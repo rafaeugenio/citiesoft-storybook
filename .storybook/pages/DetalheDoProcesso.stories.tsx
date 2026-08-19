@@ -39,7 +39,20 @@ import {
 } from '../fixtures/processo-tfd';
 
 /**
- * Detalhe do processo de TFD 2025/0481: instância do template
+ * Primeira mudança auditada do histórico, derivada da própria fixture.
+ *
+ * A asserção clica no primeiro evento expansível da timeline, então a
+ * expectativa precisa sair desse mesmo evento. Escrever "R$ 2.800,00" à mão
+ * testaria o que alguém lembrou de digitar: quando a fonte de domínio mudou a
+ * tabela de diárias, o literal quebrou e o teste passou a acusar defeito que
+ * não existia.
+ */
+const PRIMEIRA_MUDANCA_AUDITADA = HISTORICO_DO_PROCESSO.find(
+  (evento) => (evento.mudancas?.length ?? 0) > 0,
+)!.mudancas![0];
+
+/**
+ * Detalhe do processo de TFD: instância do template
  * `Templates/Detalhe/Detalhe de registro` com conteúdo e estados reais do
  * domínio B2G. Todo overlay começa fechado.
  */
@@ -91,7 +104,10 @@ function AbaDeDados() {
       <Card titulo="Deslocamento" subtitulo="Destino, especialidade e acompanhante">
         <ListaDeCampos campos={DADOS_DO_DESLOCAMENTO} />
       </Card>
-      <Card titulo="Diárias e ajuda de custo" subtitulo="Valores da competência de abril de 2025">
+      <Card
+        titulo="Diárias e ajuda de custo"
+        subtitulo={`Valores da competência de ${PROCESSO.competencia}`}
+      >
         <ListaDeCampos campos={DADOS_FINANCEIROS} />
       </Card>
     </div>
@@ -332,11 +348,11 @@ const meta = {
     docs: {
       description: {
         component: [
-          'Processo de TFD 2025/0481 da paciente Maria de Fátima Souza, no template `Templates/Detalhe/Detalhe de registro` (spec `09-templates/tela-detalhe-registro.md`).',
+          `Processo de TFD ${PROCESSO.numero} da paciente ${PROCESSO.paciente}, no template \`Templates/Detalhe/Detalhe de registro\` (spec \`09-templates/tela-detalhe-registro.md\`).`,
           '',
           'A identidade no cabeçalho é o nome da paciente, o dado mais reconhecível, com o número do processo na linha de apoio. "Editar processo" fica sempre visível; "Excluir processo" só existe dentro do menu de ações e abre o ConfirmDialog, com foco inicial em "Cancelar".',
           '',
-          'A aba **Atividade** é a trilha de auditoria: cada evento expande para o diff com `MudancaDeAuditoria`, sempre em texto humano ("R$ 2.800,00 → R$ 3.200,00", "Enviado → Em Análise"), nunca o valor interno. A timeline é ordenada do evento mais recente para o mais antigo.',
+          'A aba **Atividade** é a trilha de auditoria: cada evento expande para o diff com `MudancaDeAuditoria`, sempre em texto humano (valor em reais, situação por extenso), nunca o identificador interno. A timeline é ordenada do evento mais recente para o mais antigo.',
           '',
           'Comentários aparecem porque o domínio exige: o processo tramita entre a coordenação de TFD, a regulação e o corpo clínico.',
         ].join('\n'),
@@ -356,15 +372,17 @@ export const Padrao: Story = {
     await expect(
       canvas.getByRole('heading', { level: 1, name: 'Maria de Fátima Souza' }),
     ).toBeInTheDocument();
-    await expect(canvas.getByText(/Processo 2025\/0481 · Tratamento Fora do Domicílio/)).toBeVisible();
+    await expect(canvas.getByText(new RegExp(`Processo ${PROCESSO.numero} · Tratamento Fora do Domicílio`))).toBeVisible();
     await expect(canvas.getByRole('button', { name: 'Editar processo' })).toBeInTheDocument();
     // CPF sempre mascarado.
-    await expect(canvas.getByText('***.456.789-**')).toBeVisible();
+    await expect(
+      canvas.getByText(DADOS_DO_PACIENTE.find((campo) => campo.rotulo === 'CPF')!.valor),
+    ).toBeVisible();
 
     // Um h1 e um h2 por zona antes dos h3 dos Cards, sem salto de nível.
     await expect(canvas.getAllByRole('heading', { level: 1 })).toHaveLength(1);
     await expect(
-      canvas.getByRole('heading', { level: 2, name: 'Detalhes do processo 2025/0481' }),
+      canvas.getByRole('heading', { level: 2, name: `Detalhes do processo ${PROCESSO.numero}` }),
     ).toBeInTheDocument();
   },
 };
@@ -386,7 +404,7 @@ export const TrocaDeAbaPeloTeclado: Story = {
 
     // O painel da aba ativa mostra a timeline do processo.
     await expect(
-      canvas.getByRole('list', { name: 'Histórico do processo 2025/0481' }),
+      canvas.getByRole('list', { name: `Histórico do processo ${PROCESSO.numero}` }),
     ).toBeVisible();
 
     // Anel: da última aba a seta volta para a primeira.
@@ -410,7 +428,7 @@ export const ExclusaoConfirmada: Story = {
     await expect(dialogo).toHaveAttribute('role', 'alertdialog');
     // O diálogo entra com fade; a asserção espera a animação assentar.
     await waitFor(() =>
-      expect(within(dialogo).getByText('Excluir processo 2025/0481?')).toBeVisible(),
+      expect(within(dialogo).getByText(`Excluir processo ${PROCESSO.numero}?`)).toBeVisible(),
     );
 
     // Foco inicial na ação segura, nunca na destrutiva.
@@ -431,15 +449,15 @@ export const AuditoriaExpandida: Story = {
     await userEvent.click(canvas.getByRole('tab', { name: /Atividade/ }));
 
     // O escopo é a própria timeline: o valor também aparece na aba "Dados".
-    const historico = within(canvas.getByRole('list', { name: 'Histórico do processo 2025/0481' }));
+    const historico = within(canvas.getByRole('list', { name: `Histórico do processo ${PROCESSO.numero}` }));
 
     const primeiro = historico.getAllByRole('button', { name: 'Ver detalhes' })[0];
     await expect(primeiro).toHaveAttribute('aria-expanded', 'false');
     await userEvent.click(primeiro);
 
     // O diff de auditoria usa texto humano, nunca o ID interno.
-    await expect(historico.getByText('R$ 2.800,00')).toBeVisible();
-    await expect(historico.getByText('R$ 3.200,00')).toBeVisible();
+    await expect(historico.getByText(PRIMEIRA_MUDANCA_AUDITADA.de!)).toBeVisible();
+    await expect(historico.getByText(PRIMEIRA_MUDANCA_AUDITADA.para!)).toBeVisible();
     await expect(historico.getAllByRole('button', { name: 'Ocultar detalhes' })[0]).toBeVisible();
   },
 };

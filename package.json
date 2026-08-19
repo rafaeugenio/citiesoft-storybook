@@ -11,7 +11,10 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test-storybook": "vitest --project=storybook --run",
-    "verificar-catalogo": "node scripts/verificar-catalogo.mjs"
+    "verificar-catalogo": "node scripts/verificar-catalogo.mjs",
+    "gerar-inventario": "node scripts/gerar-inventario.mjs",
+    "test-storybook:dark": "VITE_CITIE_TEMA_PADRAO=dark vitest --project=storybook --run",
+    "gate": "npm run lint && tsc -b --force && npm run build-storybook && npm run verificar-catalogo && npm run test-storybook && npm run test-storybook:dark"
   },
   "dependencies": {
     "react": "^19.2.8",

@@ -22,24 +22,25 @@ import {
   type IndicadorDoWizard,
 } from '../templates/Wizard/Wizard';
 import {
-  ESPECIALIDADES,
-  ETAPAS_DA_SOLICITACAO,
+  ESPECIALIDADES_DO_ATENDIMENTO,
+  ETAPAS_DO_PROCESSO,
   HOJE,
   IDENTIFICACAO_PREENCHIDA,
-  MUNICIPIOS_DE_DESTINO,
-  MUNICIPIOS_DE_ORIGEM,
+  MUNICIPIOS_DESTINO,
+  MUNICIPIOS_ORIGEM,
   SECRETARIAS,
-  SOLICITACAO_COMPLETA,
-  SOLICITACAO_COM_TEXTO_LONGO,
-  SOLICITACAO_VAZIA,
+  UNIDADES_DESTINO,
+  PROCESSO_COMPLETO,
+  PROCESSO_COM_TEXTO_LONGO,
+  PROCESSO_VAZIO,
   TIPOS_DE_ACOMPANHAMENTO,
   TIPOS_DE_TRANSPORTE,
   formatarDataCurta,
   rotuloDaOpcao,
-  type DadosDaSolicitacao,
+  type DadosDoProcesso,
 } from '../fixtures/solicitacao-tfd';
 
-type CampoDaSolicitacao = keyof DadosDaSolicitacao;
+type CampoDaSolicitacao = keyof DadosDoProcesso;
 type ErrosDaEtapa = Partial<Record<CampoDaSolicitacao, string>>;
 
 type CampoDeTexto =
@@ -63,7 +64,7 @@ type CampoDeData = 'dataDaViagem' | 'dataDoLaudo';
  * Validação por etapa. Cada etapa valida só os próprios campos: o wizard nunca
  * cobra da etapa 1 um dado que só existe na etapa 3.
  */
-function validarEtapa(indice: number, dados: DadosDaSolicitacao): ErrosDaEtapa {
+function validarEtapa(indice: number, dados: DadosDoProcesso): ErrosDaEtapa {
   const erros: ErrosDaEtapa = {};
 
   if (indice === 0) {
@@ -120,7 +121,7 @@ function validarEtapa(indice: number, dados: DadosDaSolicitacao): ErrosDaEtapa {
 interface NovaSolicitacaoProps {
   /** Índice da etapa em que a tela abre (0 a 3). */
   etapaInicial?: number;
-  dadosIniciais?: DadosDaSolicitacao;
+  dadosIniciais?: DadosDoProcesso;
   indicador?: IndicadorDoWizard;
   /** Simula uma tentativa de avanço já recusada, para a história de erro. */
   tentativaRecusada?: boolean;
@@ -130,7 +131,7 @@ interface NovaSolicitacaoProps {
 
 function NovaSolicitacaoDeTFD({
   etapaInicial = 0,
-  dadosIniciais = SOLICITACAO_VAZIA,
+  dadosIniciais = PROCESSO_VAZIO,
   indicador = 'stepper',
   tentativaRecusada = false,
   enviandoInicial = false,
@@ -171,7 +172,7 @@ function NovaSolicitacaoDeTFD({
     camposRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
   }, [tentativas]);
 
-  const ultima = indice === ETAPAS_DA_SOLICITACAO.length - 1;
+  const ultima = indice === ETAPAS_DO_PROCESSO.length - 1;
 
   // Corrigiu o campo: o bloqueio daquele erro sai imediatamente.
   const limparErro = (campo: CampoDaSolicitacao) =>
@@ -230,7 +231,7 @@ function NovaSolicitacaoDeTFD({
 
   const listaDeErros = Object.values(erros);
 
-  const etapas: EtapaDoWizard[] = ETAPAS_DA_SOLICITACAO.map((etapa, posicao) => ({
+  const etapas: EtapaDoWizard[] = ETAPAS_DO_PROCESSO.map((etapa, posicao) => ({
     ...etapa,
     estado:
       posicao < indice ? 'concluida'
@@ -264,9 +265,9 @@ function NovaSolicitacaoDeTFD({
       descricao="Encaminhamento de paciente para Tratamento Fora do Domicílio, da identificação ao envio para a regulação."
       indicador={indicador}
       etapas={etapas}
-      etapaAtualId={ETAPAS_DA_SOLICITACAO[indice].id}
+      etapaAtualId={ETAPAS_DO_PROCESSO[indice].id}
       rotuloIndicador="Etapas da solicitação de TFD"
-      etapaTitulo={ETAPAS_DA_SOLICITACAO[indice].rotulo}
+      etapaTitulo={ETAPAS_DO_PROCESSO[indice].rotulo}
       etapaDescricao={DESCRICAO_DA_ETAPA[indice]}
       aviso={aviso}
       rotuloAvancar={ultima ? 'Enviar solicitação' : 'Avançar'}
@@ -293,7 +294,7 @@ function NovaSolicitacaoDeTFD({
                 <WizardItem rotulo="Cartão SUS" valor={dados.cartaoSus || 'Não informado'} />
                 <WizardItem
                   rotulo="Município de origem"
-                  valor={rotuloDaOpcao(MUNICIPIOS_DE_ORIGEM, dados.municipioOrigem)}
+                  valor={rotuloDaOpcao(MUNICIPIOS_ORIGEM, dados.municipioOrigem)}
                 />
                 <WizardItem
                   rotulo="Secretaria responsável"
@@ -309,12 +310,12 @@ function NovaSolicitacaoDeTFD({
               <WizardItens>
                 <WizardItem
                   rotulo="Município de destino"
-                  valor={rotuloDaOpcao(MUNICIPIOS_DE_DESTINO, dados.municipioDestino)}
+                  valor={rotuloDaOpcao(MUNICIPIOS_DESTINO, dados.municipioDestino)}
                 />
                 <WizardItem rotulo="Unidade de saúde" valor={dados.unidade || 'Não informada'} />
                 <WizardItem
                   rotulo="Especialidade"
-                  valor={rotuloDaOpcao(ESPECIALIDADES, dados.especialidade)}
+                  valor={rotuloDaOpcao(ESPECIALIDADES_DO_ATENDIMENTO, dados.especialidade)}
                 />
                 <WizardItem
                   rotulo="Transporte"
@@ -354,7 +355,7 @@ function NovaSolicitacaoDeTFD({
             rotuloConfirmar="Descartar solicitação"
             onConfirm={() => {
               setSaindo(false);
-              setDados(SOLICITACAO_VAZIA);
+              setDados(PROCESSO_VAZIO);
               setErros({});
               setIndice(0);
             }}
@@ -394,7 +395,7 @@ function NovaSolicitacaoDeTFD({
           <Select
             label="Município de origem"
             required
-            options={MUNICIPIOS_DE_ORIGEM}
+            options={MUNICIPIOS_ORIGEM}
             defaultValue={dados.municipioOrigem}
             error={erros.municipioOrigem}
             placeholder="Selecione o município"
@@ -417,24 +418,32 @@ function NovaSolicitacaoDeTFD({
           <Select
             label="Município de destino"
             required
-            options={MUNICIPIOS_DE_DESTINO}
+            options={MUNICIPIOS_DESTINO}
             defaultValue={dados.municipioDestino}
             error={erros.municipioDestino}
             placeholder="Selecione o município"
             onChange={(evento) => atualizar('municipioDestino', evento.target.value)}
           />
-          <Input
+          {/*
+            Seleção, e não texto livre. O campo guarda o identificador da unidade
+            e exibe o nome: digitar o nome à mão produziria grafia divergente
+            entre solicitações do mesmo hospital, e a regulação perde a
+            possibilidade de agrupar por unidade.
+          */}
+          <Select
             label="Unidade de saúde de destino"
             required
-            value={dados.unidade}
+            options={UNIDADES_DESTINO}
+            defaultValue={dados.unidade}
             error={erros.unidade}
-            helper="Nome da unidade indicada no laudo."
+            placeholder="Selecione a unidade"
+            helper="Unidade indicada no laudo médico."
             onChange={(evento) => atualizar('unidade', evento.target.value)}
           />
           <Select
             label="Especialidade do atendimento"
             required
-            options={ESPECIALIDADES}
+            options={ESPECIALIDADES_DO_ATENDIMENTO}
             defaultValue={dados.especialidade}
             error={erros.especialidade}
             placeholder="Selecione a especialidade"
@@ -550,7 +559,7 @@ type Story = StoryObj<typeof meta>;
 
 export const PrimeiraEtapa: Story = {
   name: 'Primeira etapa · campos vazios',
-  args: { etapaInicial: 0, dadosIniciais: SOLICITACAO_VAZIA },
+  args: { etapaInicial: 0, dadosIniciais: PROCESSO_VAZIO },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -563,21 +572,30 @@ export const PrimeiraEtapa: Story = {
 
 export const EtapaIntermediariaPreenchida: Story = {
   name: 'Etapa intermediária · preenchida',
-  args: { etapaInicial: 1, dadosIniciais: { ...SOLICITACAO_COMPLETA } },
+  args: { etapaInicial: 1, dadosIniciais: { ...PROCESSO_COMPLETO } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByRole('heading', { level: 2 })).toHaveTextContent('Deslocamento');
-    await expect(canvas.getByLabelText(/Unidade de saúde de destino/)).toHaveValue(
-      'Hospital Universitário Presidente Dutra',
-    );
+    // O campo guarda o identificador e exibe o rótulo, que é a modelagem certa:
+    // trocar o nome da unidade no cadastro não pode invalidar a solicitação já
+    // gravada. A asserção confere os dois lados.
+    const unidade = canvas.getByLabelText(/Unidade de saúde de destino/);
+    const esperada = UNIDADES_DESTINO.find(
+      (opcao) => opcao.value === PROCESSO_COMPLETO.unidade,
+    )!;
+
+    await expect(unidade).toHaveValue(esperada.value);
+    // O identificador guardado precisa existir na lista de opções oferecida.
+    // Sem isto, um valor órfão passaria: o campo mostraria vazio e o teste, verde.
+    await expect(within(unidade).getByRole('option', { name: esperada.label })).toBeInTheDocument();
     await expect(canvas.getByRole('button', { name: 'Avançar' })).toBeEnabled();
   },
 };
 
 export const EtapaComErroDeValidacao: Story = {
   name: 'Etapa com erro de validação · avanço bloqueado',
-  args: { etapaInicial: 1, dadosIniciais: SOLICITACAO_VAZIA, tentativaRecusada: true },
+  args: { etapaInicial: 1, dadosIniciais: PROCESSO_VAZIO, tentativaRecusada: true },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -590,21 +608,21 @@ export const EtapaComErroDeValidacao: Story = {
 
 export const ResumoFinal: Story = {
   name: 'Resumo final · revisão antes de confirmar',
-  args: { etapaInicial: 3, dadosIniciais: SOLICITACAO_COMPLETA },
+  args: { etapaInicial: 3, dadosIniciais: PROCESSO_COMPLETO },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByRole('button', { name: 'Enviar solicitação' })).toBeEnabled();
     await expect(canvas.getByText('Maria de Fátima Souza')).toBeVisible();
     await expect(canvas.getByText('Cardiologia')).toBeVisible();
-    await expect(canvas.getByText('08/04/2026')).toBeVisible();
+    await expect(canvas.getByText(formatarDataCurta(PROCESSO_COMPLETO.dataDaViagem))).toBeVisible();
     await expect(canvas.getByRole('button', { name: 'Editar deslocamento' })).toBeVisible();
   },
 };
 
 export const EnvioEmCurso: Story = {
   name: 'Envio em curso',
-  args: { etapaInicial: 3, dadosIniciais: SOLICITACAO_COMPLETA, enviandoInicial: true },
+  args: { etapaInicial: 3, dadosIniciais: PROCESSO_COMPLETO, enviandoInicial: true },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -620,7 +638,7 @@ export const EnvioEmCurso: Story = {
 
 export const Concluida: Story = {
   name: 'Concluída · toast de sucesso',
-  args: { etapaInicial: 3, dadosIniciais: SOLICITACAO_COMPLETA, concluidaInicial: true },
+  args: { etapaInicial: 3, dadosIniciais: PROCESSO_COMPLETO, concluidaInicial: true },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -659,7 +677,7 @@ export const NavegarEntreEtapas: Story = {
 
 export const BloqueioAoAvancar: Story = {
   name: 'Tentar avançar com etapa inválida',
-  args: { etapaInicial: 0, dadosIniciais: SOLICITACAO_VAZIA },
+  args: { etapaInicial: 0, dadosIniciais: PROCESSO_VAZIO },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -719,7 +737,7 @@ export const DescartarAoSair: Story = {
 
 export const ConteudoLongo: Story = {
   name: 'Conteúdo longo · nome e unidade extensos',
-  args: { etapaInicial: 3, dadosIniciais: SOLICITACAO_COM_TEXTO_LONGO },
+  args: { etapaInicial: 3, dadosIniciais: PROCESSO_COM_TEXTO_LONGO },
 };
 
 export const IndicadorEmBarra: Story = {
@@ -729,6 +747,6 @@ export const IndicadorEmBarra: Story = {
 
 export const Em375: Story = {
   name: 'Responsivo · 375',
-  args: { etapaInicial: 0, dadosIniciais: SOLICITACAO_VAZIA, indicador: 'barra' },
+  args: { etapaInicial: 0, dadosIniciais: PROCESSO_VAZIO, indicador: 'barra' },
   globals: { viewport: { value: 'celular' } },
 };

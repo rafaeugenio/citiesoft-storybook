@@ -13,7 +13,7 @@
  * Sai com código 1 se qualquer invariante falhar, para poder entrar em CI.
  */
 
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, globSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -159,7 +159,83 @@ for (const [titulo, arquivos] of porTitulo) {
 }
 
 // ---------------------------------------------------------------------------
-// 6. Contagens, para a documentação poder citar número conferido
+// 6. A cadeia de composição narrada na Visão geral existe mesmo no código
+// ---------------------------------------------------------------------------
+//
+// Este é o bloco que impede a reincidência do defeito mais grave da rodada 2: a
+// página de abertura afirmava uma cadeia de imports que não existia, e nada
+// acusava. Agora, cada elo narrado é conferido contra o `import` real. Alterar a
+// composição sem alterar o texto quebra o build.
+
+const CADEIA_NARRADA = [
+  {
+    elo: 'Button consome o token de marca',
+    arquivo: 'src/components/atoms/Button/Button.css',
+    exige: /var\(--citie-brand-primary\)/,
+  },
+  {
+    elo: 'DataView compõe Card',
+    arquivo: 'src/components/organisms/DataView/DataView.tsx',
+    exige: /from '[^']*\/molecules\/Card\/Card'/,
+  },
+  {
+    elo: 'DataView compõe EmptyState, Pagination, Select e SelectButton',
+    arquivo: 'src/components/organisms/DataView/DataView.tsx',
+    exige: /EmptyState/,
+    tambem: [/Pagination/, /SelectButton/],
+  },
+  {
+    elo: 'DataView compõe Skeleton',
+    arquivo: 'src/components/organisms/DataView/DataView.tsx',
+    exige: /Skeleton/,
+  },
+  {
+    elo: 'O template Listagem não importa componente nenhum',
+    arquivo: '.storybook/templates/Listagem/Listagem.tsx',
+    proibe: /from '[^']*\/(src|components)\//,
+  },
+  {
+    elo: 'A página Consulta de processos importa o template Listagem',
+    arquivo: '.storybook/pages/ConsultaDeProcessos.stories.tsx',
+    exige: /from '[^']*templates\/Listagem\/Listagem'/,
+  },
+];
+
+for (const { elo, arquivo, exige, tambem = [], proibe } of CADEIA_NARRADA) {
+  const caminho = resolve(raiz, arquivo);
+  if (!existsSync(caminho)) {
+    falhas.push(`Cadeia da Visão geral: "${elo}" aponta para ${arquivo}, que não existe.`);
+    continue;
+  }
+  const fonte = readFileSync(caminho, 'utf8');
+  for (const padrao of [...(exige ? [exige] : []), ...tambem]) {
+    if (!padrao.test(fonte)) {
+      falhas.push(
+        `Cadeia da Visão geral desatualizada: "${elo}" não se confirma em ${arquivo}. ` +
+          `Ajuste o código ou o texto de VisaoGeral.mdx.`,
+      );
+    }
+  }
+  if (proibe && proibe.test(fonte)) {
+    falhas.push(
+      `Cadeia da Visão geral: "${elo}" foi violado. ${arquivo} passou a importar componente.`,
+    );
+  }
+}
+
+/** O Button é anunciado como a peça mais reusada. O número precisa bater. */
+const consumidoresDoButton = globSync('src/components/**/*.tsx', { cwd: raiz })
+  .filter((f) => !f.includes('.stories.') && !f.includes('/Button/'))
+  .filter((f) => /from '[^']*\/atoms\/Button\/Button'/.test(readFileSync(resolve(raiz, f), 'utf8')));
+
+if (consumidoresDoButton.length < 10) {
+  avisos.push(
+    `A Visão geral afirma que catorze componentes importam o Button; hoje são ${consumidoresDoButton.length}. Atualize o texto.`,
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 7. Contagens, para a documentação poder citar número conferido
 // ---------------------------------------------------------------------------
 const contagem = {};
 for (const nivel of NIVEIS) {

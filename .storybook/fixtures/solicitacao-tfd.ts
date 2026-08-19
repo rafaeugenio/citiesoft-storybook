@@ -1,57 +1,66 @@
 /**
- * Dados fictícios da solicitação de TFD (Tratamento Fora do Domicílio), usados
- * pela página `Páginas/Processos/Nova solicitação de TFD`.
+ * Abertura de processo de TFD, usada pela página
+ * `Páginas/Processos/Novo processo de TFD`.
+ *
+ * As listas de referência (municípios, unidades, especialidades, secretarias,
+ * transporte, acompanhamento) vêm todas de `dominio-tfd.ts`, então o wizard
+ * oferece exatamente o vocabulário que a listagem filtra e o painel mede.
  *
  * Tudo determinístico: nenhuma data ou identificador é gerado em tempo de
  * execução, senão o snapshot visual muda a cada rodada.
  */
+
+import {
+  ESPECIALIDADES,
+  HOJE,
+  MUNICIPIOS_DE_DESTINO,
+  MUNICIPIOS_DE_ORIGEM,
+  PROCESSO_EM_DESTAQUE,
+  SECRETARIAS_DE_SAUDE,
+  TIPOS_DE_ACOMPANHAMENTO,
+  TIPOS_DE_TRANSPORTE,
+  UNIDADES_DE_DESTINO,
+  formatarCartaoSus,
+  formatarCPF,
+  formatarDataCurta,
+  mascararCPF,
+  rotuloDoMunicipio,
+} from './dominio-tfd';
+
+export { HOJE, TIPOS_DE_ACOMPANHAMENTO, TIPOS_DE_TRANSPORTE, formatarDataCurta, mascararCPF };
 
 export interface OpcaoDeLista {
   value: string;
   label: string;
 }
 
-/** Data de referência do fluxo: 15/03/2026. Fixa para o calendário não variar. */
-export const HOJE = new Date(2026, 2, 15);
+/** Encaminhamento de TFD sai da saúde: nenhuma outra pasta aparece aqui. */
+export const SECRETARIAS: OpcaoDeLista[] = SECRETARIAS_DE_SAUDE.map((secretaria) => ({
+  value: secretaria.id,
+  label: secretaria.nome,
+}));
 
-export const SECRETARIAS: OpcaoDeLista[] = [
-  { value: 'ses', label: 'Secretaria de Estado da Saúde' },
-  { value: 'sema', label: 'Secretaria de Meio Ambiente' },
-  { value: 'seduc', label: 'Secretaria de Educação' },
-];
+export const MUNICIPIOS_ORIGEM: OpcaoDeLista[] = MUNICIPIOS_DE_ORIGEM.map((municipio) => ({
+  value: municipio.id,
+  label: rotuloDoMunicipio(municipio.id),
+}));
 
-export const MUNICIPIOS_DE_ORIGEM: OpcaoDeLista[] = [
-  { value: 'imperatriz', label: 'Imperatriz (MA)' },
-  { value: 'caxias', label: 'Caxias (MA)' },
-  { value: 'balsas', label: 'Balsas (MA)' },
-];
+export const MUNICIPIOS_DESTINO: OpcaoDeLista[] = MUNICIPIOS_DE_DESTINO.map((municipio) => ({
+  value: municipio.id,
+  label: rotuloDoMunicipio(municipio.id),
+}));
 
-export const MUNICIPIOS_DE_DESTINO: OpcaoDeLista[] = [
-  { value: 'sao-luis', label: 'São Luís (MA)' },
-  { value: 'teresina', label: 'Teresina (PI)' },
-  { value: 'fortaleza', label: 'Fortaleza (CE)' },
-  { value: 'sao-paulo', label: 'São Paulo (SP)' },
-];
+export const ESPECIALIDADES_DO_ATENDIMENTO: OpcaoDeLista[] = ESPECIALIDADES.map(
+  (especialidade) => ({ value: especialidade.id, label: especialidade.nome }),
+);
 
-export const ESPECIALIDADES: OpcaoDeLista[] = [
-  { value: 'cardiologia', label: 'Cardiologia' },
-  { value: 'oncologia', label: 'Oncologia' },
-  { value: 'neurologia', label: 'Neurologia' },
-  { value: 'oftalmologia', label: 'Oftalmologia' },
-];
+/** Unidades habilitadas a receber o paciente, na ordem do município. */
+export const UNIDADES_DESTINO: OpcaoDeLista[] = UNIDADES_DE_DESTINO.map((unidade) => ({
+  value: unidade.id,
+  label: unidade.nome,
+}));
 
-export const TIPOS_DE_TRANSPORTE: OpcaoDeLista[] = [
-  { value: 'terrestre', label: 'Terrestre (van da Secretaria)' },
-  { value: 'aereo', label: 'Aéreo' },
-  { value: 'proprio', label: 'Meio próprio com ressarcimento' },
-];
-
-export const TIPOS_DE_ACOMPANHAMENTO: OpcaoDeLista[] = [
-  { value: 'sem', label: 'Sem acompanhante' },
-  { value: 'com', label: 'Com acompanhante indicado no laudo' },
-];
-
-export interface DadosDaSolicitacao {
+export interface DadosDoProcesso {
   /* Etapa 1 · Identificação */
   paciente: string;
   cpf: string;
@@ -72,7 +81,7 @@ export interface DadosDaSolicitacao {
   dataDoLaudo?: Date;
 }
 
-export const SOLICITACAO_VAZIA: DadosDaSolicitacao = {
+export const PROCESSO_VAZIO: DadosDoProcesso = {
   paciente: '',
   cpf: '',
   cartaoSus: '',
@@ -90,40 +99,43 @@ export const SOLICITACAO_VAZIA: DadosDaSolicitacao = {
   dataDoLaudo: undefined,
 };
 
-/** Primeira etapa já concluída, segunda etapa em preenchimento. */
-export const IDENTIFICACAO_PREENCHIDA: DadosDaSolicitacao = {
-  ...SOLICITACAO_VAZIA,
-  paciente: 'Maria de Fátima Souza',
-  cpf: '045.812.330-91',
-  cartaoSus: '708 4048 1220 3317',
-  municipioOrigem: 'imperatriz',
-  secretaria: 'ses',
-  municipioDestino: 'sao-luis',
-  unidade: 'Hospital Universitário Presidente Dutra',
+/**
+ * Primeira etapa concluída, segunda em preenchimento. A paciente é a mesma do
+ * processo 2026/0481, com o mesmo CPF e o mesmo cartão do SUS do registro:
+ * é a segunda viagem dela, aberta pela unidade de origem.
+ */
+export const IDENTIFICACAO_PREENCHIDA: DadosDoProcesso = {
+  ...PROCESSO_VAZIO,
+  paciente: PROCESSO_EM_DESTAQUE.paciente,
+  cpf: formatarCPF(PROCESSO_EM_DESTAQUE.cpf),
+  cartaoSus: formatarCartaoSus(PROCESSO_EM_DESTAQUE.cartaoSus),
+  municipioOrigem: PROCESSO_EM_DESTAQUE.municipioOrigemId,
+  secretaria: 'sms-imperatriz',
+  municipioDestino: PROCESSO_EM_DESTAQUE.municipioDestinoId,
+  unidade: PROCESSO_EM_DESTAQUE.unidadeDestinoId,
 };
 
 /** Todas as etapas preenchidas, pronta para o resumo final. */
-export const SOLICITACAO_COMPLETA: DadosDaSolicitacao = {
+export const PROCESSO_COMPLETO: DadosDoProcesso = {
   ...IDENTIFICACAO_PREENCHIDA,
-  especialidade: 'cardiologia',
+  especialidade: PROCESSO_EM_DESTAQUE.especialidadeId,
   transporte: 'terrestre',
-  dataDaViagem: new Date(2026, 3, 8),
-  numeroDoLaudo: '2025/0481',
-  medicoSolicitante: 'Dr. Carlos Andrade',
+  dataDaViagem: new Date(2026, 7, 12),
+  numeroDoLaudo: 'LM 2026/13148',
+  medicoSolicitante: 'Dr. Carlos Andrade Belfort',
   crm: 'CRM-MA 18442',
   acompanhamento: 'com',
-  dataDoLaudo: new Date(2026, 2, 2),
+  dataDoLaudo: new Date(2026, 6, 10),
 };
 
 /**
  * Conteúdo longo: nome extenso e unidade de saúde com nome completo, para
  * verificar quebra de linha no resumo e nos campos.
  */
-export const SOLICITACAO_COM_TEXTO_LONGO: DadosDaSolicitacao = {
-  ...SOLICITACAO_COMPLETA,
+export const PROCESSO_COM_TEXTO_LONGO: DadosDoProcesso = {
+  ...PROCESSO_COMPLETO,
   paciente: 'Maria de Fátima Souza do Nascimento Albuquerque Rodrigues',
-  unidade:
-    'Hospital Universitário da Universidade Federal do Maranhão · Unidade Presidente Dutra · Ambulatório de Cardiologia Intervencionista',
+  medicoSolicitante: 'Dr. Carlos Andrade Belfort de Vasconcelos Sobrinho',
 };
 
 export interface DefinicaoDeEtapa {
@@ -132,19 +144,17 @@ export interface DefinicaoDeEtapa {
   sublabel: string;
 }
 
-export const ETAPAS_DA_SOLICITACAO: DefinicaoDeEtapa[] = [
+export const ETAPAS_DO_PROCESSO: DefinicaoDeEtapa[] = [
   { id: 'identificacao', rotulo: 'Identificação', sublabel: 'Paciente e origem' },
   { id: 'deslocamento', rotulo: 'Deslocamento', sublabel: 'Destino e transporte' },
   { id: 'documentos', rotulo: 'Documentos', sublabel: 'Laudo e acompanhante' },
   { id: 'revisao', rotulo: 'Revisão', sublabel: 'Conferência final' },
 ];
 
+/** Protocolo atribuído quando a unidade envia o processo à regulação. */
+export const PROTOCOLO_GERADO = '2026/0505';
+
 /** Traduz o valor guardado para o rótulo exibido no resumo. */
 export function rotuloDaOpcao(opcoes: OpcaoDeLista[], valor: string) {
   return opcoes.find((opcao) => opcao.value === valor)?.label ?? 'Não informado';
-}
-
-export function formatarDataCurta(data?: Date) {
-  if (!data) return 'Não informada';
-  return data.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }

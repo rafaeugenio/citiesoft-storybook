@@ -2,11 +2,30 @@
  * Tokens Citiesoft — extraídos do design system oficial.
  * Fonte: Obsidian Vault/Citiesoft/Citiesoft-Design-System/design-system/02-tokens
  *   - color-tokens.md      (valores claro/escuro)
- *   - radius-tokens.md     (radius.sm 4 / md 6 / lg 8)
+ *   - radius-tokens.md     (radius.sm 4 / md 6 / lg 8 / xl 12)
  *   - spacing-tokens.md    (escala de 4)
  *   - 01-foundations/typography.md (Inter para UI, Red Hat Display para títulos)
  *
  * Regra do DS: componente consome token semântico por nome, nunca valor literal.
+ *
+ * ---------------------------------------------------------------------------
+ * DECISÃO DE ARQUITETURA — papel de TEXTO e papel de PREENCHIMENTO são famílias
+ * separadas. Não unifique.
+ *
+ * `--citie-*-strong` é cor de TEXTO sobre superfície. Todos os consumidores
+ * (Badge, Rating, Widget, Terminal, Timeline, Field) o usam em `color:`, e é
+ * por isso que o tema escuro o inverte para tinta clara: #4ADE80, #FCA5A5,
+ * #FCD34D. Esses valores existem para ser lidos SOBRE fundo escuro.
+ *
+ * `--citie-*-emphasis` + `*-hover` + `*-active` + `*-contrast` é a rampa de
+ * PREENCHIMENTO do controle cheio, espelhando a família de marca.
+ *
+ * A tentação recorrente é apontar o hover do botão para `*-strong`, que no
+ * claro casa com o hex certo por coincidência. Não faça: no escuro isso produz
+ * rótulo branco sobre #4ADE80, 1,87:1, muito abaixo do mínimo AA de 4,5:1.
+ * Se você veio aqui para "simplificar" fundindo as duas famílias, este é o
+ * motivo de elas estarem separadas.
+ * ---------------------------------------------------------------------------
  */
 
 :root {
@@ -109,7 +128,27 @@
   --citie-danger-foreground: #b91c1c;
   --citie-loading-spinner: #1261e4;
 
-  /* Raio — radius.md é o padrão Citiesoft para controle interativo */
+  /**
+   * Raio. Papel de cada degrau, para o valor ser escolhido por função e não
+   * por gosto:
+   *   sm   4px  — marcador, chip, indicador, canto interno de peça pequena
+   *   md   6px  — padrão Citiesoft para controle interativo (botão, campo)
+   *   lg   8px  — superfície densa e aninhada (linha, célula, item de lista)
+   *   xl  12px  — superfície de contorno de primeiro nível (card, widget,
+   *               gráfico, diálogo, drawer, corpo do wizard)
+   *   full      — pílula e avatar
+   *
+   * `xl` estava em uso mas fora da escala declarada no cabeçalho. Optei por
+   * oficializá-lo em vez de rebaixar os pontos de uso para `lg`: 12px é hoje
+   * o raio de card, widget, gráfico e diálogo, ou seja, as superfícies mais
+   * visíveis do produto. Removê-lo trocaria uma contradição de documentação
+   * por uma mudança de identidade visual em toda tela que tem card, que é
+   * exatamente o custo que não se deve pagar para consertar um comentário.
+   *
+   * DIVERGÊNCIA EM ABERTO: Panel, Table e Fieldset são superfície de primeiro
+   * nível e usam `lg`, então convivem com Card e Widget em `xl` na mesma tela.
+   * A correção é apontá-los para `xl`, mas são arquivos de outros donos.
+   */
   --citie-radius-sm: 4px;
   --citie-radius-md: 6px;
   --citie-radius-lg: 8px;
@@ -126,10 +165,51 @@
   /* Tipografia */
   --citie-font-ui: 'Inter', 'Segoe UI', Arial, sans-serif;
   --citie-font-display: 'Red Hat Display', 'Segoe UI', Arial, sans-serif;
+  /**
+   * ACHADO ABERTO: `.storybook/preview-head.html` carrega só Inter (400;500;600)
+   * e Red Hat Display (500;600;700). Red Hat Mono não é carregada, então este
+   * token cai no fallback do sistema — Terminal.css já declara a mesma família
+   * e já cai. E o peso 700 pedido por Badge, Tabs, Tree, TreeSelect e Timeline
+   * não existe em Inter, então o navegador sintetiza negrito falso. Correção:
+   * `Inter:wght@400;500;600;700` mais `family=Red+Hat+Mono:wght@400;500` na URL
+   * do Google Fonts.
+   */
+  --citie-font-mono: 'Red Hat Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /**
+   * Escala de corpo — Inter, via `--citie-font-ui`.
+   */
+  --citie-font-size-caption: 11px;
+  --citie-font-size-body-xs: 12px;
   --citie-font-size-body-sm: 13px;
   --citie-font-size-body-md: 14px;
   --citie-font-size-body-lg: 16px;
+
+  /**
+   * Escala de título — Red Hat Display, via `--citie-font-display`.
+   *
+   * Não existia, e a consequência foi medida: 49 `font-size` literais em 24
+   * arquivos, com 14 valores distintos, e quatro H1 diferentes em seis
+   * templates (22/600, 24/600, 24/700, mais o degrau responsivo em 20px que
+   * só três dos seis aplicam). Os degraus abaixo são os valores que já
+   * predominam no código, promovidos a token — não uma escala nova imposta
+   * por cima do que existe:
+   *   title-sm 18px  — título de card, painel, diálogo, gráfico
+   *   title-md 20px  — título de seção, e degrau responsivo do H1
+   *   title-lg 24px  — H1 de página
+   *   display  32px  — número de destaque e abertura de página
+   *
+   * O peso também é token porque a divergência medida é de tamanho E de peso:
+   * `title` 600 é o dominante, `display` 700 fica para número de destaque.
+   */
+  --citie-font-size-title-sm: 18px;
+  --citie-font-size-title-md: 20px;
+  --citie-font-size-title-lg: 24px;
+  --citie-font-size-display: 32px;
+
   --citie-font-weight-action: 500;
+  --citie-font-weight-title: 600;
+  --citie-font-weight-display: 700;
 
   /* Elevação — sombra de overlay para painéis, menus e diálogos */
   --citie-shadow-overlay: 0 4px 12px rgba(16, 24, 40, 0.12);

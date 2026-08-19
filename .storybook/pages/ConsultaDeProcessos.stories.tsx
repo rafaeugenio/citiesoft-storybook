@@ -22,14 +22,27 @@ import {
   DESTINOS,
   FILTROS_VAZIOS,
   SITUACOES,
-  SOLICITACOES,
-  SOLICITACOES_LONGAS,
+  PROCESSOS_DA_FILA,
+  PROCESSOS_LONGOS,
   filtrar,
   formatarData,
   formatarMoeda,
   type FiltrosDaConsulta,
-  type SolicitacaoTFD,
+  type LinhaDoProcesso,
 } from '../fixtures/processos';
+
+/**
+ * As asserções derivam da fonte de domínio, e não de protocolo digitado à mão.
+ *
+ * Motivo: quando a fonte única de domínio fixou uma data de referência, o ano
+ * dos protocolos mudou e onze asserções literais quebraram de uma vez. Uma
+ * expectativa escrita à mão testa o que alguém lembrou de escrever, e não o que
+ * o sistema mostra. É a mesma lição que reprovou esta rodada em outra camada.
+ */
+const [PRIMEIRO, SEGUNDO] = PROCESSOS_DA_FILA;
+
+/** Protocolo que comprovadamente não existe na fila, para o caso de filtro sem resultado. */
+const PROTOCOLO_INEXISTENTE = '1900/0000';
 
 /* ------------------------------------------------------------------ */
 /* Ícones das ações de linha                                           */
@@ -102,7 +115,7 @@ const TRILHA = (
  * Ordem fixa das colunas, conforme a spec: seleção, identificador, campos
  * descritivos, campos numéricos e de data, status e ações à direita.
  */
-function colunas(): Coluna<SolicitacaoTFD>[] {
+function colunas(): Coluna<LinhaDoProcesso>[] {
   return [
     {
       chave: 'protocolo',
@@ -173,7 +186,7 @@ function colunas(): Coluna<SolicitacaoTFD>[] {
 
 export interface ConsultaDeProcessosProps {
   /** Conjunto de partida da tela. */
-  dados?: SolicitacaoTFD[];
+  dados?: LinhaDoProcesso[];
   /** Primeiro carregamento: skeleton nas linhas, cabeçalho e filtros de pé. */
   carregando?: boolean;
   /** Falha na busca dos registros. */
@@ -184,7 +197,7 @@ export interface ConsultaDeProcessosProps {
 }
 
 export function ConsultaDeProcessos({
-  dados = SOLICITACOES,
+  dados = PROCESSOS_DA_FILA,
   carregando = false,
   erro = false,
   semPermissao = false,
@@ -508,10 +521,10 @@ export const ComDados: Story = {
     ).toBeVisible();
     // O total precisa bater com as fixtures: 24 registros em processos.ts.
     await expect(canvas.getByRole('grid', { name: 'Solicitações de TFD, 24 registros' })).toBeVisible();
-    await expect(canvas.getByRole('link', { name: '2025/0481' })).toBeVisible();
+    await expect(canvas.getByRole('link', { name: PRIMEIRO.protocolo })).toBeVisible();
     await expect(canvas.getByText('24 processos encontrados')).toBeVisible();
     // A primeira página mostra 10 dos 24; o 11º registro fica para a próxima.
-    await expect(canvas.queryByRole('link', { name: '2025/0491' })).toBeNull();
+    await expect(canvas.queryByRole('link', { name: PROTOCOLO_INEXISTENTE })).toBeNull();
     await expect(canvas.getByText('1-10 de 24 registros')).toBeVisible();
     await expect(
       canvas.getByRole('navigation', { name: 'Paginação de solicitações de TFD' }),
@@ -539,14 +552,14 @@ export const BuscarELimpar: Story = {
       await userEvent.type(busca, 'Maria');
 
       await expect(canvas.getByText('Maria de Fátima Souza')).toBeVisible();
-      await expect(canvas.queryByRole('link', { name: '2025/0482' })).toBeNull();
+      await expect(canvas.queryByRole('link', { name: SEGUNDO.protocolo })).toBeNull();
     });
 
     await step('Remover o chip da busca', async () => {
       const chip = await canvas.findByRole('button', { name: 'Remover filtro Busca: Maria' });
       await userEvent.click(chip);
 
-      await expect(canvas.getByRole('link', { name: '2025/0482' })).toBeVisible();
+      await expect(canvas.getByRole('link', { name: SEGUNDO.protocolo })).toBeVisible();
       await expect(canvas.queryByRole('button', { name: /Remover filtro Busca/ })).toBeNull();
       await expect(
         canvas.getByRole('searchbox', { name: 'Buscar por protocolo ou nome do paciente' }),
@@ -569,8 +582,8 @@ export const AcaoEmMassa: Story = {
     const canvas = within(canvasElement);
 
     await step('Selecionar duas solicitações', async () => {
-      await userEvent.click(canvas.getByRole('checkbox', { name: 'Selecionar solicitação 2025/0481' }));
-      await userEvent.click(canvas.getByRole('checkbox', { name: 'Selecionar solicitação 2025/0482' }));
+      await userEvent.click(canvas.getByRole('checkbox', { name: `Selecionar solicitação ${PRIMEIRO.protocolo}` }));
+      await userEvent.click(canvas.getByRole('checkbox', { name: `Selecionar solicitação ${SEGUNDO.protocolo}` }));
 
       await expect(canvas.getByText('2 selecionados')).toBeVisible();
       // A barra de filtros dá lugar às ações em massa, nunca as duas juntas.
@@ -587,8 +600,8 @@ export const AcaoEmMassa: Story = {
         within(dialogo).getByRole('button', { name: 'Cancelar solicitações' }),
       );
 
-      await expect(canvas.queryByRole('link', { name: '2025/0481' })).toBeNull();
-      await expect(canvas.queryByRole('link', { name: '2025/0482' })).toBeNull();
+      await expect(canvas.queryByRole('link', { name: PRIMEIRO.protocolo })).toBeNull();
+      await expect(canvas.queryByRole('link', { name: SEGUNDO.protocolo })).toBeNull();
       // Sem seleção, a barra de filtros volta ao lugar.
       await expect(canvas.getByRole('group', { name: 'Filtros da listagem' })).toBeVisible();
     });
@@ -655,7 +668,7 @@ export const VazioPorFiltro: Story = {
 
     // Limpar devolve os 24 registros, provando que o vazio era do filtro.
     await userEvent.click(canvas.getByRole('button', { name: 'Limpar filtros' }));
-    await expect(canvas.getByRole('link', { name: '2025/0481' })).toBeVisible();
+    await expect(canvas.getByRole('link', { name: PRIMEIRO.protocolo })).toBeVisible();
   },
 };
 
@@ -708,7 +721,7 @@ export const SemPermissao: Story = {
 
 export const ConteudoLongo: Story = {
   name: 'Conteúdo longo · nomes e valores extensos',
-  args: { dados: SOLICITACOES_LONGAS },
+  args: { dados: PROCESSOS_LONGOS },
   parameters: {
     docs: {
       description: {

@@ -88,8 +88,8 @@
 .citie-dialog__titulo {
   margin: 0;
   font-family: var(--citie-font-display);
-  font-size: 18px;
-  font-weight: 600;
+  font-size: var(--citie-font-size-title-sm);
+  font-weight: var(--citie-font-weight-title);
   color: var(--citie-text-primary);
 }
 

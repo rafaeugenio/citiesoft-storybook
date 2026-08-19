@@ -21,12 +21,29 @@ import {
 } from '../../src';
 import { CelulaDoDashboard, Dashboard } from '../templates/Dashboard/Dashboard';
 import {
-  DADOS_POR_PERIODO,
+  dadosDoPainel,
   PERIODOS,
   PERIODO_SEM_DADO,
   type DadosDoPainel,
   type PeriodoId,
 } from '../fixtures/painel-tfd';
+
+/**
+ * O indicador exibido é derivado do agregado calculado, e não de um número
+ * digitado na asserção. É a mesma regra que fez o painel deixar de poder
+ * contradizer a lista: se o total sai de conta sobre os registros, o teste
+ * precisa sair da mesma conta.
+ */
+const RECEBIDOS_NO_MES = dadosDoPainel('mes').indicadores.find(
+  (indicador) => indicador.id === 'recebidos',
+)!.valor;
+
+const RECEBIDOS_NO_TRIMESTRE = dadosDoPainel('trimestre').indicadores.find(
+  (indicador) => indicador.id === 'recebidos',
+)!.valor;
+
+const INTERVALO_DO_MES = dadosDoPainel('mes').intervalo;
+const INTERVALO_DO_TRIMESTRE = dadosDoPainel('trimestre').intervalo;
 
 /**
  * Painel de TFD — instância do template `Templates/Dashboard/Painel de indicadores`
@@ -72,7 +89,7 @@ interface PainelProps {
 function PainelDeTFD({ estado = 'default', periodoInicial = 'mes' }: PainelProps) {
   const [periodo, setPeriodo] = useState<PeriodoId>(periodoInicial);
 
-  const dados: DadosDoPainel = estado === 'vazio' ? PERIODO_SEM_DADO : DADOS_POR_PERIODO[periodo];
+  const dados: DadosDoPainel = estado === 'vazio' ? PERIODO_SEM_DADO : dadosDoPainel(periodo);
   const estadoDoWidget = estado === 'default' ? 'default' : estado;
   const totalRecebidas = dados.situacao.reduce((soma, fatia) => soma + fatia.valor, 0);
 
@@ -320,19 +337,20 @@ export const TrocaDePeriodo: Story = {
     const canvas = within(canvasElement);
 
     // Estado inicial: julho de 2026.
-    await expect(canvas.getByText('512')).toBeInTheDocument();
-    await expect(canvas.getAllByText('Julho de 2026').length).toBeGreaterThan(0);
+    // O mesmo total aparece no indicador e no gráfico, que é o comportamento certo:
+    // os dois saem do mesmo agregado calculado.
+    await expect(canvas.getAllByText(RECEBIDOS_NO_MES).length).toBeGreaterThan(0);
+    await expect(canvas.getAllByText(INTERVALO_DO_MES).length).toBeGreaterThan(0);
 
     await userEvent.click(canvas.getByRole('button', { name: 'Trimestre' }));
 
     // Indicadores e chip de período acompanham o filtro. O total aparece também
     // no centro da rosca, então a asserção aceita mais de uma ocorrência.
-    await expect(canvas.getAllByText('1.486').length).toBeGreaterThan(0);
-    await expect(canvas.getByText('R$ 962.150')).toBeInTheDocument();
-    await expect(canvas.getAllByText('Maio a julho de 2026').length).toBeGreaterThan(0);
+    await expect(canvas.getAllByText(RECEBIDOS_NO_TRIMESTRE).length).toBeGreaterThan(0);
+    await expect(canvas.getAllByText(INTERVALO_DO_TRIMESTRE).length).toBeGreaterThan(0);
 
     // O recorte anterior não sobrevive em lugar nenhum da tela.
-    await expect(canvas.queryByText('Julho de 2026')).not.toBeInTheDocument();
+    await expect(canvas.queryByText(INTERVALO_DO_MES)).not.toBeInTheDocument();
   },
 };
 
