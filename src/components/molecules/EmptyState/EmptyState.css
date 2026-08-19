@@ -42,13 +42,13 @@
 .citie-empty__titulo {
   margin: 0;
   font-family: var(--citie-font-display);
-  font-size: 20px;
-  font-weight: 600;
+  font-size: var(--citie-font-size-title-md);
+  font-weight: var(--citie-font-weight-title);
   color: var(--citie-text-primary);
 }
 
 .citie-empty--sm .citie-empty__titulo {
-  font-size: 16px;
+  font-size: var(--citie-font-size-body-lg);
 }
 
 .citie-empty__descricao {
@@ -67,7 +67,7 @@
 .citie-empty__codigo {
   margin: 0;
   font-family: var(--citie-font-ui);
-  font-size: 12px;
+  font-size: var(--citie-font-size-body-xs);
   color: var(--citie-text-secondary);
 }
 

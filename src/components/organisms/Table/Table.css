@@ -13,10 +13,24 @@
   color: var(--citie-text-base);
 }
 
+/**
+ * Cabeçalho de coluna: rótulo micro em maiúscula, e não texto de corpo em peso alto.
+ *
+ * Antes ele usava corpo `sm` em `text-primary`, então competia em peso e em cor
+ * com o dado da linha e a hierarquia da tabela não se lia. O cabeçalho é
+ * metadado: ele nomeia a coluna e depois some do caminho, enquanto o dado é o
+ * que o servidor veio ler.
+ *
+ * A anatomia abaixo é a mesma que o protótipo TFD já pratica. Contraste
+ * conferido: `text-secondary` sobre `background-subtle` mede 4,64:1, acima dos
+ * 4,5:1 que a WCAG 1.4.3 exige para texto.
+ */
 .citie-table th {
-  font-size: var(--citie-font-size-body-sm);
-  font-weight: 600;
-  color: var(--citie-text-primary);
+  font-size: var(--citie-font-size-body-xs);
+  font-weight: var(--citie-font-weight-title);
+  color: var(--citie-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   text-align: start;
   background-color: var(--citie-background-subtle);
   border-block-end: 1px solid var(--citie-border-strong);
@@ -111,7 +125,7 @@
 
 .citie-table tbody tr:hover {
   background-color: var(--citie-state-hover-overlay);
-  transition: background-color 100ms ease-out;
+  transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -190,4 +204,89 @@
 .citie-table__ausente {
   color: var(--citie-text-secondary);
   font-style: italic;
+}
+
+/* ---------- Coluna de ações por linha ---------- */
+
+/*
+ * Anatomia vinda do protótipo TFD: ícones de ação encostados à direita, largura
+ * que não cresce, e a coluna fora do fluxo de leitura do dado. Manter isso na
+ * tabela, e não no consumidor, é o que impede a divergência de largura e de
+ * alinhamento que aparecia de tela para tela.
+ */
+.citie-table__celula--acoes {
+  width: 1%;
+  white-space: nowrap;
+  text-align: end;
+}
+
+.citie-table__acoes {
+  display: inline-flex;
+  align-items: center;
+  /* Ícones de ação ficam próximos entre si: eles formam um grupo, não uma lista. */
+  gap: var(--citie-spacing-1);
+  justify-content: flex-end;
+}
+
+/*
+ * As ações só aparecem no hover da linha ou quando algo dentro delas tem foco.
+ * Em tabela longa, um enxame de ícones em toda linha compete com o dado. O
+ * `:focus-within` é o que mantém a coluna alcançável por teclado, e o
+ * `prefers-reduced-motion` não se aplica aqui porque a mudança é de opacidade
+ * de revelação, e não de deslocamento.
+ */
+@media (hover: hover) {
+  .citie-table__acoes {
+    opacity: 0;
+    transition: opacity var(--citie-motion-rapido) var(--citie-easing-padrao);
+  }
+
+  .citie-table tbody tr:hover .citie-table__acoes,
+  .citie-table tbody tr:focus-within .citie-table__acoes {
+    opacity: 1;
+  }
+}
+
+/*
+ * Sem hover disponível (toque), as ações ficam sempre visíveis: não existe
+ * estado intermediário para revelá-las.
+ */
+@media (hover: none) {
+  .citie-table__acoes {
+    opacity: 1;
+  }
+}
+
+/* ---------- Destaque de linha por estado ---------- */
+
+/*
+ * Barra vertical na borda de início, e não fundo colorido. Fundo briga com o
+ * zebrado e com o realce de hover, e a linha destacada deixa de responder ao
+ * ponteiro. A barra convive com os dois porque é `inset` na primeira célula.
+ *
+ * A cor sozinha não comunica: o motivo do destaque vai como texto oculto na
+ * primeira célula de dado, então quem usa leitor de tela recebe a informação.
+ */
+.citie-table__linha--destaque td:first-child {
+  box-shadow: inset 3px 0 0 0 var(--citie-destaque-da-linha);
+}
+
+.citie-table__linha--destaque-info {
+  --citie-destaque-da-linha: var(--citie-brand-primary);
+}
+
+.citie-table__linha--destaque-atencao {
+  --citie-destaque-da-linha: var(--citie-warning-emphasis);
+}
+
+.citie-table__linha--destaque-critico {
+  --citie-destaque-da-linha: var(--citie-danger-emphasis);
+}
+
+/*
+ * A linha selecionada vence o destaque de estado: seleção é ação do usuário
+ * agora, destaque é condição do dado. Duas barras no mesmo lugar não cabem.
+ */
+.citie-table__linha--selecionada.citie-table__linha--destaque td:first-child {
+  box-shadow: inset 3px 0 0 var(--citie-brand-primary);
 }

@@ -14,14 +14,10 @@
   text-underline-offset: 0.2em;
   text-decoration-thickness: 1px;
   border-radius: var(--citie-radius-sm);
-  /*
-   * ACHADO ABERTO DO DS: não existe token de motion. O `120ms ease-out` abaixo
-   * repete o literal do Button, que é o idioma atual da casa, em vez de inventar
-   * um token só para este componente. Registrado como achado nº 13.
-   */
+  /* Hover e foco usam a duração rápida, conforme a escala de motion do sistema. */
   transition:
-    color 120ms ease-out,
-    text-decoration-thickness 120ms ease-out;
+    color var(--citie-motion-rapido) var(--citie-easing-padrao),
+    text-decoration-thickness var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-link:hover {

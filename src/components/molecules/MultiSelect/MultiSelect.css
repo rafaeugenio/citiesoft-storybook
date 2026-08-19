@@ -105,7 +105,7 @@
 .citie-multiselect__seta {
   flex: none;
   color: var(--citie-text-secondary);
-  transition: rotate 160ms ease-out;
+  transition: rotate var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-multiselect__seta--aberta {

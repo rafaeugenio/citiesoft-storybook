@@ -8,14 +8,15 @@
   position: absolute;
   z-index: 10;
   width: 320px;
-  max-width: calc(100vw - 32px);
+  max-width: calc(100vw - var(--citie-spacing-8));
   color: var(--citie-text-base);
   background-color: var(--citie-background-surface);
   border: 1px solid var(--citie-border-default);
-  border-radius: var(--citie-radius-md);
+  /* Cartão ancorado é contêiner externo: raio de camada, e não raio de campo. */
+  border-radius: var(--citie-radius-2xl);
   box-shadow: var(--citie-shadow-overlay);
   font-family: var(--citie-font-ui);
-  animation: citie-confirm-popup-entrada 160ms ease-out;
+  animation: citie-confirm-popup-entrada var(--citie-motion-padrao) var(--citie-easing-entrada);
 }
 
 .citie-confirm-popup__cartao--abaixo {
@@ -37,7 +38,7 @@
 @keyframes citie-confirm-popup-entrada {
   from {
     opacity: 0;
-    translate: 0 -4px;
+    translate: 0 calc(-1 * var(--citie-spacing-1));
   }
 }
 
@@ -51,7 +52,8 @@
   display: flex;
   align-items: flex-start;
   gap: var(--citie-spacing-3);
-  padding: var(--citie-spacing-3);
+  /* Respiro de card compacto: o cartão de confirmação é card, não linha. */
+  padding: var(--citie-spacing-4);
 }
 
 .citie-confirm-popup__icone {
@@ -82,7 +84,7 @@
 
 /* Texto auxiliar legível: secundário, nunca o cinza de desabilitado. */
 .citie-confirm-popup__detalhe {
-  margin: 4px 0 0;
+  margin: var(--citie-spacing-1) 0 0;
   font-size: var(--citie-font-size-body-sm);
   color: var(--citie-text-secondary);
 }
@@ -91,12 +93,12 @@
   display: flex;
   justify-content: flex-end;
   gap: var(--citie-spacing-2);
-  padding: 0 var(--citie-spacing-3) var(--citie-spacing-3);
+  padding: 0 var(--citie-spacing-4) var(--citie-spacing-4);
 }
 
 /* Abaixo de 480px o cartão acompanha a largura disponível da âncora. */
 @media (max-width: 479px) {
   .citie-confirm-popup__cartao {
-    width: max(240px, calc(100vw - 32px));
+    width: max(240px, calc(100vw - var(--citie-spacing-8)));
   }
 }

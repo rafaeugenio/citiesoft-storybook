@@ -103,7 +103,7 @@
 .citie-treeselect__seta {
   flex: none;
   color: var(--citie-text-secondary);
-  transition: rotate 160ms ease-out;
+  transition: rotate var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-treeselect__seta--aberta {
@@ -223,7 +223,7 @@
 }
 
 .citie-treeselect__chevron {
-  transition: rotate 160ms ease-out;
+  transition: rotate var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-treeselect__chevron--aberto {

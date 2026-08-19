@@ -19,16 +19,28 @@
 
 /* ---------- SelectButton (segmentado) ---------- */
 
+/**
+ * Trilho de pílula. O segmentado de borda separava os segmentos por uma linha
+ * de 1px, então o ativo só se distinguia por cor. Aqui o trilho fica recuado em
+ * relação à superfície e o ativo sobe como pílula com elevação `raised`, o que
+ * acrescenta profundidade à pista de cor que já existia. Quem não distingue a
+ * cor do ativo continua enxergando qual segmento está por cima.
+ *
+ * A altura externa não muda: o segmento cai para a altura compacta e o trilho
+ * devolve os 8px em respiro, então o controle continua ocupando a mesma faixa
+ * que ocupava ao lado dos campos de filtro.
+ */
 .citie-selectbutton {
   display: inline-flex;
+  gap: var(--citie-spacing-1);
+  padding: var(--citie-spacing-1);
   border: 1px solid var(--citie-form-field-border);
-  border-radius: var(--citie-radius-md);
-  overflow: hidden;
-  background-color: var(--citie-background-surface);
+  border-radius: var(--citie-radius-full);
+  background-color: var(--citie-background-subtle);
 }
 
 .citie-selectbutton__item {
-  height: var(--citie-control-height-normal);
+  height: var(--citie-control-height-small);
   padding-inline: var(--citie-spacing-4);
   font-family: var(--citie-font-ui);
   font-size: var(--citie-font-size-body-md);
@@ -36,16 +48,23 @@
   color: var(--citie-text-primary);
   background-color: transparent;
   border: none;
-  border-inline-end: 1px solid var(--citie-form-field-border);
+  /* Pílula dentro do trilho de pílula: o interno acompanha o externo. */
+  border-radius: var(--citie-radius-full);
   cursor: pointer;
-}
-
-.citie-selectbutton__item:last-child {
-  border-inline-end: none;
+  transition:
+    background-color var(--citie-motion-rapido) var(--citie-easing-padrao),
+    color var(--citie-motion-rapido) var(--citie-easing-padrao),
+    box-shadow var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-selectbutton__item:hover:not(.citie-selectbutton__item--active) {
-  background-color: var(--citie-background-subtle);
+  background-color: var(--citie-background-surface);
+}
+
+/* Realimentação de pressão: o segmento afunda antes de assumir a seleção. */
+.citie-selectbutton__item:active {
+  scale: 0.98;
+  transition-duration: var(--citie-motion-instantaneo);
 }
 
 .citie-selectbutton__item:focus-visible {
@@ -59,4 +78,15 @@
 .citie-selectbutton__item--active {
   background-color: var(--citie-brand-primary);
   color: var(--citie-brand-contrast);
+  box-shadow: var(--citie-shadow-raised);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-selectbutton__item {
+    transition: none;
+  }
+
+  .citie-selectbutton__item:active {
+    scale: 1;
+  }
 }

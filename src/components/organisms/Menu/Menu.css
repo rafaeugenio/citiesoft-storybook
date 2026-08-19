@@ -2,25 +2,43 @@
   display: flex;
   flex-direction: column;
   min-width: 220px;
-  padding: var(--citie-spacing-1) 0;
+  /**
+   * Tamanho do líder da linha (ícone). A anatomia de linha exige que todo item
+   * reserve a mesma largura de líder, senão itens com e sem ícone desalinham o
+   * texto entre si. Não existe token global de líder; ver relatório.
+   */
+  --citie-menu-lider: 20px;
+  /* O painel recua o realce do item da própria borda pelo padding. */
+  padding: var(--citie-spacing-1);
   font-family: var(--citie-font-ui);
   font-size: var(--citie-font-size-body-md);
   color: var(--citie-text-base);
   background: var(--citie-background-surface);
   border: 1px solid var(--citie-border-default);
-  border-radius: var(--citie-radius-md);
+  border-radius: var(--citie-radius-2xl);
 }
 
-/* menu-item do arquivo: 28px de altura útil com padding 7/10.5. Aqui o alvo
-   sobe para 32px (control-height-small), o mínimo de toque do produto. */
+/**
+ * Anatomia de linha: [líder] gap-3 [conteúdo, cresce] gap-3 [trilha, não encolhe].
+ * A altura mínima é a de densidade normal; o realce é pílula de raio de item,
+ * recuada do bordo do painel, em vez de faixa colada na borda.
+ */
 .citie-menu__item {
   display: flex;
   align-items: center;
-  gap: var(--citie-spacing-2);
-  min-height: var(--citie-control-height-small);
+  gap: var(--citie-spacing-3);
+  min-height: var(--citie-control-height-normal);
   padding: 0 var(--citie-spacing-3);
+  border-radius: var(--citie-radius-lg);
   font-weight: var(--citie-font-weight-action);
   cursor: pointer;
+  transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-menu__item {
+    transition: none;
+  }
 }
 
 .citie-menu__item:hover {
@@ -30,22 +48,29 @@
 .citie-menu__item:focus-visible {
   outline: none;
   box-shadow: var(--citie-state-focus-ring);
-  /* Sem o recuo o anel some sob a borda do painel. */
-  border-radius: var(--citie-radius-sm);
 }
 
+/* Líder de largura fixa: mantém a coluna de texto alinhada entre os itens. */
 .citie-menu__icone {
   display: inline-flex;
-  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 var(--citie-menu-lider);
+  inline-size: var(--citie-menu-lider);
+  block-size: var(--citie-menu-lider);
   color: var(--citie-text-secondary);
 }
 
 .citie-menu__rotulo {
   flex: 1 1 auto;
+  min-inline-size: 0;
 }
 
+/* Trilha: alinhada à direita e sem encolher sob rótulo longo. */
 .citie-menu__atalho {
-  flex: 0 0 auto;
+  flex-shrink: 0;
+  margin-inline-start: auto;
+  text-align: end;
   font-size: var(--citie-font-size-body-sm);
   font-weight: 400;
   color: var(--citie-text-secondary);
@@ -74,21 +99,34 @@
   background: transparent;
 }
 
-/* menu-submenu-label */
+/**
+ * menu-submenu-label. Rótulo de seção é micro, em maiúscula e em cor
+ * secundária, e alinha com o TEXTO do item, não com o líder: por isso o recuo
+ * soma padding do item, largura do líder e o gap entre eles.
+ */
 .citie-menu__grupo-rotulo {
   display: block;
-  padding: var(--citie-spacing-2) var(--citie-spacing-3) var(--citie-spacing-1);
-  font-size: var(--citie-font-size-body-sm);
-  font-weight: 600;
+  padding: var(--citie-spacing-3) var(--citie-spacing-3) var(--citie-spacing-1);
+  font-size: var(--citie-font-size-caption);
+  font-weight: var(--citie-font-weight-title);
   color: var(--citie-text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
+}
+
+/* Só há coluna de texto a respeitar quando o menu reserva líder. */
+.citie-menu--com-lider .citie-menu__grupo-rotulo {
+  padding-inline-start: calc(
+    var(--citie-spacing-3) + var(--citie-menu-lider) + var(--citie-spacing-3)
+  );
 }
 
 /* menu-separator */
 .citie-menu__separador {
   height: 1px;
   margin: var(--citie-spacing-1) 0;
+  /* O separador atravessa o painel inteiro, então anula o recuo do contêiner. */
+  margin-inline: calc(-1 * var(--citie-spacing-1));
   background: var(--citie-border-default);
 }
 
@@ -102,9 +140,27 @@
   position: absolute;
   z-index: 10;
   top: calc(100% + var(--citie-spacing-1));
+  animation: citie-menu-entrada var(--citie-motion-padrao) var(--citie-easing-entrada);
   left: 0;
 }
 
 .citie-menu-popup__painel .citie-menu {
   box-shadow: var(--citie-shadow-overlay);
+}
+
+/**
+ * A entrada anima só o deslocamento. Começar em `opacity: 0` deixaria o painel
+ * recém-aberto se declarando invisível no primeiro quadro, e é isso que a
+ * verificação de visibilidade (do teste ou de um leitor de tela) enxerga.
+ */
+@keyframes citie-menu-entrada {
+  from {
+    translate: 0 calc(-1 * var(--citie-spacing-1));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-menu-popup__painel {
+    animation: none;
+  }
 }

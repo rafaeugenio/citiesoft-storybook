@@ -3,7 +3,8 @@
   height: var(--citie-splitter-altura, 320px);
   background-color: var(--citie-background-surface);
   border: 1px solid var(--citie-border-default);
-  border-radius: var(--citie-radius-lg);
+  /* Moldura externa de área de trabalho: mesmo degrau de Card e Panel. */
+  border-radius: var(--citie-radius-2xl);
   font-family: var(--citie-font-ui);
   font-size: var(--citie-font-size-body-md);
   color: var(--citie-text-base);
@@ -24,7 +25,9 @@
   min-width: 0;
   min-height: 0;
   overflow: auto;
-  padding: var(--citie-spacing-4);
+  /* O painel encosta na quina da moldura de 16, então o recuo abre um degrau
+     para o conteúdo não entrar na curva. */
+  padding: var(--citie-spacing-5);
 }
 
 .citie-splitter__painel:focus-visible {
@@ -42,7 +45,7 @@
   justify-content: center;
   background-color: var(--citie-background-subtle);
   touch-action: none;
-  transition: background-color 120ms ease-out;
+  transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-splitter--horizontal > .citie-splitter__barra {

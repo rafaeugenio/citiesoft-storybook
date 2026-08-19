@@ -90,7 +90,7 @@
 }
 
 .citie-tree__chevron {
-  transition: rotate 160ms ease-out;
+  transition: rotate var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-tree__chevron--aberto {

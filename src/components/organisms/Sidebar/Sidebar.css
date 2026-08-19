@@ -1,6 +1,15 @@
 /* Sidebar (navigation-sidebar-header.md). Menu principal da aplicação. */
 
 .citie-sidebar {
+  /* Tamanho do líder da linha; não existe token global de líder, ver relatório. */
+  --citie-sidebar-lider: 20px;
+  /**
+   * Recuo da coluna de texto: padding do item, mais a barra de estado ativo,
+   * mais o líder e o gap. Rótulo de categoria e sub-item alinham por ele.
+   */
+  --citie-sidebar-recuo-texto: calc(
+    var(--citie-spacing-4) + 3px + var(--citie-sidebar-lider) + var(--citie-spacing-3)
+  );
   width: 260px;
   padding-block: var(--citie-spacing-3);
   font-family: var(--citie-font-ui);
@@ -31,12 +40,17 @@
   margin-block-start: var(--citie-spacing-4);
 }
 
+/**
+ * Rótulo de categoria: micro, em maiúscula, entreletra larga e cor secundária,
+ * alinhado com o TEXTO do item, não com o ícone.
+ */
 .citie-sidebar__categoria {
   margin: 0 0 var(--citie-spacing-2);
   padding-inline: var(--citie-spacing-4);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  padding-inline-start: var(--citie-sidebar-recuo-texto);
+  font-size: var(--citie-font-size-caption);
+  font-weight: var(--citie-font-weight-title);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--citie-text-secondary);
 }
@@ -53,7 +67,7 @@
   align-items: center;
   gap: var(--citie-spacing-3);
   width: 100%;
-  min-height: 44px;
+  min-height: var(--citie-touch-target-comfortable);
   padding: var(--citie-spacing-3) var(--citie-spacing-4);
   font-family: inherit;
   font-size: var(--citie-font-size-body-md);
@@ -99,16 +113,36 @@
   color: var(--citie-brand-hover);
 }
 
+/* Líder de largura fixa: a coluna de texto não desloca entre um item e outro. */
 .citie-sidebar__icone {
   display: inline-flex;
-  flex: none;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 var(--citie-sidebar-lider);
+  inline-size: var(--citie-sidebar-lider);
+  block-size: var(--citie-sidebar-lider);
+}
+
+/**
+ * Se a lista tem ícone em algum item, os demais reservam a mesma coluna: sem
+ * isso o texto de uma linha começa em posição diferente do texto da linha
+ * acima, que é a origem do desalinhamento relatado.
+ */
+.citie-sidebar__lista:has(.citie-sidebar__icone)
+  .citie-sidebar__item:not(:has(.citie-sidebar__icone))::before {
+  content: '';
+  flex: 0 0 var(--citie-sidebar-lider);
 }
 
 .citie-sidebar__rotulo {
-  flex: 1;
+  flex: 1 1 auto;
+  min-inline-size: 0;
 }
 
+/* Trilha da linha: à direita e sem encolher sob rótulo longo. */
 .citie-sidebar__contagem {
+  flex-shrink: 0;
+  margin-inline-start: auto;
   font-size: var(--citie-font-size-body-sm);
   font-weight: 600;
   color: var(--citie-brand-primary);
@@ -120,9 +154,11 @@
   color: var(--citie-brand-hover);
 }
 
+/* Trilha da linha quando o item tem sub-lista. */
 .citie-sidebar__seta {
+  flex-shrink: 0;
   color: var(--citie-text-secondary);
-  transition: rotate 160ms ease-out;
+  transition: rotate var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-sidebar__seta--aberta {
@@ -138,9 +174,10 @@
 .citie-sidebar__subitem {
   display: block;
   width: 100%;
-  min-height: 40px;
-  /* Recuo do sub-item conforme a spec. */
-  padding: var(--citie-spacing-2) var(--citie-spacing-4) var(--citie-spacing-2) 32px;
+  min-height: var(--citie-control-height-normal);
+  /* O sub-item alinha com o texto do item pai, não com o ícone dele. */
+  padding: var(--citie-spacing-2) var(--citie-spacing-4);
+  padding-inline-start: var(--citie-sidebar-recuo-texto);
   font-family: inherit;
   font-size: var(--citie-font-size-body-md);
   color: var(--citie-text-base);

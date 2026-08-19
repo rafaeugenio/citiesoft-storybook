@@ -1,6 +1,10 @@
 /**
- * AvatarGroup (avatar.md). Empilhamento com sobreposição de 8px e anel de 2px
- * na cor do fundo para separar um avatar do outro.
+ * AvatarGroup (avatar.md). Empilhamento com sobreposição e anel de separação.
+ *
+ * O anel é `box-shadow` na cor da superfície que está atrás, e não borda de cor
+ * fixa: dentro de um card ele precisa ser da cor do card, e no tema escuro uma
+ * borda branca viraria um traço luminoso entre os avatares. Quem posicionar o
+ * grupo sobre outra superfície redefine `--citie-avatar-anel` no contêiner.
  */
 
 .citie-avatar-group {
@@ -9,16 +13,23 @@
 }
 
 .citie-avatar-group > * {
-  box-shadow: 0 0 0 2px var(--citie-background-default);
+  box-shadow: 0 0 0 2px var(--citie-avatar-anel, var(--citie-background-default));
   border-radius: var(--citie-radius-full);
 }
 
+/* Sobreposição de um degrau da escala, para o grupo não improvisar o próprio. */
 .citie-avatar-group > * + * {
-  margin-inline-start: -8px;
+  margin-inline-start: calc(var(--citie-spacing-2) * -1);
 }
 
+/**
+ * O contador de excedente carrega as mesmas classes de Avatar, então herda
+ * tamanho, forma e anel. A cor entra pelas mesmas variáveis de severidade que
+ * o Avatar usa, e não por `background-color` direto, senão a composição opaca
+ * do tema escuro não se aplicaria a ele e o contador destoaria do grupo.
+ */
 .citie-avatar--overflow {
-  background-color: var(--citie-background-subtle);
-  color: var(--citie-text-base);
+  --sev-bg: var(--citie-background-subtle);
+  --sev-fg: var(--citie-text-base);
   cursor: pointer;
 }

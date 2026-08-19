@@ -1,6 +1,7 @@
 /**
  * TieredMenu — cascata de painéis (Figma CitieOne, ❖ TieredMenu).
- * As alturas de item (34px) e de separador (9px) são contrato com o TSX:
+ * As alturas de item (40px, densidade normal) e de separador (9px) são contrato
+ * com o TSX:
  * o deslocamento vertical de cada submenu é calculado a partir delas.
  */
 
@@ -24,16 +25,20 @@
 
 .citie-tieredmenu__painel {
   min-width: 200px;
-  padding: var(--citie-spacing-1) 0;
+  /* Tamanho do líder da linha; não existe token global de líder, ver relatório. */
+  --citie-tieredmenu-lider: 20px;
+  /* Recuo do painel: o realce do item nunca encosta na borda. */
+  padding: var(--citie-spacing-1);
   background: var(--citie-background-surface);
   border: 1px solid var(--citie-border-default);
-  border-radius: var(--citie-radius-md);
+  /* Painel de menu é contêiner externo: raio de camada, item fica em raio menor. */
+  border-radius: var(--citie-radius-2xl);
   box-shadow: var(--citie-shadow-overlay);
 }
 
 .citie-tieredmenu__painel + .citie-tieredmenu__painel {
   margin-left: 2px;
-  animation: citie-tieredmenu-entrada 140ms ease-out;
+  animation: citie-tieredmenu-entrada var(--citie-motion-padrao) var(--citie-easing-entrada);
 }
 
 /**
@@ -50,9 +55,11 @@
 .citie-tieredmenu__item {
   display: flex;
   align-items: center;
-  gap: var(--citie-spacing-2);
-  height: 34px;
+  /* Anatomia de linha: líder, gap-3, conteúdo que cresce, gap-3, trilha fixa. */
+  gap: var(--citie-spacing-3);
+  height: var(--citie-control-height-normal);
   padding: 0 var(--citie-spacing-3);
+  border-radius: var(--citie-radius-lg);
   box-sizing: border-box;
   position: relative;
   cursor: pointer;
@@ -87,6 +94,9 @@
   position: absolute;
   inset: 0 auto 0 0;
   width: 3px;
+  /* A barra segue o raio da pílula do item, senão sobra canto reto no realce. */
+  border-start-start-radius: var(--citie-radius-lg);
+  border-end-start-radius: var(--citie-radius-lg);
   background: var(--citie-brand-primary);
 }
 
@@ -104,8 +114,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  flex: 0 0 var(--citie-tieredmenu-lider);
+  width: var(--citie-tieredmenu-lider);
+  height: var(--citie-tieredmenu-lider);
   color: var(--citie-text-secondary);
 }
 
@@ -115,17 +126,21 @@
 }
 
 .citie-tieredmenu__rotulo {
-  flex: 1;
+  flex: 1 1 auto;
+  min-inline-size: 0;
 }
 
+/* Trilha da linha: encostada à direita e sem encolher. */
 .citie-tieredmenu__seta {
-  flex: none;
+  flex-shrink: 0;
+  margin-inline-start: auto;
   color: var(--citie-text-secondary);
 }
 
 .citie-tieredmenu__separador {
   height: 1px;
   margin: var(--citie-spacing-1) 0;
+  margin-inline: calc(-1 * var(--citie-spacing-1));
   background: var(--citie-border-default);
 }
 

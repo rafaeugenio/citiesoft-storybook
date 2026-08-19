@@ -55,7 +55,7 @@
 
 /* O "+" vira "×" quando o leque abre: além da cor, a forma comunica o estado. */
 .citie-speeddial__acionador .citie-speeddial__icone {
-  transition: transform 160ms ease-out;
+  transition: transform var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-speeddial--aberto .citie-speeddial__acionador .citie-speeddial__icone {
@@ -152,7 +152,7 @@
   white-space: nowrap;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 120ms ease-out;
+  transition: opacity var(--citie-motion-rapido) var(--citie-easing-padrao);
   pointer-events: none;
 }
 

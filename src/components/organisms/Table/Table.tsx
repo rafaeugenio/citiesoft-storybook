@@ -33,6 +33,37 @@ export interface TableProps<T> {
   semConteudo?: ReactNode;
   /** Barra que aparece acima do cabeçalho quando há seleção. */
   acoesEmMassa?: (selecionados: string[]) => ReactNode;
+  /**
+   * Ações rápidas por linha, sempre na última coluna e alinhadas à direita.
+   *
+   * Existe porque o consumidor vinha improvisando isso como coluna comum com
+   * `render`, e o resultado divergia de tela para tela: largura diferente,
+   * alinhamento diferente, e o cabeçalho da coluna às vezes com verbo. Aqui a
+   * coluna é gerada pela tabela, então a anatomia é a mesma em todo lugar.
+   *
+   * O cabeçalho fica visualmente oculto de propósito: "Ações" repetido em toda
+   * tabela é ruído visual, mas o leitor de tela precisa dele para anunciar a
+   * coluna.
+   */
+  acoesDaLinha?: (linha: T) => ReactNode;
+  /**
+   * Destaque de linha por estado, como barra vertical na borda de início.
+   *
+   * A barra é `box-shadow: inset`, e não cor de fundo, de propósito: fundo
+   * colorido briga com o zebrado e com o realce de hover, e a linha destacada
+   * deixa de responder ao ponteiro. A barra convive com os dois.
+   *
+   * Devolva `undefined` para a linha sem destaque. A severidade escolhe o token
+   * de cor, e o `motivo` vira texto para o leitor de tela, porque barra colorida
+   * sozinha não comunica nada a quem não a enxerga.
+   */
+  destaqueDaLinha?: (linha: T) => DestaqueDeLinha | undefined;
+}
+
+export interface DestaqueDeLinha {
+  severidade: 'info' | 'atencao' | 'critico';
+  /** Por que esta linha está destacada. Anunciado ao leitor de tela. */
+  motivo: string;
 }
 
 const CLASSE_ALINHAMENTO: Record<Alinhamento, string> = {
@@ -59,6 +90,8 @@ export function Table<T>({
   carregando = false,
   semConteudo,
   acoesEmMassa,
+  acoesDaLinha,
+  destaqueDaLinha,
 }: TableProps<T>) {
   const [selecionados, setSelecionados] = useState<string[]>([]);
   const [ordenacao, setOrdenacao] = useState<{ chave: string; direcao: 'ascending' | 'descending' } | null>(
@@ -147,6 +180,11 @@ export function Table<T>({
                 </th>
               );
             })}
+            {acoesDaLinha ? (
+              <th scope="col" className="citie-table__celula--acoes">
+                <span className="citie-visualmente-oculto">Ações</span>
+              </th>
+            ) : null}
           </tr>
         </thead>
 
@@ -167,18 +205,31 @@ export function Table<T>({
                     </div>
                   </td>
                 ))}
+                {acoesDaLinha ? (
+                  <td className="citie-table__celula--acoes">
+                    <Skeleton forma="linha" width="56px" />
+                  </td>
+                ) : null}
               </tr>
             ))
           ) : linhas.length === 0 ? (
             <tr>
-              <td colSpan={colunas.length + (selecionavel ? 1 : 0)}>{semConteudo}</td>
+              <td colSpan={colunas.length + (selecionavel ? 1 : 0) + (acoesDaLinha ? 1 : 0)}>{semConteudo}</td>
             </tr>
           ) : (
             linhas.map((linha) => {
               const chave = chaveDaLinha(linha);
               const marcada = selecionados.includes(chave);
+              const destaque = destaqueDaLinha?.(linha);
+              const classes = [
+                marcada ? 'citie-table__linha--selecionada' : null,
+                destaque ? `citie-table__linha--destaque citie-table__linha--destaque-${destaque.severidade}` : null,
+              ]
+                .filter(Boolean)
+                .join(' ');
               return (
-                <tr key={chave} className={marcada ? 'citie-table__linha--selecionada' : undefined}>
+                <tr key={chave} className={classes || undefined}>
+
                   {selecionavel ? (
                     <td className="citie-table__celula--selecao">
                       <Checkbox
@@ -192,14 +243,30 @@ export function Table<T>({
                       />
                     </td>
                   ) : null}
-                  {colunas.map((coluna) => (
+                  {colunas.map((coluna, posicao) => (
                     <td
                       key={coluna.chave}
                       className={CLASSE_ALINHAMENTO[coluna.alinhamento ?? 'esquerda']}
                     >
-                      <div className="citie-table__conteudo">{coluna.render(linha)}</div>
+                      <div className="citie-table__conteudo">
+                        {/*
+                          O motivo do destaque entra na primeira célula de dado, e
+                          não numa célula própria: coluna extra só nas linhas
+                          destacadas quebraria a contagem de colunas da grade.
+                          A barra é visual, e o texto é o que chega a quem não a vê.
+                        */}
+                        {destaque && posicao === 0 ? (
+                          <span className="citie-visualmente-oculto">{destaque.motivo}. </span>
+                        ) : null}
+                        {coluna.render(linha)}
+                      </div>
                     </td>
                   ))}
+                  {acoesDaLinha ? (
+                    <td className="citie-table__celula--acoes">
+                      <div className="citie-table__acoes">{acoesDaLinha(linha)}</div>
+                    </td>
+                  ) : null}
                 </tr>
               );
             })

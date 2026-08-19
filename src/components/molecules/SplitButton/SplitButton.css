@@ -57,7 +57,7 @@
 /* ---------- Figma `Raised = True` ---------- */
 
 .citie-split-button--elevado {
-  box-shadow: var(--citie-shadow-card);
+  box-shadow: var(--citie-shadow-raised);
   border-radius: var(--citie-radius-md);
 }
 
@@ -80,7 +80,7 @@
 /* ---------- Seta do gatilho ---------- */
 
 .citie-split-button__seta {
-  transition: rotate 120ms ease-out;
+  transition: rotate var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-split-button__seta--aberta {
@@ -106,26 +106,44 @@
   flex-direction: column;
   background-color: var(--citie-background-surface);
   border: 1px solid var(--citie-border-default);
-  border-radius: var(--citie-radius-md);
+  /* Painel externo com raio maior que o do item que ele contém: é o que faz o
+     conjunto ler como profundidade em vez de adesivo colado. */
+  border-radius: var(--citie-radius-xl);
   box-shadow: var(--citie-shadow-overlay);
 }
 
+/**
+ * Anatomia de linha: líder, conteúdo e trilha separados por `gap-3`, respiro de
+ * `spacing-2` na vertical e `spacing-3` na horizontal, altura mínima de 40px.
+ * A mesma que a linha de lista e a linha de tabela seguem, para o olho não
+ * precisar reaprender o ritmo a cada menu.
+ */
 .citie-split-button__item {
   display: flex;
   align-items: center;
-  gap: var(--citie-spacing-2);
+  gap: var(--citie-spacing-3);
   width: 100%;
-  min-height: var(--citie-control-height-small);
-  padding: var(--citie-spacing-1) var(--citie-spacing-3);
+  min-height: var(--citie-control-height-normal);
+  padding: var(--citie-spacing-2) var(--citie-spacing-3);
   background: none;
   border: none;
-  border-radius: var(--citie-radius-sm);
+  border-radius: var(--citie-radius-md);
   font-family: var(--citie-font-ui);
   font-size: var(--citie-font-size-body-md);
   color: var(--citie-text-primary);
   text-align: start;
   white-space: nowrap;
   cursor: pointer;
+}
+
+.citie-split-button__item {
+  transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-split-button__item {
+    transition: none;
+  }
 }
 
 .citie-split-button__item:hover:not([aria-disabled='true']) {

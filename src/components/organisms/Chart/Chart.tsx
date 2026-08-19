@@ -1,7 +1,78 @@
-import { useState, type ReactNode } from 'react';
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { Button } from '../../atoms/Button/Button';
 import { PALETA_OFICIAL } from '../../../tokens/paletas';
 import './Chart.css';
+
+/** Largura usada até a primeira medição. Só vale para o primeiro quadro. */
+const LARGURA_PADRAO = 640;
+
+/**
+ * Raio da extremidade do dado, em unidade de usuário do SVG.
+ *
+ * Espelha `--citie-radius-sm` (4px). Geometria de `path` não aceita variável
+ * CSS, então o valor vive aqui como constante nomeada em vez de literal solto
+ * espalhado pelo desenho. Como o viewBox passou a ser medido em pixel real
+ * (ver `useLarguraMedida`), 4 unidades são 4px na tela em qualquer largura.
+ */
+const RAIO_DO_DADO = 4;
+
+/** Respiro entre fatias da rosca, para que duas cores vizinhas não encostem. */
+const RESPIRO_ENTRE_FATIAS = 2;
+
+/**
+ * Mede a largura real do SVG para que o viewBox seja declarado em pixel de
+ * tela, e não em unidade arbitrária.
+ *
+ * O motivo é tipográfico. Com viewBox fixo de 640 e `width: 100%`, todo o
+ * desenho era escalado pelo navegador, texto incluído: o mesmo
+ * `font-size: 12px` rendia 11,3px num gráfico de 605px de largura e 23,9px num
+ * de 1276px, duas escalas tipográficas 2x diferentes na mesma tela. Com o
+ * viewBox igual à largura medida a escala é sempre 1, e o rótulo tem o tamanho
+ * que o token declara em qualquer moldura.
+ */
+function useLarguraMedida() {
+  const referencia = useRef<SVGSVGElement>(null);
+  const [largura, setLargura] = useState(LARGURA_PADRAO);
+
+  useLayoutEffect(() => {
+    const alvo = referencia.current;
+    if (!alvo) return;
+
+    const medir = () => {
+      const medida = Math.round(alvo.getBoundingClientRect().width);
+      if (medida > 0) setLargura(medida);
+    };
+
+    medir();
+    if (typeof ResizeObserver === 'undefined') return;
+    const observador = new ResizeObserver(medir);
+    observador.observe(alvo);
+    return () => observador.disconnect();
+  }, []);
+
+  return [referencia, largura] as const;
+}
+
+/**
+ * Barra com a extremidade do dado arredondada e a base reta.
+ *
+ * Seção 8 da spec estrutural: o topo termina com raio, e a extremidade que
+ * encosta no eixo nunca arredonda, porque canto arredondado sobre a linha de
+ * base solta a barra do eixo e falseia a leitura de onde o valor começa.
+ */
+function caminhoDaBarra(x: number, y: number, largura: number, altura: number) {
+  const raio = Math.min(RAIO_DO_DADO, largura / 2, altura);
+  if (altura <= 0) return '';
+  return [
+    `M ${x} ${y + altura}`,
+    `L ${x} ${y + raio}`,
+    `Q ${x} ${y} ${x + raio} ${y}`,
+    `L ${x + largura - raio} ${y}`,
+    `Q ${x + largura} ${y} ${x + largura} ${y + raio}`,
+    `L ${x + largura} ${y + altura}`,
+    'Z',
+  ].join(' ');
+}
 
 export interface Serie {
   rotulo: string;
@@ -124,7 +195,7 @@ function ChartCard({
 export function BarChart(props: ChartProps) {
   const { categorias, series, paleta = PALETA_OFICIAL, formatar = formatarPadrao, altura = 240 } = props;
   const maximo = Math.max(...series.flatMap((serie) => serie.valores), 1);
-  const largura = 640;
+  const [referencia, largura] = useLarguraMedida();
   const margem = { topo: 16, base: 32, esquerda: 48, direita: 8 };
   const areaLargura = largura - margem.esquerda - margem.direita;
   const areaAltura = altura - margem.topo - margem.base;
@@ -135,6 +206,7 @@ export function BarChart(props: ChartProps) {
   return (
     <ChartCard {...props}>
       <svg
+        ref={referencia}
         className="citie-chart__area"
         viewBox={`0 0 ${largura} ${altura}`}
         role="img"
@@ -170,17 +242,19 @@ export function BarChart(props: ChartProps) {
                 indiceSerie * (barraLargura + 2);
 
               return (
-                <rect
+                <path
                   key={serie.rotulo}
-                  x={x}
-                  y={margem.topo + areaAltura - alturaBarra}
-                  width={barraLargura}
-                  height={alturaBarra}
-                  rx="4"
+                  className="citie-chart__barra"
+                  d={caminhoDaBarra(
+                    x,
+                    margem.topo + areaAltura - alturaBarra,
+                    barraLargura,
+                    alturaBarra,
+                  )}
                   fill={paleta[indiceSerie % paleta.length]}
                 >
                   <title>{`${serie.rotulo} · ${categoria}: ${formatar(valor)}`}</title>
-                </rect>
+                </path>
               );
             })}
             <text
@@ -205,7 +279,7 @@ export function BarChart(props: ChartProps) {
 export function LineChart(props: ChartProps) {
   const { categorias, series, paleta = PALETA_OFICIAL, formatar = formatarPadrao, altura = 240 } = props;
   const maximo = Math.max(...series.flatMap((serie) => serie.valores), 1);
-  const largura = 640;
+  const [referencia, largura] = useLarguraMedida();
   const margem = { topo: 16, base: 32, esquerda: 48, direita: 64 };
   const areaLargura = largura - margem.esquerda - margem.direita;
   const areaAltura = altura - margem.topo - margem.base;
@@ -217,6 +291,7 @@ export function LineChart(props: ChartProps) {
   return (
     <ChartCard {...props}>
       <svg
+        ref={referencia}
         className="citie-chart__area"
         viewBox={`0 0 ${largura} ${altura}`}
         role="img"
@@ -249,7 +324,16 @@ export function LineChart(props: ChartProps) {
           return (
             <g key={serie.rotulo}>
               {/* Linha de 2px, nunca 1px nem acima de 3px. */}
-              <path d={caminho} fill="none" stroke={cor} strokeWidth="2" strokeLinejoin="round" />
+              <path
+                className="citie-chart__serie"
+                d={caminho}
+                fill="none"
+                stroke={cor}
+                strokeWidth="2"
+                strokeLinejoin="round"
+                /* Extremidade de dado arredondada, seção 8 da spec estrutural. */
+                strokeLinecap="round"
+              />
               {serie.valores.map((valor, indice) => (
                 <circle
                   key={`${serie.rotulo}-${indice}`}
@@ -336,8 +420,42 @@ export function DonutChart({ fatias, ...resto }: DonutProps) {
         >
           {finais.map((fatia, indice) => {
             const fracao = fatia.valor / total;
-            const dash = circunferencia * fracao;
-            const offset = circunferencia * acumulado;
+            /* Fatia única fecha o anel: sem corte, não há extremidade a arredondar. */
+            if (finais.length === 1) {
+              return (
+                <circle
+                  key={fatia.rotulo}
+                  cx="100"
+                  cy="100"
+                  r={raio}
+                  fill="none"
+                  stroke={paleta[indice % paleta.length]}
+                  strokeWidth={espessura}
+                >
+                  <title>{`${fatia.rotulo}: ${formatar(fatia.valor)}`}</title>
+                </circle>
+              );
+            }
+            const arco = circunferencia * fracao;
+            /**
+             * Com `stroke-linecap: round` o traço cresce meia espessura para
+             * cada lado, então o dash é encurtado pela espessura inteira e o
+             * início é empurrado meia espessura à frente. Sem isso as fatias
+             * avançariam umas sobre as outras.
+             *
+             * Fatia menor que a própria espessura não comporta a ponta
+             * arredondada: só o cap já ocuparia mais arco que o dado, e a fatia
+             * apareceria maior do que é. Nesse caso a extremidade fica reta,
+             * porque proporção correta vem antes de acabamento.
+             */
+            const cabeAPonta = arco > espessura + RESPIRO_ENTRE_FATIAS;
+            const visivel = cabeAPonta
+              ? arco - espessura - RESPIRO_ENTRE_FATIAS
+              : Math.max(0.01, arco - RESPIRO_ENTRE_FATIAS);
+            const offset =
+              circunferencia * acumulado +
+              RESPIRO_ENTRE_FATIAS / 2 +
+              (cabeAPonta ? espessura / 2 : 0);
             acumulado += fracao;
 
             return (
@@ -349,8 +467,8 @@ export function DonutChart({ fatias, ...resto }: DonutProps) {
                 fill="none"
                 stroke={paleta[indice % paleta.length]}
                 strokeWidth={espessura}
-                // 2px de respiro entre fatias.
-                strokeDasharray={`${Math.max(0, dash - 2)} ${circunferencia - dash + 2}`}
+                strokeLinecap={cabeAPonta ? 'round' : 'butt'}
+                strokeDasharray={`${visivel} ${circunferencia - visivel}`}
                 strokeDashoffset={-offset}
                 transform="rotate(-90 100 100)"
               >
@@ -358,11 +476,12 @@ export function DonutChart({ fatias, ...resto }: DonutProps) {
               </circle>
             );
           })}
-          <text x="100" y="96" className="citie-chart__donut-valor" textAnchor="middle">
-            {formatar(total)}
+          {/* Anatomia de métrica, seção 4: rótulo micro acima, número abaixo. */}
+          <text x="100" y="90" className="citie-chart__donut-rotulo" textAnchor="middle">
+            No total
           </text>
-          <text x="100" y="116" className="citie-chart__donut-rotulo" textAnchor="middle">
-            no total
+          <text x="100" y="116" className="citie-chart__donut-valor" textAnchor="middle">
+            {formatar(total)}
           </text>
         </svg>
 

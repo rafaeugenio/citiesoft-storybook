@@ -35,7 +35,7 @@
 
 .citie-knob__valor {
   stroke: var(--citie-brand-primary);
-  transition: stroke-dasharray 160ms ease-out;
+  transition: stroke-dasharray var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 @media (prefers-reduced-motion: reduce) {

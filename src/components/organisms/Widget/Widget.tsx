@@ -19,7 +19,25 @@ export interface KpiProps {
   estado?: EstadoDoWidget;
   /** Sparkline ou mini-gráfico opcional. */
   grafico?: ReactNode;
+  /**
+   * Navegação: o indicador leva o operador para outra tela.
+   *
+   * Vira um botão comum, sem `aria-pressed`, porque quem aciona sai da tela e
+   * não deixa nada ligado atrás de si.
+   */
   onDrillDown?: () => void;
+  /**
+   * Filtro: o indicador aplica e retira o recorte correspondente na listagem
+   * que está logo abaixo dele.
+   *
+   * Vira um controle de alternância, com `aria-pressed` refletindo `ativo`,
+   * porque quem aciona permanece na tela e o estado continua ligado. Não
+   * combine com `onDrillDown`: são dois contratos diferentes e, se os dois
+   * vierem, o de filtro prevalece.
+   */
+  onFiltrar?: () => void;
+  /** Indica que o filtro deste indicador está aplicado. Só faz sentido com `onFiltrar`. */
+  ativo?: boolean;
 }
 
 export function KpiWidget({
@@ -32,6 +50,8 @@ export function KpiWidget({
   estado = 'default',
   grafico,
   onDrillDown,
+  onFiltrar,
+  ativo = false,
 }: KpiProps) {
   if (estado === 'carregando') {
     return (
@@ -75,16 +95,24 @@ export function KpiWidget({
           <p className="citie-widget__periodo">{periodo}</p>
 
           {variacao ? (
+            /**
+             * Pílula de tendência: ícone circular de seta mais texto.
+             *
+             * O significado vem por forma (a seta) e por palavra ("acima de
+             * fevereiro"). A cor entra como terceira pista e nunca como única,
+             * o que é exigência de acessibilidade e não escolha estética.
+             */
             <p
-              className={`citie-widget__variacao${
-                positiva ? ' citie-widget__variacao--alta' : ' citie-widget__variacao--baixa'
+              className={`citie-widget__tendencia${
+                positiva ? ' citie-widget__tendencia--alta' : ' citie-widget__tendencia--baixa'
               }`}
             >
-              {/* Ícone direcional mais número mais cor: a cor nunca vai sozinha. */}
-              <span aria-hidden="true">{positiva ? '▲' : '▼'}</span>
-              {positiva ? '+' : ''}
-              {variacao.percentual.toLocaleString('pt-BR')}%
-              <span className="citie-widget__comparacao">
+              <span className="citie-widget__tendencia-icone" aria-hidden="true">
+                {positiva ? '▲' : '▼'}
+              </span>
+              <span className="citie-widget__tendencia-texto">
+                {positiva ? '+' : ''}
+                {variacao.percentual.toLocaleString('pt-BR')}%{' '}
                 {positiva ? 'acima' : 'abaixo'} de {variacao.comparadoA}
               </span>
             </p>
@@ -117,6 +145,27 @@ export function KpiWidget({
       )}
     </>
   );
+
+  /**
+   * Filtro e navegação não podem se confundir, nem para o olho nem para o
+   * leitor de tela. O filtro é alternância, então declara `aria-pressed` e
+   * ganha o anel de seleção; a navegação é botão comum e nunca declara estado
+   * ligado, porque não existe estado ligado a manter depois de sair da tela.
+   */
+  if (onFiltrar) {
+    return (
+      <button
+        type="button"
+        className={`citie-widget citie-widget--clicavel citie-widget--filtro${
+          ativo ? ' citie-widget--ativo' : ''
+        }`}
+        aria-pressed={ativo}
+        onClick={onFiltrar}
+      >
+        {Conteudo}
+      </button>
+    );
+  }
 
   if (onDrillDown) {
     return (

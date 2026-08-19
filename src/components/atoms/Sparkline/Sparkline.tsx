@@ -36,7 +36,16 @@ export function Sparkline({ valores, label, cor = 'var(--citie-chart-cat-1)' }: 
       aria-labelledby={id}
     >
       <title id={id}>{label}</title>
-      <path d={pontos} fill="none" stroke={cor} strokeWidth="2" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+      {/* Extremidade de dado arredondada, seção 8 da spec estrutural. */}
+      <path
+        d={pontos}
+        fill="none"
+        stroke={cor}
+        strokeWidth="2"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        vectorEffect="non-scaling-stroke"
+      />
     </svg>
   );
 }

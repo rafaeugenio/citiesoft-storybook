@@ -57,7 +57,7 @@
   margin-block-start: 2px;
   border-radius: var(--citie-radius-full);
   font-size: 9px;
-  font-weight: 700;
+  font-weight: var(--citie-font-weight-display);
   color: #ffffff;
   background-color: var(--citie-border-strong);
 }
@@ -96,25 +96,25 @@
 .citie-timeline__conteudo {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--citie-spacing-1);
   min-width: 0;
 }
 
 .citie-timeline__data {
-  font-size: 12px;
+  font-size: var(--citie-font-size-body-xs);
   color: var(--citie-text-secondary);
 }
 
 .citie-timeline__titulo {
   margin: 0;
   font-size: var(--citie-font-size-body-md);
-  font-weight: 500;
+  font-weight: var(--citie-font-weight-action);
   color: var(--citie-text-primary);
 }
 
 .citie-timeline__ator {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--citie-font-size-body-xs);
   color: var(--citie-text-secondary);
 }
 
@@ -124,7 +124,7 @@
   padding: 0;
   font-family: inherit;
   font-size: var(--citie-font-size-body-sm);
-  font-weight: 500;
+  font-weight: var(--citie-font-weight-action);
   color: var(--citie-brand-primary);
   background: none;
   border: none;
@@ -137,6 +137,14 @@
   border-radius: var(--citie-radius-sm);
 }
 
+ /**
+ * Bloco aninhado dentro do item: raio menor que o do contêiner que o abriga,
+ * conforme a hierarquia de camada da seção 3.
+ *
+ * A abertura é acordeão, então usa `motion-padrao` com `easing-entrada`. O
+ * movimento acompanha uma mudança que também se lê parada (o botão troca de
+ * rótulo e de `aria-expanded`), nunca a substitui.
+ */
 .citie-timeline__detalhe {
   margin-block-start: var(--citie-spacing-2);
   padding: var(--citie-spacing-3);
@@ -144,6 +152,26 @@
   border: 1px solid var(--citie-border-default);
   border-radius: var(--citie-radius-md);
   font-size: var(--citie-font-size-body-sm);
+  animation: citie-timeline-detalhe var(--citie-motion-padrao) var(--citie-easing-entrada) both;
+}
+
+/**
+ * Só deslocamento, sem opacidade. O detalhe precisa estar legível desde o
+ * primeiro quadro: quem clicou em "Ver detalhes" já quer ler o conteúdo, e
+ * conteúdo transparente também some para teste automatizado e para leitor de
+ * tela que consulta a visibilidade computada.
+ */
+@keyframes citie-timeline-detalhe {
+  from {
+    transform: translateY(calc(var(--citie-spacing-1) * -1));
+  }
+}
+
+/* Nenhum item de lista anima entrada: lista longa não paga o custo de quadro. */
+@media (prefers-reduced-motion: reduce) {
+  .citie-timeline__detalhe {
+    animation: none;
+  }
 }
 
 .citie-timeline__vazio {
@@ -161,7 +189,7 @@
 }
 
 .citie-audit__campo {
-  font-weight: 500;
+  font-weight: var(--citie-font-weight-action);
   color: var(--citie-text-primary);
 }
 

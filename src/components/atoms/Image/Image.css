@@ -82,7 +82,7 @@
   /* Máscara escura da variante State=Hover, Preview=True. Sem token de véu na
      marca, então a cor de texto primária em baixa opacidade faz o papel. */
   background-color: color-mix(in srgb, var(--citie-text-primary) 55%, transparent);
-  transition: opacity 150ms ease-out;
+  transition: opacity var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-image__gatilho:enabled:hover .citie-image__mascara,
@@ -196,7 +196,7 @@
 .citie-image-preview__midia {
   max-width: 100%;
   max-height: 100%;
-  transition: transform 200ms ease-out;
+  transition: transform var(--citie-motion-padrao) var(--citie-easing-padrao);
 }
 
 .citie-image-preview__situacao {

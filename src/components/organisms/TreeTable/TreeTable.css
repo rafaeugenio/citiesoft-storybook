@@ -98,7 +98,7 @@
   border: none;
   border-radius: var(--citie-radius-sm);
   cursor: pointer;
-  transition: transform 120ms ease-out, background-color 120ms ease-out;
+  transition: transform var(--citie-motion-rapido) var(--citie-easing-padrao), background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-treetable__toggle:hover {
@@ -199,7 +199,7 @@
 
 .citie-treetable tbody tr:hover {
   background-color: var(--citie-state-hover-overlay);
-  transition: background-color 100ms ease-out;
+  transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-treetable__linha:focus-visible {

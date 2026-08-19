@@ -168,7 +168,7 @@ export const ElevadoEArredondado: Story = {
     docs: {
       description: {
         story:
-          'Eixos `Raised` e `Rounded` do Figma. Elevado usa `shadow.card`; arredondado leva `radius.full` só às pontas externas, preservando a emenda reta entre a ação e o gatilho.',
+          'Eixos `Raised` e `Rounded` do Figma. Elevado usa `shadow.raised`, o degrau de card em repouso; arredondado leva `radius.full` só às pontas externas, preservando a emenda reta entre a ação e o gatilho.',
       },
     },
   },

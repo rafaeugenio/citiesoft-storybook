@@ -5,7 +5,12 @@
   color: var(--citie-text-base);
   background-color: var(--citie-background-surface);
   font-family: var(--citie-font-ui);
-  box-shadow: 0 20px 48px rgba(16, 24, 40, 0.24);
+  /**
+   * Degrau `dialog` da escala de elevação. Diálogo e drawer são a camada mais
+   * alta da tela, e precisam se ler como mais distantes do fundo que um menu
+   * ou um popover, que param no degrau `overlay`.
+   */
+  box-shadow: var(--citie-shadow-dialog);
 }
 
 .citie-dialog::backdrop,
@@ -17,10 +22,12 @@
 
 .citie-dialog {
   width: 560px;
-  max-width: calc(100vw - 32px);
+  max-width: calc(100vw - var(--citie-spacing-8));
   max-height: 90dvh;
-  border-radius: var(--citie-radius-xl);
-  animation: citie-dialog-entrada 300ms ease-out;
+  /* Contêiner externo: raio maior que o do conteúdo aninhado, para ler camada. */
+  border-radius: var(--citie-radius-2xl);
+  /* Entrada de camada alta: tempo lento e curva de entrada, para ser percebida. */
+  animation: citie-dialog-entrada var(--citie-motion-lento) var(--citie-easing-entrada);
 }
 
 @keyframes citie-dialog-entrada {
@@ -77,7 +84,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--citie-spacing-4);
-  padding: var(--citie-spacing-4) 24px;
+  padding: var(--citie-spacing-4) var(--citie-spacing-6);
   border-block-end: 1px solid var(--citie-border-default);
 }
 
@@ -100,7 +107,7 @@
 }
 
 .citie-dialog__corpo {
-  padding: 24px;
+  padding: var(--citie-spacing-6);
   overflow-y: auto;
   max-height: calc(90dvh - 140px);
 }
@@ -110,7 +117,7 @@
   display: flex;
   justify-content: flex-end;
   gap: var(--citie-spacing-3);
-  padding: var(--citie-spacing-4) 24px;
+  padding: var(--citie-spacing-4) var(--citie-spacing-6);
   border-block-start: 1px solid var(--citie-border-default);
   background-color: var(--citie-background-surface);
 }
@@ -152,7 +159,7 @@
 }
 
 .citie-confirm__conteudo {
-  padding: 24px 24px var(--citie-spacing-4);
+  padding: var(--citie-spacing-6) var(--citie-spacing-6) var(--citie-spacing-4);
 }
 
 .citie-confirm__descricao {
@@ -174,7 +181,7 @@
   max-height: 100dvh;
   display: flex;
   flex-direction: column;
-  animation: citie-drawer-entrada 300ms ease-out;
+  animation: citie-drawer-entrada var(--citie-motion-lento) var(--citie-easing-entrada);
 }
 
 .citie-drawer--right-sm,
@@ -211,8 +218,8 @@
   height: auto;
   max-height: 90dvh;
   margin-block-start: auto;
-  border-start-start-radius: var(--citie-radius-xl);
-  border-start-end-radius: var(--citie-radius-xl);
+  border-start-start-radius: var(--citie-radius-2xl);
+  border-start-end-radius: var(--citie-radius-2xl);
 }
 
 @keyframes citie-drawer-entrada {
@@ -225,7 +232,7 @@
 .citie-drawer__corpo {
   flex: 1;
   overflow-y: auto;
-  padding: 24px;
+  padding: var(--citie-spacing-6);
   display: flex;
   flex-direction: column;
   gap: var(--citie-spacing-4);
@@ -238,7 +245,7 @@
     height: auto;
     max-height: 90dvh;
     margin: auto 0 0;
-    border-start-start-radius: var(--citie-radius-xl);
-    border-start-end-radius: var(--citie-radius-xl);
+    border-start-start-radius: var(--citie-radius-2xl);
+    border-start-end-radius: var(--citie-radius-2xl);
   }
 }

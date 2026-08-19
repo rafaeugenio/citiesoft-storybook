@@ -1,7 +1,8 @@
 /**
  * ContextMenu — Figma CitieOne `6738:52934`.
- * Geometria do arquivo: painel raio 6 com respiro interno de 4, itens de raio 4
- * com padding 8/12 e ícone de 14. Cor e tipografia vêm dos tokens Citiesoft.
+ * Geometria: o painel é contêiner externo e usa raio de camada, com respiro
+ * interno de 4; o item fica um degrau abaixo, em raio de item, e segue a
+ * anatomia de linha. Cor e tipografia vêm dos tokens Citiesoft.
  */
 
 .citie-context-menu {
@@ -25,13 +26,15 @@
   /* Figma: lista com respiro de 3,5 e itens espaçados de 2. */
   gap: 2px;
   min-width: 200px;
-  max-width: min(320px, calc(100vw - 16px));
+  max-width: min(320px, calc(100vw - var(--citie-spacing-4)));
+  /* Tamanho do líder da linha; não existe token global de líder, ver relatório. */
+  --citie-context-menu-lider: 20px;
   padding: var(--citie-spacing-1);
   border: 1px solid var(--citie-border-default);
-  border-radius: var(--citie-radius-md);
+  border-radius: var(--citie-radius-2xl);
   background-color: var(--citie-background-surface);
   box-shadow: var(--citie-shadow-overlay);
-  animation: citie-context-menu-entrada 120ms ease-out;
+  animation: citie-context-menu-entrada var(--citie-motion-padrao) var(--citie-easing-entrada);
 }
 
 @keyframes citie-context-menu-entrada {
@@ -44,13 +47,13 @@
 .citie-context-menu__item {
   display: flex;
   align-items: center;
-  gap: var(--citie-spacing-2);
+  gap: var(--citie-spacing-3);
   width: 100%;
-  /* Figma desenha 28px de altura; 32 garante alvo de clique acessível. */
-  min-height: var(--citie-control-height-small);
+  /* Altura de linha de densidade normal, com o realce em raio de item. */
+  min-height: var(--citie-control-height-normal);
   padding: var(--citie-spacing-2) var(--citie-spacing-3);
   border: none;
-  border-radius: var(--citie-radius-sm);
+  border-radius: var(--citie-radius-lg);
   background-color: transparent;
   color: var(--citie-text-base);
   font-family: inherit;
@@ -101,13 +104,14 @@
   color: var(--citie-text-secondary);
 }
 
+/* Líder de largura fixa: alinha a coluna de texto entre itens com e sem ícone. */
 .citie-context-menu__icone {
   display: inline-flex;
-  flex: none;
+  flex: 0 0 var(--citie-context-menu-lider);
   align-items: center;
   justify-content: center;
-  width: 14px;
-  height: 14px;
+  width: var(--citie-context-menu-lider);
+  height: var(--citie-context-menu-lider);
 }
 
 .citie-context-menu__rotulo {
@@ -117,9 +121,10 @@
   white-space: nowrap;
 }
 
+/* Trilha: à direita, sem encolher sob rótulo longo. */
 .citie-context-menu__atalho {
-  flex: none;
-  margin-left: var(--citie-spacing-3);
+  flex-shrink: 0;
+  margin-inline-start: auto;
   color: var(--citie-text-secondary);
   font-size: var(--citie-font-size-body-sm);
   white-space: nowrap;
@@ -130,13 +135,14 @@
 }
 
 .citie-context-menu__seta {
-  flex: none;
+  flex-shrink: 0;
   color: var(--citie-text-secondary);
 }
 
 .citie-context-menu__separador {
   height: 1px;
   margin: var(--citie-spacing-1) 0;
+  margin-inline: calc(-1 * var(--citie-spacing-1));
   background-color: var(--citie-border-default);
 }
 

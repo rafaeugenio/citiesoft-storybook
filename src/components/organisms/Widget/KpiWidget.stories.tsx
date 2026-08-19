@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 import { KpiWidget } from './Widget';
 import { Sparkline } from '../../atoms/Sparkline/Sparkline';
 
@@ -143,6 +144,92 @@ export const KpiComDrillDown: Story = {
     const canvas = within(canvasElement);
     // Com ação, o widget inteiro é focável por teclado.
     await expect(canvas.getByRole('button', { name: /Solicitações no mês/ })).toBeVisible();
+  },
+};
+
+export const KpiComoFiltro: Story = {
+  name: 'Estado · como filtro',
+  args: {
+    rotulo: 'Em análise',
+    valor: '128',
+    periodo: 'Fila atual',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: [
+          'Com `onFiltrar`, o indicador vira controle de alternância: clicar aplica o recorte na',
+          'listagem logo abaixo e o cartão fica marcado como ativo; clicar de novo retira. Por isso',
+          'ele declara `aria-pressed`, que o leitor de tela anuncia como "pressionado".',
+          '',
+          'O anel de seleção é `inset` e existe desde o repouso em transparente, então ativar o',
+          'filtro não desloca nada. Sem essa reserva, a faixa inteira de indicadores pula a cada',
+          'clique do operador.',
+        ].join('\n'),
+      },
+    },
+  },
+  render: (args) => {
+    const [ativo, setAtivo] = useState(false);
+    return <KpiWidget {...args} ativo={ativo} onFiltrar={() => setAtivo((valor) => !valor)} />;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const indicador = canvas.getByRole('button', { name: /Em análise/ });
+    await expect(indicador).toHaveAttribute('aria-pressed', 'false');
+    await userEvent.click(indicador);
+    await expect(indicador).toHaveAttribute('aria-pressed', 'true');
+    await userEvent.click(indicador);
+    await expect(indicador).toHaveAttribute('aria-pressed', 'false');
+  },
+};
+
+export const FiltroContraNavegacao: Story = {
+  name: 'Composição · filtro contra navegação',
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        story: [
+          'Os dois comportamentos não podem se confundir, nem visualmente nem para o leitor de tela.',
+          '',
+          '`onFiltrar` é alternância: o operador permanece na tela, o recorte fica aplicado e o',
+          'estado ligado se lê parado, por anel de seleção e fundo recuado, além de `aria-pressed`.',
+          '',
+          '`onDrillDown` é navegação: o operador sai para outra tela e não fica nada ligado atrás,',
+          'então o cartão é botão comum, sem `aria-pressed` e sem estado ativo. Marcar um indicador',
+          'de navegação como pressionado prometeria um filtro que a tela não tem.',
+        ].join('\n'),
+      },
+    },
+  },
+  render: () => (
+    <div style={{ display: 'flex', gap: 16, padding: 24 }}>
+      <KpiWidget
+        rotulo="Em análise"
+        valor="128"
+        periodo="Fila atual"
+        ativo
+        onFiltrar={() => {}}
+      />
+      <KpiWidget
+        rotulo="Painel completo"
+        valor="1.183"
+        periodo="Março de 2025"
+        onDrillDown={() => {}}
+      />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('button', { name: /Em análise/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    // A navegação nunca declara estado ligado.
+    await expect(canvas.getByRole('button', { name: /Painel completo/ })).not.toHaveAttribute(
+      'aria-pressed',
+    );
   },
 };
 

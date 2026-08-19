@@ -44,6 +44,7 @@ export * from './components/molecules/MeterGroup/MeterGroup';
 export * from './components/molecules/MultiSelect/MultiSelect';
 export * from './components/molecules/Navigation/Navigation';
 export * from './components/molecules/Pagination/Pagination';
+export * from './components/molecules/PrazoIndicador/PrazoIndicador';
 export * from './components/molecules/RadioGroup/RadioGroup';
 export * from './components/molecules/Search/Search';
 export * from './components/molecules/Select/Select';
@@ -56,6 +57,7 @@ export * from './components/molecules/Tabs/Tabs';
 export * from './components/molecules/Textarea/Textarea';
 export * from './components/molecules/Tooltip/Tooltip';
 export * from './components/molecules/TreeSelect/TreeSelect';
+export * from './components/molecules/ValorMonetario/ValorMonetario';
 
 /* ---------- Organismos ---------- */
 
@@ -90,6 +92,7 @@ export * from './components/organisms/Toolbar/Toolbar';
 export * from './components/organisms/Tree/Tree';
 export * from './components/organisms/TreeTable/TreeTable';
 export * from './components/organisms/Upload/Upload';
+export * from './components/organisms/Widget/KpiFaixa';
 export * from './components/organisms/Widget/Widget';
 
 /* ---------- Fundação ---------- */

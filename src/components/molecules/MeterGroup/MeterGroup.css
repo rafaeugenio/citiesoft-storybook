@@ -17,7 +17,7 @@
   margin: 0;
   font-family: var(--citie-font-display);
   font-size: var(--citie-font-size-body-lg);
-  font-weight: 600;
+  font-weight: var(--citie-font-weight-title);
   color: var(--citie-text-primary);
 }
 
@@ -45,8 +45,15 @@
 /* Trilho e faixas                                                   */
 /* ---------------------------------------------------------------- */
 
+/**
+ * O trilho é a pílula que contém o dado; as faixas dentro dele terminam
+ * arredondadas em `radius-sm`, seção 8 da spec estrutural. O respiro de
+ * `spacing-1` separa faixas vizinhas, para que duas cores adjacentes não
+ * encostem e a extremidade de cada dado se leia.
+ */
 .citie-meter-group__trilho {
   display: flex;
+  gap: var(--citie-spacing-1);
   background-color: var(--citie-background-subtle);
   border-radius: var(--citie-radius-full);
   overflow: hidden;
@@ -54,7 +61,8 @@
 
 .citie-meter-group__faixa {
   display: block;
-  transition: flex-basis 240ms ease-out;
+  border-radius: var(--citie-radius-sm);
+  transition: flex-basis var(--citie-motion-padrao) var(--citie-easing-padrao);
 }
 
 .citie-meter-group--horizontal .citie-meter-group__trilho {
@@ -64,7 +72,8 @@
 }
 
 .citie-meter-group--horizontal .citie-meter-group__faixa {
-  flex: 0 0 var(--meter-tamanho, 0%);
+  /* Encolhe para absorver o respiro entre faixas sem estourar o trilho. */
+  flex: 0 1 var(--meter-tamanho, 0%);
   height: 100%;
   /* Faixa de fração mínima não pode desaparecer do desenho. */
   min-width: 4px;
@@ -84,7 +93,7 @@
 }
 
 .citie-meter-group--vertical .citie-meter-group__faixa {
-  flex: 0 0 var(--meter-tamanho, 0%);
+  flex: 0 1 var(--meter-tamanho, 0%);
   width: 100%;
   min-height: 4px;
 }

@@ -48,15 +48,26 @@
   overflow: hidden;
 }
 
+/**
+ * Extremidade de dado arredondada. O raio fica só na ponta que avança: a ponta
+ * que encosta na origem é o começo da medida, e arredondá-la faria a barra
+ * parecer descolada do zero. É a mesma regra da barra de gráfico e do arco.
+ */
 .citie-progress__preenchimento {
   height: 100%;
   background-color: var(--progress-cor);
-  border-radius: var(--citie-radius-full);
-  transition: width 240ms ease-out;
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+  border-start-end-radius: var(--citie-radius-sm);
+  border-end-end-radius: var(--citie-radius-sm);
+  transition: width var(--citie-motion-padrao) var(--citie-easing-padrao);
 }
 
+/* O bloco indeterminado não tem origem: ele varre o trilho, então as duas
+   pontas são extremidade de dado. */
 .citie-progress__trilho--indeterminado .citie-progress__preenchimento {
   width: 40%;
+  border-radius: var(--citie-radius-full);
   animation: citie-progress-sweep 1400ms ease-in-out infinite;
 }
 

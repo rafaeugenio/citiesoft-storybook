@@ -264,3 +264,144 @@ export const VazioComFiltro: Story = {
     },
   },
 };
+
+/** As mesmas colunas, sem a coluna de ações montada à mão. */
+const COLUNAS_SEM_ACOES = COLUNAS.filter((coluna) => coluna.chave !== 'acoes');
+
+export const AcoesPorLinha: Story = {
+  name: 'Controle · ações por linha',
+  render: () => (
+    <Table
+      legenda="Solicitações de TFD, 4 registros"
+      colunas={COLUNAS_SEM_ACOES}
+      linhas={SOLICITACOES}
+      chaveDaLinha={(linha) => linha.processo}
+      zebra
+      acoesDaLinha={ (linha: Solicitacao) => (
+      <>
+        <Button
+          variant="text"
+          size="small"
+          iconOnly
+          aria-label={`Abrir o processo ${linha.processo}`}
+          icon={
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path
+                d="M2 8s2.4-4 6-4 6 4 6 4-2.4 4-6 4-6-4-6-4Z"
+                stroke="currentColor"
+                strokeWidth="1.3"
+              />
+              <circle cx="8" cy="8" r="1.8" stroke="currentColor" strokeWidth="1.3" />
+            </svg>
+          }
+        />
+        <Button
+          variant="text"
+          size="small"
+          iconOnly
+          aria-label={`Editar o processo ${linha.processo}`}
+          icon={
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path
+                d="M10.8 2.2 13.8 5.2 5.6 13.4H2.6v-3z"
+                stroke="currentColor"
+                strokeWidth="1.3"
+                strokeLinejoin="round"
+              />
+            </svg>
+          }
+        />
+      </>
+      )}
+    />
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: [
+          'A coluna de ações é gerada pela própria tabela, e não montada pelo consumidor como',
+          'coluna comum. Antes, cada tela improvisava a sua: largura diferente, alinhamento',
+          'diferente, e o cabeçalho às vezes com verbo. A anatomia vem do protótipo TFD.',
+          '',
+          'O cabeçalho fica visualmente oculto de propósito, porque "Ações" repetido em toda',
+          'tabela é ruído, mas o leitor de tela precisa dele para anunciar a coluna.',
+          '',
+          'Os ícones aparecem no hover da linha para não competir com o dado numa tabela longa,',
+          'e o `:focus-within` os revela na navegação por teclado. Cada ação nomeia o registro',
+          'no `aria-label`: "Abrir" sozinho não diz ao leitor de tela qual processo será aberto.',
+        ].join('\n'),
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // O nome acessível carrega o registro, e não só o verbo.
+    const abrir = canvas.getByRole('button', { name: `Abrir o processo ${SOLICITACOES[0].processo}` });
+    await expect(abrir).toBeInTheDocument();
+
+    // O cabeçalho existe para o leitor de tela mesmo sem aparecer na tela, e é
+    // único: a coluna improvisada foi substituída, não somada.
+    await expect(canvas.getAllByText('Ações')).toHaveLength(1);
+
+    // Alcançável por teclado: as ações continuam na ordem de tabulação mesmo
+    // enquanto estão transparentes, que é o que o :focus-within resolve.
+    abrir.focus();
+    await expect(abrir).toHaveFocus();
+  },
+};
+
+export const DestaqueDeLinha: Story = {
+  name: 'Controle · destaque de linha por estado',
+  render: () => (
+    <Table
+      legenda="Solicitações de TFD, 4 registros"
+      colunas={COLUNAS}
+      linhas={SOLICITACOES}
+      chaveDaLinha={(linha) => linha.processo}
+      zebra
+      destaqueDaLinha={(linha) =>
+      linha.estado === 'Devolvido'
+        ? { severidade: 'critico' as const, motivo: 'Devolvido pela regulação e aguardando correção' }
+        : linha.estado === 'Em Análise'
+          ? { severidade: 'atencao' as const, motivo: 'Na regulação há mais de 5 dias' }
+          : undefined
+      }
+    />
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: [
+          'Destaca a linha que exige atenção sem tirá-la do fluxo da lista. A anatomia vem do',
+          'protótipo TFD, que usa barra vertical em três das suas filas de trabalho.',
+          '',
+          '**A barra é `box-shadow: inset`, e não cor de fundo.** Fundo colorido briga com o',
+          'zebrado e com o realce de hover, e a linha destacada deixa de responder ao ponteiro.',
+          'A barra convive com os dois.',
+          '',
+          '**Cor sozinha não comunica.** O motivo do destaque entra como texto na primeira célula',
+          'de dado, oculto visualmente e disponível ao leitor de tela. Ele vai na célula existente,',
+          'e não numa coluna própria: coluna extra apenas nas linhas destacadas quebraria a',
+          'contagem de colunas da grade.',
+          '',
+          'Quando a linha está selecionada, a seleção vence o destaque: seleção é ação do usuário',
+          'agora, destaque é condição do dado, e duas barras não cabem no mesmo lugar.',
+        ].join('\n'),
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // O motivo chega a quem não enxerga a barra.
+    await expect(canvas.getByText(/Devolvido pela regulação e aguardando correção/)).toBeInTheDocument();
+    await expect(canvas.getByText(/Na regulação há mais de 5 dias/)).toBeInTheDocument();
+
+    // A contagem de colunas não muda por causa do destaque: a grade continua íntegra.
+    const linhas = canvas.getAllByRole('row');
+    const celulasDaPrimeira = linhas[1].querySelectorAll('td').length;
+    const celulasDaSegunda = linhas[2].querySelectorAll('td').length;
+    await expect(celulasDaPrimeira).toBe(celulasDaSegunda);
+  },
+};

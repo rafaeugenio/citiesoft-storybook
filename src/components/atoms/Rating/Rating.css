@@ -36,7 +36,9 @@
   color: var(--citie-border-strong);
   cursor: pointer;
   border-radius: var(--citie-radius-sm);
-  transition: color 120ms ease-out, scale 120ms ease-out;
+  transition:
+    color var(--citie-motion-rapido) var(--citie-easing-padrao),
+    scale var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-rating__item--preenchido {

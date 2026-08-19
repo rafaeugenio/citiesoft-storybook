@@ -53,7 +53,8 @@ export interface TieredMenuProps {
  * abre alinhado ao item que o originou, e para isso a altura de item e de
  * separador precisam bater com o CSS.
  */
-const ALTURA_ITEM = 34;
+// 40px é a altura de linha de densidade normal (`--citie-control-height-normal`).
+const ALTURA_ITEM = 40;
 const ALTURA_SEPARADOR = 9;
 
 function SetaDeSubmenu() {

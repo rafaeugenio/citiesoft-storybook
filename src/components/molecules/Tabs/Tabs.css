@@ -92,19 +92,25 @@
   border-block-end: none;
   padding: var(--citie-spacing-1);
   background-color: var(--citie-background-subtle);
-  border-radius: var(--citie-radius-md);
+  /**
+   * Trilho e segmento em raio total, que é o degrau de pílula da escala. O par
+   * antigo em `radius-md` deixava trilho e segmento no mesmo raio, e o ativo só
+   * se distinguia por cor.
+   */
+  border-radius: var(--citie-radius-full);
 }
 
 .citie-tabs--pill .citie-tabs__aba {
   border-block-end: none;
   margin-block-end: 0;
-  border-radius: var(--citie-radius-md);
+  border-radius: var(--citie-radius-full);
 }
 
+/* O segmento ativo se lê por profundidade, e não só por cor: sobe a `raised`. */
 .citie-tabs--pill .citie-tabs__aba--ativa {
   background-color: var(--citie-background-surface);
   color: var(--citie-brand-primary);
-  box-shadow: var(--citie-shadow-card);
+  box-shadow: var(--citie-shadow-raised);
 }
 
 /* ---------- Variante vertical ---------- */
@@ -143,7 +149,8 @@
 .citie-accordion {
   font-family: var(--citie-font-ui);
   border: 1px solid var(--citie-border-default);
-  border-radius: var(--citie-radius-md);
+  /* Contêiner externo de seções empilhadas, mesmo degrau de Card e Panel. */
+  border-radius: var(--citie-radius-2xl);
   overflow: hidden;
 }
 
@@ -161,7 +168,9 @@
   gap: var(--citie-spacing-2);
   width: 100%;
   min-height: 44px;
-  padding: var(--citie-spacing-3) var(--citie-spacing-4);
+  /* Recuo horizontal maior que o raio de 16, senão o rótulo do primeiro e do
+     último item entra na curva da quina. */
+  padding: var(--citie-spacing-3) var(--citie-spacing-5);
   font-family: inherit;
   font-size: var(--citie-font-size-body-md);
   font-weight: 500;
@@ -189,7 +198,8 @@
 .citie-accordion__seta {
   display: inline-block;
   color: var(--citie-text-secondary);
-  transition: rotate 160ms ease-out;
+  /* Abrir e fechar de seção é movimento dentro da tela: duração padrão. */
+  transition: rotate var(--citie-motion-padrao) var(--citie-easing-padrao);
 }
 
 .citie-accordion__seta--aberta {
@@ -202,8 +212,9 @@
   }
 }
 
+/* Alinhado ao recuo do gatilho, para título e conteúdo caírem na mesma linha. */
 .citie-accordion__painel {
-  padding: 0 var(--citie-spacing-4) var(--citie-spacing-4);
+  padding: 0 var(--citie-spacing-5) var(--citie-spacing-5);
   font-size: var(--citie-font-size-body-md);
   color: var(--citie-text-base);
 }

@@ -32,7 +32,7 @@
   color: var(--citie-text-primary);
   text-align: start;
   cursor: pointer;
-  transition: background-color 120ms ease, border-color 120ms ease;
+  transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao), border-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 /* State=Hover do Figma: o realce é a única pista de que o valor é editável. */

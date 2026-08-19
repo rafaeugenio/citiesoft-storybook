@@ -36,7 +36,7 @@
   cursor: inherit;
   display: grid;
   place-content: center;
-  transition: background-color 120ms ease-out, border-color 120ms ease-out;
+  transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao), border-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -108,7 +108,7 @@
   background-color: var(--citie-border-strong);
   position: relative;
   cursor: inherit;
-  transition: background-color 140ms ease-out;
+  transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-switch::after {
@@ -120,7 +120,7 @@
   height: 17px;
   border-radius: var(--citie-radius-full);
   background-color: #ffffff;
-  transition: translate 140ms ease-out;
+  transition: translate var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-switch:checked {

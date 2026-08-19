@@ -72,8 +72,8 @@
   border: 1px solid var(--citie-form-field-border);
   border-radius: var(--citie-radius-md);
   transition:
-    border-color 120ms ease-out,
-    background-color 120ms ease-out;
+    border-color var(--citie-motion-rapido) var(--citie-easing-padrao),
+    background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 [data-theme='dark'] .citie-field-control {

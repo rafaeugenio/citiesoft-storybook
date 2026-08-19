@@ -1,0 +1,56 @@
+/**
+ * Célula de valor monetário.
+ *
+ * Duas decisões estruturais valem registro:
+ *
+ * 1. `tabular-nums` é obrigatório. É ele que mantém a coluna alinhada quando o
+ *    valor muda de largura de dígito, e sem ele a leitura vertical de uma
+ *    coluna de dinheiro se perde.
+ * 2. A família é a de interface, e não a monoespaçada. `--citie-font-mono`
+ *    aponta para Red Hat Mono, que o catálogo ainda não carrega (achado aberto
+ *    registrado em tokens.css), então usá-la aqui cairia no monoespaçado do
+ *    sistema e traria uma tipografia que não é a nossa. O alinhamento que a
+ *    mono daria já vem de `tabular-nums`.
+ */
+
+.citie-valor {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--citie-spacing-1);
+  font-family: var(--citie-font-ui);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.citie-valor__principal {
+  color: var(--citie-text-primary);
+  font-weight: var(--citie-font-weight-action);
+}
+
+.citie-valor--md .citie-valor__principal {
+  font-size: var(--citie-font-size-body-md);
+}
+
+.citie-valor--sm .citie-valor__principal {
+  font-size: var(--citie-font-size-body-sm);
+}
+
+/**
+ * Cancelado recua a cor e risca o valor. O risco é a pista visual; a pista para
+ * quem não vê a tela é o nome acessível, que diz "valor cancelado".
+ */
+.citie-valor--cancelado .citie-valor__principal {
+  color: var(--citie-text-secondary);
+  text-decoration: line-through;
+}
+
+/**
+ * A segunda linha é apoio, então fica um degrau abaixo em tamanho e recebe a
+ * cor de atenção do mapa canônico de severidade. Nunca abaixo de 12px: o DS
+ * proíbe cor de texto secundária ou de severidade em corpo menor que isso.
+ */
+.citie-valor__reembolso {
+  color: var(--sev-fg);
+  font-size: var(--citie-font-size-body-xs);
+}

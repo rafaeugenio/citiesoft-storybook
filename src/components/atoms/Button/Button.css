@@ -27,9 +27,9 @@
   border-radius: var(--citie-radius-md);
   cursor: pointer;
   transition:
-    background-color 120ms ease-out,
-    border-color 120ms ease-out,
-    color 120ms ease-out;
+    background-color var(--citie-motion-rapido) var(--citie-easing-padrao),
+    border-color var(--citie-motion-rapido) var(--citie-easing-padrao),
+    color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 @media (prefers-reduced-motion: reduce) {

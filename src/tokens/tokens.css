@@ -153,6 +153,17 @@
   --citie-radius-md: 6px;
   --citie-radius-lg: 8px;
   --citie-radius-xl: 12px;
+  /**
+   * Raio de contêiner externo: card, painel e diálogo.
+   *
+   * A regra que ele serve é de camada, não de gosto: o contêiner externo tem
+   * raio maior que o interno, então card 16 com célula aninhada 12 e controle 8
+   * lê como profundidade. Todos com o mesmo raio lê como adesivo colado.
+   *
+   * Para em 16 de propósito. Acima disso o canto come área útil de tabela, e a
+   * densidade que um sistema de processo administrativo exige sofre.
+   */
+  --citie-radius-2xl: 16px;
   --citie-radius-full: 9999px;
 
   /* Espaçamento */
@@ -161,6 +172,16 @@
   --citie-spacing-3: 12px;
   --citie-spacing-4: 16px;
   --citie-spacing-5: 20px;
+  /**
+   * A escala parava em 20px, e a consequência foi medida: não existindo token
+   * de respiro interno de card, cada card escolhia o próprio padding e eles
+   * divergiam entre telas. Os dois degraus abaixo fecham isso.
+   *
+   * `spacing-6` é o respiro de card de destaque, painel e diálogo.
+   * `spacing-8` é o intervalo entre seções de página.
+   */
+  --citie-spacing-6: 24px;
+  --citie-spacing-8: 32px;
 
   /* Tipografia */
   --citie-font-ui: 'Inter', 'Segoe UI', Arial, sans-serif;
@@ -211,9 +232,51 @@
   --citie-font-weight-title: 600;
   --citie-font-weight-display: 700;
 
-  /* Elevação — sombra de overlay para painéis, menus e diálogos */
-  --citie-shadow-overlay: 0 4px 12px rgba(16, 24, 40, 0.12);
-  --citie-shadow-card: 0 1px 3px rgba(16, 24, 40, 0.08);
+  /**
+   * Elevação em quatro degraus, cada um com papel definido.
+   *
+   * Antes existiam dois, com 3px e 12px de desfoque, os dois de camada única.
+   * Sombra de camada única é sombra de contato: ela recorta o elemento em vez
+   * de fazê-lo flutuar, e card e overlay ficavam praticamente indistinguíveis,
+   * então a hierarquia de profundidade não se lia.
+   *
+   * Cada degrau agora combina duas camadas: uma sombra de contato curta, que
+   * ancora o elemento na superfície, e uma sombra ambiente longa e de opacidade
+   * baixa, que dá a distância. É a anatomia que as referências usam.
+   *
+   * Regra de uso: um elemento sobe no máximo UM degrau no hover, e nunca dois.
+   */
+  --citie-shadow-raised:
+    0 1px 2px rgba(16, 24, 40, 0.06),
+    0 4px 12px -2px rgba(16, 24, 40, 0.08);
+  --citie-shadow-overlay:
+    0 2px 4px rgba(16, 24, 40, 0.06),
+    0 12px 28px -6px rgba(16, 24, 40, 0.14);
+  --citie-shadow-dialog:
+    0 4px 8px rgba(16, 24, 40, 0.08),
+    0 24px 56px -12px rgba(16, 24, 40, 0.22);
+  /** Mantido como apelido de `raised`: 15 pontos do catálogo consomem este nome. */
+  --citie-shadow-card: var(--citie-shadow-raised);
+
+  /**
+   * Motion. Não existia token nenhum, então cada componente repetia
+   * `120ms ease-out` como literal ou inventava o próprio tempo.
+   *
+   * A escala é de intenção, não de número: o autor escolhe pelo que o
+   * movimento significa, e o valor pode ser calibrado depois num lugar só.
+   */
+  --citie-motion-instantaneo: 80ms;
+  --citie-motion-rapido: 140ms;
+  --citie-motion-padrao: 220ms;
+  --citie-motion-lento: 320ms;
+
+  /**
+   * Curvas. Entrada é mais lenta que saída de propósito: o que entra precisa
+   * ser percebido, o que sai já foi decidido pelo usuário.
+   */
+  --citie-easing-saida: cubic-bezier(0.4, 0, 1, 1);
+  --citie-easing-entrada: cubic-bezier(0, 0, 0.2, 1);
+  --citie-easing-padrao: cubic-bezier(0.4, 0, 0.2, 1);
 
   /**
    * Véu (scrim) de bloqueio: fundo escurecido atrás de diálogo, drawer,
@@ -362,6 +425,19 @@
   --citie-danger-foreground: #fca5a5;
   --citie-loading-spinner: #4d8bfc;
 
-  --citie-shadow-overlay: 0 4px 12px rgba(0, 0, 0, 0.45);
-  --citie-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.35);
+  /**
+   * No escuro a sombra funciona por ausência de luz, então ela precisa de mais
+   * opacidade e menos difusão do que no claro para ainda ser percebida sobre um
+   * fundo já escuro.
+   */
+  --citie-shadow-raised:
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    0 4px 12px -2px rgba(0, 0, 0, 0.45);
+  --citie-shadow-overlay:
+    0 2px 4px rgba(0, 0, 0, 0.45),
+    0 12px 28px -6px rgba(0, 0, 0, 0.55);
+  --citie-shadow-dialog:
+    0 4px 8px rgba(0, 0, 0, 0.5),
+    0 24px 56px -12px rgba(0, 0, 0, 0.65);
+  --citie-shadow-card: var(--citie-shadow-raised);
 }

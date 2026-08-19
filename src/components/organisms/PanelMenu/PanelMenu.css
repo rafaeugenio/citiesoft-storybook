@@ -4,15 +4,18 @@
   gap: var(--citie-spacing-1);
   font-family: var(--citie-font-ui);
   color: var(--citie-text-base);
+  /* Tamanho do líder da linha; não existe token global de líder, ver relatório. */
+  --citie-panelmenu-lider: 20px;
   /* Largura típica do painel ou drawer que hospeda o menu. */
   inline-size: 100%;
   max-inline-size: 320px;
 }
 
+/* Seção é contêiner externo: raio de camada, com o item um degrau abaixo. */
 .citie-panelmenu__secao {
   background-color: var(--citie-background-surface);
   border: 1px solid var(--citie-border-default);
-  border-radius: var(--citie-radius-md);
+  border-radius: var(--citie-radius-2xl);
   overflow: hidden;
 }
 
@@ -25,7 +28,7 @@
 .citie-panelmenu__cabecalho {
   display: flex;
   align-items: center;
-  gap: var(--citie-spacing-2);
+  gap: var(--citie-spacing-3);
   inline-size: 100%;
   min-block-size: var(--citie-control-height-normal);
   padding: var(--citie-spacing-2) var(--citie-spacing-3);
@@ -37,7 +40,7 @@
   color: var(--citie-text-primary);
   text-align: start;
   cursor: pointer;
-  transition: background-color 120ms ease;
+  transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-panelmenu__cabecalho:hover {
@@ -55,10 +58,10 @@
 .citie-panelmenu__chevron {
   display: inline-flex;
   flex-shrink: 0;
-  inline-size: 16px;
-  block-size: 16px;
+  inline-size: var(--citie-panelmenu-lider);
+  block-size: var(--citie-panelmenu-lider);
   color: var(--citie-text-secondary);
-  transition: transform 150ms ease;
+  transition: transform var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-panelmenu__chevron svg {
@@ -73,8 +76,8 @@
 .citie-panelmenu__icone {
   display: inline-flex;
   flex-shrink: 0;
-  inline-size: 16px;
-  block-size: 16px;
+  inline-size: var(--citie-panelmenu-lider);
+  block-size: var(--citie-panelmenu-lider);
   color: var(--citie-text-secondary);
 }
 
@@ -111,14 +114,20 @@
 .citie-panelmenu__item {
   display: flex;
   align-items: center;
-  gap: var(--citie-spacing-2);
+  gap: var(--citie-spacing-3);
   inline-size: 100%;
-  min-block-size: var(--citie-control-height-small);
-  /* O recuo alinha o rótulo do item com o rótulo do cabeçalho, abaixo do chevron. */
-  padding: var(--citie-spacing-1) var(--citie-spacing-2) var(--citie-spacing-1)
-    var(--citie-spacing-4);
+  min-block-size: var(--citie-control-height-normal);
+  /**
+   * O recuo alinha o rótulo do item com o rótulo do cabeçalho: soma o padding
+   * do cabeçalho, o líder e o gap, e desconta o recuo da própria lista.
+   */
+  padding: var(--citie-spacing-1) var(--citie-spacing-3);
+  padding-inline-start: calc(
+    var(--citie-spacing-3) + var(--citie-panelmenu-lider) + var(--citie-spacing-3) -
+      var(--citie-spacing-1)
+  );
   border: none;
-  border-radius: var(--citie-radius-sm);
+  border-radius: var(--citie-radius-lg);
   background-color: transparent;
   font: inherit;
   font-size: var(--citie-font-size-body-sm);
@@ -126,7 +135,7 @@
   text-align: start;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 120ms ease;
+  transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-panelmenu__item:hover {
@@ -162,8 +171,10 @@
   cursor: not-allowed;
 }
 
+/* Trilha da linha: à direita e sem encolher sob rótulo longo. */
 .citie-panelmenu__contagem {
   flex-shrink: 0;
+  margin-inline-start: auto;
   font-size: var(--citie-font-size-body-sm);
   font-variant-numeric: tabular-nums;
   color: var(--citie-text-secondary);

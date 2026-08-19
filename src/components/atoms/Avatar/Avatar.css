@@ -73,8 +73,18 @@ button.citie-avatar {
   cursor: pointer;
 }
 
+button.citie-avatar {
+  transition: filter var(--citie-motion-rapido) var(--citie-easing-padrao);
+}
+
 button.citie-avatar:hover:not(:disabled) {
   filter: brightness(0.95);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button.citie-avatar {
+    transition: none;
+  }
 }
 
 button.citie-avatar:focus-visible {
@@ -118,7 +128,12 @@ button.citie-avatar:focus-visible {
   inset-block-end: -2px;
   inset-inline-end: -2px;
   display: inline-flex;
-  /* Borda de 2px isola o badge do fundo. */
+  /**
+   * Anel de 2px na cor da superfície de trás, e não borda branca fixa: dentro
+   * de um card o anel precisa ser da cor do card, e no tema escuro uma borda
+   * branca fixa viraria um traço luminoso em volta do badge. Quem colocar o
+   * avatar sobre outra superfície redefine `--citie-avatar-anel` no contêiner.
+   */
   border-radius: var(--citie-radius-full);
-  box-shadow: 0 0 0 2px var(--citie-background-default);
+  box-shadow: 0 0 0 2px var(--citie-avatar-anel, var(--citie-background-default));
 }

@@ -78,9 +78,9 @@
   color: var(--citie-text-secondary);
   transform: translateY(calc(var(--fl-espaco-topo) + var(--fl-altura) / 2 - 50%));
   transition:
-    transform 140ms ease-out,
-    font-size 140ms ease-out,
-    color 140ms ease-out;
+    transform var(--citie-motion-rapido) var(--citie-easing-padrao),
+    font-size var(--citie-motion-rapido) var(--citie-easing-padrao),
+    color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-floatlabel--in .citie-floatlabel__rotulo {

@@ -12,7 +12,13 @@
   color: var(--citie-text-primary);
 }
 
+/**
+ * O contêiner segue o raio de campo (`Field`), e não o de painel: a linhagem do
+ * Listbox é de controle de formulário, com borda de campo e estado de inválido.
+ */
 .citie-listbox {
+  /* Tamanho do líder da linha; não existe token global de líder, ver relatório. */
+  --citie-listbox-lider: 20px;
   background-color: var(--citie-background-surface);
   border: 1px solid var(--citie-form-field-border);
   border-radius: var(--citie-radius-md);
@@ -73,26 +79,35 @@
   box-shadow: inset 0 0 0 2px var(--citie-brand-primary);
 }
 
+/* Rótulo de seção: micro, maiúscula, entreletra larga e cor secundária. */
 .citie-listbox__grupo {
   display: block;
-  margin: var(--citie-spacing-2) 0 4px;
+  margin: var(--citie-spacing-2) 0 var(--citie-spacing-1);
   padding-inline: var(--citie-spacing-3);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-size: var(--citie-font-size-caption);
+  font-weight: var(--citie-font-weight-title);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--citie-text-secondary);
+}
+
+/* Com marca de seleção na linha, o rótulo alinha com o texto, não com a marca. */
+.citie-listbox__lista:has(.citie-listbox__marca) .citie-listbox__grupo {
+  padding-inline-start: calc(
+    var(--citie-spacing-3) + var(--citie-listbox-lider) + var(--citie-spacing-3)
+  );
 }
 
 .citie-listbox__opcao {
   display: flex;
   align-items: center;
-  gap: var(--citie-spacing-2);
-  min-height: 36px;
+  /* Anatomia de linha: líder, gap-3, conteúdo que cresce. */
+  gap: var(--citie-spacing-3);
+  min-height: var(--citie-control-height-normal);
   padding: var(--citie-spacing-2) var(--citie-spacing-3);
   font-size: var(--citie-font-size-body-md);
   color: var(--citie-text-base);
-  border-radius: var(--citie-radius-sm);
+  border-radius: var(--citie-radius-lg);
   cursor: pointer;
 }
 
@@ -116,12 +131,13 @@
   cursor: not-allowed;
 }
 
+/* Líder de largura fixa: a coluna de texto não desloca ao marcar e desmarcar. */
 .citie-listbox__marca {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  flex: none;
+  width: var(--citie-listbox-lider);
+  flex: 0 0 var(--citie-listbox-lider);
   font-weight: 700;
   color: var(--citie-brand-primary);
 }
@@ -135,7 +151,7 @@
 .citie-listbox__erro {
   display: flex;
   align-items: flex-start;
-  gap: 6px;
+  gap: var(--citie-spacing-1);
   margin: 0;
   font-size: var(--citie-font-size-body-sm);
   color: var(--citie-danger-foreground);

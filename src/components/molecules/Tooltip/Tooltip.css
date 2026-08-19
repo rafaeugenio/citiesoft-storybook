@@ -6,7 +6,8 @@
 .citie-tooltip {
   position: absolute;
   z-index: 1100;
-  padding: 6px var(--citie-spacing-2);
+  /* Respiro de chip: o tooltip é rótulo curto, não painel. */
+  padding: var(--citie-spacing-1) var(--citie-spacing-2);
   font-family: var(--citie-font-ui);
   font-size: var(--citie-font-size-body-sm);
   line-height: 1.35;
@@ -20,6 +21,26 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   pointer-events: none;
+  /* Camada de overlay entra no tempo padrão, mais curto que o de diálogo. */
+  animation: citie-overlay-ancorado-entrada var(--citie-motion-padrao) var(--citie-easing-entrada);
+}
+
+/**
+ * A entrada anima só o deslocamento. Começar em `opacity: 0` deixaria o painel
+ * recém-aberto se declarando invisível no primeiro quadro, e é isso que a
+ * verificação de visibilidade (do teste ou de um leitor de tela) enxerga.
+ */
+@keyframes citie-overlay-ancorado-entrada {
+  from {
+    translate: 0 var(--citie-spacing-1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-tooltip,
+  .citie-popover {
+    animation: none;
+  }
 }
 
 .citie-tooltip--sm {
@@ -35,25 +56,25 @@
 }
 
 .citie-tooltip--top {
-  inset-block-end: calc(100% + 8px);
+  inset-block-end: calc(100% + var(--citie-spacing-2));
   inset-inline-start: 50%;
   translate: -50% 0;
 }
 
 .citie-tooltip--bottom {
-  inset-block-start: calc(100% + 8px);
+  inset-block-start: calc(100% + var(--citie-spacing-2));
   inset-inline-start: 50%;
   translate: -50% 0;
 }
 
 .citie-tooltip--left {
-  inset-inline-end: calc(100% + 8px);
+  inset-inline-end: calc(100% + var(--citie-spacing-2));
   inset-block-start: 50%;
   translate: 0 -50%;
 }
 
 .citie-tooltip--right {
-  inset-inline-start: calc(100% + 8px);
+  inset-inline-start: calc(100% + var(--citie-spacing-2));
   inset-block-start: 50%;
   translate: 0 -50%;
 }
@@ -82,7 +103,7 @@
 .citie-popover {
   position: absolute;
   z-index: 1100;
-  inset-block-start: calc(100% + 8px);
+  inset-block-start: calc(100% + var(--citie-spacing-2));
   inset-inline-start: 0;
   min-width: 260px;
   padding: var(--citie-spacing-4);
@@ -91,7 +112,9 @@
   color: var(--citie-text-base);
   background-color: var(--citie-background-surface);
   border: 1px solid var(--citie-border-default);
-  border-radius: var(--citie-radius-md);
+  /* Painel ancorado é contêiner externo: acompanha o raio de painel, não o de campo. */
+  border-radius: var(--citie-radius-2xl);
   box-shadow: var(--citie-shadow-overlay);
   text-align: start;
+  animation: citie-overlay-ancorado-entrada var(--citie-motion-padrao) var(--citie-easing-entrada);
 }

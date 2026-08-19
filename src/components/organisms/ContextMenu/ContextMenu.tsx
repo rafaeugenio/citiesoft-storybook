@@ -101,6 +101,10 @@ function PainelMenu({
   // usuário de teclado descobrir que a ação existe mas está indisponível.
   const navegaveis = entradas.filter((entrada): entrada is ItemMenuContexto => !ehSeparador(entrada));
 
+  // Se um item tem ícone, todos reservam o líder: sem isso a coluna de texto
+  // quebra de uma linha para a outra dentro do mesmo painel.
+  const reservaLider = navegaveis.some((entrada) => Boolean(entrada.icone));
+
   /**
    * `preventScroll` é obrigatório aqui: o painel é `position: fixed`, e o
    * navegador rolaria a página atrás dele para trazer o item à vista. Essa
@@ -227,7 +231,11 @@ function PainelMenu({
       ref={painelRef}
       role="menu"
       aria-label={rotulo}
-      className="citie-context-menu__painel"
+      className={
+        reservaLider
+          ? 'citie-context-menu__painel citie-context-menu__painel--com-lider'
+          : 'citie-context-menu__painel'
+      }
       style={{ left: `${ancora.x}px`, top: `${ancora.y}px` }}
       onKeyDown={aoTeclar}
     >
@@ -267,7 +275,7 @@ function PainelMenu({
               if (!temSubmenu) aoFecharSubmenu?.();
             }}
           >
-            {entrada.icone ? (
+            {reservaLider ? (
               <span className="citie-context-menu__icone" aria-hidden="true">
                 {entrada.icone}
               </span>

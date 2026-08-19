@@ -2,12 +2,18 @@
   box-sizing: border-box;
   background-color: var(--citie-background-surface);
   border: 1px solid var(--citie-border-default);
-  /* Figma usa raio 6 no painel, que é o raio de controle da marca. */
-  border-radius: var(--citie-radius-md);
+  /**
+   * A região de rolagem quase sempre mora dentro de um card ou painel, então
+   * ela é camada aninhada e fica em `radius-xl`, um degrau abaixo do contêiner
+   * externo de 16. O `radius-md` anterior é raio de controle, e igualava a área
+   * de rolagem a um campo de formulário.
+   */
+  border-radius: var(--citie-radius-xl);
   font-family: var(--citie-font-ui);
   font-size: var(--citie-font-size-body-md);
   color: var(--citie-text-base);
-  padding: var(--citie-spacing-3);
+  /* Respiro de superfície aninhada; 12px encostava o texto na curva de 12. */
+  padding: var(--citie-spacing-4);
 }
 
 .citie-scrollpanel:focus-visible {

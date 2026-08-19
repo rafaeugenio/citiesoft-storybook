@@ -2,12 +2,25 @@
   display: block;
   background-color: var(--citie-background-surface);
   border: 1px solid var(--citie-border-default);
-  border-radius: var(--citie-radius-xl);
-  box-shadow: var(--citie-shadow-card);
+  /**
+   * Card é contêiner externo, e o raio dele governa a leitura de profundidade
+   * da tela inteira: 16 por fora, 12 no que estiver aninhado, 8 ou menos no
+   * controle. Com todos no mesmo raio a pilha lê como adesivo colado.
+   */
+  border-radius: var(--citie-radius-2xl);
+  box-shadow: var(--citie-shadow-raised);
   font-family: var(--citie-font-ui);
   color: var(--citie-text-base);
   text-decoration: none;
   overflow: hidden;
+}
+
+/**
+ * Card dentro de card desce um degrau de raio. É o degrau que faz o aninhamento
+ * se ler como interior, e não como duas caixas irmãs empilhadas por acidente.
+ */
+.citie-card .citie-card {
+  border-radius: var(--citie-radius-xl);
 }
 
 .citie-card__cabecalho {
@@ -21,16 +34,16 @@
 .citie-card__titulo {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--citie-spacing-2);
   margin: 0;
   font-family: var(--citie-font-display);
-  font-size: 18px;
-  font-weight: 600;
+  font-size: var(--citie-font-size-title-sm);
+  font-weight: var(--citie-font-weight-title);
   color: var(--citie-text-primary);
 }
 
 .citie-card__subtitulo {
-  margin: 4px 0 0;
+  margin: var(--citie-spacing-1) 0 0;
   font-size: var(--citie-font-size-body-sm);
   color: var(--citie-text-secondary);
 }
@@ -55,25 +68,31 @@
 
 /* ---------- Densidades ---------- */
 
-.citie-card--confortavel .citie-card__cabecalho {
-  padding: var(--citie-spacing-4) 24px;
-}
-
+/**
+ * O respiro de cada densidade agora sai da escala, e não de um número escolhido
+ * a cada card: destaque em `spacing-6`, compacta em `spacing-4`. O horizontal
+ * de 24px já era o valor praticado no confortável, só que como literal, porque
+ * a escala parava em 20px.
+ *
+ * O rodapé fica um degrau abaixo do corpo no eixo vertical: ele carrega ação e
+ * não leitura, então respiro igual ao do corpo o faz pesar mais do que vale.
+ */
+.citie-card--confortavel .citie-card__cabecalho,
 .citie-card--confortavel .citie-card__corpo {
-  padding: var(--citie-spacing-4) 24px;
+  padding: var(--citie-spacing-6);
 }
 
 .citie-card--confortavel .citie-card__rodape {
-  padding: var(--citie-spacing-3) 24px;
+  padding: var(--citie-spacing-4) var(--citie-spacing-6);
 }
 
 .citie-card--compacta .citie-card__cabecalho,
 .citie-card--compacta .citie-card__corpo {
-  padding: var(--citie-spacing-3) var(--citie-spacing-4);
+  padding: var(--citie-spacing-4);
 }
 
 .citie-card--compacta .citie-card__rodape {
-  padding: var(--citie-spacing-2) var(--citie-spacing-4);
+  padding: var(--citie-spacing-3) var(--citie-spacing-4);
 }
 
 .citie-card--ultracompacta .citie-card__cabecalho,
@@ -85,11 +104,26 @@
   padding: var(--citie-spacing-2) var(--citie-spacing-3);
 }
 
+/**
+ * O estado vazio já carrega o próprio respiro vertical e se centra sozinho.
+ * Somado ao padding do corpo, o conteúdo desce e sai do centro óptico do card,
+ * que é justamente o eixo em que o olho procura a mensagem de ausência.
+ *
+ * Vem depois das densidades e com a classe do bloco no seletor de propósito:
+ * empatado em especificidade com `.citie-card--compacta .citie-card__corpo`,
+ * quem vem por último vence, e a regra passava despercebida.
+ */
+.citie-card .citie-card__corpo:has(> .citie-empty) {
+  padding-block: 0;
+}
+
 /* ---------- Estados ---------- */
 
 .citie-card--clicavel {
   cursor: pointer;
-  transition: box-shadow 140ms ease-out, background-color 140ms ease-out;
+  transition:
+    box-shadow var(--citie-motion-rapido) var(--citie-easing-padrao),
+    background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -98,6 +132,7 @@
   }
 }
 
+/* Um degrau de elevação no hover, de `raised` para `overlay`, e nunca dois. */
 .citie-card--clicavel:hover {
   box-shadow: var(--citie-shadow-overlay);
   background-color: var(--citie-state-hover-overlay);
@@ -108,9 +143,10 @@
   box-shadow: var(--citie-state-focus-ring);
 }
 
+/* Pressionado volta ao repouso: o card afunda de novo contra a superfície. */
 .citie-card--clicavel:active {
   background-color: var(--citie-brand-subtle);
-  box-shadow: var(--citie-shadow-card);
+  box-shadow: var(--citie-shadow-raised);
 }
 
 .citie-card--selecionado {

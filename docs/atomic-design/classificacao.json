@@ -106,6 +106,8 @@
     { "nome": "Tabs", "nivel": "molecula", "familia": "Contêineres", "arquivo": "Tabs/Tabs", "tituloAntigo": "Layout/Tabs e Accordion" },
     { "nome": "Accordion", "nivel": "molecula", "familia": "Contêineres", "arquivo": "Tabs/Tabs", "tituloAntigo": "Layout/Tabs e Accordion" },
     { "nome": "MeterGroup", "nivel": "molecula", "familia": "Visualização", "arquivo": "MeterGroup/MeterGroup", "tituloAntigo": "Dados/MeterGroup" },
+    { "nome": "ValorMonetario", "nivel": "molecula", "familia": "Visualização", "arquivo": "ValorMonetario/ValorMonetario", "tituloAntigo": null },
+    { "nome": "PrazoIndicador", "nivel": "molecula", "familia": "Visualização", "arquivo": "PrazoIndicador/PrazoIndicador", "tituloAntigo": null },
     { "nome": "SkeletonParagrafo", "nivel": "molecula", "familia": "Feedback", "arquivo": "SkeletonParagrafo/SkeletonParagrafo", "tituloAntigo": "Feedback/Skeleton" },
     { "nome": "SkeletonLista", "nivel": "molecula", "familia": "Feedback", "arquivo": "SkeletonLista/SkeletonLista", "tituloAntigo": "Feedback/Skeleton" },
     { "nome": "SkeletonFormulario", "nivel": "molecula", "familia": "Feedback", "arquivo": "SkeletonFormulario/SkeletonFormulario", "tituloAntigo": "Feedback/Skeleton" },

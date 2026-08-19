@@ -44,7 +44,13 @@ export function Badge({
     <span
       className={`citie-badge citie-sev citie-sev--${severity} citie-badge--${size}${
         dot ? ' citie-badge--dot' : ''
-      }${children ? ' citie-badge-anchor__badge' : ''}`}
+      }${
+        children
+          ? ' citie-badge-anchor__badge'
+          : // Solto na linha, o badge entra na escala de altura de Tag, Status e
+            // Chip; ancorado, mantém a caixa compacta para não vazar do alvo.
+            ' citie-badge--solto'
+      }`}
       // Badge é decorativo: o nome acessível completo vive no elemento pai.
       aria-hidden="true"
     >
@@ -119,9 +125,7 @@ export function StatusIndicator({ estado, size = 'md', icon }: StatusIndicatorPr
   const severidade = ESTADOS_DE_FLUXO[estado];
   return (
     <span
-      className={`citie-tag citie-status citie-sev citie-sev--${severidade} citie-tag--${size}${
-        size === 'lg' ? ' citie-status--lg' : ''
-      }`}
+      className={`citie-tag citie-status citie-sev citie-sev--${severidade} citie-tag--${size}`}
     >
       {icon ? (
         <span className="citie-tag__icon" aria-hidden="true">

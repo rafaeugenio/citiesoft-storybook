@@ -84,6 +84,9 @@ export function Menu({
 }: MenuProps) {
   const uid = useId();
   const acoes = acoesEmOrdem(itens);
+  // Se um item do menu tem ícone, todos reservam o líder: sem isso a coluna de
+  // texto quebra entre uma linha e outra dentro do mesmo painel.
+  const reservaLider = acoes.some((acao) => Boolean(acao.icone));
   const [aberto, setAberto] = useState(false);
   const [ativo, setAtivo] = useState<string>(acoes[0]?.id ?? '');
   const referencias = useRef(new Map<string, HTMLDivElement | null>());
@@ -171,7 +174,7 @@ export function Menu({
       }}
       onFocus={() => setAtivo(acao.id)}
     >
-      {acao.icone ? (
+      {reservaLider ? (
         <span className="citie-menu__icone" aria-hidden="true">
           {acao.icone}
         </span>
@@ -183,7 +186,7 @@ export function Menu({
 
   const lista = (
     <div
-      className="citie-menu"
+      className={reservaLider ? 'citie-menu citie-menu--com-lider' : 'citie-menu'}
       role="menu"
       aria-label={label}
       onKeyDown={aoTeclar}

@@ -67,7 +67,7 @@
   border-radius: var(--citie-radius-sm);
   cursor: pointer;
   /* A troca de posição precisa ser perceptível sem virar animação de lista. */
-  transition: background-color 120ms ease-out;
+  transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-orderlist__item:hover {

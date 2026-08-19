@@ -2,7 +2,12 @@
   display: block;
   background-color: var(--citie-background-surface);
   border: 1px solid var(--citie-border-default);
-  border-radius: var(--citie-radius-lg);
+  /**
+   * Painel é superfície de primeiro nível e convive com Card na mesma tela,
+   * então segue o mesmo raio externo. Em `lg` ele lia como caixa aninhada ao
+   * lado de um card, e a hierarquia de camada invertia.
+   */
+  border-radius: var(--citie-radius-2xl);
   font-family: var(--citie-font-ui);
   color: var(--citie-text-base);
   overflow: hidden;
@@ -14,9 +19,22 @@
   justify-content: space-between;
   gap: var(--citie-spacing-3);
   min-height: var(--citie-control-height-normal);
-  padding: var(--citie-spacing-2) var(--citie-spacing-4);
+  /**
+   * O horizontal acompanha o do corpo para título e conteúdo caírem na mesma
+   * linha vertical. Com raio 16 no contêiner, 16px de recuo ainda encostaria o
+   * título na curva da quina.
+   */
+  padding: var(--citie-spacing-3) var(--citie-spacing-6);
   background-color: var(--citie-background-subtle);
   border-block-end: 1px solid var(--citie-border-default);
+}
+
+/**
+ * Painel aninhado dentro de outro painel desce um degrau de raio, pela mesma
+ * razão do card aninhado: o interior precisa se ler como interior.
+ */
+.citie-panel__corpo .citie-panel {
+  border-radius: var(--citie-radius-xl);
 }
 
 /* Recolhido não tem corpo abaixo, então a borda do cabeçalho vira sobra visual. */
@@ -52,7 +70,9 @@
   background-color: transparent;
   color: var(--citie-text-secondary);
   cursor: pointer;
-  transition: background-color 120ms ease, color 120ms ease;
+  transition:
+    background-color var(--citie-motion-rapido) var(--citie-easing-padrao),
+    color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-panel__gatilho:hover {
@@ -65,14 +85,16 @@
   box-shadow: var(--citie-state-focus-ring);
 }
 
+/* Painel é contêiner de destaque: respiro interno de `spacing-6`. */
 .citie-panel__corpo {
-  padding: var(--citie-spacing-4);
+  padding: var(--citie-spacing-6);
   font-size: var(--citie-font-size-body-md);
   line-height: 1.6;
 }
 
+/* Rodapé um degrau abaixo do corpo no vertical: ele fecha, não carrega leitura. */
 .citie-panel__rodape {
-  padding: var(--citie-spacing-3) var(--citie-spacing-4);
+  padding: var(--citie-spacing-4) var(--citie-spacing-6);
   border-block-start: 1px solid var(--citie-border-default);
   font-size: var(--citie-font-size-body-sm);
   color: var(--citie-text-secondary);

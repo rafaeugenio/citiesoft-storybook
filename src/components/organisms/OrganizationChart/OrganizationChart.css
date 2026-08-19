@@ -136,7 +136,7 @@
   background-color: var(--citie-background-default);
   border: 1px solid var(--citie-border-default);
   border-radius: var(--citie-radius-md);
-  transition: border-color 120ms ease, background-color 120ms ease;
+  transition: border-color var(--citie-motion-rapido) var(--citie-easing-padrao), background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-organograma__no--expansivel {
@@ -203,7 +203,7 @@
 }
 
 .citie-organograma__seta {
-  transition: transform 150ms ease;
+  transition: transform var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-organograma__item[aria-expanded='true'] > .citie-organograma__no .citie-organograma__seta {

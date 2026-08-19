@@ -91,7 +91,7 @@
 
 .citie-megamenu__seta {
   flex: none;
-  transition: transform 150ms ease;
+  transition: transform var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-megamenu__icone {
@@ -104,6 +104,13 @@
   color: var(--citie-text-secondary);
 }
 
+/* Dentro do painel o ícone é líder de linha e tem largura fixa. */
+.citie-megamenu__item .citie-megamenu__icone {
+  flex: 0 0 var(--citie-megamenu-lider);
+  width: var(--citie-megamenu-lider);
+  height: var(--citie-megamenu-lider);
+}
+
 /* ---------------------------------------------------------------- */
 /* Painel (Overlay True/False)                                       */
 /* ---------------------------------------------------------------- */
@@ -112,10 +119,13 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--citie-spacing-4);
-  padding: var(--citie-spacing-3);
+  /* Tamanho do líder da linha; não existe token global de líder, ver relatório. */
+  --citie-megamenu-lider: 20px;
+  /* Respiro de painel, e raio de contêiner externo com o item um degrau abaixo. */
+  padding: var(--citie-spacing-4);
   background: var(--citie-background-surface);
   border: 1px solid var(--citie-border-default);
-  border-radius: var(--citie-radius-lg);
+  border-radius: var(--citie-radius-2xl);
 }
 
 /* Overlay: True — o painel flutua e não empurra o conteúdo da página. */
@@ -123,6 +133,15 @@
   position: absolute;
   z-index: 20;
   box-shadow: var(--citie-shadow-overlay);
+  animation: citie-megamenu-entrada var(--citie-motion-padrao) var(--citie-easing-entrada);
+}
+
+/* Sem `opacity: 0` no primeiro quadro: o painel recém-aberto se declararia
+   invisível para o teste e para o leitor de tela. */
+@keyframes citie-megamenu-entrada {
+  from {
+    translate: 0 calc(-1 * var(--citie-spacing-1));
+  }
 }
 
 .citie-megamenu--sobreposto.citie-megamenu--horizontal .citie-megamenu__painel {
@@ -136,9 +155,12 @@
   left: calc(100% + var(--citie-spacing-1));
 }
 
-/* Overlay: False — o painel entra no fluxo, encostado na barra. */
+/**
+ * Overlay: False — o painel entra no fluxo, encostado na barra. Por não flutuar
+ * sobre nada, ele fica no degrau `raised`, e não no `overlay`.
+ */
 .citie-megamenu--embutido .citie-megamenu__painel {
-  box-shadow: var(--citie-shadow-card);
+  box-shadow: var(--citie-shadow-raised);
 }
 
 .citie-megamenu--embutido.citie-megamenu--horizontal .citie-megamenu__painel {
@@ -161,25 +183,36 @@
   min-width: 180px;
 }
 
+/**
+ * Rótulo de seção: micro, em maiúscula, com entreletra larga e cor secundária,
+ * alinhado com o TEXTO do item da coluna, não com o líder.
+ */
 .citie-megamenu__titulo {
   margin: 0 0 var(--citie-spacing-1);
-  padding: 0 var(--citie-spacing-2);
-  color: var(--citie-text-primary);
+  padding: 0 var(--citie-spacing-3);
+  color: var(--citie-text-secondary);
   font-family: var(--citie-font-display);
-  font-size: var(--citie-font-size-body-sm);
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  font-size: var(--citie-font-size-caption);
+  font-weight: var(--citie-font-weight-title);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
+.citie-megamenu__coluna:has(.citie-megamenu__icone) .citie-megamenu__titulo {
+  padding-inline-start: calc(
+    var(--citie-spacing-3) + var(--citie-megamenu-lider) + var(--citie-spacing-3)
+  );
+}
+
+/* Anatomia de linha: líder, gap-3, conteúdo de uma ou duas linhas. */
 .citie-megamenu__item {
   display: flex;
   align-items: center;
-  gap: var(--citie-spacing-2);
+  gap: var(--citie-spacing-3);
   /* Alvo de clique confortável mesmo quando o rótulo é curto. */
-  min-height: var(--citie-control-height-small);
-  padding: var(--citie-spacing-1) var(--citie-spacing-2);
-  border-radius: var(--citie-radius-md);
+  min-height: var(--citie-control-height-normal);
+  padding: var(--citie-spacing-1) var(--citie-spacing-3);
+  border-radius: var(--citie-radius-lg);
   color: var(--citie-text-base);
   font-size: var(--citie-font-size-body-md);
   text-decoration: none;
@@ -195,10 +228,24 @@
   box-shadow: var(--citie-state-focus-ring);
 }
 
+/* Conteúdo de duas linhas: nome em peso de ação, apoio menor e secundário. */
 .citie-megamenu__textos {
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
   gap: 2px;
+  min-inline-size: 0;
+}
+
+.citie-megamenu__textos .citie-megamenu__rotulo {
+  font-weight: var(--citie-font-weight-action);
+}
+
+/* Coluna com ícone reserva o líder também nas linhas que não têm ícone. */
+.citie-megamenu__coluna:has(.citie-megamenu__icone)
+  .citie-megamenu__item:not(:has(.citie-megamenu__icone))::before {
+  content: '';
+  flex: 0 0 var(--citie-megamenu-lider);
 }
 
 .citie-megamenu__descricao {
@@ -209,5 +256,9 @@
 @media (prefers-reduced-motion: reduce) {
   .citie-megamenu__seta {
     transition: none;
+  }
+
+  .citie-megamenu--sobreposto .citie-megamenu__painel {
+    animation: none;
   }
 }

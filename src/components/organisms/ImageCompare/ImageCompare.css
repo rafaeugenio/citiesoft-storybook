@@ -66,7 +66,7 @@
   color: var(--citie-text-primary);
   box-shadow: var(--citie-shadow-overlay);
   cursor: ew-resize;
-  transition: border-color 120ms ease, background-color 120ms ease;
+  transition: border-color var(--citie-motion-rapido) var(--citie-easing-padrao), background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-image-compare__alca:hover {

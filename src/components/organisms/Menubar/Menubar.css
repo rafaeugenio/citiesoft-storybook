@@ -96,7 +96,7 @@
 }
 
 .citie-menubar__seta {
-  transition: transform 150ms ease;
+  transition: transform var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-menubar__seta--aberta {
@@ -117,12 +117,15 @@
   flex-direction: column;
   gap: 2px;
   min-width: 220px;
+  /* Tamanho do líder da linha; não existe token global de líder, ver relatório. */
+  --citie-menubar-lider: 20px;
   padding: var(--citie-spacing-1);
   background-color: var(--citie-background-default);
   border: 1px solid var(--citie-border-default);
-  border-radius: var(--citie-radius-md);
+  /* Painel de menu é contêiner externo: raio de camada. */
+  border-radius: var(--citie-radius-2xl);
   box-shadow: var(--citie-shadow-overlay);
-  animation: citie-menubar-entrada 120ms ease;
+  animation: citie-menubar-entrada var(--citie-motion-padrao) var(--citie-easing-entrada);
 }
 
 .citie-menubar__grupo-aninhado {
@@ -135,12 +138,13 @@
   margin-inline-start: var(--citie-spacing-1);
 }
 
+/* Anatomia de linha: líder, gap-3, conteúdo, gap-3, trilha à direita. */
 .citie-menubar__opcao {
   display: flex;
   align-items: center;
-  gap: var(--citie-spacing-2);
+  gap: var(--citie-spacing-3);
   width: 100%;
-  min-height: var(--citie-control-height-small);
+  min-height: var(--citie-control-height-normal);
   padding: var(--citie-spacing-1) var(--citie-spacing-3);
   font-family: inherit;
   font-size: var(--citie-font-size-body-md);
@@ -149,14 +153,32 @@
   text-align: start;
   background: none;
   border: none;
-  border-radius: var(--citie-radius-sm);
+  border-radius: var(--citie-radius-lg);
   cursor: pointer;
+}
+
+/* Líder de largura fixa dentro do painel. */
+.citie-menubar__opcao .citie-menubar__icone {
+  flex: 0 0 var(--citie-menubar-lider);
+  width: var(--citie-menubar-lider);
+  height: var(--citie-menubar-lider);
+}
+
+/**
+ * Quando o painel tem ao menos uma opção com ícone, as opções sem ícone
+ * reservam a mesma coluna. Sem isso o texto de uma linha começa em posição
+ * diferente do texto da linha de cima, dentro do mesmo painel.
+ */
+.citie-menubar__submenu:has(.citie-menubar__icone)
+  .citie-menubar__opcao:not(:has(.citie-menubar__icone))::before {
+  content: '';
+  flex: 0 0 var(--citie-menubar-lider);
 }
 
 @keyframes citie-menubar-entrada {
   from {
     opacity: 0;
-    transform: translateY(-4px);
+    transform: translateY(calc(-1 * var(--citie-spacing-1)));
   }
 }
 
