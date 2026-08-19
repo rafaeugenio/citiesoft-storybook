@@ -1,0 +1,77 @@
+.citie-otp {
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-2);
+  border: none;
+  margin: 0;
+  padding: 0;
+  font-family: var(--citie-font-ui);
+}
+
+.citie-otp__label {
+  padding: 0;
+  font-size: var(--citie-font-size-body-md);
+  font-weight: 500;
+  color: var(--citie-text-primary);
+}
+
+.citie-otp__casas {
+  display: flex;
+  gap: var(--citie-spacing-2);
+}
+
+.citie-otp__casa {
+  box-sizing: border-box;
+  text-align: center;
+  font-family: inherit;
+  font-weight: 600;
+  color: var(--citie-text-primary);
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-form-field-border);
+  border-radius: var(--citie-radius-md);
+}
+
+/* Alturas alinhadas à escala de controle do DS: 32 / 40 / 48. */
+.citie-otp--small .citie-otp__casa {
+  width: 32px;
+  height: var(--citie-control-height-small);
+  font-size: var(--citie-font-size-body-sm);
+}
+
+.citie-otp--normal .citie-otp__casa {
+  width: 40px;
+  height: var(--citie-control-height-normal);
+  font-size: var(--citie-font-size-body-md);
+}
+
+.citie-otp--large .citie-otp__casa {
+  width: 48px;
+  height: var(--citie-control-height-large);
+  font-size: var(--citie-font-size-body-lg);
+}
+
+.citie-otp__casa:hover:not(:disabled):not(:focus) {
+  border-color: var(--citie-border-strong);
+}
+
+.citie-otp__casa:focus {
+  outline: none;
+  border-color: var(--citie-brand-primary);
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-otp__casa[aria-invalid='true'] {
+  border-color: var(--citie-border-danger);
+}
+
+.citie-otp__casa:disabled {
+  background-color: var(--citie-state-disabled-background);
+  color: var(--citie-state-disabled-text);
+  cursor: not-allowed;
+}
+
+.citie-otp__erro {
+  margin: 0;
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-danger-foreground);
+}

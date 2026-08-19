@@ -1,0 +1,148 @@
+/**
+ * FloatLabel — página do Figma `❖ FloatLabel` (7421:322901).
+ *
+ * O rótulo nunca muda de elemento: é o mesmo `<label>` em repouso e flutuado,
+ * só o deslocamento e o tamanho da fonte mudam. Por isso todas as posições
+ * saem de `transform: translateY(...)`, o que mantém o texto sempre legível
+ * (nada de opacidade parcial) e a transição barata.
+ */
+
+.citie-floatlabel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-2);
+  font-family: var(--citie-font-ui);
+}
+
+/* Cada tamanho carrega as medidas que o rótulo precisa para alinhar com o valor
+   digitado: recuo lateral igual ao padding do controle e altura do controle. */
+.citie-floatlabel--small {
+  --fl-altura: var(--citie-control-height-small);
+  --fl-recuo-inline: var(--citie-spacing-3);
+  --fl-fonte-repouso: var(--citie-font-size-body-sm);
+  /* Sem token de altura para o campo do variante In: é a altura do controle
+     mais o espaço que o rótulo ocupa no topo. */
+  --fl-altura-in: 48px;
+  --fl-topo-rotulo-in: 6px;
+}
+
+.citie-floatlabel--normal {
+  --fl-altura: var(--citie-control-height-normal);
+  --fl-recuo-inline: var(--citie-spacing-4);
+  --fl-fonte-repouso: var(--citie-font-size-body-md);
+  --fl-altura-in: 56px;
+  --fl-topo-rotulo-in: 7px;
+}
+
+.citie-floatlabel--large {
+  --fl-altura: var(--citie-control-height-large);
+  --fl-recuo-inline: var(--citie-spacing-5);
+  --fl-fonte-repouso: var(--citie-font-size-body-lg);
+  --fl-altura-in: 64px;
+  --fl-topo-rotulo-in: 8px;
+}
+
+/* Espaço reservado acima do campo para o rótulo flutuado não ser cortado. */
+.citie-floatlabel--over {
+  --fl-espaco-topo: 20px;
+}
+
+.citie-floatlabel--on {
+  --fl-espaco-topo: 10px;
+}
+
+.citie-floatlabel--in {
+  --fl-espaco-topo: 0px;
+}
+
+.citie-floatlabel__area {
+  position: relative;
+  padding-top: var(--fl-espaco-topo);
+}
+
+/* ---------- Rótulo ---------- */
+
+.citie-floatlabel__rotulo {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: var(--fl-recuo-inline);
+  max-width: calc(100% - 2 * var(--fl-recuo-inline));
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  /* O clique atravessa o rótulo e cai no campo, que já recebe o foco. */
+  pointer-events: none;
+  font-size: var(--fl-fonte-repouso);
+  font-weight: 500;
+  /* Contraste mínimo 4,5:1 em qualquer posição: nunca usa o token de placeholder. */
+  color: var(--citie-text-secondary);
+  transform: translateY(calc(var(--fl-espaco-topo) + var(--fl-altura) / 2 - 50%));
+  transition:
+    transform 140ms ease-out,
+    font-size 140ms ease-out,
+    color 140ms ease-out;
+}
+
+.citie-floatlabel--in .citie-floatlabel__rotulo {
+  transform: translateY(calc(var(--fl-altura-in) / 2 - 50%));
+}
+
+.citie-floatlabel--flutuando .citie-floatlabel__rotulo {
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-text-primary);
+}
+
+.citie-floatlabel--over.citie-floatlabel--flutuando .citie-floatlabel__rotulo {
+  transform: translateY(0);
+}
+
+/* On: o rótulo monta em cima da borda superior e abre um vão nela. */
+.citie-floatlabel--on.citie-floatlabel--flutuando .citie-floatlabel__rotulo {
+  transform: translateY(calc(var(--fl-espaco-topo) - 50%));
+  padding-inline: var(--citie-spacing-1);
+  margin-inline-start: calc(-1 * var(--citie-spacing-1));
+  background-color: var(--citie-background-default);
+}
+
+/* Campo preenchido não tem borda para interromper. */
+.citie-floatlabel--on.citie-floatlabel--filled.citie-floatlabel--flutuando
+  .citie-floatlabel__rotulo {
+  background-color: transparent;
+}
+
+.citie-floatlabel--in.citie-floatlabel--flutuando .citie-floatlabel__rotulo {
+  transform: translateY(var(--fl-topo-rotulo-in));
+}
+
+.citie-floatlabel--foco .citie-floatlabel__rotulo {
+  color: var(--citie-brand-primary);
+}
+
+.citie-floatlabel--invalido .citie-floatlabel__rotulo {
+  color: var(--citie-danger-foreground);
+}
+
+/* Campo desabilitado ainda é lido em tela de consulta: o rótulo mantém contraste
+   de texto auxiliar em vez do token de texto desabilitado. */
+.citie-floatlabel--desabilitado .citie-floatlabel__rotulo {
+  color: var(--citie-text-secondary);
+}
+
+/* ---------- Campo ---------- */
+
+.citie-floatlabel__campo {
+  width: 100%;
+}
+
+/* No variante In o rótulo divide a altura com o valor, então o campo cresce e o
+   texto desce. Nos outros dois o campo mantém a altura padrão do DS. */
+.citie-floatlabel--in .citie-floatlabel__campo {
+  height: var(--fl-altura-in);
+  padding-block: calc(var(--fl-topo-rotulo-in) + 14px) 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-floatlabel__rotulo {
+    transition: none;
+  }
+}

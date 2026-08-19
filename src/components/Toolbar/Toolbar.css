@@ -1,0 +1,69 @@
+/* Medidas do Figma arredondadas para os tokens: padding 10,5 -> spacing-3 (12),
+   gap interno 7 -> spacing-2 (8), raio 6 -> radius-md. */
+.citie-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-3);
+  padding: var(--citie-spacing-3);
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-md);
+  font-family: var(--citie-font-ui);
+  font-size: var(--citie-font-size-body-md);
+  color: var(--citie-text-base);
+}
+
+/* `space-between` do Figma: com as três áreas o centro ocupa a sobra; com duas,
+   início e fim vão para as pontas sozinhos. */
+.citie-toolbar--horizontal {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.citie-toolbar--vertical {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.citie-toolbar__area {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-2);
+  min-width: 0;
+}
+
+.citie-toolbar--vertical .citie-toolbar__area {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.citie-toolbar--horizontal .citie-toolbar__area--centro {
+  flex: 1 1 220px;
+  justify-content: center;
+}
+
+.citie-toolbar--horizontal .citie-toolbar__area--fim {
+  justify-content: flex-end;
+}
+
+.citie-toolbar__separador {
+  flex: none;
+  background-color: var(--citie-border-default);
+  border: 0;
+}
+
+.citie-toolbar__separador--vertical {
+  inline-size: 1px;
+  block-size: var(--citie-control-height-small);
+}
+
+.citie-toolbar__separador--horizontal {
+  inline-size: 100%;
+  block-size: 1px;
+}
+
+/* A busca já vem com largura própria; dentro da barra ela acompanha a área. */
+.citie-toolbar__area--centro .citie-search-bloco {
+  inline-size: 100%;
+}

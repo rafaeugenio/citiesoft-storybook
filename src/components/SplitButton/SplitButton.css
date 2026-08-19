@@ -1,0 +1,155 @@
+/**
+ * SplitButton Citiesoft — família de ação da spec design-system/03-components/buttons.md v2.0.0
+ * Equivalente PrimeNG: p-splitbutton
+ *
+ * A cor, a altura e o anel de foco vêm do Button; aqui só existe o que a
+ * composição exige: a costura entre os dois botões e o painel do menu.
+ */
+
+.citie-split-button {
+  display: inline-flex;
+  position: relative;
+  /* O par se comporta como um controle só: nada quebra entre a ação e o gatilho. */
+  isolation: isolate;
+}
+
+/* ---------- Costura: raio externo preservado, interno zerado ---------- */
+
+.citie-split-button__acao {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+
+.citie-split-button__gatilho {
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+  /* Sobrepõe a borda de 1px para não formar linha dupla na emenda. */
+  margin-inline-start: -1px;
+}
+
+/* O foco precisa ficar por cima do irmão, senão o anel some sob a emenda. */
+.citie-split-button__acao:focus-visible,
+.citie-split-button__gatilho:focus-visible {
+  z-index: 1;
+}
+
+/**
+ * Divisor da emenda. Usa `currentColor` com opacidade em vez de um token de
+ * borda porque a linha precisa acompanhar a cor do rótulo em todas as
+ * variantes de severidade, claras e escuras.
+ */
+.citie-split-button__gatilho::before {
+  content: '';
+  position: absolute;
+  inset-block: 25%;
+  inset-inline-start: 0;
+  width: 1px;
+  background-color: currentColor;
+  opacity: 0.32;
+}
+
+/* Text e secondary não têm preenchimento: a borda da variante já separa. */
+.citie-split-button--text .citie-split-button__gatilho::before,
+.citie-split-button--secondary .citie-split-button__gatilho::before {
+  opacity: 0.18;
+}
+
+/* ---------- Figma `Raised = True` ---------- */
+
+.citie-split-button--elevado {
+  box-shadow: var(--citie-shadow-card);
+  border-radius: var(--citie-radius-md);
+}
+
+/* ---------- Figma `Rounded = True`: só as pontas externas ---------- */
+
+.citie-split-button--arredondado {
+  border-radius: var(--citie-radius-full);
+}
+
+.citie-split-button--arredondado .citie-split-button__acao {
+  border-start-start-radius: var(--citie-radius-full);
+  border-end-start-radius: var(--citie-radius-full);
+}
+
+.citie-split-button--arredondado .citie-split-button__gatilho {
+  border-start-end-radius: var(--citie-radius-full);
+  border-end-end-radius: var(--citie-radius-full);
+}
+
+/* ---------- Seta do gatilho ---------- */
+
+.citie-split-button__seta {
+  transition: rotate 120ms ease-out;
+}
+
+.citie-split-button__seta--aberta {
+  rotate: 180deg;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-split-button__seta {
+    transition: none;
+  }
+}
+
+/* ---------- Menu ---------- */
+
+.citie-split-button__menu {
+  position: absolute;
+  inset-block-start: calc(100% + var(--citie-spacing-1));
+  inset-inline-end: 0;
+  z-index: 20;
+  min-width: 100%;
+  padding: var(--citie-spacing-1);
+  display: flex;
+  flex-direction: column;
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-md);
+  box-shadow: var(--citie-shadow-overlay);
+}
+
+.citie-split-button__item {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-2);
+  width: 100%;
+  min-height: var(--citie-control-height-small);
+  padding: var(--citie-spacing-1) var(--citie-spacing-3);
+  background: none;
+  border: none;
+  border-radius: var(--citie-radius-sm);
+  font-family: var(--citie-font-ui);
+  font-size: var(--citie-font-size-body-md);
+  color: var(--citie-text-primary);
+  text-align: start;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.citie-split-button__item:hover:not([aria-disabled='true']) {
+  background-color: var(--citie-state-hover-overlay);
+}
+
+.citie-split-button__item:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-split-button__item[aria-disabled='true'] {
+  color: var(--citie-state-disabled-text);
+  cursor: not-allowed;
+}
+
+.citie-split-button__item-icone {
+  display: inline-flex;
+  flex: none;
+  color: var(--citie-text-secondary);
+}
+
+.citie-split-button__separador {
+  height: 1px;
+  margin-block: var(--citie-spacing-1);
+  background-color: var(--citie-border-default);
+}

@@ -1,0 +1,126 @@
+.citie-progress {
+  --progress-cor: var(--citie-info-emphasis);
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-2);
+  font-family: var(--citie-font-ui);
+  width: 100%;
+}
+
+.citie-progress--info {
+  --progress-cor: var(--citie-info-emphasis);
+}
+
+.citie-progress--success {
+  --progress-cor: var(--citie-success-emphasis);
+}
+
+.citie-progress--danger {
+  --progress-cor: var(--citie-danger-emphasis);
+}
+
+.citie-progress--warn {
+  --progress-cor: var(--citie-warning-emphasis);
+}
+
+.citie-progress--neutro {
+  --progress-cor: var(--citie-border-strong);
+}
+
+.citie-progress__cabecalho {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--citie-spacing-3);
+  font-size: var(--citie-font-size-body-md);
+  font-weight: 500;
+  color: var(--citie-text-primary);
+}
+
+.citie-progress__valor {
+  font-variant-numeric: tabular-nums;
+}
+
+/* O trilho ocupa 100% do container, nunca largura fixa em pixel. */
+.citie-progress__trilho {
+  width: 100%;
+  background-color: var(--citie-background-subtle);
+  border-radius: var(--citie-radius-full);
+  overflow: hidden;
+}
+
+.citie-progress__preenchimento {
+  height: 100%;
+  background-color: var(--progress-cor);
+  border-radius: var(--citie-radius-full);
+  transition: width 240ms ease-out;
+}
+
+.citie-progress__trilho--indeterminado .citie-progress__preenchimento {
+  width: 40%;
+  animation: citie-progress-sweep 1400ms ease-in-out infinite;
+}
+
+@keyframes citie-progress-sweep {
+  from {
+    translate: -100% 0;
+  }
+  to {
+    translate: 250% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-progress__preenchimento {
+    transition: none;
+  }
+
+  .citie-progress__trilho--indeterminado .citie-progress__preenchimento {
+    animation: none;
+    width: 100%;
+    opacity: 0.5;
+  }
+}
+
+.citie-progress__mensagem {
+  margin: 0;
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-text-secondary);
+}
+
+/* ---------- Spinner ---------- */
+
+.citie-spinner {
+  display: inline-block;
+  border: 2px solid var(--citie-loading-spinner);
+  border-top-color: transparent;
+  border-radius: var(--citie-radius-full);
+  animation: citie-spinner-giro 700ms linear infinite;
+}
+
+.citie-spinner--sm {
+  width: 16px;
+  height: 16px;
+}
+
+.citie-spinner--md {
+  width: 24px;
+  height: 24px;
+}
+
+.citie-spinner--lg {
+  width: 40px;
+  height: 40px;
+  border-width: 3px;
+}
+
+@keyframes citie-spinner-giro {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-spinner {
+    animation-duration: 2s;
+  }
+}

@@ -1,0 +1,127 @@
+.citie-card {
+  display: block;
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-xl);
+  box-shadow: var(--citie-shadow-card);
+  font-family: var(--citie-font-ui);
+  color: var(--citie-text-base);
+  text-decoration: none;
+  overflow: hidden;
+}
+
+.citie-card__cabecalho {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--citie-spacing-4);
+  border-block-end: 1px solid var(--citie-border-default);
+}
+
+.citie-card__titulo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-family: var(--citie-font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--citie-text-primary);
+}
+
+.citie-card__subtitulo {
+  margin: 4px 0 0;
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-text-secondary);
+}
+
+.citie-card__corpo {
+  font-size: var(--citie-font-size-body-md);
+}
+
+.citie-card__rodape {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--citie-spacing-3);
+  border-block-start: 1px solid var(--citie-border-default);
+}
+
+/* Mídia sem padding, com radius só nos cantos superiores. */
+.citie-card__midia img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ---------- Densidades ---------- */
+
+.citie-card--confortavel .citie-card__cabecalho {
+  padding: var(--citie-spacing-4) 24px;
+}
+
+.citie-card--confortavel .citie-card__corpo {
+  padding: var(--citie-spacing-4) 24px;
+}
+
+.citie-card--confortavel .citie-card__rodape {
+  padding: var(--citie-spacing-3) 24px;
+}
+
+.citie-card--compacta .citie-card__cabecalho,
+.citie-card--compacta .citie-card__corpo {
+  padding: var(--citie-spacing-3) var(--citie-spacing-4);
+}
+
+.citie-card--compacta .citie-card__rodape {
+  padding: var(--citie-spacing-2) var(--citie-spacing-4);
+}
+
+.citie-card--ultracompacta .citie-card__cabecalho,
+.citie-card--ultracompacta .citie-card__corpo {
+  padding: var(--citie-spacing-2) var(--citie-spacing-3);
+}
+
+.citie-card--ultracompacta .citie-card__rodape {
+  padding: var(--citie-spacing-2) var(--citie-spacing-3);
+}
+
+/* ---------- Estados ---------- */
+
+.citie-card--clicavel {
+  cursor: pointer;
+  transition: box-shadow 140ms ease-out, background-color 140ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-card--clicavel {
+    transition: none;
+  }
+}
+
+.citie-card--clicavel:hover {
+  box-shadow: var(--citie-shadow-overlay);
+  background-color: var(--citie-state-hover-overlay);
+}
+
+.citie-card--clicavel:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-card--clicavel:active {
+  background-color: var(--citie-brand-subtle);
+  box-shadow: var(--citie-shadow-card);
+}
+
+.citie-card--selecionado {
+  border-inline-start: 3px solid var(--citie-brand-primary);
+}
+
+.citie-card--erro {
+  border-color: var(--citie-border-danger);
+}
+
+.citie-card__alerta {
+  display: inline-flex;
+  color: var(--citie-danger-foreground);
+}

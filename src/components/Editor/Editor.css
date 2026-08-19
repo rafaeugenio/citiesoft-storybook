@@ -1,0 +1,254 @@
+.citie-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-1);
+  font-family: var(--citie-font-ui);
+}
+
+.citie-editor__rotulo {
+  font-size: var(--citie-font-size-body-md);
+  font-weight: var(--citie-font-weight-action);
+  color: var(--citie-text-primary);
+}
+
+.citie-editor__moldura {
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-lg);
+  background: var(--citie-background-surface);
+  overflow: hidden;
+}
+
+.citie-editor--invalido .citie-editor__moldura {
+  border-color: var(--citie-border-danger);
+}
+
+.citie-editor--desabilitado .citie-editor__moldura {
+  background: var(--citie-state-disabled-background);
+}
+
+/* Barra ------------------------------------------------------------------ */
+
+.citie-editor__barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--citie-spacing-1);
+  padding: var(--citie-spacing-2) var(--citie-spacing-3);
+  border-bottom: 1px solid var(--citie-border-default);
+  background: var(--citie-background-surface);
+}
+
+.citie-editor--desabilitado .citie-editor__barra {
+  background: var(--citie-state-disabled-background);
+}
+
+.citie-editor__separador {
+  width: 1px;
+  align-self: stretch;
+  margin: 0 var(--citie-spacing-1);
+  background: var(--citie-border-default);
+}
+
+.citie-editor__seletor {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.citie-editor__select {
+  width: 100%;
+  height: var(--citie-control-height-small);
+  padding: 0 calc(var(--citie-spacing-5) + var(--citie-spacing-1)) 0 var(--citie-spacing-2);
+  border: 1px solid transparent;
+  border-radius: var(--citie-radius-md);
+  background: transparent;
+  font-family: inherit;
+  font-size: var(--citie-font-size-body-md);
+  font-weight: var(--citie-font-weight-action);
+  color: var(--citie-text-base);
+  appearance: none;
+  cursor: pointer;
+}
+
+.citie-editor__select:hover:not(:disabled) {
+  background: var(--citie-state-hover-overlay);
+}
+
+.citie-editor__select:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-editor__select:disabled {
+  color: var(--citie-state-disabled-text);
+  cursor: not-allowed;
+}
+
+.citie-editor__chevron {
+  position: absolute;
+  right: var(--citie-spacing-2);
+  color: var(--citie-text-secondary);
+  pointer-events: none;
+}
+
+.citie-editor--desabilitado .citie-editor__chevron {
+  color: var(--citie-state-disabled-text);
+}
+
+/* Botões de formatação --------------------------------------------------- */
+
+.citie-editor__botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* O ícone do Figma tem 18px; o alvo cresce para o mínimo de 24x24 da WCAG. */
+  width: var(--citie-control-height-small);
+  height: var(--citie-control-height-small);
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--citie-radius-md);
+  background: transparent;
+  color: var(--citie-text-base);
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.citie-editor__botao:hover:not(:disabled) {
+  background: var(--citie-state-hover-overlay);
+  color: var(--citie-brand-primary);
+}
+
+.citie-editor__botao:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+/**
+ * Estado Active do `editor-toolbar-item`. A cor sozinha não pode carregar o
+ * estado, então o botão ativo também ganha fundo e borda de marca; o leitor de
+ * tela recebe o mesmo dado por `aria-pressed`.
+ */
+.citie-editor__botao--ativo:not(:disabled) {
+  background: var(--citie-brand-subtle);
+  border-color: var(--citie-brand-primary);
+  color: var(--citie-brand-primary);
+}
+
+.citie-editor__botao:disabled {
+  color: var(--citie-state-disabled-text);
+  cursor: not-allowed;
+}
+
+.citie-editor__icone {
+  flex: none;
+}
+
+/* Área de edição --------------------------------------------------------- */
+
+.citie-editor__area {
+  padding: var(--citie-spacing-3) var(--citie-spacing-4);
+  overflow-y: auto;
+  font-size: var(--citie-font-size-body-lg);
+  line-height: 1.5;
+  color: var(--citie-text-base);
+  /* Cursor de texto mesmo nas margens internas do bloco. */
+  cursor: text;
+}
+
+.citie-editor__area:focus-visible {
+  outline: none;
+  box-shadow: inset var(--citie-state-focus-ring);
+}
+
+.citie-editor__area[data-vazio]::before {
+  content: attr(data-placeholder);
+  color: var(--citie-text-placeholder);
+  pointer-events: none;
+}
+
+.citie-editor--desabilitado .citie-editor__area {
+  color: var(--citie-state-disabled-text);
+  cursor: not-allowed;
+}
+
+.citie-editor--somente-leitura .citie-editor__area {
+  cursor: default;
+}
+
+.citie-editor__area > :first-child {
+  margin-top: 0;
+}
+
+.citie-editor__area > :last-child {
+  margin-bottom: 0;
+}
+
+.citie-editor__area h2,
+.citie-editor__area h3 {
+  font-family: var(--citie-font-display);
+  color: var(--citie-text-primary);
+}
+
+.citie-editor__area h2 {
+  font-size: 20px;
+  margin: var(--citie-spacing-3) 0 var(--citie-spacing-2);
+}
+
+.citie-editor__area h3 {
+  font-size: 17px;
+  margin: var(--citie-spacing-3) 0 var(--citie-spacing-2);
+}
+
+.citie-editor__area p {
+  margin: 0 0 var(--citie-spacing-3);
+}
+
+.citie-editor__area ul,
+.citie-editor__area ol {
+  margin: 0 0 var(--citie-spacing-3);
+  padding-left: var(--citie-spacing-5);
+}
+
+.citie-editor__area blockquote {
+  margin: 0 0 var(--citie-spacing-3);
+  padding-left: var(--citie-spacing-3);
+  border-left: 3px solid var(--citie-brand-primary);
+  color: var(--citie-text-secondary);
+}
+
+.citie-editor__area code,
+.citie-editor__area pre {
+  /* Não há token de fonte monoespaçada na lista; usa a pilha do sistema. */
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: var(--citie-font-size-body-md);
+  background: var(--citie-background-subtle);
+  border-radius: var(--citie-radius-sm);
+}
+
+.citie-editor__area code {
+  padding: 2px var(--citie-spacing-1);
+}
+
+.citie-editor__area pre {
+  margin: 0 0 var(--citie-spacing-3);
+  padding: var(--citie-spacing-3);
+  overflow-x: auto;
+}
+
+/* Apoio ------------------------------------------------------------------ */
+
+.citie-editor__apoio {
+  margin: 0;
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-form-helper);
+}
+
+.citie-editor__apoio--erro {
+  color: var(--citie-danger-foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-editor__botao {
+    transition: none;
+  }
+}

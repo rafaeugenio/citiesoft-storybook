@@ -1,0 +1,110 @@
+.citie-menu {
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+  padding: var(--citie-spacing-1) 0;
+  font-family: var(--citie-font-ui);
+  font-size: var(--citie-font-size-body-md);
+  color: var(--citie-text-base);
+  background: var(--citie-background-surface);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-md);
+}
+
+/* menu-item do arquivo: 28px de altura útil com padding 7/10.5. Aqui o alvo
+   sobe para 32px (control-height-small), o mínimo de toque do produto. */
+.citie-menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-2);
+  min-height: var(--citie-control-height-small);
+  padding: 0 var(--citie-spacing-3);
+  font-weight: var(--citie-font-weight-action);
+  cursor: pointer;
+}
+
+.citie-menu__item:hover {
+  background: var(--citie-state-hover-overlay);
+}
+
+.citie-menu__item:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+  /* Sem o recuo o anel some sob a borda do painel. */
+  border-radius: var(--citie-radius-sm);
+}
+
+.citie-menu__icone {
+  display: inline-flex;
+  flex: 0 0 auto;
+  color: var(--citie-text-secondary);
+}
+
+.citie-menu__rotulo {
+  flex: 1 1 auto;
+}
+
+.citie-menu__atalho {
+  flex: 0 0 auto;
+  font-size: var(--citie-font-size-body-sm);
+  font-weight: 400;
+  color: var(--citie-text-secondary);
+}
+
+.citie-menu__item--destrutivo {
+  color: var(--citie-danger-foreground);
+}
+
+.citie-menu__item--destrutivo .citie-menu__icone {
+  color: var(--citie-danger-foreground);
+}
+
+.citie-menu__item--destrutivo:hover {
+  background: var(--citie-danger-background);
+}
+
+/* Item desabilitado continua focável e legível: o cinza de estado reprovaria
+   contraste, então o indicativo vem da opacidade do ícone mais o cursor. */
+.citie-menu__item--desabilitado {
+  color: var(--citie-text-secondary);
+  cursor: not-allowed;
+}
+
+.citie-menu__item--desabilitado:hover {
+  background: transparent;
+}
+
+/* menu-submenu-label */
+.citie-menu__grupo-rotulo {
+  display: block;
+  padding: var(--citie-spacing-2) var(--citie-spacing-3) var(--citie-spacing-1);
+  font-size: var(--citie-font-size-body-sm);
+  font-weight: 600;
+  color: var(--citie-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* menu-separator */
+.citie-menu__separador {
+  height: 1px;
+  margin: var(--citie-spacing-1) 0;
+  background: var(--citie-border-default);
+}
+
+/* Type=Popup: gatilho mais painel sobreposto. */
+.citie-menu-popup {
+  position: relative;
+  display: inline-block;
+}
+
+.citie-menu-popup__painel {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + var(--citie-spacing-1));
+  left: 0;
+}
+
+.citie-menu-popup__painel .citie-menu {
+  box-shadow: var(--citie-shadow-overlay);
+}

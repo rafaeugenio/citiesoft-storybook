@@ -1,0 +1,178 @@
+.citie-panelmenu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-1);
+  font-family: var(--citie-font-ui);
+  color: var(--citie-text-base);
+  /* Largura típica do painel ou drawer que hospeda o menu. */
+  inline-size: 100%;
+  max-inline-size: 320px;
+}
+
+.citie-panelmenu__secao {
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-md);
+  overflow: hidden;
+}
+
+.citie-panelmenu__titulo {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.citie-panelmenu__cabecalho {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-2);
+  inline-size: 100%;
+  min-block-size: var(--citie-control-height-normal);
+  padding: var(--citie-spacing-2) var(--citie-spacing-3);
+  border: none;
+  background-color: var(--citie-background-subtle);
+  font: inherit;
+  font-size: var(--citie-font-size-body-md);
+  font-weight: var(--citie-font-weight-action);
+  color: var(--citie-text-primary);
+  text-align: start;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+
+.citie-panelmenu__cabecalho:hover {
+  background-color: var(--citie-state-hover-overlay);
+}
+
+.citie-panelmenu__cabecalho:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+  /* O anel fica por cima da borda do painel vizinho. */
+  position: relative;
+  z-index: 1;
+}
+
+.citie-panelmenu__chevron {
+  display: inline-flex;
+  flex-shrink: 0;
+  inline-size: 16px;
+  block-size: 16px;
+  color: var(--citie-text-secondary);
+  transition: transform 150ms ease;
+}
+
+.citie-panelmenu__chevron svg {
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.citie-panelmenu__chevron--aberto {
+  transform: rotate(90deg);
+}
+
+.citie-panelmenu__icone {
+  display: inline-flex;
+  flex-shrink: 0;
+  inline-size: 16px;
+  block-size: 16px;
+  color: var(--citie-text-secondary);
+}
+
+.citie-panelmenu__icone svg {
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.citie-panelmenu__rotulo {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.citie-panelmenu__painel {
+  border-block-start: 1px solid var(--citie-border-default);
+}
+
+.citie-panelmenu__painel[hidden] {
+  display: none;
+}
+
+.citie-panelmenu__lista {
+  list-style: none;
+  margin: 0;
+  padding: var(--citie-spacing-1);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.citie-panelmenu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-2);
+  inline-size: 100%;
+  min-block-size: var(--citie-control-height-small);
+  /* O recuo alinha o rótulo do item com o rótulo do cabeçalho, abaixo do chevron. */
+  padding: var(--citie-spacing-1) var(--citie-spacing-2) var(--citie-spacing-1)
+    var(--citie-spacing-4);
+  border: none;
+  border-radius: var(--citie-radius-sm);
+  background-color: transparent;
+  font: inherit;
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-text-base);
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+
+.citie-panelmenu__item:hover {
+  background-color: var(--citie-state-hover-overlay);
+  color: var(--citie-text-primary);
+}
+
+.citie-panelmenu__item:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+/* Item corrente: a cor vem acompanhada de peso e da barra à esquerda, para o
+   estado não depender só do azul. */
+.citie-panelmenu__item--ativo {
+  background-color: var(--citie-brand-subtle);
+  color: var(--citie-brand-primary);
+  font-weight: var(--citie-font-weight-action);
+  box-shadow: inset 3px 0 0 var(--citie-brand-primary);
+}
+
+.citie-panelmenu__item--ativo:hover {
+  background-color: var(--citie-brand-subtle);
+  color: var(--citie-brand-primary);
+}
+
+/* O rótulo do item indisponível continua precisando ser lido, então usa o texto
+   secundário em vez do cinza de desabilitado, que não alcança 4,5:1. O estado vem
+   do atributo `disabled`, anunciado pelo leitor de tela. */
+.citie-panelmenu__item:disabled {
+  background-color: transparent;
+  color: var(--citie-text-secondary);
+  cursor: not-allowed;
+}
+
+.citie-panelmenu__contagem {
+  flex-shrink: 0;
+  font-size: var(--citie-font-size-body-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--citie-text-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-panelmenu__cabecalho,
+  .citie-panelmenu__chevron,
+  .citie-panelmenu__item {
+    transition: none;
+  }
+}

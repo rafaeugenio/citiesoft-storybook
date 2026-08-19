@@ -1,0 +1,167 @@
+/* Medidas do Figma arredondadas para os tokens: barra com raio 12 -> radius-xl,
+   gap entre ícones 8 -> spacing-2, respiro interno 8 -> spacing-2.
+   O fundo translúcido do kit (branco a 15%) não tem token: usamos
+   `--citie-background-surface` com borda, que é o que a marca Citiesoft usa em
+   superfície flutuante e mantém contraste sobre qualquer papel de parede. */
+.citie-dock {
+  display: flex;
+  font-family: var(--citie-font-ui);
+  pointer-events: none;
+}
+
+.citie-dock__barra {
+  display: flex;
+  gap: var(--citie-spacing-2);
+  padding: var(--citie-spacing-2);
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-xl);
+  box-shadow: var(--citie-shadow-overlay);
+  pointer-events: auto;
+}
+
+/* Location do Figma: a barra encosta na borda escolhida e centraliza no eixo
+   livre. Cada posição também define de que lado a dica aparece. */
+.citie-dock--bottom {
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.citie-dock--top {
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.citie-dock--left {
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.citie-dock--right {
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.citie-dock--left .citie-dock__barra,
+.citie-dock--right .citie-dock__barra {
+  flex-direction: column;
+}
+
+.citie-dock__casa {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.citie-dock__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Alvo de clique de 40x40 mesmo com o desenho do ícone em 24. */
+  width: var(--citie-control-height-normal);
+  height: var(--citie-control-height-normal);
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: var(--citie-radius-lg);
+  color: var(--citie-text-base);
+  cursor: pointer;
+}
+
+.citie-dock__item:hover {
+  background-color: var(--citie-state-hover-overlay);
+}
+
+.citie-dock__item:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-dock__item[aria-disabled='true'] {
+  color: var(--citie-state-disabled-text);
+  cursor: default;
+}
+
+.citie-dock__item[aria-disabled='true']:hover {
+  background-color: transparent;
+}
+
+.citie-dock__icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  transition: transform 160ms ease-out;
+}
+
+/* Ampliação do Figma: decorativa, aplicada só ao desenho do ícone. O botão
+   mantém o tamanho, então o alvo de clique nunca se move. */
+.citie-dock__item:hover .citie-dock__icone,
+.citie-dock__item:focus-visible .citie-dock__icone {
+  transform: scale(1.35);
+}
+
+.citie-dock--sem-ampliacao .citie-dock__item:hover .citie-dock__icone,
+.citie-dock--sem-ampliacao .citie-dock__item:focus-visible .citie-dock__icone {
+  transform: none;
+}
+
+/* Dica visível: o nome acessível também precisa ser lido por quem enxerga, já
+   que o item é só ícone. Some do fluxo, nunca do DOM. */
+.citie-dock__dica {
+  position: absolute;
+  z-index: 1;
+  padding: var(--citie-spacing-1) var(--citie-spacing-2);
+  background-color: var(--citie-text-primary);
+  border-radius: var(--citie-radius-sm);
+  color: var(--citie-text-inverse);
+  font-size: var(--citie-font-size-body-sm);
+  font-weight: var(--citie-font-weight-action);
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 120ms ease-out;
+  pointer-events: none;
+}
+
+.citie-dock__item:hover + .citie-dock__dica,
+.citie-dock__item:focus-visible + .citie-dock__dica {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* A dica cresce para fora da barra, no lado oposto à borda em que ela encosta. */
+.citie-dock--bottom .citie-dock__dica {
+  bottom: calc(100% + var(--citie-spacing-2));
+}
+
+.citie-dock--top .citie-dock__dica {
+  top: calc(100% + var(--citie-spacing-2));
+}
+
+.citie-dock--left .citie-dock__dica {
+  left: calc(100% + var(--citie-spacing-2));
+}
+
+.citie-dock--right .citie-dock__dica {
+  right: calc(100% + var(--citie-spacing-2));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-dock__icone {
+    transition: none;
+  }
+
+  /* A ampliação é enfeite: com movimento reduzido ela some por completo, e a
+     dica continua respondendo ao hover e ao foco. */
+  .citie-dock__item:hover .citie-dock__icone,
+  .citie-dock__item:focus-visible .citie-dock__icone {
+    transform: none;
+  }
+
+  .citie-dock__dica {
+    transition: none;
+  }
+}

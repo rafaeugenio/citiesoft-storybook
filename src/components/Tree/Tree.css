@@ -1,0 +1,167 @@
+.citie-tree {
+  font-family: var(--citie-font-ui);
+  max-width: 420px;
+  padding: var(--citie-spacing-2);
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-md);
+}
+
+.citie-tree__filtro {
+  width: 100%;
+  box-sizing: border-box;
+  height: var(--citie-control-height-small);
+  margin-block-end: var(--citie-spacing-2);
+  padding-inline: var(--citie-spacing-3);
+  font-family: inherit;
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-text-primary);
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-form-field-border);
+  border-radius: var(--citie-radius-sm);
+}
+
+.citie-tree__filtro::placeholder {
+  color: var(--citie-text-placeholder);
+}
+
+.citie-tree__filtro:focus {
+  outline: none;
+  border-color: var(--citie-brand-primary);
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-tree__raiz {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.citie-tree__raiz:focus-visible {
+  outline: none;
+  border-radius: var(--citie-radius-sm);
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-tree__linha {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-2);
+  min-height: 32px;
+  padding-block: 4px;
+  padding-inline-end: var(--citie-spacing-2);
+  font-size: var(--citie-font-size-body-md);
+  color: var(--citie-text-base);
+  border-radius: var(--citie-radius-sm);
+  cursor: pointer;
+}
+
+.citie-tree__linha:hover {
+  background-color: var(--citie-background-subtle);
+}
+
+/* Sem seleção a árvore só navega: nada de affordance de escolha na linha. */
+.citie-tree__linha--sem-selecao {
+  cursor: default;
+}
+
+.citie-tree__linha--selecionada {
+  background-color: var(--citie-state-selected);
+  color: var(--citie-brand-primary);
+  font-weight: var(--citie-font-weight-action);
+}
+
+/*
+  O nó ativo do teclado é apontado por `aria-activedescendant`, que não gera
+  anel de foco do navegador: o realce precisa ser desenhado à mão.
+*/
+.citie-tree__linha--ativa {
+  box-shadow: inset 0 0 0 2px var(--citie-brand-primary);
+}
+
+.citie-tree__alternador {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  /* Alvo de 24x24 mesmo com o chevron desenhado em 14px. */
+  width: 24px;
+  height: 24px;
+  color: var(--citie-text-secondary);
+}
+
+.citie-tree__chevron {
+  transition: rotate 160ms ease-out;
+}
+
+.citie-tree__chevron--aberto {
+  rotate: 90deg;
+}
+
+.citie-tree__girador {
+  color: var(--citie-loading-spinner);
+  animation: citie-tree-girar 900ms linear infinite;
+}
+
+@keyframes citie-tree-girar {
+  to {
+    rotate: 360deg;
+  }
+}
+
+.citie-tree__caixa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--citie-brand-contrast);
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-form-field-border);
+  border-radius: var(--citie-radius-sm);
+}
+
+.citie-tree__caixa--marcado,
+.citie-tree__caixa--parcial {
+  background-color: var(--citie-brand-primary);
+  border-color: var(--citie-brand-primary);
+}
+
+.citie-tree__icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  color: var(--citie-text-secondary);
+}
+
+.citie-tree__linha--selecionada .citie-tree__icone,
+.citie-tree__linha--selecionada .citie-tree__alternador {
+  color: inherit;
+}
+
+.citie-tree__rotulo {
+  min-width: 0;
+}
+
+.citie-tree__vazio {
+  margin: 0;
+  padding: var(--citie-spacing-3);
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-text-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-tree__chevron {
+    transition: none;
+  }
+
+  .citie-tree__girador {
+    animation: none;
+  }
+}

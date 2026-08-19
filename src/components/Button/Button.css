@@ -1,0 +1,265 @@
+/**
+ * Button Citiesoft — implementação da spec design-system/03-components/buttons.md v2.0.0
+ * Equivalente PrimeNG: p-button
+ *
+ * Todo valor vem de token. Se você precisou de um literal aqui, o token está faltando no DS.
+ */
+
+.citie-button {
+  /* estrutura */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--citie-spacing-2);
+  position: relative;
+  box-sizing: border-box;
+
+  /* tipografia do rótulo: typography.body.md, peso 500 */
+  font-family: var(--citie-font-ui);
+  font-size: var(--citie-font-size-body-md);
+  font-weight: var(--citie-font-weight-action);
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+
+  /* forma */
+  border: 1px solid transparent;
+  border-radius: var(--citie-radius-md);
+  cursor: pointer;
+  transition:
+    background-color 120ms ease-out,
+    border-color 120ms ease-out,
+    color 120ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-button {
+    transition: none;
+  }
+}
+
+/* ---------- Tamanhos ---------- */
+
+.citie-button--small {
+  height: var(--citie-control-height-small);
+  padding-inline: var(--citie-spacing-3);
+}
+
+.citie-button--normal {
+  height: var(--citie-control-height-normal);
+  padding-inline: var(--citie-spacing-4);
+}
+
+.citie-button--large {
+  height: var(--citie-control-height-large);
+  padding-inline: var(--citie-spacing-5);
+}
+
+/* Somente-ícone: largura igual à altura, sem padding lateral extra */
+.citie-button--icon-only {
+  padding-inline: 0;
+  aspect-ratio: 1;
+}
+
+/**
+ * Alvo de toque. O DS exige mínimo 24x24 (WCAG 2.5.8) e recomenda 44x44 em
+ * contexto de cidadão e mobile, garantido por CSS mesmo com visual menor.
+ */
+.citie-button--touch-comfortable::after {
+  content: '';
+  position: absolute;
+  inset: 50% auto auto 50%;
+  translate: -50% -50%;
+  min-width: var(--citie-touch-target-comfortable);
+  min-height: var(--citie-touch-target-comfortable);
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- Foco: obrigatório em toda variante, sem remover a borda ---------- */
+
+.citie-button:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+/* ---------- Variante: Primary (cheio) ---------- */
+
+.citie-button--primary {
+  background-color: var(--citie-brand-primary);
+  border-color: var(--citie-brand-primary);
+  color: var(--citie-brand-contrast);
+}
+
+.citie-button--primary:hover:not(:disabled):not([aria-disabled='true']) {
+  background-color: var(--citie-brand-hover);
+  border-color: var(--citie-brand-hover);
+}
+
+.citie-button--primary:active:not(:disabled):not([aria-disabled='true']) {
+  background-color: var(--citie-brand-active);
+  border-color: var(--citie-brand-active);
+}
+
+/* ---------- Variante: Secondary (contornado) ---------- */
+
+.citie-button--secondary {
+  background-color: transparent;
+  border-color: var(--citie-border-default);
+  color: var(--citie-text-primary);
+}
+
+.citie-button--secondary:hover:not(:disabled):not([aria-disabled='true']) {
+  background-color: var(--citie-background-subtle);
+  border-color: var(--citie-border-strong);
+}
+
+.citie-button--secondary:active:not(:disabled):not([aria-disabled='true']) {
+  background-color: var(--citie-state-selected);
+  border-color: var(--citie-border-strong);
+}
+
+/* ---------- Variante: Success (cheio) ---------- */
+
+.citie-button--success {
+  background-color: var(--citie-success-emphasis);
+  border-color: var(--citie-success-emphasis);
+  color: #ffffff;
+}
+
+.citie-button--success:hover:not(:disabled):not([aria-disabled='true']) {
+  background-color: #15803d;
+  border-color: #15803d;
+}
+
+.citie-button--success:active:not(:disabled):not([aria-disabled='true']) {
+  background-color: #166534;
+  border-color: #166534;
+}
+
+/* ---------- Variante: Danger (cheio, só ação destrutiva) ---------- */
+
+.citie-button--danger {
+  background-color: var(--citie-danger-emphasis);
+  border-color: var(--citie-danger-emphasis);
+  color: #ffffff;
+}
+
+.citie-button--danger:hover:not(:disabled):not([aria-disabled='true']) {
+  background-color: #b91c1c;
+  border-color: #b91c1c;
+}
+
+.citie-button--danger:active:not(:disabled):not([aria-disabled='true']) {
+  background-color: #991b1b;
+  border-color: #991b1b;
+}
+
+/* ---------- Variante: Warn (cheio) ---------- */
+
+.citie-button--warn {
+  background-color: var(--citie-warning-emphasis);
+  border-color: var(--citie-warning-emphasis);
+  color: #ffffff;
+}
+
+.citie-button--warn:hover:not(:disabled):not([aria-disabled='true']) {
+  background-color: #b45309;
+  border-color: #b45309;
+}
+
+.citie-button--warn:active:not(:disabled):not([aria-disabled='true']) {
+  background-color: #92400e;
+  border-color: #92400e;
+}
+
+/* ---------- Variante: Info ---------- */
+
+.citie-button--info {
+  background-color: var(--citie-info-text);
+  border-color: var(--citie-info-text);
+  color: var(--citie-brand-contrast);
+}
+
+.citie-button--info:hover:not(:disabled):not([aria-disabled='true']) {
+  background-color: var(--citie-info-emphasis);
+  border-color: var(--citie-info-emphasis);
+}
+
+/* ---------- Variante: Text (terciária, sem fundo) ---------- */
+
+.citie-button--text {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--citie-brand-primary);
+}
+
+.citie-button--text:hover:not(:disabled):not([aria-disabled='true']) {
+  background-color: var(--citie-brand-subtle);
+}
+
+.citie-button--text:active:not(:disabled):not([aria-disabled='true']) {
+  background-color: var(--citie-state-selected);
+  color: var(--citie-brand-active);
+}
+
+/* ---------- Variante: Contrast (neutro para barras e superfícies) ---------- */
+
+.citie-button--contrast {
+  background-color: var(--citie-text-primary);
+  border-color: var(--citie-text-primary);
+  color: var(--citie-text-inverse);
+}
+
+.citie-button--contrast:hover:not(:disabled):not([aria-disabled='true']) {
+  background-color: var(--citie-text-base);
+  border-color: var(--citie-text-base);
+}
+
+/* ---------- Estado: Disabled ---------- */
+
+.citie-button:disabled {
+  background-color: var(--citie-state-disabled-background);
+  border-color: var(--citie-state-disabled-background);
+  color: var(--citie-state-disabled-text);
+  cursor: not-allowed;
+}
+
+/* ---------- Estado: Loading ---------- */
+
+/**
+ * Loading usa aria-disabled em vez de disabled: o botão continua focável, então
+ * o leitor de tela anuncia a mudança de estado em vez de o foco sumir da tela.
+ * O clique é bloqueado no componente.
+ */
+.citie-button[aria-disabled='true'] {
+  cursor: progress;
+  opacity: 0.85;
+}
+
+.citie-button__spinner {
+  width: 1em;
+  height: 1em;
+  flex: none;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: citie-button-spin 700ms linear infinite;
+}
+
+@keyframes citie-button-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-button__spinner {
+    animation-duration: 2s;
+  }
+}
+
+.citie-button__icon {
+  display: inline-flex;
+  flex: none;
+}

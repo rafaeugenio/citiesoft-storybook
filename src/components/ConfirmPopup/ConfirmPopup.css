@@ -1,0 +1,102 @@
+/* Âncora: o cartão se posiciona a partir do gatilho, nunca do viewport. */
+.citie-confirm-popup {
+  position: relative;
+  display: inline-block;
+}
+
+.citie-confirm-popup__cartao {
+  position: absolute;
+  z-index: 10;
+  width: 320px;
+  max-width: calc(100vw - 32px);
+  color: var(--citie-text-base);
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-md);
+  box-shadow: var(--citie-shadow-overlay);
+  font-family: var(--citie-font-ui);
+  animation: citie-confirm-popup-entrada 160ms ease-out;
+}
+
+.citie-confirm-popup__cartao--abaixo {
+  inset-block-start: calc(100% + var(--citie-spacing-2));
+}
+
+.citie-confirm-popup__cartao--acima {
+  inset-block-end: calc(100% + var(--citie-spacing-2));
+}
+
+.citie-confirm-popup__cartao--inicio {
+  inset-inline-start: 0;
+}
+
+.citie-confirm-popup__cartao--fim {
+  inset-inline-end: 0;
+}
+
+@keyframes citie-confirm-popup-entrada {
+  from {
+    opacity: 0;
+    translate: 0 -4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-confirm-popup__cartao {
+    animation: none;
+  }
+}
+
+.citie-confirm-popup__conteudo {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--citie-spacing-3);
+  padding: var(--citie-spacing-3);
+}
+
+.citie-confirm-popup__icone {
+  display: inline-flex;
+  flex: none;
+  /* Alinha o ícone à primeira linha da mensagem, não ao topo do bloco. */
+  margin-block-start: 1px;
+}
+
+.citie-confirm-popup__icone--aviso {
+  color: var(--citie-warning-emphasis);
+}
+
+.citie-confirm-popup__icone--informacao {
+  color: var(--citie-info-emphasis);
+}
+
+.citie-confirm-popup__icone--sucesso {
+  color: var(--citie-success-emphasis);
+}
+
+.citie-confirm-popup__mensagem {
+  margin: 0;
+  font-size: var(--citie-font-size-body-md);
+  font-weight: var(--citie-font-weight-action);
+  color: var(--citie-text-primary);
+}
+
+/* Texto auxiliar legível: secundário, nunca o cinza de desabilitado. */
+.citie-confirm-popup__detalhe {
+  margin: 4px 0 0;
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-text-secondary);
+}
+
+.citie-confirm-popup__rodape {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--citie-spacing-2);
+  padding: 0 var(--citie-spacing-3) var(--citie-spacing-3);
+}
+
+/* Abaixo de 480px o cartão acompanha a largura disponível da âncora. */
+@media (max-width: 479px) {
+  .citie-confirm-popup__cartao {
+    width: max(240px, calc(100vw - 32px));
+  }
+}

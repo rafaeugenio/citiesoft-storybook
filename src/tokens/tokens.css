@@ -1,0 +1,210 @@
+/**
+ * Tokens Citiesoft — extraídos do design system oficial.
+ * Fonte: Obsidian Vault/Citiesoft/Citiesoft-Design-System/design-system/02-tokens
+ *   - color-tokens.md      (valores claro/escuro)
+ *   - radius-tokens.md     (radius.sm 4 / md 6 / lg 8)
+ *   - spacing-tokens.md    (escala de 4)
+ *   - 01-foundations/typography.md (Inter para UI, Red Hat Display para títulos)
+ *
+ * Regra do DS: componente consome token semântico por nome, nunca valor literal.
+ */
+
+:root {
+  /* Marca */
+  --citie-brand-primary: #1261e4;
+  --citie-brand-hover: #0e4db8;
+  --citie-brand-active: #0b3c8f;
+  --citie-brand-subtle: #eff5ff;
+  --citie-brand-contrast: #ffffff;
+
+  /* Superfícies */
+  --citie-background-default: #fafafa;
+  --citie-background-surface: #ffffff;
+  --citie-background-subtle: #f4f5f7;
+
+  /* Texto */
+  --citie-text-primary: #202020;
+  --citie-text-base: #3c3c3c;
+  --citie-text-secondary: #6b7177;
+  --citie-text-inverse: #ffffff;
+
+  /* Bordas */
+  --citie-border-default: #e8eaed;
+  --citie-border-strong: #d6d8dc;
+
+  /* Feedback — sucesso */
+  --citie-success-emphasis: #16a34a;
+  --citie-success-strong: #15803d;
+  --citie-success-background: #ecfdf3;
+
+  /* Feedback — aviso */
+  --citie-warning-emphasis: #d97706;
+  --citie-warning-strong: #b45309;
+  --citie-warning-background: #fffbeb;
+
+  /* Feedback — erro / destrutivo */
+  --citie-danger-emphasis: #dc2626;
+  --citie-danger-strong: #b91c1c;
+  --citie-danger-background: #fef2f2;
+
+  /* Feedback — informação */
+  --citie-info-emphasis: #0e4db8;
+  --citie-info-text: #1261e4;
+  --citie-info-background: #eff5ff;
+
+  /* Estados */
+  --citie-state-focus-ring: 0 0 0 3px rgba(18, 97, 228, 0.4);
+  --citie-state-disabled-background: #e8eaed;
+  --citie-state-disabled-text: #a8acb3;
+  --citie-state-selected: #eff5ff;
+  --citie-state-hover-overlay: rgba(18, 97, 228, 0.08);
+
+  /* Formulário — aliases citados nas specs de campo */
+  --citie-form-field-border: #e8eaed;
+  --citie-form-helper: #6b7177;
+  /**
+   * ACHADO ABERTO DO DS: a spec define `color.text.placeholder` como #A8ACB3,
+   * que dá 2,27:1 no fundo branco e reprova WCAG AA para texto. O valor aqui é
+   * `text.secondary` #6B7177 (4,63:1), que passa. No `::placeholder` nativo o
+   * problema não aparece na varredura, porque o axe não inspeciona
+   * pseudo-elemento, mas o contraste é o mesmo para quem lê.
+   */
+  --citie-text-placeholder: #6b7177;
+  --citie-border-danger: #dc2626;
+  --citie-danger-foreground: #b91c1c;
+  --citie-loading-spinner: #1261e4;
+
+  /* Raio — radius.md é o padrão Citiesoft para controle interativo */
+  --citie-radius-sm: 4px;
+  --citie-radius-md: 6px;
+  --citie-radius-lg: 8px;
+  --citie-radius-xl: 12px;
+  --citie-radius-full: 9999px;
+
+  /* Espaçamento */
+  --citie-spacing-1: 4px;
+  --citie-spacing-2: 8px;
+  --citie-spacing-3: 12px;
+  --citie-spacing-4: 16px;
+  --citie-spacing-5: 20px;
+
+  /* Tipografia */
+  --citie-font-ui: 'Inter', 'Segoe UI', Arial, sans-serif;
+  --citie-font-display: 'Red Hat Display', 'Segoe UI', Arial, sans-serif;
+  --citie-font-size-body-sm: 13px;
+  --citie-font-size-body-md: 14px;
+  --citie-font-size-body-lg: 16px;
+  --citie-font-weight-action: 500;
+
+  /* Elevação — sombra de overlay para painéis, menus e diálogos */
+  --citie-shadow-overlay: 0 4px 12px rgba(16, 24, 40, 0.12);
+  --citie-shadow-card: 0 1px 3px rgba(16, 24, 40, 0.08);
+
+  /* Altura de controle */
+  --citie-control-height-small: 32px;
+  --citie-control-height-normal: 40px;
+  --citie-control-height-large: 48px;
+
+  /* Alvo de toque — WCAG 2.5.8 mínimo 24px, recomendado 44px para cidadão/mobile */
+  --citie-touch-target-min: 24px;
+  --citie-touch-target-comfortable: 44px;
+}
+
+/**
+ * Paleta categórica de gráfico.
+ *
+ * `--citie-chart-cat-*` reproduz a ordem oficial da spec charts-data-viz.md.
+ * Ela reprova a validação de daltonismo: com 4 séries, âmbar #F59E0B e verde
+ * #22C55E ficam a ΔE 5,7 em protanopia, e no conjunto de 8 o par verde/teal fica
+ * a ΔE 11,3 mesmo para visão tricromata.
+ *
+ * `--citie-chart-alt-*` é a proposta corrigida (6 séries), aprovada em todos os
+ * checks em claro e escuro. Ver a story "Paleta · validação".
+ */
+:root,
+[data-theme='dark'] {
+  --citie-chart-cat-1: #1261e4;
+  --citie-chart-cat-2: #00b5f0;
+  --citie-chart-cat-3: #22c55e;
+  --citie-chart-cat-4: #f59e0b;
+  --citie-chart-cat-5: #8b5cf6;
+  --citie-chart-cat-6: #ef4444;
+  --citie-chart-cat-7: #14b8a6;
+  --citie-chart-cat-8: #ec4899;
+
+  --citie-chart-alt-1: #1261e4;
+  --citie-chart-alt-2: #b45309;
+  --citie-chart-alt-3: #7c3aed;
+  --citie-chart-alt-4: #15803d;
+  --citie-chart-alt-5: #0891b2;
+  --citie-chart-alt-6: #dc2626;
+
+  --citie-chart-grade: #e8eaed;
+  --citie-chart-meta: #a8acb3;
+}
+
+[data-theme='dark'] {
+  --citie-chart-grade: #34343a;
+  --citie-chart-meta: #6b7177;
+}
+
+/** Conteúdo só para leitor de tela, usado por rótulos de checkbox e regiões vivas. */
+.citie-visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+[data-theme='dark'] {
+  --citie-brand-primary: #4d8bfc;
+  --citie-brand-hover: #84aefd;
+  --citie-brand-active: #b3cefe;
+  --citie-brand-subtle: rgba(77, 139, 252, 0.14);
+  --citie-brand-contrast: #141414;
+
+  --citie-background-default: #141414;
+  --citie-background-surface: #1a1a1d;
+  --citie-background-subtle: #232327;
+
+  --citie-text-primary: #f5f5f6;
+  --citie-text-base: #d2d3d6;
+  --citie-text-secondary: #9a9da3;
+  --citie-text-inverse: #202020;
+
+  --citie-border-default: #34343a;
+  --citie-border-strong: #45454c;
+
+  --citie-success-strong: #4ade80;
+  --citie-success-background: rgba(34, 197, 94, 0.12);
+
+  --citie-warning-strong: #fcd34d;
+  --citie-warning-background: rgba(245, 158, 11, 0.12);
+
+  --citie-danger-strong: #fca5a5;
+  --citie-danger-background: rgba(239, 68, 68, 0.12);
+
+  --citie-info-emphasis: #4d8bfc;
+  --citie-info-text: #84aefd;
+  --citie-info-background: rgba(77, 139, 252, 0.14);
+
+  --citie-state-focus-ring: 0 0 0 3px rgba(77, 139, 252, 0.5);
+  --citie-state-disabled-background: #34343a;
+  --citie-state-disabled-text: #6b7177;
+  --citie-state-selected: rgba(77, 139, 252, 0.14);
+  --citie-state-hover-overlay: rgba(77, 139, 252, 0.14);
+
+  --citie-form-field-border: #34343a;
+  --citie-form-helper: #9a9da3;
+  --citie-text-placeholder: #6b7177;
+  --citie-danger-foreground: #fca5a5;
+  --citie-loading-spinner: #4d8bfc;
+
+  --citie-shadow-overlay: 0 4px 12px rgba(0, 0, 0, 0.45);
+  --citie-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.35);
+}

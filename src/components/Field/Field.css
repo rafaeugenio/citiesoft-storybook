@@ -1,0 +1,200 @@
+/**
+ * Base compartilhada da família de campo (inputs.md, textarea.md, select.md).
+ * Altura, radius, borda e estados são idênticos entre os três por decisão do DS:
+ * é o que sustenta a eficiência de quem preenche dezenas de campos por hora.
+ */
+
+.citie-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-2);
+  font-family: var(--citie-font-ui);
+}
+
+.citie-field__label {
+  font-size: var(--citie-font-size-body-md);
+  font-weight: 500;
+  color: var(--citie-text-primary);
+}
+
+.citie-field__required {
+  color: var(--citie-danger-foreground);
+  margin-inline-start: 2px;
+}
+
+.citie-field__helper {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-form-helper);
+}
+
+.citie-field__helper--error {
+  color: var(--citie-danger-foreground);
+}
+
+.citie-field__footer {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--citie-spacing-3);
+}
+
+.citie-field__counter {
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-form-helper);
+  white-space: nowrap;
+}
+
+.citie-field__counter--warning {
+  color: var(--citie-warning-strong);
+}
+
+/* ---------- Controle (input, textarea, select) ---------- */
+
+.citie-field-control {
+  box-sizing: border-box;
+  width: 100%;
+  font-family: var(--citie-font-ui);
+  font-size: var(--citie-font-size-body-md);
+  color: var(--citie-text-primary);
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-form-field-border);
+  border-radius: var(--citie-radius-md);
+  transition:
+    border-color 120ms ease-out,
+    background-color 120ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-field-control {
+    transition: none;
+  }
+}
+
+.citie-field-control::placeholder {
+  color: var(--citie-text-placeholder);
+}
+
+.citie-field-control--small {
+  height: var(--citie-control-height-small);
+  padding-inline: var(--citie-spacing-3);
+  font-size: var(--citie-font-size-body-sm);
+}
+
+.citie-field-control--normal {
+  height: var(--citie-control-height-normal);
+  padding-inline: var(--citie-spacing-4);
+}
+
+.citie-field-control--large {
+  height: var(--citie-control-height-large);
+  padding-inline: var(--citie-spacing-5);
+  font-size: var(--citie-font-size-body-lg);
+}
+
+/* Filled: só quando a tela inteira adota o padrão preenchido. */
+.citie-field-control--filled {
+  background-color: var(--citie-background-subtle);
+  border-color: transparent;
+}
+
+.citie-field-control:hover:not(:disabled):not(:focus) {
+  border-color: var(--citie-border-strong);
+}
+
+.citie-field-control:focus {
+  outline: none;
+  border-color: var(--citie-brand-primary);
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-field-control:disabled {
+  background-color: var(--citie-state-disabled-background);
+  color: var(--citie-state-disabled-text);
+  cursor: not-allowed;
+}
+
+.citie-field-control[aria-invalid='true'] {
+  border-color: var(--citie-border-danger);
+}
+
+/* ---------- Grupo com addon (InputGroup) ---------- */
+
+.citie-input-group {
+  display: flex;
+  align-items: stretch;
+}
+
+.citie-input-group__addon {
+  display: inline-flex;
+  align-items: center;
+  padding-inline: var(--citie-spacing-3);
+  background-color: var(--citie-background-subtle);
+  border: 1px solid var(--citie-form-field-border);
+  color: var(--citie-text-secondary);
+  font-size: var(--citie-font-size-body-md);
+  white-space: nowrap;
+}
+
+.citie-input-group__addon--start {
+  border-inline-end: none;
+  border-radius: var(--citie-radius-md) 0 0 var(--citie-radius-md);
+}
+
+.citie-input-group__addon--end {
+  border-inline-start: none;
+  border-radius: 0 var(--citie-radius-md) var(--citie-radius-md) 0;
+}
+
+.citie-input-group--start .citie-field-control {
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+}
+
+.citie-input-group--end .citie-field-control {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+
+/* ---------- Afixo interno (spinner de validação assíncrona, ícone) ---------- */
+
+.citie-field-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.citie-field-wrapper__affix {
+  position: absolute;
+  inset-inline-end: var(--citie-spacing-3);
+  display: inline-flex;
+  align-items: center;
+  pointer-events: none;
+  color: var(--citie-text-secondary);
+}
+
+.citie-field-wrapper--has-affix .citie-field-control {
+  padding-inline-end: 40px;
+}
+
+.citie-field__spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--citie-loading-spinner);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: citie-field-spin 700ms linear infinite;
+}
+
+@keyframes citie-field-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-field__spinner {
+    animation-duration: 2s;
+  }
+}

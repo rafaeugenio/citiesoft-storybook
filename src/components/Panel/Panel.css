@@ -1,0 +1,85 @@
+.citie-panel {
+  display: block;
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-lg);
+  font-family: var(--citie-font-ui);
+  color: var(--citie-text-base);
+  overflow: hidden;
+}
+
+.citie-panel__cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--citie-spacing-3);
+  min-height: var(--citie-control-height-normal);
+  padding: var(--citie-spacing-2) var(--citie-spacing-4);
+  background-color: var(--citie-background-subtle);
+  border-block-end: 1px solid var(--citie-border-default);
+}
+
+/* Recolhido não tem corpo abaixo, então a borda do cabeçalho vira sobra visual. */
+.citie-panel--recolhido .citie-panel__cabecalho {
+  border-block-end: none;
+}
+
+.citie-panel__titulo {
+  margin: 0;
+  font-size: var(--citie-font-size-body-md);
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--citie-text-primary);
+}
+
+.citie-panel__acoes {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-1);
+  flex-shrink: 0;
+}
+
+.citie-panel__gatilho {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Ícone desenhado a 14px, mas o alvo de clique nunca fica abaixo de 24x24. */
+  inline-size: 28px;
+  block-size: 28px;
+  padding: 0;
+  border: none;
+  border-radius: var(--citie-radius-full);
+  background-color: transparent;
+  color: var(--citie-text-secondary);
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.citie-panel__gatilho:hover {
+  background-color: var(--citie-state-hover-overlay);
+  color: var(--citie-text-primary);
+}
+
+.citie-panel__gatilho:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-panel__corpo {
+  padding: var(--citie-spacing-4);
+  font-size: var(--citie-font-size-body-md);
+  line-height: 1.6;
+}
+
+.citie-panel__rodape {
+  padding: var(--citie-spacing-3) var(--citie-spacing-4);
+  border-block-start: 1px solid var(--citie-border-default);
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-text-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-panel__gatilho {
+    transition: none;
+  }
+}

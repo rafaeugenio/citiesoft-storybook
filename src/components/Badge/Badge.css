@@ -1,0 +1,240 @@
+/**
+ * Badge, Tag, Chip e Status Indicator (badges-tags.md).
+ * Toda cor sai do mapa canônico de 7 severidades. Hex direto fora do mapa é proibido.
+ */
+
+.citie-sev {
+  --sev-bg: var(--citie-background-subtle);
+  --sev-fg: var(--citie-text-base);
+}
+
+.citie-sev--success {
+  --sev-bg: var(--citie-success-background);
+  --sev-fg: var(--citie-success-strong);
+}
+
+.citie-sev--info {
+  --sev-bg: var(--citie-info-background);
+  --sev-fg: var(--citie-info-text);
+}
+
+.citie-sev--warn {
+  --sev-bg: var(--citie-warning-background);
+  --sev-fg: var(--citie-warning-strong);
+}
+
+.citie-sev--danger {
+  --sev-bg: var(--citie-danger-background);
+  --sev-fg: var(--citie-danger-foreground);
+}
+
+.citie-sev--secondary {
+  --sev-bg: var(--citie-background-subtle);
+  --sev-fg: var(--citie-text-base);
+}
+
+.citie-sev--primary {
+  --sev-bg: var(--citie-brand-subtle);
+  --sev-fg: var(--citie-brand-primary);
+}
+
+.citie-sev--contrast {
+  --sev-bg: var(--citie-text-primary);
+  --sev-fg: var(--citie-text-inverse);
+}
+
+/* ---------- Badge: contagem ou dot sobreposto ---------- */
+
+.citie-badge-anchor {
+  position: relative;
+  display: inline-flex;
+}
+
+.citie-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--citie-font-ui);
+  font-weight: 600;
+  color: var(--sev-fg);
+  background-color: var(--sev-bg);
+  border-radius: var(--citie-radius-full);
+  box-shadow: 0 0 0 2px var(--citie-background-surface);
+}
+
+.citie-badge--sm {
+  min-width: 16px;
+  height: 16px;
+  padding-inline: 4px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.citie-badge--md {
+  min-width: 20px;
+  height: 20px;
+  padding-inline: 6px;
+  font-size: 12px;
+}
+
+.citie-badge--lg {
+  min-width: 24px;
+  height: 24px;
+  padding-inline: 8px;
+  font-size: 13px;
+}
+
+.citie-badge--dot {
+  min-width: 0;
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  background-color: var(--sev-fg);
+}
+
+.citie-badge-anchor__badge {
+  position: absolute;
+  inset-block-start: -6px;
+  inset-inline-end: -8px;
+}
+
+/* ---------- Tag e Status Indicator ---------- */
+
+.citie-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--citie-font-ui);
+  color: var(--sev-fg);
+  background-color: var(--sev-bg);
+  border-radius: var(--citie-radius-full);
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.citie-tag__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.citie-tag--sm {
+  height: 20px;
+  padding-inline: var(--citie-spacing-2);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.citie-tag--md {
+  height: 24px;
+  padding-inline: var(--citie-spacing-2);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.citie-tag--lg {
+  height: 28px;
+  padding-inline: var(--citie-spacing-3);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.citie-tag__icon {
+  display: inline-flex;
+  flex: none;
+}
+
+/* Status Indicator: mesma anatomia de Tag, com largura mínima para a coluna
+   de tabela não variar de tamanho conforme o estado. */
+.citie-status {
+  min-width: 120px;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.citie-status--lg {
+  height: 32px;
+}
+
+/* ---------- Chip ---------- */
+
+.citie-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--citie-spacing-2);
+  font-family: var(--citie-font-ui);
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-text-primary);
+  background-color: var(--citie-background-subtle);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-full);
+  padding-inline: var(--citie-spacing-3);
+}
+
+.citie-chip--sm {
+  height: 24px;
+}
+
+.citie-chip--md {
+  height: 32px;
+}
+
+.citie-chip--lg {
+  height: 40px;
+}
+
+.citie-chip--selectable {
+  cursor: pointer;
+}
+
+.citie-chip--selected {
+  background-color: var(--citie-brand-subtle);
+  border-color: var(--citie-brand-primary);
+  color: var(--citie-brand-primary);
+}
+
+.citie-chip--error {
+  border-color: var(--citie-border-danger);
+  color: var(--citie-danger-foreground);
+}
+
+.citie-chip--disabled {
+  color: var(--citie-state-disabled-text);
+  background-color: var(--citie-state-disabled-background);
+  cursor: not-allowed;
+}
+
+.citie-chip:focus-visible,
+.citie-chip__remove:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-chip--selectable:active {
+  scale: 0.97;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-chip--selectable:active {
+    scale: 1;
+  }
+}
+
+.citie-chip__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Área de clique mínima de 24x24 mesmo com o ícone de 12px (WCAG 2.5.8). */
+  min-width: 24px;
+  min-height: 24px;
+  margin-inline-end: -6px;
+  padding: 0;
+  color: inherit;
+  background: none;
+  border: none;
+  border-radius: var(--citie-radius-full);
+  cursor: pointer;
+}
+
+.citie-chip__remove:hover {
+  background-color: var(--citie-state-hover-overlay);
+}

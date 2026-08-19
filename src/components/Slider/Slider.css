@@ -1,0 +1,183 @@
+/**
+ * Slider. Estrutura e variantes do Figma CitieOne; cores e medidas dos tokens
+ * Citiesoft do vault, nunca do azul padrão do PrimeOne.
+ */
+
+.citie-slider {
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-2);
+  font-family: var(--citie-font-ui);
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-width: 240px;
+}
+
+.citie-slider__label {
+  padding: 0;
+  font-size: var(--citie-font-size-body-md);
+  font-weight: 500;
+  color: var(--citie-text-primary);
+}
+
+.citie-slider__linha {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-3);
+}
+
+.citie-slider__valor {
+  font-size: var(--citie-font-size-body-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--citie-text-secondary);
+  min-width: 48px;
+  margin: 0;
+}
+
+.citie-slider__entrada {
+  width: 88px;
+  height: var(--citie-control-height-small);
+  padding-inline: var(--citie-spacing-2);
+  font-family: inherit;
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-text-primary);
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-form-field-border);
+  border-radius: var(--citie-radius-md);
+}
+
+.citie-slider__entrada:focus {
+  outline: none;
+  border-color: var(--citie-brand-primary);
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+/* ---------- Controle ---------- */
+
+.citie-slider__controle {
+  flex: 1;
+  appearance: none;
+  height: 6px;
+  margin: 0;
+  border-radius: var(--citie-radius-full);
+  background: linear-gradient(
+    to right,
+    var(--citie-brand-primary) 0 var(--preenchido, 50%),
+    var(--citie-background-subtle) var(--preenchido, 50%) 100%
+  );
+  cursor: pointer;
+}
+
+.citie-slider--vertical .citie-slider__linha {
+  flex-direction: column-reverse;
+  align-items: flex-start;
+}
+
+.citie-slider--vertical .citie-slider__controle {
+  writing-mode: vertical-lr;
+  direction: rtl;
+  width: 6px;
+  height: 160px;
+  flex: none;
+  background: linear-gradient(
+    to top,
+    var(--citie-brand-primary) 0 var(--preenchido, 50%),
+    var(--citie-background-subtle) var(--preenchido, 50%) 100%
+  );
+}
+
+/* Handle: 20px, borda de marca, sombra própria. */
+.citie-slider__controle::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--citie-radius-full);
+  background-color: var(--citie-background-surface);
+  border: 2px solid var(--citie-brand-primary);
+  box-shadow: var(--citie-shadow-card);
+  cursor: grab;
+  transition: border-color 120ms ease-out, scale 120ms ease-out;
+}
+
+.citie-slider__controle::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--citie-radius-full);
+  background-color: var(--citie-background-surface);
+  border: 2px solid var(--citie-brand-primary);
+  box-shadow: var(--citie-shadow-card);
+  cursor: grab;
+}
+
+.citie-slider__controle:hover:not(:disabled)::-webkit-slider-thumb {
+  border-color: var(--citie-brand-hover);
+  scale: 1.08;
+}
+
+.citie-slider__controle:focus-visible {
+  outline: none;
+}
+
+.citie-slider__controle:focus-visible::-webkit-slider-thumb {
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-slider__controle:focus-visible::-moz-range-thumb {
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-slider__controle:disabled {
+  background: var(--citie-state-disabled-background);
+  cursor: not-allowed;
+}
+
+.citie-slider__controle:disabled::-webkit-slider-thumb {
+  border-color: var(--citie-state-disabled-text);
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-slider__controle::-webkit-slider-thumb {
+    transition: none;
+  }
+}
+
+/* ---------- Range de duas pontas ---------- */
+
+.citie-slider__trilho-duplo {
+  position: relative;
+  height: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.citie-slider__trilho-duplo::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  height: 6px;
+  border-radius: var(--citie-radius-full);
+  background: linear-gradient(
+    to right,
+    var(--citie-background-subtle) 0 var(--inicio, 20%),
+    var(--citie-brand-primary) var(--inicio, 20%) var(--fim, 80%),
+    var(--citie-background-subtle) var(--fim, 80%) 100%
+  );
+}
+
+.citie-slider__controle--sobreposto {
+  position: absolute;
+  inset-inline: 0;
+  width: 100%;
+  background: none;
+  pointer-events: none;
+}
+
+.citie-slider__controle--sobreposto::-webkit-slider-thumb {
+  pointer-events: auto;
+}
+
+.citie-slider__controle--sobreposto::-moz-range-thumb {
+  pointer-events: auto;
+}

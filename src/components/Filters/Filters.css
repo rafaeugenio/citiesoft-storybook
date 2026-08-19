@@ -1,0 +1,117 @@
+.citie-filtros {
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-3);
+  padding: var(--citie-spacing-4);
+  font-family: var(--citie-font-ui);
+  background-color: var(--citie-background-surface);
+  border-block-end: 1px solid var(--citie-border-default);
+}
+
+.citie-filtros__controles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--citie-spacing-2);
+}
+
+.citie-filtros--compacta {
+  gap: var(--citie-spacing-2);
+  padding: var(--citie-spacing-2) var(--citie-spacing-3);
+}
+
+.citie-filtros__chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--citie-spacing-2);
+  animation: citie-filtros-entrada 200ms ease-out;
+}
+
+@keyframes citie-filtros-entrada {
+  from {
+    opacity: 0.2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-filtros__chips {
+    animation: none;
+  }
+}
+
+.citie-filtro-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+  padding: var(--citie-spacing-1) var(--citie-spacing-2);
+  font-size: var(--citie-font-size-body-sm);
+  background-color: var(--citie-brand-subtle);
+  border: 1px solid color-mix(in srgb, var(--citie-brand-primary) 25%, transparent);
+  border-radius: var(--citie-radius-full);
+}
+
+.citie-filtro-chip:hover {
+  background-color: var(--citie-state-hover-overlay);
+  border-color: var(--citie-brand-primary);
+}
+
+.citie-filtro-chip__rotulo {
+  color: var(--citie-text-secondary);
+  font-weight: 500;
+}
+
+.citie-filtro-chip__valor {
+  color: var(--citie-brand-primary);
+  font-weight: 600;
+}
+
+.citie-filtro-chip__remover {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Área de clique mínima de 24x24 com o ícone de 12px. */
+  min-width: 24px;
+  min-height: 24px;
+  margin-inline-end: -6px;
+  padding: 0;
+  color: var(--citie-brand-primary);
+  background: none;
+  border: none;
+  border-radius: var(--citie-radius-full);
+  cursor: pointer;
+}
+
+.citie-filtro-chip__remover:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-filtros__limpar {
+  padding: 0 var(--citie-spacing-2);
+  font-family: inherit;
+  font-size: var(--citie-font-size-body-sm);
+  font-weight: 500;
+  color: var(--citie-text-secondary);
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.citie-filtros__limpar:hover {
+  color: var(--citie-text-primary);
+}
+
+.citie-filtros__limpar:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+  border-radius: var(--citie-radius-sm);
+}
+
+.citie-filtros__contagem {
+  margin: 0;
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-text-secondary);
+}

@@ -1,0 +1,62 @@
+.citie-select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.citie-select {
+  appearance: none;
+  padding-inline-end: 36px;
+  cursor: pointer;
+}
+
+.citie-select__chevron {
+  position: absolute;
+  inset-inline-end: var(--citie-spacing-3);
+  color: var(--citie-text-secondary);
+  pointer-events: none;
+}
+
+/* ---------- SelectButton (segmentado) ---------- */
+
+.citie-selectbutton {
+  display: inline-flex;
+  border: 1px solid var(--citie-form-field-border);
+  border-radius: var(--citie-radius-md);
+  overflow: hidden;
+  background-color: var(--citie-background-surface);
+}
+
+.citie-selectbutton__item {
+  height: var(--citie-control-height-normal);
+  padding-inline: var(--citie-spacing-4);
+  font-family: var(--citie-font-ui);
+  font-size: var(--citie-font-size-body-md);
+  font-weight: var(--citie-font-weight-action);
+  color: var(--citie-text-primary);
+  background-color: transparent;
+  border: none;
+  border-inline-end: 1px solid var(--citie-form-field-border);
+  cursor: pointer;
+}
+
+.citie-selectbutton__item:last-child {
+  border-inline-end: none;
+}
+
+.citie-selectbutton__item:hover:not(.citie-selectbutton__item--active) {
+  background-color: var(--citie-background-subtle);
+}
+
+.citie-selectbutton__item:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+  /* O anel precisa ficar acima dos segmentos vizinhos para não ser cortado. */
+  position: relative;
+  z-index: 1;
+}
+
+.citie-selectbutton__item--active {
+  background-color: var(--citie-brand-primary);
+  color: var(--citie-brand-contrast);
+}

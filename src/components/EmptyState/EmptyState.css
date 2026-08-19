@@ -1,0 +1,86 @@
+.citie-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--citie-spacing-3);
+  font-family: var(--citie-font-ui);
+}
+
+.citie-empty--lg {
+  padding-block: 80px;
+}
+
+.citie-empty--md {
+  padding-block: 48px;
+}
+
+.citie-empty--sm {
+  padding-block: var(--citie-spacing-5);
+}
+
+.citie-empty__ilustracao {
+  color: var(--citie-text-secondary);
+  opacity: 0.7;
+}
+
+.citie-empty--lg .citie-empty__ilustracao svg {
+  width: 96px;
+  height: 96px;
+}
+
+.citie-empty--md .citie-empty__ilustracao svg {
+  width: 64px;
+  height: 64px;
+}
+
+.citie-empty--sm .citie-empty__ilustracao svg {
+  width: 24px;
+  height: 24px;
+}
+
+.citie-empty__titulo {
+  margin: 0;
+  font-family: var(--citie-font-display);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--citie-text-primary);
+}
+
+.citie-empty--sm .citie-empty__titulo {
+  font-size: 16px;
+}
+
+.citie-empty__descricao {
+  margin: 0;
+  max-width: 480px;
+  font-size: var(--citie-font-size-body-md);
+  color: var(--citie-text-secondary);
+}
+
+/**
+ * Código técnico é discreto, nunca em destaque. Discreto vem do tamanho e da
+ * cor de texto auxiliar, sem opacidade: 11px com opacity 0.75 dava 2,96:1 e
+ * reprovava AA. Em 12px, `text.secondary` sobre o fundo padrão dá 4,73:1, e o
+ * DS proíbe usar essa cor abaixo de 12px.
+ */
+.citie-empty__codigo {
+  margin: 0;
+  font-family: var(--citie-font-ui);
+  font-size: 12px;
+  color: var(--citie-text-secondary);
+}
+
+.citie-empty__acoes {
+  display: flex;
+  gap: var(--citie-spacing-3);
+  margin-block-start: var(--citie-spacing-2);
+}
+
+.citie-empty__filtros {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--citie-spacing-1);
+  margin-block-end: var(--citie-spacing-2);
+}

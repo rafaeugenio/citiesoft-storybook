@@ -1,0 +1,95 @@
+/**
+ * IftaLabel — rótulo pequeno e fixo dentro da caixa, acima do valor.
+ * Sem transição nem transform de propósito: o rótulo não flutua, então não há
+ * nada para `prefers-reduced-motion` desligar aqui.
+ */
+
+.citie-iftalabel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-2);
+  font-family: var(--citie-font-ui);
+}
+
+.citie-iftalabel__caixa {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+.citie-iftalabel__label {
+  position: absolute;
+  z-index: 1;
+  inset-block-start: calc(var(--citie-spacing-1) + 2px);
+  inset-inline-start: var(--citie-spacing-4);
+  /**
+   * O DS não tem token de 12px (o Figma desenha em 12). `body-sm` (13) é o mais
+   * próximo e ainda ajuda a legibilidade de um rótulo pequeno.
+   */
+  font-size: var(--citie-font-size-body-sm);
+  line-height: 16px;
+  font-weight: var(--citie-font-weight-action);
+  /**
+   * `text.base` (#3C3C3C) e nunca `state.disabled.text`: sobre o fundo
+   * desabilitado (#E8EAED) o cinza de desabilitado dá 4,09:1 e reprova; este dá
+   * 9,1:1 ali e 11:1 no branco. O rótulo permanece legível em todos os estados.
+   */
+  color: var(--citie-text-base);
+  /* Rótulo longo encurta em vez de escapar da caixa. */
+  max-width: calc(100% - 2 * var(--citie-spacing-4));
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/**
+ * A caixa cresce para caber rótulo mais valor: altura do controle equivalente
+ * mais uma linha de rótulo (16) com folga. O rótulo ocupa o topo, então o
+ * controle recebe o padding superior e o texto se centraliza no que sobra.
+ */
+.citie-iftalabel__control {
+  width: 100%;
+  padding-block-start: calc(var(--citie-spacing-5) + 2px);
+  padding-block-end: 0;
+}
+
+.citie-iftalabel__control--small {
+  height: calc(var(--citie-control-height-small) + var(--citie-spacing-4));
+  padding-inline: var(--citie-spacing-3);
+  font-size: var(--citie-font-size-body-sm);
+}
+
+.citie-iftalabel__control--normal {
+  height: calc(var(--citie-control-height-normal) + var(--citie-spacing-4));
+  padding-inline: var(--citie-spacing-4);
+}
+
+.citie-iftalabel__control--large {
+  height: calc(var(--citie-control-height-large) + var(--citie-spacing-4));
+  padding-inline: var(--citie-spacing-5);
+  font-size: var(--citie-font-size-body-lg);
+}
+
+/* Rótulo alinhado ao mesmo recuo do valor em cada tamanho. */
+.citie-iftalabel--small .citie-iftalabel__label {
+  inset-inline-start: var(--citie-spacing-3);
+  max-width: calc(100% - 2 * var(--citie-spacing-3));
+}
+
+.citie-iftalabel--large .citie-iftalabel__label {
+  inset-inline-start: var(--citie-spacing-5);
+  max-width: calc(100% - 2 * var(--citie-spacing-5));
+}
+
+/* Textarea dentro do invólucro: cresce em vez de fixar altura. */
+.citie-iftalabel__control:is(textarea) {
+  height: auto;
+  min-height: calc(var(--citie-control-height-large) + var(--citie-spacing-5));
+  padding-block-end: var(--citie-spacing-2);
+  resize: vertical;
+}
+
+/* Select nativo: reserva o espaço do chevron sem comer o rótulo. */
+.citie-iftalabel__control:is(select) {
+  padding-inline-end: 36px;
+}

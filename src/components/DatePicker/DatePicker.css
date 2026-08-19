@@ -1,0 +1,160 @@
+.citie-datepicker {
+  position: relative;
+}
+
+.citie-datepicker .citie-field-control {
+  cursor: pointer;
+}
+
+/* O gatilho do calendário é um botão real, então recupera o clique e o foco. */
+.citie-datepicker__gatilho {
+  pointer-events: auto;
+  padding: 0;
+  min-width: 24px;
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--citie-text-secondary);
+  background: none;
+  border: none;
+  border-radius: var(--citie-radius-sm);
+  cursor: pointer;
+}
+
+.citie-datepicker__gatilho:hover:not(:disabled) {
+  color: var(--citie-text-primary);
+}
+
+.citie-datepicker__gatilho:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-datepicker__gatilho:disabled {
+  color: var(--citie-state-disabled-text);
+  cursor: not-allowed;
+}
+
+.citie-calendario {
+  position: absolute;
+  z-index: 1100;
+  inset-block-start: calc(100% + 4px);
+  inset-inline-start: 0;
+  padding: var(--citie-spacing-3);
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-md);
+  box-shadow: var(--citie-shadow-overlay);
+  font-family: var(--citie-font-ui);
+}
+
+.citie-calendario__cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--citie-spacing-2);
+  margin-block-end: var(--citie-spacing-2);
+}
+
+.citie-calendario__mes {
+  font-size: var(--citie-font-size-body-md);
+  font-weight: 600;
+  color: var(--citie-text-primary);
+  text-transform: capitalize;
+}
+
+.citie-calendario__navegar {
+  min-width: 28px;
+  height: 28px;
+  color: var(--citie-text-secondary);
+  background: none;
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-sm);
+  cursor: pointer;
+}
+
+.citie-calendario__navegar:hover {
+  background-color: var(--citie-background-subtle);
+  color: var(--citie-text-primary);
+}
+
+.citie-calendario__grade {
+  border-collapse: collapse;
+}
+
+.citie-calendario__grade th {
+  padding-block-end: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--citie-text-secondary);
+  text-transform: uppercase;
+}
+
+.citie-calendario__dia {
+  /* Alvo de toque mínimo de 24x24 por WCAG 2.5.8. */
+  width: 32px;
+  height: 32px;
+  font-family: inherit;
+  font-size: var(--citie-font-size-body-md);
+  color: var(--citie-text-base);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--citie-radius-sm);
+  cursor: pointer;
+}
+
+.citie-calendario__dia:hover:not(:disabled) {
+  background-color: var(--citie-background-subtle);
+}
+
+.citie-calendario__dia:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+/* Dia de hoje: contorno de marca, sem preenchimento. */
+.citie-calendario__dia--hoje {
+  border-color: var(--citie-brand-primary);
+  font-weight: 600;
+}
+
+.citie-calendario__dia--selecionado {
+  background-color: var(--citie-brand-primary);
+  border-color: var(--citie-brand-primary);
+  color: var(--citie-brand-contrast);
+  font-weight: 600;
+}
+
+/* Dias fora do mês corrente e datas bloqueadas não são clicáveis. */
+.citie-calendario__dia--fora,
+.citie-calendario__dia:disabled {
+  color: var(--citie-state-disabled-text);
+  cursor: not-allowed;
+}
+
+.citie-calendario__rodape {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--citie-spacing-3);
+  margin-block-start: var(--citie-spacing-2);
+  padding-block-start: var(--citie-spacing-2);
+  border-block-start: 1px solid var(--citie-border-default);
+}
+
+.citie-calendario__acao {
+  padding: 0;
+  font-family: inherit;
+  font-size: var(--citie-font-size-body-sm);
+  font-weight: 500;
+  color: var(--citie-brand-primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.citie-calendario__acao:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+  border-radius: var(--citie-radius-sm);
+}

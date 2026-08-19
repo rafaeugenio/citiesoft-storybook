@@ -1,0 +1,243 @@
+/**
+ * Família de escolha (checkbox-radio-switch.md).
+ * Regra central: o rótulo fica à direita e é clicável junto com o controle,
+ * então o alvo de toque inclui o texto e não só a caixa.
+ */
+
+.citie-choice {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--citie-spacing-2);
+  font-family: var(--citie-font-ui);
+  font-size: var(--citie-font-size-body-md);
+  color: var(--citie-text-primary);
+  cursor: pointer;
+  /* Alvo de toque mínimo de 24px por WCAG 2.5.8, contando o rótulo. */
+  min-height: var(--citie-touch-target-min);
+}
+
+.citie-choice--disabled {
+  color: var(--citie-state-disabled-text);
+  cursor: not-allowed;
+}
+
+.citie-choice__label {
+  line-height: 1.4;
+}
+
+.citie-choice__control {
+  appearance: none;
+  margin: 0;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-form-field-border);
+  cursor: inherit;
+  display: grid;
+  place-content: center;
+  transition: background-color 120ms ease-out, border-color 120ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-choice__control {
+    transition: none;
+  }
+}
+
+.citie-choice__control--checkbox {
+  border-radius: var(--citie-radius-sm);
+}
+
+.citie-choice__control--radio {
+  border-radius: var(--citie-radius-full);
+}
+
+.citie-choice__control:hover:not(:disabled) {
+  border-color: var(--citie-border-strong);
+}
+
+.citie-choice__control:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-choice__control--invalid {
+  border-color: var(--citie-border-danger);
+}
+
+/* Marcado: preenchimento de marca com a marca ou o ponto em branco. */
+.citie-choice__control--checkbox:checked,
+.citie-choice__control--checkbox:indeterminate {
+  background-color: var(--citie-brand-primary);
+  border-color: var(--citie-brand-primary);
+}
+
+.citie-choice__control--checkbox:checked::after {
+  content: '';
+  width: 10px;
+  height: 6px;
+  border-inline-start: 2px solid var(--citie-brand-contrast);
+  border-block-end: 2px solid var(--citie-brand-contrast);
+  rotate: -45deg;
+  translate: 0 -1px;
+}
+
+.citie-choice__control--checkbox:indeterminate::after {
+  content: '';
+  width: 10px;
+  height: 2px;
+  background-color: var(--citie-brand-contrast);
+}
+
+.citie-choice__control--radio:checked {
+  border-color: var(--citie-brand-primary);
+}
+
+.citie-choice__control--radio:checked::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: var(--citie-radius-full);
+  background-color: var(--citie-brand-primary);
+}
+
+.citie-choice__control:disabled {
+  background-color: var(--citie-state-disabled-background);
+  border-color: var(--citie-state-disabled-background);
+}
+
+.citie-choice__control:disabled::after {
+  border-color: var(--citie-state-disabled-text);
+  background-color: var(--citie-state-disabled-text);
+}
+
+/* ---------- Grupo ---------- */
+
+.citie-choice-group {
+  border: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-2);
+  font-family: var(--citie-font-ui);
+}
+
+.citie-choice-group__legend {
+  padding: 0;
+  margin-block-end: var(--citie-spacing-1);
+  font-size: var(--citie-font-size-body-md);
+  font-weight: 500;
+  color: var(--citie-text-primary);
+}
+
+.citie-choice-group__items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-2);
+}
+
+.citie-choice-group__error {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-danger-foreground);
+}
+
+/* ---------- ToggleSwitch: trilho 35x21 ---------- */
+
+.citie-switch {
+  appearance: none;
+  margin: 0;
+  flex: none;
+  width: 35px;
+  height: 21px;
+  border-radius: var(--citie-radius-full);
+  background-color: var(--citie-border-strong);
+  position: relative;
+  cursor: inherit;
+  transition: background-color 140ms ease-out;
+}
+
+.citie-switch::after {
+  content: '';
+  position: absolute;
+  inset-block-start: 2px;
+  inset-inline-start: 2px;
+  width: 17px;
+  height: 17px;
+  border-radius: var(--citie-radius-full);
+  background-color: #ffffff;
+  transition: translate 140ms ease-out;
+}
+
+.citie-switch:checked {
+  background-color: var(--citie-brand-primary);
+}
+
+/* A posição do botão comunica o estado junto com a cor, nunca a cor sozinha. */
+.citie-switch:checked::after {
+  translate: 14px 0;
+}
+
+.citie-switch:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-switch:disabled {
+  background-color: var(--citie-state-disabled-background);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-switch,
+  .citie-switch::after {
+    transition: none;
+  }
+}
+
+/* ---------- ToggleButton ---------- */
+
+.citie-togglebutton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--citie-spacing-2);
+  height: var(--citie-control-height-normal);
+  padding-inline: var(--citie-spacing-4);
+  font-family: var(--citie-font-ui);
+  font-size: var(--citie-font-size-body-md);
+  font-weight: var(--citie-font-weight-action);
+  color: var(--citie-text-primary);
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-form-field-border);
+  border-radius: var(--citie-radius-md);
+  cursor: pointer;
+}
+
+.citie-togglebutton:hover:not(:disabled):not(.citie-togglebutton--pressed) {
+  background-color: var(--citie-background-subtle);
+}
+
+.citie-togglebutton:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-togglebutton--pressed {
+  background-color: var(--citie-brand-primary);
+  border-color: var(--citie-brand-primary);
+  color: var(--citie-brand-contrast);
+}
+
+.citie-togglebutton:disabled {
+  background-color: var(--citie-state-disabled-background);
+  border-color: var(--citie-state-disabled-background);
+  color: var(--citie-state-disabled-text);
+  cursor: not-allowed;
+}
+
+.citie-togglebutton__icon {
+  display: inline-flex;
+}

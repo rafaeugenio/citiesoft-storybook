@@ -1,0 +1,246 @@
+.citie-autocomplete {
+  font-family: var(--citie-font-ui);
+  max-width: 340px;
+}
+
+.citie-autocomplete__ancora {
+  position: relative;
+}
+
+.citie-autocomplete__campo {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--citie-spacing-1);
+  box-sizing: border-box;
+  width: 100%;
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-form-field-border);
+  border-radius: var(--citie-radius-md);
+}
+
+.citie-autocomplete__campo--small {
+  min-height: var(--citie-control-height-small);
+  padding-inline: var(--citie-spacing-2);
+  font-size: var(--citie-font-size-body-sm);
+}
+
+.citie-autocomplete__campo--normal {
+  min-height: var(--citie-control-height-normal);
+  padding-inline: var(--citie-spacing-3);
+  font-size: var(--citie-font-size-body-md);
+}
+
+.citie-autocomplete__campo--large {
+  min-height: var(--citie-control-height-large);
+  padding-inline: var(--citie-spacing-4);
+  font-size: var(--citie-font-size-body-lg);
+}
+
+.citie-autocomplete__campo--filled {
+  background-color: var(--citie-background-subtle);
+  border-color: transparent;
+}
+
+.citie-autocomplete__campo:hover:not(.citie-autocomplete__campo--desabilitado) {
+  border-color: var(--citie-border-strong);
+}
+
+/* O foco vive no input, mas o anel precisa cercar o campo inteiro, que também
+   abriga as fichas e o botão de dropdown. */
+.citie-autocomplete__campo:focus-within {
+  border-color: var(--citie-brand-primary);
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-autocomplete__campo--invalido {
+  border-color: var(--citie-border-danger);
+}
+
+.citie-autocomplete__campo--desabilitado {
+  background-color: var(--citie-state-disabled-background);
+  border-color: var(--citie-border-default);
+}
+
+.citie-autocomplete__entrada {
+  flex: 1 1 120px;
+  min-width: 0;
+  padding-block: 6px;
+  font-family: inherit;
+  font-size: inherit;
+  color: var(--citie-text-primary);
+  background: none;
+  border: none;
+}
+
+.citie-autocomplete__entrada::placeholder {
+  color: var(--citie-text-placeholder);
+}
+
+.citie-autocomplete__entrada:focus {
+  outline: none;
+}
+
+.citie-autocomplete__entrada:disabled {
+  color: var(--citie-state-disabled-text);
+  cursor: not-allowed;
+}
+
+.citie-autocomplete__lupa {
+  display: inline-flex;
+  flex: none;
+  color: var(--citie-text-secondary);
+}
+
+.citie-autocomplete__dropdown {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  /* Alvo de clique de 24px mesmo com o ícone de 16px. */
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  color: var(--citie-text-secondary);
+  background: none;
+  border: none;
+  border-radius: var(--citie-radius-sm);
+  cursor: pointer;
+}
+
+.citie-autocomplete__dropdown:hover:not(:disabled) {
+  background-color: var(--citie-state-hover-overlay);
+  color: var(--citie-text-primary);
+}
+
+.citie-autocomplete__dropdown:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-autocomplete__dropdown:disabled {
+  color: var(--citie-state-disabled-text);
+  cursor: not-allowed;
+}
+
+.citie-autocomplete__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-block: 4px;
+}
+
+.citie-autocomplete__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 24px;
+  padding-inline-start: var(--citie-spacing-2);
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-brand-primary);
+  background-color: var(--citie-brand-subtle);
+  border-radius: var(--citie-radius-full);
+}
+
+.citie-autocomplete__chip-remover {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  color: inherit;
+  background: none;
+  border: none;
+  border-radius: var(--citie-radius-full);
+  cursor: pointer;
+}
+
+.citie-autocomplete__chip-remover:hover:not(:disabled) {
+  background-color: var(--citie-state-selected);
+}
+
+.citie-autocomplete__chip-remover:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-autocomplete__chip-remover:disabled {
+  color: var(--citie-state-disabled-text);
+  cursor: not-allowed;
+}
+
+.citie-autocomplete__painel {
+  position: absolute;
+  z-index: 1100;
+  inset-block-start: calc(100% + 4px);
+  inset-inline: 0;
+  padding: var(--citie-spacing-2);
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-md);
+  box-shadow: var(--citie-shadow-overlay);
+}
+
+.citie-autocomplete__lista {
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.citie-autocomplete__lista:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-autocomplete__grupo-titulo {
+  padding: var(--citie-spacing-2) var(--citie-spacing-3);
+  font-size: var(--citie-font-size-body-sm);
+  font-weight: var(--citie-font-weight-action);
+  color: var(--citie-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.citie-autocomplete__opcao {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-2);
+  min-height: 36px;
+  padding: var(--citie-spacing-2) var(--citie-spacing-3);
+  font-size: var(--citie-font-size-body-md);
+  color: var(--citie-text-base);
+  border-radius: var(--citie-radius-sm);
+  cursor: pointer;
+}
+
+.citie-autocomplete__opcao:hover {
+  background-color: var(--citie-background-subtle);
+}
+
+/* Destaque do teclado (aria-activedescendant): fundo mais a barra lateral, para
+   não depender só da cor. */
+.citie-autocomplete__opcao--destacada {
+  background-color: var(--citie-state-selected);
+  box-shadow: inset 3px 0 0 0 var(--citie-brand-primary);
+}
+
+.citie-autocomplete__opcao--escolhida {
+  color: var(--citie-brand-primary);
+  font-weight: var(--citie-font-weight-action);
+}
+
+.citie-autocomplete__marca {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 16px;
+  font-weight: 700;
+  color: var(--citie-brand-primary);
+}
+
+.citie-autocomplete__vazio {
+  padding: var(--citie-spacing-3);
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-text-secondary);
+}

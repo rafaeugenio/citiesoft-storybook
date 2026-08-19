@@ -1,0 +1,53 @@
+.marca {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  font-family: var(--citie-font-ui);
+}
+
+.marca__caso {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin: 0;
+  padding: 24px;
+  border-radius: var(--citie-radius-lg);
+  border: 1px solid var(--citie-border-default);
+}
+
+.marca__caso figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px;
+  font-size: var(--citie-font-size-body-sm);
+  background-color: var(--citie-background-surface);
+  color: var(--citie-text-base);
+  border-radius: var(--citie-radius-md);
+}
+
+.marca__caso--claro {
+  background-color: #fafafa;
+}
+
+.marca__caso--azul {
+  background-color: #1261e4;
+}
+
+/* Gradiente institucional da marca. */
+.marca__caso--gradiente {
+  background: linear-gradient(135deg, #146bfa, #0b3c8f);
+}
+
+.marca__nota {
+  color: var(--citie-text-secondary);
+}
+
+.marca__caso--errado {
+  border: 2px dashed var(--citie-danger-emphasis);
+}
+
+/* Demonstração do que o brandbook proíbe. */
+.marca__recolorido {
+  filter: hue-rotate(140deg) saturate(2);
+}

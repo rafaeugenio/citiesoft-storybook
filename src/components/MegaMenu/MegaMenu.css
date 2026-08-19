@@ -1,0 +1,213 @@
+/**
+ * MegaMenu — Figma CitieOne, página `❖ MegaMenu` (6738:52938).
+ * Estrutura vem do Figma; cor, raio, espaçamento e tipografia vêm dos tokens.
+ */
+
+.citie-megamenu {
+  position: relative;
+  display: flex;
+  font-family: var(--citie-font-ui);
+}
+
+/* Orientation: Horizontal — barra em linha, painel abaixo. */
+.citie-megamenu--horizontal {
+  flex-direction: column;
+}
+
+/* Orientation: Vertical — barra em coluna, painel ao lado. */
+.citie-megamenu--vertical {
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.citie-megamenu__barra {
+  display: flex;
+  gap: var(--citie-spacing-1);
+  padding: var(--citie-spacing-1);
+  background: var(--citie-background-surface);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-md);
+}
+
+.citie-megamenu--vertical .citie-megamenu__barra {
+  flex-direction: column;
+  min-width: 208px;
+}
+
+/* ---------------------------------------------------------------- */
+/* Item de topo (megamenu-item, State Idle/Hover/Focus/Active)       */
+/* ---------------------------------------------------------------- */
+
+.citie-megamenu__topo {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-1);
+  min-height: var(--citie-control-height-small);
+  padding: 0 var(--citie-spacing-2);
+  border: 0;
+  border-radius: var(--citie-radius-md);
+  background: transparent;
+  color: var(--citie-text-base);
+  font: inherit;
+  font-size: var(--citie-font-size-body-md);
+  font-weight: var(--citie-font-weight-action);
+  cursor: pointer;
+}
+
+.citie-megamenu--vertical .citie-megamenu__topo {
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.citie-megamenu__topo:hover {
+  background: var(--citie-state-hover-overlay);
+  color: var(--citie-text-primary);
+}
+
+.citie-megamenu__topo:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+/* State Active: fundo e cor de marca, e a seta girada — cor nunca é o único sinal. */
+.citie-megamenu__topo--ativo {
+  background: var(--citie-state-selected);
+  color: var(--citie-brand-primary);
+}
+
+.citie-megamenu__topo--ativo .citie-megamenu__seta {
+  transform: rotate(180deg);
+}
+
+.citie-megamenu--vertical .citie-megamenu__topo .citie-megamenu__seta {
+  /* Na barra vertical o painel abre para o lado, então a seta aponta para lá. */
+  transform: rotate(-90deg);
+  margin-left: auto;
+}
+
+.citie-megamenu--vertical .citie-megamenu__topo--ativo .citie-megamenu__seta {
+  transform: rotate(-90deg) scaleX(-1);
+}
+
+.citie-megamenu__seta {
+  flex: none;
+  transition: transform 150ms ease;
+}
+
+.citie-megamenu__icone {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--citie-text-secondary);
+}
+
+/* ---------------------------------------------------------------- */
+/* Painel (Overlay True/False)                                       */
+/* ---------------------------------------------------------------- */
+
+.citie-megamenu__painel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--citie-spacing-4);
+  padding: var(--citie-spacing-3);
+  background: var(--citie-background-surface);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-lg);
+}
+
+/* Overlay: True — o painel flutua e não empurra o conteúdo da página. */
+.citie-megamenu--sobreposto .citie-megamenu__painel {
+  position: absolute;
+  z-index: 20;
+  box-shadow: var(--citie-shadow-overlay);
+}
+
+.citie-megamenu--sobreposto.citie-megamenu--horizontal .citie-megamenu__painel {
+  top: calc(100% + var(--citie-spacing-1));
+  left: 0;
+  min-width: 100%;
+}
+
+.citie-megamenu--sobreposto.citie-megamenu--vertical .citie-megamenu__painel {
+  top: 0;
+  left: calc(100% + var(--citie-spacing-1));
+}
+
+/* Overlay: False — o painel entra no fluxo, encostado na barra. */
+.citie-megamenu--embutido .citie-megamenu__painel {
+  box-shadow: var(--citie-shadow-card);
+}
+
+.citie-megamenu--embutido.citie-megamenu--horizontal .citie-megamenu__painel {
+  margin-top: var(--citie-spacing-1);
+}
+
+.citie-megamenu--embutido.citie-megamenu--vertical .citie-megamenu__painel {
+  margin-left: var(--citie-spacing-1);
+}
+
+/* ---------------------------------------------------------------- */
+/* Coluna (megamenu-submenu / megamenu-submenu-label)                */
+/* ---------------------------------------------------------------- */
+
+.citie-megamenu__coluna {
+  display: flex;
+  flex: 1 1 180px;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 180px;
+}
+
+.citie-megamenu__titulo {
+  margin: 0 0 var(--citie-spacing-1);
+  padding: 0 var(--citie-spacing-2);
+  color: var(--citie-text-primary);
+  font-family: var(--citie-font-display);
+  font-size: var(--citie-font-size-body-sm);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.citie-megamenu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-2);
+  /* Alvo de clique confortável mesmo quando o rótulo é curto. */
+  min-height: var(--citie-control-height-small);
+  padding: var(--citie-spacing-1) var(--citie-spacing-2);
+  border-radius: var(--citie-radius-md);
+  color: var(--citie-text-base);
+  font-size: var(--citie-font-size-body-md);
+  text-decoration: none;
+}
+
+.citie-megamenu__item:hover {
+  background: var(--citie-state-hover-overlay);
+  color: var(--citie-text-primary);
+}
+
+.citie-megamenu__item:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-megamenu__textos {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.citie-megamenu__descricao {
+  color: var(--citie-text-secondary);
+  font-size: var(--citie-font-size-body-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-megamenu__seta {
+    transition: none;
+  }
+}

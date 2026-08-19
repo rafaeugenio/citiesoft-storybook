@@ -1,0 +1,97 @@
+.citie-tooltip-anchor {
+  position: relative;
+  display: inline-flex;
+}
+
+.citie-tooltip {
+  position: absolute;
+  z-index: 1100;
+  padding: 6px var(--citie-spacing-2);
+  font-family: var(--citie-font-ui);
+  font-size: var(--citie-font-size-body-sm);
+  line-height: 1.35;
+  color: var(--citie-text-inverse);
+  background-color: var(--citie-text-primary);
+  border-radius: var(--citie-radius-sm);
+  box-shadow: var(--citie-shadow-overlay);
+  /* Máximo de 2 linhas: se o conteúdo passar disso, o componente certo é o Popover. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.citie-tooltip--sm {
+  max-width: 180px;
+}
+
+.citie-tooltip--md {
+  max-width: 240px;
+}
+
+.citie-tooltip--lg {
+  max-width: 320px;
+}
+
+.citie-tooltip--top {
+  inset-block-end: calc(100% + 8px);
+  inset-inline-start: 50%;
+  translate: -50% 0;
+}
+
+.citie-tooltip--bottom {
+  inset-block-start: calc(100% + 8px);
+  inset-inline-start: 50%;
+  translate: -50% 0;
+}
+
+.citie-tooltip--left {
+  inset-inline-end: calc(100% + 8px);
+  inset-block-start: 50%;
+  translate: 0 -50%;
+}
+
+.citie-tooltip--right {
+  inset-inline-start: calc(100% + 8px);
+  inset-block-start: 50%;
+  translate: 0 -50%;
+}
+
+/* Seta de 6px na mesma cor do contêiner. */
+.citie-tooltip::after {
+  content: '';
+  position: absolute;
+  border: 6px solid transparent;
+}
+
+.citie-tooltip--top::after {
+  inset-block-start: 100%;
+  inset-inline-start: 50%;
+  margin-inline-start: -6px;
+  border-block-start-color: var(--citie-text-primary);
+}
+
+.citie-tooltip--bottom::after {
+  inset-block-end: 100%;
+  inset-inline-start: 50%;
+  margin-inline-start: -6px;
+  border-block-end-color: var(--citie-text-primary);
+}
+
+.citie-popover {
+  position: absolute;
+  z-index: 1100;
+  inset-block-start: calc(100% + 8px);
+  inset-inline-start: 0;
+  min-width: 260px;
+  padding: var(--citie-spacing-4);
+  font-family: var(--citie-font-ui);
+  font-size: var(--citie-font-size-body-md);
+  color: var(--citie-text-base);
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-md);
+  box-shadow: var(--citie-shadow-overlay);
+  text-align: start;
+}

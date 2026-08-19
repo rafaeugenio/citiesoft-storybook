@@ -1,0 +1,435 @@
+.citie-galleria {
+  display: flex;
+  gap: var(--citie-spacing-3);
+  font-family: var(--citie-font-ui);
+  color: var(--citie-text-base);
+}
+
+/* Posição da tira de miniaturas: Thumbnail Location do component set. */
+.citie-galleria--tira-bottom {
+  flex-direction: column;
+}
+
+.citie-galleria--tira-top {
+  flex-direction: column-reverse;
+}
+
+.citie-galleria--tira-right {
+  flex-direction: row;
+}
+
+.citie-galleria--tira-left {
+  flex-direction: row-reverse;
+}
+
+.citie-galleria__principal {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  gap: var(--citie-spacing-2);
+}
+
+/* Posição das bolinhas: Indicator Location do component set. */
+.citie-galleria__principal--ind-bottom {
+  flex-direction: column;
+}
+
+.citie-galleria__principal--ind-top {
+  flex-direction: column-reverse;
+}
+
+.citie-galleria__principal--ind-right {
+  flex-direction: row;
+}
+
+.citie-galleria__principal--ind-left {
+  flex-direction: row-reverse;
+}
+
+/* ---------- Palco ---------- */
+
+.citie-galleria__palco {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-lg);
+  background-color: var(--citie-background-subtle);
+}
+
+.citie-galleria__imagem {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+
+.citie-galleria__nav,
+.citie-galleria__expandir {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  cursor: pointer;
+  color: var(--citie-text-primary);
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-full);
+  box-shadow: var(--citie-shadow-card);
+  transition: background-color 150ms ease-out;
+}
+
+.citie-galleria__nav:hover:not(:disabled),
+.citie-galleria__expandir:hover {
+  background-color: var(--citie-background-subtle);
+}
+
+.citie-galleria__nav:focus-visible,
+.citie-galleria__expandir:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+/* A seta desabilitada continua visível para não deslocar o palco, e o estado é
+   lido pelo `disabled`, não apenas pela cor. */
+.citie-galleria__nav:disabled {
+  cursor: default;
+  color: var(--citie-state-disabled-text);
+  background-color: var(--citie-state-disabled-background);
+}
+
+.citie-galleria__nav--anterior {
+  inset-block-start: 50%;
+  inset-inline-start: var(--citie-spacing-3);
+  translate: 0 -50%;
+}
+
+.citie-galleria__nav--proxima {
+  inset-block-start: 50%;
+  inset-inline-end: var(--citie-spacing-3);
+  translate: 0 -50%;
+}
+
+.citie-galleria__expandir {
+  inset-block-start: var(--citie-spacing-3);
+  inset-inline-end: var(--citie-spacing-3);
+}
+
+/* Faixa escura própria: a legenda fica sobre foto de conteúdo imprevisível e
+   precisa manter 4,5:1 com qualquer imagem embaixo. */
+.citie-galleria__legenda {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  padding: var(--citie-spacing-3) var(--citie-spacing-4);
+  background-color: rgba(16, 24, 40, 0.78);
+  color: var(--citie-text-inverse);
+}
+
+.citie-galleria__legenda-titulo {
+  margin: 0;
+  font-size: var(--citie-font-size-body-md);
+  font-weight: var(--citie-font-weight-action);
+}
+
+.citie-galleria__legenda-descricao {
+  margin: 2px 0 0;
+  font-size: var(--citie-font-size-body-sm);
+  /* Branco puro com opacidade alta: `--citie-text-secondary` não teria contraste
+     sobre a faixa escura. */
+  color: rgba(255, 255, 255, 0.88);
+}
+
+/* ---------- Indicadores ---------- */
+
+.citie-galleria__indicadores {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.citie-galleria__indicadores--vertical {
+  flex-direction: column;
+}
+
+.citie-galleria__indicadores--sobreposta {
+  position: absolute;
+  inset-block-end: var(--citie-spacing-3);
+  inset-inline: 0;
+  padding: 4px;
+}
+
+.citie-galleria__indicadores--sobreposta.citie-galleria__indicadores--vertical {
+  inset-block: var(--citie-spacing-3);
+  inset-inline: auto var(--citie-spacing-3);
+}
+
+.citie-galleria__indicador {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Alvo de 24x24 mesmo com o ponto desenhado em 10px. */
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-radius: var(--citie-radius-full);
+}
+
+.citie-galleria__ponto {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--citie-radius-full);
+  background-color: var(--citie-border-strong);
+  transition: background-color 150ms ease-out, scale 150ms ease-out;
+}
+
+.citie-galleria__indicador:hover .citie-galleria__ponto {
+  background-color: var(--citie-brand-hover);
+}
+
+.citie-galleria__indicador[aria-current='true'] .citie-galleria__ponto {
+  background-color: var(--citie-brand-primary);
+  scale: 1.2;
+}
+
+.citie-galleria__indicador:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+/* Sobre a imagem os pontos ganham um fundo próprio para não sumir na foto. */
+.citie-galleria__indicadores--sobreposta .citie-galleria__ponto {
+  background-color: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 0 0 1px rgba(16, 24, 40, 0.32);
+}
+
+.citie-galleria__indicadores--sobreposta .citie-galleria__indicador[aria-current='true'] .citie-galleria__ponto {
+  background-color: var(--citie-brand-contrast);
+  box-shadow: 0 0 0 3px var(--citie-brand-primary);
+}
+
+/* ---------- Tira de miniaturas ---------- */
+
+.citie-galleria__tira {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-1);
+  min-width: 0;
+}
+
+.citie-galleria__tira--vertical {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.citie-galleria__tira-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  cursor: pointer;
+  color: var(--citie-text-secondary);
+  background: none;
+  border: none;
+  border-radius: var(--citie-radius-sm);
+}
+
+.citie-galleria__tira-nav:hover:not(:disabled) {
+  color: var(--citie-text-primary);
+  background-color: var(--citie-background-subtle);
+}
+
+.citie-galleria__tira-nav:disabled {
+  cursor: default;
+  color: var(--citie-state-disabled-text);
+}
+
+.citie-galleria__tira-nav:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-galleria__miniaturas {
+  display: flex;
+  gap: var(--citie-spacing-2);
+  margin: 0;
+  padding: 2px;
+  list-style: none;
+  overflow: auto;
+  scrollbar-width: none;
+}
+
+.citie-galleria__miniaturas::-webkit-scrollbar {
+  display: none;
+}
+
+.citie-galleria__tira--vertical .citie-galleria__miniaturas {
+  flex-direction: column;
+  max-height: 320px;
+}
+
+.citie-galleria__miniatura {
+  display: block;
+  flex: none;
+  width: 84px;
+  padding: 0;
+  cursor: pointer;
+  overflow: hidden;
+  background: none;
+  border: 2px solid transparent;
+  border-radius: var(--citie-radius-md);
+  opacity: 0.72;
+  transition: opacity 150ms ease-out, border-color 150ms ease-out;
+}
+
+.citie-galleria__tira--vertical .citie-galleria__miniatura {
+  width: 100%;
+}
+
+.citie-galleria__miniatura:hover {
+  opacity: 1;
+}
+
+.citie-galleria__miniatura[aria-current='true'] {
+  opacity: 1;
+  border-color: var(--citie-brand-primary);
+}
+
+.citie-galleria__miniatura:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-galleria__miniatura-imagem {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--citie-radius-sm);
+}
+
+/* ---------- Vazio ---------- */
+
+.citie-galleria--vazia {
+  padding: var(--citie-spacing-5);
+  border: 1px dashed var(--citie-border-default);
+  border-radius: var(--citie-radius-lg);
+}
+
+.citie-galleria__vazio {
+  margin: 0;
+  font-size: var(--citie-font-size-body-md);
+  color: var(--citie-text-secondary);
+  text-align: center;
+}
+
+/* ---------- Tela cheia ---------- */
+
+.citie-galleria__dialogo {
+  width: 100vw;
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+}
+
+.citie-galleria__dialogo::backdrop {
+  background-color: rgba(16, 24, 40, 0.88);
+}
+
+.citie-galleria__dialogo-conteudo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 56px var(--citie-spacing-5) var(--citie-spacing-5);
+}
+
+.citie-galleria__dialogo-conteudo .citie-galleria {
+  width: min(960px, 100%);
+}
+
+.citie-galleria__dialogo-conteudo .citie-galleria__palco {
+  border-color: transparent;
+  background-color: transparent;
+}
+
+.citie-galleria__fechar {
+  position: absolute;
+  inset-block-start: var(--citie-spacing-4);
+  inset-inline-end: var(--citie-spacing-4);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  cursor: pointer;
+  color: var(--citie-text-primary);
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-full);
+}
+
+.citie-galleria__fechar:hover {
+  background-color: var(--citie-background-subtle);
+}
+
+.citie-galleria__fechar:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+@media (max-width: 767px) {
+  .citie-galleria--tira-left,
+  .citie-galleria--tira-right {
+    flex-direction: column;
+  }
+
+  .citie-galleria--tira-left .citie-galleria__tira,
+  .citie-galleria--tira-right .citie-galleria__tira {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .citie-galleria--tira-left .citie-galleria__miniaturas,
+  .citie-galleria--tira-right .citie-galleria__miniaturas {
+    flex-direction: row;
+    max-height: none;
+  }
+
+  .citie-galleria--tira-left .citie-galleria__miniatura,
+  .citie-galleria--tira-right .citie-galleria__miniatura {
+    width: 84px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-galleria__nav,
+  .citie-galleria__expandir,
+  .citie-galleria__ponto,
+  .citie-galleria__miniatura {
+    transition: none;
+  }
+
+  .citie-galleria__indicador[aria-current='true'] .citie-galleria__ponto {
+    scale: 1;
+  }
+}

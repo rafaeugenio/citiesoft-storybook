@@ -1,0 +1,278 @@
+.citie-treetable-wrapper {
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-lg);
+  overflow: auto;
+  background-color: var(--citie-background-surface);
+}
+
+.citie-treetable {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--citie-font-ui);
+  font-size: var(--citie-font-size-body-md);
+  color: var(--citie-text-base);
+}
+
+/* Faixa de título (treetable-header do Figma). */
+.citie-treetable__titulo {
+  padding: var(--citie-spacing-3) var(--citie-spacing-4);
+  background-color: var(--citie-background-subtle);
+  border-block-end: 1px solid var(--citie-border-default);
+  font-size: var(--citie-font-size-body-md);
+  font-weight: 600;
+  color: var(--citie-text-primary);
+}
+
+.citie-treetable th {
+  font-size: var(--citie-font-size-body-sm);
+  font-weight: 600;
+  color: var(--citie-text-primary);
+  text-align: start;
+  background-color: var(--citie-background-subtle);
+  border-block-end: 1px solid var(--citie-border-strong);
+  white-space: nowrap;
+}
+
+.citie-treetable td {
+  border-block-end: 1px solid var(--citie-border-default);
+  /* Texto que excede a largura trunca com reticências, nunca quebra no meio da palavra. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 360px;
+}
+
+.citie-treetable tbody tr:last-child td {
+  border-block-end: none;
+}
+
+/**
+ * O conteúdo da célula vive num container flex em vez de solto na linha de base:
+ * o botão de expandir arrastaria o strut da linha e inflaria a altura.
+ */
+.citie-treetable__conteudo {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  line-height: 1.4;
+}
+
+.citie-treetable__conteudo > * {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.citie-treetable__celula--direita .citie-treetable__conteudo {
+  justify-content: flex-end;
+}
+
+.citie-treetable__celula--centro .citie-treetable__conteudo,
+.citie-treetable__celula--selecao .citie-treetable__conteudo {
+  justify-content: center;
+}
+
+/* ---------- Hierarquia ---------- */
+
+/**
+ * Um nível de profundidade recua `spacing.4` (16px), conforme a spec do DS.
+ * O recuo é padding do container, não margem do toggle, para o alvo de clique do
+ * botão continuar inteiro em qualquer nível.
+ */
+.citie-treetable__conteudo--hierarquia {
+  gap: var(--citie-spacing-2);
+  padding-inline-start: calc(var(--citie-treetable-nivel, 0) * var(--citie-spacing-4));
+}
+
+.citie-treetable__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  /* Alvo de 24x24 mesmo com o chevron desenhado em 16px. */
+  inline-size: 24px;
+  block-size: 24px;
+  padding: 0;
+  color: var(--citie-text-secondary);
+  background: none;
+  border: none;
+  border-radius: var(--citie-radius-sm);
+  cursor: pointer;
+  transition: transform 120ms ease-out, background-color 120ms ease-out;
+}
+
+.citie-treetable__toggle:hover {
+  background-color: var(--citie-state-hover-overlay);
+  color: var(--citie-text-primary);
+}
+
+.citie-treetable__toggle:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+/* Chevron aponta para a direita fechado e para baixo aberto. */
+.citie-treetable__linha[aria-expanded='true'] .citie-treetable__toggle {
+  transform: rotate(90deg);
+}
+
+/* Folha sem filhos reserva o mesmo espaço para os rótulos alinharem na coluna. */
+.citie-treetable__toggle-vazio {
+  display: inline-block;
+  flex: none;
+  inline-size: 24px;
+  block-size: 24px;
+}
+
+/* Cada nível perde peso: a hierarquia se lê sem depender só do recuo. */
+.citie-treetable__linha--nivel-1 .citie-treetable__conteudo--hierarquia {
+  font-weight: 600;
+  color: var(--citie-text-primary);
+}
+
+.citie-treetable__linha--nivel-2 .citie-treetable__conteudo--hierarquia {
+  font-weight: 500;
+}
+
+/* Código da conta antes do nome: dígito alinhado para a leitura vertical. */
+.citie-treetable__codigo {
+  font-variant-numeric: tabular-nums;
+  color: var(--citie-text-primary);
+}
+
+/* ---------- Densidades ---------- */
+
+/**
+ * Em célula de tabela o `height` é altura de conteúdo e o padding vertical soma
+ * por cima (48 + 12 + 12 + borda = 73). Por isso a altura fica no `height` e o
+ * respiro vertical vira espaço mínimo do container interno.
+ */
+.citie-treetable--confortavel th,
+.citie-treetable--confortavel td {
+  height: 48px;
+  padding: 0 var(--citie-spacing-4);
+}
+
+.citie-treetable--confortavel .citie-treetable__conteudo {
+  min-height: 24px;
+}
+
+.citie-treetable--compacta th,
+.citie-treetable--compacta td {
+  height: 36px;
+  padding: 0 var(--citie-spacing-3);
+}
+
+.citie-treetable--compacta .citie-treetable__conteudo {
+  min-height: 20px;
+}
+
+.citie-treetable--compacta .citie-treetable__toggle,
+.citie-treetable--compacta .citie-treetable__toggle-vazio {
+  /* Mantém os 24px de alvo sem esticar a linha de 36px. */
+  block-size: 24px;
+}
+
+/* ---------- Zebra ---------- */
+
+.citie-treetable--zebra tbody tr:nth-child(even) {
+  background-color: var(--citie-background-subtle);
+}
+
+/* ---------- Linhas de grade ---------- */
+
+.citie-treetable--grade th:not(:last-child),
+.citie-treetable--grade td:not(:last-child) {
+  border-inline-end: 1px solid var(--citie-border-default);
+}
+
+/* ---------- Header fixo ---------- */
+
+.citie-treetable--header-fixo thead th {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1020;
+  box-shadow: 0 1px 0 var(--citie-border-strong);
+}
+
+/* ---------- Estados de linha ---------- */
+
+.citie-treetable tbody tr:hover {
+  background-color: var(--citie-state-hover-overlay);
+  transition: background-color 100ms ease-out;
+}
+
+.citie-treetable__linha:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-treetable__linha--selecionada {
+  background-color: var(--citie-state-selected);
+}
+
+.citie-treetable__linha--selecionada td:first-child {
+  box-shadow: inset 3px 0 0 var(--citie-brand-primary);
+}
+
+/* ---------- Colunas especiais ---------- */
+
+.citie-treetable__celula--selecao {
+  width: 48px;
+  text-align: center;
+}
+
+.citie-treetable__celula--esquerda {
+  text-align: start;
+}
+
+.citie-treetable__celula--direita {
+  /* Valores monetários alinham à direita para comparação vertical. */
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.citie-treetable__celula--centro {
+  text-align: center;
+}
+
+/* ---------- Ordenação ---------- */
+
+.citie-treetable__ordenar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  font: inherit;
+  color: var(--citie-text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.citie-treetable__ordenar--ativa {
+  color: var(--citie-brand-primary);
+}
+
+.citie-treetable__ordenar:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+  border-radius: var(--citie-radius-sm);
+}
+
+/* ---------- Rodapé de totais ---------- */
+
+.citie-treetable tfoot td {
+  background-color: var(--citie-background-subtle);
+  border-block-start: 1px solid var(--citie-border-strong);
+  border-block-end: none;
+  font-weight: 600;
+  color: var(--citie-text-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-treetable tbody tr:hover,
+  .citie-treetable__toggle {
+    transition: none;
+  }
+}

@@ -1,0 +1,128 @@
+.fnd {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  font-family: var(--citie-font-ui);
+  color: var(--citie-text-base);
+}
+
+.fnd__titulo {
+  margin: 0 0 12px;
+  font-family: var(--citie-font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--citie-text-primary);
+}
+
+.fnd__grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.fnd-amostra {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.fnd-amostra__cor {
+  width: 48px;
+  height: 48px;
+  flex: none;
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-md);
+}
+
+.fnd-amostra__cor--raio {
+  background-color: var(--citie-brand-primary);
+}
+
+.fnd-amostra__nome {
+  margin: 0;
+  font-size: var(--citie-font-size-body-md);
+  font-weight: 500;
+  color: var(--citie-text-primary);
+}
+
+.fnd-amostra__token {
+  font-family: var(--citie-font-ui);
+  font-size: 12px;
+  color: var(--citie-text-secondary);
+}
+
+.fnd-amostra__texto {
+  margin: 4px 0 0;
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-text-secondary);
+  max-width: 46ch;
+}
+
+.fnd__linha {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-block-end: 8px;
+}
+
+.fnd__linha code {
+  min-width: 180px;
+}
+
+.fnd__barra {
+  display: inline-block;
+  height: 16px;
+  background-color: var(--citie-brand-primary);
+  border-radius: var(--citie-radius-sm);
+}
+
+.fnd__controle {
+  display: inline-block;
+  width: 120px;
+  flex: none;
+  background-color: var(--citie-background-subtle);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-md);
+}
+
+.fnd__display {
+  margin: 0;
+  font-family: var(--citie-font-display);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--citie-text-primary);
+}
+
+.fnd__display--xl {
+  font-size: 32px;
+}
+
+.fnd__corpo {
+  margin: 0;
+  font-family: var(--citie-font-ui);
+  font-size: var(--citie-font-size-body-md);
+}
+
+.fnd__corpo--lg {
+  font-size: var(--citie-font-size-body-lg);
+}
+
+.fnd__corpo--sm {
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-text-secondary);
+}
+
+.fnd__corpo--acao {
+  font-weight: 500;
+}
+
+.fnd__elevacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-text-secondary);
+  background-color: var(--citie-background-surface);
+  border-radius: var(--citie-radius-lg);
+}

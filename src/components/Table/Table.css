@@ -1,0 +1,193 @@
+.citie-table-wrapper {
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-lg);
+  overflow: auto;
+  background-color: var(--citie-background-surface);
+}
+
+.citie-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--citie-font-ui);
+  font-size: var(--citie-font-size-body-md);
+  color: var(--citie-text-base);
+}
+
+.citie-table th {
+  font-size: var(--citie-font-size-body-sm);
+  font-weight: 600;
+  color: var(--citie-text-primary);
+  text-align: start;
+  background-color: var(--citie-background-subtle);
+  border-block-end: 1px solid var(--citie-border-strong);
+  white-space: nowrap;
+}
+
+.citie-table td {
+  border-block-end: 1px solid var(--citie-border-default);
+  /* Texto que excede a largura trunca com reticências, nunca quebra no meio da palavra. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 320px;
+}
+
+.citie-table tbody tr:last-child td {
+  border-block-end: none;
+}
+
+/**
+ * O conteúdo da célula vive num container flex em vez de solto na linha de base.
+ * Solto, um botão de 32px arrasta o strut da linha junto e infla a altura em
+ * ~17px; no flex a altura da linha volta a ser padding mais conteúdo, como a
+ * spec define.
+ */
+.citie-table__conteudo {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  line-height: 1.4;
+}
+
+.citie-table__conteudo > * {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.citie-table__celula--direita .citie-table__conteudo {
+  justify-content: flex-end;
+}
+
+.citie-table__celula--centro .citie-table__conteudo,
+.citie-table__celula--selecao .citie-table__conteudo {
+  justify-content: center;
+}
+
+/* ---------- Densidades ---------- */
+
+/**
+ * Em célula de tabela o `height` é altura de conteúdo e o padding vertical soma
+ * por cima (48 + 12 + 12 + borda = 73). Por isso a altura fica no `height` e o
+ * respiro vertical vira espaço mínimo do container interno, mantendo os 48px e
+ * os 36px que a spec define.
+ */
+.citie-table--confortavel th,
+.citie-table--confortavel td {
+  height: 48px;
+  padding: 0 var(--citie-spacing-4);
+}
+
+.citie-table--confortavel .citie-table__conteudo {
+  min-height: 24px;
+}
+
+.citie-table--compacta th,
+.citie-table--compacta td {
+  height: 36px;
+  padding: 0 var(--citie-spacing-3);
+}
+
+.citie-table--compacta .citie-table__conteudo {
+  min-height: 20px;
+}
+
+/* ---------- Zebra ---------- */
+
+.citie-table--zebra tbody tr:nth-child(even) {
+  background-color: var(--citie-background-subtle);
+}
+
+/* ---------- Header fixo ---------- */
+
+.citie-table--header-fixo thead th {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1020;
+  box-shadow: 0 1px 0 var(--citie-border-strong);
+}
+
+/* ---------- Estados de linha ---------- */
+
+.citie-table tbody tr:hover {
+  background-color: var(--citie-state-hover-overlay);
+  transition: background-color 100ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-table tbody tr:hover {
+    transition: none;
+  }
+}
+
+.citie-table__linha--selecionada {
+  background-color: var(--citie-state-selected);
+}
+
+.citie-table__linha--selecionada td:first-child {
+  box-shadow: inset 3px 0 0 var(--citie-brand-primary);
+}
+
+/* ---------- Colunas especiais ---------- */
+
+.citie-table__celula--selecao {
+  width: 48px;
+  text-align: center;
+}
+
+.citie-table__celula--esquerda {
+  text-align: start;
+}
+
+.citie-table__celula--direita {
+  /* Valores monetários alinham à direita para comparação vertical. */
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.citie-table__celula--centro {
+  text-align: center;
+}
+
+/* ---------- Ordenação ---------- */
+
+.citie-table__ordenar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  font: inherit;
+  color: var(--citie-text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.citie-table__ordenar--ativa {
+  color: var(--citie-brand-primary);
+}
+
+.citie-table__ordenar:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+  border-radius: var(--citie-radius-sm);
+}
+
+/* ---------- Barra de ações em massa ---------- */
+
+.citie-table__acoes-massa {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-3);
+  padding: var(--citie-spacing-3) var(--citie-spacing-4);
+  background-color: var(--citie-brand-subtle);
+  border-block-end: 1px solid var(--citie-border-default);
+  font-size: var(--citie-font-size-body-sm);
+  font-weight: 500;
+  color: var(--citie-text-primary);
+}
+
+.citie-table__ausente {
+  color: var(--citie-text-secondary);
+  font-style: italic;
+}

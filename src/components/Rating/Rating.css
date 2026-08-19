@@ -1,0 +1,84 @@
+.citie-rating {
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-2);
+  border: none;
+  margin: 0;
+  padding: 0;
+  font-family: var(--citie-font-ui);
+}
+
+.citie-rating--leitura {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--citie-spacing-3);
+}
+
+.citie-rating__label {
+  padding: 0;
+  font-size: var(--citie-font-size-body-md);
+  font-weight: 500;
+  color: var(--citie-text-primary);
+}
+
+.citie-rating__estrelas {
+  display: inline-flex;
+  gap: var(--citie-spacing-1);
+}
+
+.citie-rating__item {
+  display: inline-flex;
+  /* Alvo de toque de 24px mesmo com o ícone de 20px (WCAG 2.5.8). */
+  min-width: 24px;
+  min-height: 24px;
+  align-items: center;
+  justify-content: center;
+  color: var(--citie-border-strong);
+  cursor: pointer;
+  border-radius: var(--citie-radius-sm);
+  transition: color 120ms ease-out, scale 120ms ease-out;
+}
+
+.citie-rating__item--preenchido {
+  color: var(--citie-warning-emphasis);
+}
+
+.citie-rating__item:hover {
+  color: var(--citie-warning-strong);
+  scale: 1.1;
+}
+
+/* O anel de foco fica no rótulo, já que o radio em si é visualmente oculto. */
+.citie-rating__item:has(:focus-visible) {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-rating__icone {
+  width: 20px;
+  height: 20px;
+}
+
+.citie-rating--leitura .citie-rating__item {
+  cursor: default;
+}
+
+.citie-rating--desabilitado .citie-rating__item {
+  color: var(--citie-state-disabled-text);
+  cursor: not-allowed;
+}
+
+.citie-rating--desabilitado .citie-rating__item:hover {
+  scale: 1;
+  color: var(--citie-state-disabled-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-rating__item {
+    transition: none;
+  }
+
+  .citie-rating__item:hover {
+    scale: 1;
+  }
+}
