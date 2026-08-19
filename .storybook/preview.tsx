@@ -17,7 +17,11 @@ const preview: Preview = {
         method: 'alphabetical',
         order: [
           'Visão geral',
+          // A ordem aninhada põe a Introdução na frente das páginas de token,
+          // que seguem em ordem alfabética pelo curinga. Sem isto, a porta de
+          // entrada cairia entre Espaçamento e Marca.
           'Fundações',
+          ['Introdução', '*'],
           'Átomos',
           'Moléculas',
           'Organismos',

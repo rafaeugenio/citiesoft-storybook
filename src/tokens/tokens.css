@@ -114,7 +114,17 @@
   --citie-state-hover-overlay: rgba(18, 97, 228, 0.08);
 
   /* Formulário — aliases citados nas specs de campo */
-  --citie-form-field-border: #e8eaed;
+  /**
+   * Borda de campo. O valor anterior era `#e8eaed`, que mede **1,21:1** sobre o
+   * branco e reprova o contraste mínimo de 3:1 que a WCAG 1.4.11 exige de
+   * elemento de interface. Uma borda que ninguém enxerga não delimita o campo,
+   * e quem tem baixa visão perde a fronteira entre o campo e a página.
+   *
+   * `#8f8f8f` mede **3,23:1** sobre `#ffffff` e passa. A correção vale para os
+   * 14 componentes que consomem este token, e não só para os dois que herdam de
+   * `primitives/Field`.
+   */
+  --citie-form-field-border: #8f8f8f;
   --citie-form-helper: #6b7177;
   /**
    * ACHADO ABERTO DO DS: a spec define `color.text.placeholder` como #A8ACB3,
@@ -419,7 +429,8 @@
   --citie-state-selected: rgba(77, 139, 252, 0.14);
   --citie-state-hover-overlay: rgba(77, 139, 252, 0.14);
 
-  --citie-form-field-border: #34343a;
+  /* `#34343a` media 1,40:1 sobre `#1a1a1d`. `#6b6b6b` mede 3,26:1 e passa. */
+  --citie-form-field-border: #6b6b6b;
   --citie-form-helper: #9a9da3;
   --citie-text-placeholder: #6b7177;
   --citie-danger-foreground: #fca5a5;

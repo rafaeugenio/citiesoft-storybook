@@ -126,3 +126,31 @@
   background-color: var(--citie-background-surface);
   border-radius: var(--citie-radius-lg);
 }
+
+/* ---------- Exemplos de código nas páginas de fundação ---------- */
+
+.citie-exemplo-codigo {
+  font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace;
+  font-size: var(--citie-font-size-body-xs);
+  line-height: 1.6;
+  color: var(--citie-text-base);
+  background-color: var(--citie-background-subtle);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-lg);
+  padding: var(--citie-spacing-4);
+  margin: 0;
+  overflow-x: auto;
+}
+
+.citie-nota-fundacao {
+  font-family: var(--citie-font-ui);
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-text-secondary);
+  max-inline-size: 68ch;
+  margin: 0;
+}
+
+.citie-nota-fundacao code {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  color: var(--citie-brand-primary);
+}

@@ -1,20 +1,70 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
+import { Bloco, TabelaDeContexto } from './_ui/TabelaDeTokens';
 import './Fundacoes.css';
 
 /**
- * As fundações são lidas do CSS real, então esta página nunca diverge dos tokens
- * que os componentes consomem. Se um token some, a amostra some junto.
+ * Porta de entrada das fundações. As páginas irmãs listam os tokens de cada
+ * tema; esta explica como o sistema é montado e qual regra vale para todas.
  */
 
 const meta = {
-  title: 'Fundações/Tokens',
+  title: 'Fundações/Introdução',
   tags: ['autodocs'],
   parameters: {
     docs: {
       description: {
-        component:
-          'Tokens Citiesoft aplicados. Fonte: `design-system/01-foundations/` e `02-tokens/`. O componente consome token por nome, nunca hex literal.',
+        component: [
+          'Toda decisão visual do produto vive em `src/tokens/tokens.css`, como propriedade',
+          'customizada de CSS. Nenhum componente escreve valor literal.',
+          '',
+          '## A regra que sustenta tudo',
+          '',
+          '**Componente consome token semântico por nome, nunca valor literal.**',
+          '',
+          'Não é preferência de estilo. Cada literal que entrou no código deste catálogo virou',
+          'depois um defeito real, e todos foram encontrados por medição:',
+          '',
+          '- doze cores literais no `Button` quebravam o tema escuro exatamente nos estados',
+          '  hover e active das variantes de feedback;',
+          '- a falta de token de véu fez dois organismos repetirem o mesmo valor e um template',
+          '  inventar um terceiro, divergente, na mesma tela;',
+          '- a falta de escala de título produziu 48 tamanhos literais em 24 arquivos, com 14',
+          '  valores distintos, e quatro H1 diferentes em seis templates;',
+          '- a falta de átomo de link deixou o identificador de processo no azul padrão do',
+          '  navegador, medindo 1,67:1 sobre a linha zebrada no tema escuro.',
+          '',
+          'O padrão se repete: **onde falta token, o componente improvisa, e a improvisação',
+          'diverge.** Se você precisa de um valor que não existe como token, o token está',
+          'faltando. Peça o token.',
+          '',
+          '## Como o token é nomeado',
+          '',
+          'O nome descreve o **papel**, nunca a aparência. `text-secondary` diz para que serve;',
+          '`cinza-medio` diria como é. É a nomenclatura por papel que permite o tema escuro',
+          'trocar o valor sem que nenhum componente mude.',
+          '',
+          'Dentro de cada família de feedback existem três papéis distintos, e confundi-los é o',
+          'erro mais frequente:',
+          '',
+          '- `*-emphasis` é **preenchimento** de controle cheio;',
+          '- `*-strong` é **tinta de texto** sobre superfície clara;',
+          '- `*-background` é **fundo** de mensagem.',
+          '',
+          'Apontar o hover de um botão para `*-strong` casa por coincidência no tema claro e',
+          'produz rótulo branco sobre verde claro no escuro, a 1,87:1. O motivo de as duas',
+          'famílias existirem separadas está anotado no topo do arquivo de tokens.',
+          '',
+          '## Onde procurar',
+          '',
+          'Cada página irmã traz a tabela `Token · Amostra · Valor · Uso` do seu tema. Procure',
+          'pela **situação** na coluna Uso, e não pelo valor que você quer ver.',
+          '',
+          '**O valor mostrado é lido do CSS em tempo de execução**, e nunca copiado para a',
+          'documentação. Valor copiado envelhece em silêncio: alguém ajusta o token e a página',
+          'passa a mentir sem que nada acuse. Troque o tema no controle da barra superior e os',
+          'valores mudam junto.',
+        ].join('\n'),
       },
     },
   },
@@ -23,179 +73,113 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-function Amostra({ nome, token, texto }: { nome: string; token: string; texto?: string }) {
-  return (
-    <div className="fnd-amostra">
-      <span className="fnd-amostra__cor" style={{ backgroundColor: `var(${token})` }} />
-      <div>
-        <p className="fnd-amostra__nome">{nome}</p>
-        <code className="fnd-amostra__token">{token}</code>
-        {texto ? <p className="fnd-amostra__texto">{texto}</p> : null}
-      </div>
-    </div>
-  );
-}
-
-export const Cores: Story = {
-  name: 'Cores semânticas',
+export const OndeProcurar: Story = {
+  name: 'Onde procurar cada decisão',
   render: () => (
-    <div className="fnd">
-      <section>
-        <h3 className="fnd__titulo">Marca</h3>
-        <div className="fnd__grade">
-          <Amostra nome="Primária" token="--citie-brand-primary" texto="Ação principal, no máximo uma por contexto" />
-          <Amostra nome="Hover" token="--citie-brand-hover" />
-          <Amostra nome="Pressionado" token="--citie-brand-active" />
-          <Amostra nome="Sutil" token="--citie-brand-subtle" texto="Linha selecionada, item ativo de menu" />
-        </div>
-      </section>
-
-      <section>
-        <h3 className="fnd__titulo">Superfícies</h3>
-        <div className="fnd__grade">
-          <Amostra nome="Fundo de página" token="--citie-background-default" />
-          <Amostra nome="Superfície" token="--citie-background-surface" texto="Cards, modais, tabelas" />
-          <Amostra nome="Sutil" token="--citie-background-subtle" texto="Cabeçalho de tabela, faixa zebrada" />
-        </div>
-      </section>
-
-      <section>
-        <h3 className="fnd__titulo">Texto</h3>
-        <div className="fnd__grade">
-          <Amostra nome="Primário" token="--citie-text-primary" texto="Títulos e dados de máxima ênfase" />
-          <Amostra nome="Base" token="--citie-text-base" texto="Todo texto de corpo" />
-          <Amostra nome="Secundário" token="--citie-text-secondary" texto="Metadado; nunca abaixo de 12px" />
-        </div>
-      </section>
-
-      <section>
-        <h3 className="fnd__titulo">Feedback</h3>
-        <div className="fnd__grade">
-          <Amostra nome="Sucesso" token="--citie-success-emphasis" texto="Aprovado, homologado, vigente" />
-          <Amostra nome="Aviso" token="--citie-warning-emphasis" texto="Pendente, prazo próximo" />
-          <Amostra nome="Erro" token="--citie-danger-emphasis" texto="Devolvido, vencido, exclusão" />
-          <Amostra nome="Informação" token="--citie-info-text" texto="Em andamento, em análise" />
-        </div>
-      </section>
-    </div>
+    <Bloco
+      titulo="Índice das fundações"
+      descricao="Entre pela situação que você tem na mão, e não pelo nome do token."
+    >
+      <TabelaDeContexto
+        legenda="Índice das fundações por situação"
+        colunaDoValor="Página"
+        linhas={[
+          { contexto: 'Que cor usar aqui', valor: 'Fundações · Cores', exemplo: 'Marca, texto, superfície, borda, estado, feedback' },
+          { contexto: 'Que tamanho de texto', valor: 'Fundações · Tipografia', exemplo: 'Famílias, escala de corpo e de título, pesos, números tabulares' },
+          { contexto: 'Quanto de respiro', valor: 'Fundações · Espaçamento', exemplo: 'Respiro interno, gap de grid, intervalo entre seções' },
+          { contexto: 'Quanto de canto e que altura', valor: 'Fundações · Raio e dimensões', exemplo: 'Raio por camada, altura de controle, alvo de toque' },
+          { contexto: 'Que sombra e como marcar o foco', valor: 'Fundações · Elevação e foco', exemplo: 'Quatro degraus de profundidade, anel de foco' },
+          { contexto: 'Quanto tempo dura a transição', valor: 'Fundações · Motion', exemplo: 'Durações por intenção, curvas, movimento reduzido' },
+          { contexto: 'Qual logo em qual fundo', valor: 'Fundações · Marca', exemplo: 'Versões da assinatura e regra de aplicação' },
+        ]}
+      />
+    </Bloco>
   ),
   play: async ({ canvasElement }) => {
-    const estilo = getComputedStyle(canvasElement.ownerDocument.documentElement);
-    // A amostra lê o token real: se o valor mudar no CSS, a página acompanha.
-    await expect(estilo.getPropertyValue('--citie-brand-primary').trim()).toBe('#1261e4');
-    await expect(within(canvasElement).getByText('--citie-brand-primary')).toBeVisible();
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Fundações · Cores')).toBeVisible();
+    await expect(canvas.getByText('Fundações · Motion')).toBeVisible();
   },
 };
 
-export const Tipografia: Story = {
-  name: 'Tipografia',
+export const ComoConsumir: Story = {
+  name: 'Como consumir um token',
   parameters: {
     docs: {
       description: {
         story:
-          'Inter para toda interface densa e Red Hat Display para títulos e momentos institucionais. Fontes fora do sistema (Arial, Roboto, Montserrat) não aparecem em produto.',
+          'O token é propriedade customizada de CSS, então basta `var()`. Não existe camada de build, nem importação de JavaScript, nem função auxiliar: o valor é resolvido pelo navegador em tempo de execução, e é por isso que a troca de tema não exige recarregar a página.',
       },
     },
   },
   render: () => (
-    <div className="fnd">
-      <p className="fnd__display fnd__display--xl">Red Hat Display 32/600</p>
-      <p className="fnd__display">Red Hat Display 20/600, títulos de seção</p>
-      <p className="fnd__corpo fnd__corpo--lg">Inter 16/400, corpo ampliado e mobile</p>
-      <p className="fnd__corpo">Inter 14/400, corpo padrão de produto</p>
-      <p className="fnd__corpo fnd__corpo--sm">Inter 13/400, helper text e metadado</p>
-      <p className="fnd__corpo fnd__corpo--acao">Inter 14/500, rótulo de ação</p>
+    <div style={{ display: 'grid', gap: 'var(--citie-spacing-5)', maxInlineSize: '640px' }}>
+      <Bloco titulo="Em CSS" descricao="A forma padrão. Todo componente deste catálogo é assim.">
+        <pre className="citie-exemplo-codigo">
+{`.minha-secao {
+  background-color: var(--citie-background-surface);
+  color: var(--citie-text-base);
+  padding: var(--citie-spacing-5);
+  border-radius: var(--citie-radius-xl);
+  box-shadow: var(--citie-shadow-raised);
+}`}
+        </pre>
+      </Bloco>
+
+      <Bloco
+        titulo="Em estilo inline de React"
+        descricao="Válido, e reservado a valor que depende de dado em tempo de execução. Estilo estático pertence ao arquivo CSS."
+      >
+        <pre className="citie-exemplo-codigo">
+{`<div style={{ gap: 'var(--citie-spacing-3)' }}>`}
+        </pre>
+      </Bloco>
+
+      <Bloco
+        titulo="Lendo o valor em JavaScript"
+        descricao="Necessário apenas quando o valor precisa ir para um canvas ou para um cálculo. As tabelas destas páginas usam exatamente isto."
+      >
+        <pre className="citie-exemplo-codigo">
+{`const valor = getComputedStyle(document.documentElement)
+  .getPropertyValue('--citie-brand-primary')
+  .trim();`}
+        </pre>
+      </Bloco>
     </div>
   ),
 };
 
-export const Espacamento: Story = {
-  name: 'Espaçamento e raio',
-  render: () => (
-    <div className="fnd">
-      <section>
-        <h3 className="fnd__titulo">Escala de espaçamento</h3>
-        {[1, 2, 3, 4, 5].map((passo) => (
-          <div key={passo} className="fnd__linha">
-            <code className="fnd-amostra__token">--citie-spacing-{passo}</code>
-            <span className="fnd__barra" style={{ width: `var(--citie-spacing-${passo})` }} />
-          </div>
-        ))}
-      </section>
-
-      <section>
-        <h3 className="fnd__titulo">Raio</h3>
-        <div className="fnd__grade">
-          {[
-            ['sm', 'Tags secundárias, paginador'],
-            ['md', 'PADRÃO: todo controle interativo'],
-            ['lg', 'Cards e painéis'],
-            ['xl', 'Modais e widgets'],
-          ].map(([nome, uso]) => (
-            <div key={nome} className="fnd-amostra">
-              <span
-                className="fnd-amostra__cor fnd-amostra__cor--raio"
-                style={{ borderRadius: `var(--citie-radius-${nome})` }}
-              />
-              <div>
-                <p className="fnd-amostra__nome">radius.{nome}</p>
-                <code className="fnd-amostra__token">--citie-radius-{nome}</code>
-                <p className="fnd-amostra__texto">{uso}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section>
-        <h3 className="fnd__titulo">Altura de controle</h3>
-        <div className="fnd__grade">
-          {[
-            ['small', '32px'],
-            ['normal', '40px'],
-            ['large', '48px'],
-          ].map(([nome, medida]) => (
-            <div key={nome} className="fnd-amostra">
-              <span
-                className="fnd__controle"
-                style={{ height: `var(--citie-control-height-${nome})` }}
-              />
-              <div>
-                <p className="fnd-amostra__nome">{medida}</p>
-                <code className="fnd-amostra__token">--citie-control-height-{nome}</code>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-    </div>
-  ),
-  play: async ({ canvasElement }) => {
-    const estilo = getComputedStyle(canvasElement.ownerDocument.documentElement);
-    // radius.md é o padrão Citiesoft para controle interativo.
-    await expect(estilo.getPropertyValue('--citie-radius-md').trim()).toBe('6px');
-    await expect(estilo.getPropertyValue('--citie-control-height-normal').trim()).toBe('40px');
+export const TemaEscuro: Story = {
+  name: 'Como o tema escuro funciona',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'O tema escuro redefine o valor dos mesmos tokens sob `[data-theme="dark"]`. Nenhum componente tem regra própria de tema escuro, e nenhum componente precisa saber qual tema está ativo. Quando um componente escreve literal, ele fica congelado no tema claro, e o defeito só aparece quando alguém troca o tema.',
+      },
+    },
   },
-};
-
-export const Elevacao: Story = {
-  name: 'Elevação e foco',
   render: () => (
-    <div className="fnd">
-      <div className="fnd__grade">
-        <div className="fnd__elevacao" style={{ boxShadow: 'var(--citie-shadow-card)' }}>
-          shadow card
-        </div>
-        <div className="fnd__elevacao" style={{ boxShadow: 'var(--citie-shadow-overlay)' }}>
-          shadow overlay
-        </div>
-        <div className="fnd__elevacao" style={{ boxShadow: 'var(--citie-state-focus-ring)' }}>
-          anel de foco
-        </div>
-      </div>
-      <p className="fnd-amostra__texto">
-        O anel de foco é obrigatório em todo elemento focável e nunca pode ser removido sem
-        substituto equivalente ou superior (WCAG 2.4.7 e 2.4.11).
+    <div style={{ display: 'grid', gap: 'var(--citie-spacing-5)', maxInlineSize: '640px' }}>
+      <Bloco titulo="Como o token é redefinido" descricao="Um lugar só, para o sistema inteiro.">
+        <pre className="citie-exemplo-codigo">
+{`:root {
+  --citie-background-surface: #ffffff;
+  --citie-text-base: #3c3c3c;
+}
+
+[data-theme='dark'] {
+  --citie-background-surface: #1a1a1d;
+  --citie-text-base: #d7d8da;
+}`}
+        </pre>
+      </Bloco>
+
+      <p className="citie-nota-fundacao">
+        O gate de acessibilidade roda a suíte inteira também no tema escuro, por
+        <code> npm run test-storybook:dark</code>. Ele existe porque durante muito tempo todas
+        as stories rodavam apenas no tema claro, e o axe nunca inspecionava o escuro: a
+        primeira tela composta que rodou lá reprovou por contraste.
       </p>
     </div>
   ),
