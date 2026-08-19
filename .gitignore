@@ -29,3 +29,4 @@ storybook-static
 # iCloud: dependencias fora da sincronizacao (node_modules e um symlink para ca)
 node_modules.nosync
 storybook-static
+.vercel

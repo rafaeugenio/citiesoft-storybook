@@ -1,0 +1,228 @@
+/*
+ * Layout do template de wizard: grade, regiões, espaçamento entre zonas e
+ * comportamento responsivo. Cor, tipografia, raio e sombra vêm dos tokens.
+ */
+
+.citie-wizard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-5);
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-bottom: var(--citie-spacing-5);
+}
+
+/* ---------- Cabeçalho ---------- */
+
+.citie-wizard__cabecalho {
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-1);
+}
+
+.citie-wizard__titulo {
+  margin: 0;
+  font-family: var(--citie-font-display);
+  font-size: 24px;
+  line-height: 1.25;
+  font-weight: 600;
+  color: var(--citie-text-primary);
+}
+
+.citie-wizard__descricao {
+  margin: 0;
+  font-size: var(--citie-font-size-body-md);
+  line-height: 1.5;
+  color: var(--citie-text-secondary);
+}
+
+/* ---------- Conteúdo: indicador + corpo ---------- */
+
+.citie-wizard__conteudo {
+  display: grid;
+  gap: var(--citie-spacing-5);
+}
+
+/* Barra de progresso: empilha sobre o corpo, largura inteira. */
+.citie-wizard__conteudo--barra {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Stepper vertical: coluna de orientação à esquerda do corpo. */
+.citie-wizard__conteudo--stepper {
+  grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
+  align-items: start;
+}
+
+.citie-wizard__indicador {
+  min-width: 0;
+}
+
+.citie-wizard__conteudo--stepper .citie-wizard__indicador {
+  position: sticky;
+  top: var(--citie-spacing-4);
+}
+
+/* ---------- Corpo da etapa ---------- */
+
+.citie-wizard__corpo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-4);
+  min-width: 0;
+  max-width: 680px;
+  padding: var(--citie-spacing-5);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-xl);
+  background-color: var(--citie-background-surface);
+  box-shadow: var(--citie-shadow-card);
+}
+
+/* O corpo recebe o foco a cada troca de etapa: o anel precisa ser visível. */
+.citie-wizard__corpo:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-wizard__etapa-titulo {
+  margin: 0;
+  font-family: var(--citie-font-display);
+  font-size: var(--citie-font-size-body-lg);
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--citie-text-primary);
+}
+
+.citie-wizard__etapa-descricao {
+  margin: calc(var(--citie-spacing-3) * -1) 0 0;
+  font-size: var(--citie-font-size-body-sm);
+  line-height: 1.5;
+  color: var(--citie-text-secondary);
+}
+
+.citie-wizard__aviso {
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-2);
+}
+
+/* ---------- Campos da etapa ---------- */
+
+.citie-wizard__campos {
+  display: grid;
+  gap: var(--citie-spacing-4);
+}
+
+.citie-wizard__campos--1 {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.citie-wizard__campos--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* ---------- Resumo final ---------- */
+
+.citie-wizard__resumo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-4);
+}
+
+.citie-wizard__itens {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--citie-spacing-3);
+  margin: 0;
+}
+
+.citie-wizard__item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.citie-wizard__item-rotulo {
+  font-size: var(--citie-font-size-body-sm);
+  line-height: 1.4;
+  color: var(--citie-text-secondary);
+}
+
+.citie-wizard__item-valor {
+  margin: 0;
+  font-size: var(--citie-font-size-body-md);
+  line-height: 1.5;
+  color: var(--citie-text-base);
+  /* Nome longo e endereço completo quebram sem estourar a coluna. */
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Navegação fixa ---------- */
+
+.citie-wizard__navegacao {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--citie-spacing-3);
+  padding: var(--citie-spacing-3) var(--citie-spacing-4);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-lg);
+  background-color: var(--citie-background-surface);
+  box-shadow: var(--citie-shadow-overlay);
+}
+
+.citie-wizard__navegacao-secundaria,
+.citie-wizard__navegacao-principal {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-2);
+  flex-wrap: wrap;
+}
+
+/* ---------- Responsivo ---------- */
+
+@media (max-width: 1024px) {
+  .citie-wizard__conteudo--stepper {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .citie-wizard__conteudo--stepper .citie-wizard__indicador {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .citie-wizard__corpo {
+    max-width: none;
+    padding: var(--citie-spacing-4);
+  }
+
+  .citie-wizard__campos--2,
+  .citie-wizard__itens {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .citie-wizard__titulo {
+    font-size: 20px;
+  }
+
+  .citie-wizard__navegacao {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .citie-wizard__navegacao-principal {
+    /* Avançar é a ação primária: fica à direita no fim da linha. */
+    justify-content: flex-end;
+  }
+
+  .citie-wizard__navegacao-secundaria:empty {
+    display: none;
+  }
+}

@@ -2,7 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './tokens/tokens.css';
 import './index.css';
-import { Button } from './components/Button/Button';
+import { Button } from './components/atoms/Button/Button';
 
 /**
  * Este projeto é um workshop de componentes. A vitrine real é o Storybook

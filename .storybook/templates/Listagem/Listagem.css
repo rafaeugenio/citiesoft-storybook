@@ -1,0 +1,146 @@
+/**
+ * Layout do template de listagem. Só grade, regiões, espaçamento e
+ * responsividade: cor, tipografia, raio e sombra vêm dos tokens.
+ *
+ * A responsividade usa consulta de contêiner, não de janela: assim a tela
+ * reage à largura real disponível, dentro ou fora do app shell, e a story
+ * responsiva continua fiel quando o Storybook a exibe num painel estreito.
+ */
+
+.citie-tpl-listagem {
+  container-type: inline-size;
+  container-name: listagem;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-4);
+
+  inline-size: 100%;
+  max-inline-size: 1440px;
+  margin-inline: auto;
+}
+
+/* Zona 1: cabeçalho ------------------------------------------------------ */
+
+.citie-tpl-listagem__cabecalho {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--citie-spacing-4);
+  flex-wrap: wrap;
+}
+
+.citie-tpl-listagem__identificacao {
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-1);
+  min-inline-size: 0;
+}
+
+.citie-tpl-listagem__titulo {
+  margin: 0;
+  font-family: var(--citie-font-display);
+  font-size: 24px;
+  line-height: 1.25;
+  font-weight: 700;
+  color: var(--citie-text-primary);
+  text-wrap: balance;
+}
+
+.citie-tpl-listagem__descricao {
+  margin: 0;
+  font-size: var(--citie-font-size-body-md);
+  line-height: 1.5;
+  color: var(--citie-text-secondary);
+  max-inline-size: 68ch;
+}
+
+/* A ação primária de criação nunca encolhe nem desce para a barra de filtros. */
+.citie-tpl-listagem__acao {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-2);
+  flex-shrink: 0;
+}
+
+/* Zonas 2, 3 e 4 --------------------------------------------------------- */
+
+.citie-tpl-listagem__filtros {
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-2);
+}
+
+/* Zona 5: tabela --------------------------------------------------------- */
+
+.citie-tpl-listagem__tabela {
+  /* A tabela rola no eixo horizontal antes de estourar a largura da tela. */
+  overflow-x: auto;
+  border-radius: var(--citie-radius-md);
+}
+
+/* Zona 6: rodapé --------------------------------------------------------- */
+
+.citie-tpl-listagem__rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--citie-spacing-4);
+  flex-wrap: wrap;
+  padding-block-start: var(--citie-spacing-2);
+  border-block-start: 1px solid var(--citie-border-default);
+}
+
+.citie-tpl-listagem__itens-por-pagina {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-2);
+  min-inline-size: 180px;
+}
+
+.citie-tpl-listagem__paginacao {
+  display: flex;
+  align-items: center;
+  margin-inline-start: auto;
+}
+
+/* Tablet: o rodapé quebra em duas linhas e a ação primária ganha a linha
+   inteira, abaixo do título, mantendo a ordem de leitura da anatomia. */
+@container listagem (max-width: 900px) {
+  .citie-tpl-listagem__cabecalho {
+    align-items: flex-start;
+  }
+
+  .citie-tpl-listagem__acao {
+    inline-size: 100%;
+  }
+
+  .citie-tpl-listagem__rodape {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .citie-tpl-listagem__paginacao {
+    margin-inline-start: 0;
+    justify-content: center;
+  }
+}
+
+/* Celular: uma coluna, sem margem lateral desperdiçada. */
+@container listagem (max-width: 560px) {
+  .citie-tpl-listagem {
+    gap: var(--citie-spacing-3);
+  }
+
+  .citie-tpl-listagem__titulo {
+    font-size: 20px;
+  }
+
+  .citie-tpl-listagem__acao > * {
+    inline-size: 100%;
+  }
+
+  .citie-tpl-listagem__itens-por-pagina {
+    min-inline-size: 0;
+  }
+}

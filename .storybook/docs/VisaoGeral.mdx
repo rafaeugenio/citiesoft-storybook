@@ -1,0 +1,162 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Visão geral/Como este catálogo funciona" />
+
+# Design System Citiesoft
+
+Este é o catálogo executável dos componentes que constroem os sistemas B2G da
+Citiesoft. Cada peça aqui não é uma imagem nem uma descrição: é o componente
+real, rodando, com os estados que o produto precisa e com os testes que provam
+que eles funcionam.
+
+Ele serve a três públicos ao mesmo tempo. Para quem **desenvolve**, é a fonte do
+componente e do contrato de acessibilidade. Para quem **desenha**, é onde a
+decisão vira comportamento verificável. Para quem **decide**, é onde dá para ver
+uma tela inteira antes de existir back-end.
+
+## De onde vem cada coisa
+
+Duas fontes, com papéis separados e sem empate:
+
+| Fonte | O que manda |
+| --- | --- |
+| Design System no Obsidian Vault | **A marca.** Cor, tipografia, espaçamento, raio, conteúdo e regra de uso. |
+| Figma **CitieOne** | **A estrutura.** Quais componentes existem, quais variantes e quais estados. |
+
+O CitieOne é o kit PrimeNG que a Citiesoft comprou. Ele ainda carrega os tokens
+padrão do PrimeOne/Aura, onde `primary` é o azul Tailwind `#3b82f6`, e não o
+Citie Blue `#1261E4`. Por isso a regra deste repositório é dura: **estrutura vem
+do Figma, cor vem do vault**. Nenhum valor de cor é copiado do arquivo de Figma.
+
+Os produtos Citiesoft rodam predominantemente em Angular com PrimeNG. Este
+catálogo é a referência em React, e cada componente documenta o seu equivalente
+PrimeNG para que o handoff seja direto. O motivo dessa escolha está registrado
+no ADR de arquitetura, dentro de `docs/atomic-design/`.
+
+## A cadeia de composição
+
+O catálogo é organizado por **Atomic Design**, a metodologia do Brad Frost. A
+ordem do menu à esquerda não é alfabética nem por assunto: ela é a ordem de
+construção. Cada nível é feito do nível anterior.
+
+<div className="vg-cadeia">
+  <div className="vg-elo">
+    <strong>Fundação</strong>
+    <span>A decisão. Não tem forma.</span>
+    <code>--citie-brand-primary: #1261E4</code>
+  </div>
+  <div className="vg-seta">→</div>
+  <div className="vg-elo">
+    <strong>Átomo</strong>
+    <span>A peça indivisível.</span>
+    <code>Button</code>
+  </div>
+  <div className="vg-seta">→</div>
+  <div className="vg-elo">
+    <strong>Molécula</strong>
+    <span>Uma tarefa única.</span>
+    <code>Search</code>
+  </div>
+  <div className="vg-seta">→</div>
+  <div className="vg-elo">
+    <strong>Organismo</strong>
+    <span>Uma seção autônoma.</span>
+    <code>Table</code>
+  </div>
+  <div className="vg-seta">→</div>
+  <div className="vg-elo">
+    <strong>Template</strong>
+    <span>A estrutura da tela, sem dado.</span>
+    <code>Listagem</code>
+  </div>
+  <div className="vg-seta">→</div>
+  <div className="vg-elo vg-elo--fim">
+    <strong>Página</strong>
+    <span>A tela real, com dado e estado.</span>
+    <code>Consulta de processos</code>
+  </div>
+</div>
+
+### O mesmo exemplo, percorrido de verdade
+
+O token `--citie-brand-primary` decide o azul. O **Button** consome esse token no
+preenchimento da variante primária. O **Search** combina Button, campo e
+mensagem de contagem para resolver a tarefa "encontrar um registro". A **Table**
+usa Search, Checkbox, StatusIndicator e Pagination para virar a seção de dados.
+O template **Listagem** organiza cabeçalho, filtros, tabela e rodapé em regiões,
+sem saber que dado vai entrar. A página **Consulta de processos** preenche esse
+template com solicitações de TFD e mostra o que acontece quando a lista está
+vazia, quando o filtro não encontra nada e quando o servidor falha.
+
+Trocar o azul na Fundação muda os seis níveis de uma vez. É por isso que a
+cadeia existe: ela torna o custo de uma decisão de baixo nível visível em tela
+real, antes do deploy.
+
+## Como ler cada componente
+
+Cada página de componente traz, quando se aplica:
+
+- **quando usar e quando não usar**, que é a parte que evita o erro mais caro;
+- **anatomia e composição**, com o que ele consome de outros níveis;
+- **variantes, tamanhos e densidades**;
+- **os estados obrigatórios**: padrão, hover, foco, ativo, desabilitado,
+  inválido, carregando, vazio e erro;
+- **teclado e leitor de tela**;
+- **o equivalente PrimeNG**, para o handoff com os times Angular.
+
+Três abas do painel inferior valem o hábito: **Interactions** reproduz a `play`
+function passo a passo e mostra a tela em cada asserção; **Accessibility** roda
+o axe na story aberta; **Docs** traz a tabela de props gerada do TypeScript.
+
+## O que o gate garante
+
+A acessibilidade aqui não é aspiracional. O axe roda em modo `error` e reprova o
+build, porque em B2G isso é exigência legal, e-MAG e WCAG 2.2 AA, e não
+preferência de time. Toda story renderiza, os fluxos críticos têm teste de
+interação, e a suíte inteira roda no Chromium a cada mudança.
+
+Quando um achado de acessibilidade nasce do próprio design system, e não do
+código, ele não é silenciado: fica visível como aviso, com a correção proposta
+ao lado do valor oficial, esperando decisão do time de Design. Os achados
+abertos estão listados no `README` do repositório.
+
+<style>{`
+  .vg-cadeia {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 24px 0 32px;
+    font-family: var(--citie-font-ui, system-ui);
+  }
+  .vg-elo {
+    flex: 1 1 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px;
+    border: 1px solid var(--citie-border-default, #e8eaed);
+    border-radius: var(--citie-radius-lg, 8px);
+    background: var(--citie-background-surface, #fff);
+    border-top: 3px solid var(--citie-brand-primary, #1261e4);
+  }
+  .vg-elo strong { font-size: 14px; color: var(--citie-text-primary, #202020); }
+  .vg-elo span { font-size: 12px; color: var(--citie-text-secondary, #6b7177); }
+  .vg-elo code {
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--citie-brand-primary, #1261e4);
+    background: var(--citie-brand-subtle, #eff5ff);
+    padding: 3px 6px;
+    border-radius: 4px;
+    align-self: flex-start;
+  }
+  .vg-elo--fim { border-top-color: var(--citie-success-emphasis, #16a34a); }
+  .vg-elo--fim code { color: var(--citie-success-strong, #15803d); background: var(--citie-success-background, #ecfdf3); }
+  .vg-seta {
+    align-self: center;
+    color: var(--citie-text-secondary, #6b7177);
+    font-size: 18px;
+  }
+  @media (max-width: 700px) { .vg-seta { display: none; } }
+`}</style>

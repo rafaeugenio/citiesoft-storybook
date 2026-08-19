@@ -1,0 +1,1297 @@
+[
+  {
+    "tituloAntigo": "Ação/Button",
+    "importPathAtual": "src/components/Button/Button.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Button",
+        "nivel": "atomo",
+        "tituloNovo": "Átomos/Ações/Button"
+      }
+    ],
+    "stories": 20,
+    "playFns": 7,
+    "primengEquivalente": "p-button",
+    "referenciaFigma": null,
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Ação/SpeedDial",
+    "importPathAtual": "src/components/SpeedDial/SpeedDial.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "SpeedDial",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Ações/SpeedDial"
+      }
+    ],
+    "stories": 12,
+    "playFns": 12,
+    "primengEquivalente": "p-speeddial",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Ação/SplitButton",
+    "importPathAtual": "src/components/SplitButton/SplitButton.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "SplitButton",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Ações/SplitButton"
+      }
+    ],
+    "stories": 11,
+    "playFns": 8,
+    "primengEquivalente": "p-splitbutton",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Dados/Avatar",
+    "importPathAtual": "src/components/Avatar/Avatar.stories.tsx",
+    "acao": "dividir",
+    "destinos": [
+      {
+        "componente": "Avatar",
+        "nivel": "atomo",
+        "tituloNovo": "Átomos/Identidade/Avatar"
+      },
+      {
+        "componente": "AvatarGroup",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Identidade/AvatarGroup"
+      }
+    ],
+    "stories": 9,
+    "playFns": 6,
+    "primengEquivalente": null,
+    "referenciaFigma": null,
+    "justificativa": "O arquivo concentra 2 componentes com responsabilidades próprias; a documentação passa a ter um título por componente."
+  },
+  {
+    "tituloAntigo": "Dados/DataView",
+    "importPathAtual": "src/components/DataView/DataView.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "DataView",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Coleções/DataView"
+      }
+    ],
+    "stories": 10,
+    "playFns": 10,
+    "primengEquivalente": "p-dataview",
+    "referenciaFigma": null,
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Dados/Filtros",
+    "importPathAtual": "src/components/Filters/Filters.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "FilterBar",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Busca/FilterBar"
+      }
+    ],
+    "stories": 6,
+    "playFns": 5,
+    "primengEquivalente": null,
+    "referenciaFigma": null,
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Dados/Gráficos",
+    "importPathAtual": "src/components/Chart/Chart.stories.tsx",
+    "acao": "dividir",
+    "destinos": [
+      {
+        "componente": "BarChart",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Gráficos/BarChart"
+      },
+      {
+        "componente": "LineChart",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Gráficos/LineChart"
+      },
+      {
+        "componente": "DonutChart",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Gráficos/DonutChart"
+      }
+    ],
+    "stories": 10,
+    "playFns": 9,
+    "primengEquivalente": null,
+    "referenciaFigma": null,
+    "justificativa": "O arquivo concentra 3 componentes com responsabilidades próprias; a documentação passa a ter um título por componente."
+  },
+  {
+    "tituloAntigo": "Dados/Marcadores",
+    "importPathAtual": "src/components/Badge/Badge.stories.tsx",
+    "acao": "dividir",
+    "destinos": [
+      {
+        "componente": "Badge",
+        "nivel": "atomo",
+        "tituloNovo": "Átomos/Marcadores/Badge"
+      },
+      {
+        "componente": "Tag",
+        "nivel": "atomo",
+        "tituloNovo": "Átomos/Marcadores/Tag"
+      },
+      {
+        "componente": "Chip",
+        "nivel": "atomo",
+        "tituloNovo": "Átomos/Marcadores/Chip"
+      },
+      {
+        "componente": "StatusIndicator",
+        "nivel": "atomo",
+        "tituloNovo": "Átomos/Marcadores/StatusIndicator"
+      }
+    ],
+    "stories": 9,
+    "playFns": 6,
+    "primengEquivalente": null,
+    "referenciaFigma": null,
+    "justificativa": "O arquivo concentra 4 componentes com responsabilidades próprias; a documentação passa a ter um título por componente."
+  },
+  {
+    "tituloAntigo": "Dados/MeterGroup",
+    "importPathAtual": "src/components/MeterGroup/MeterGroup.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "MeterGroup",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Visualização/MeterGroup"
+      }
+    ],
+    "stories": 9,
+    "playFns": 4,
+    "primengEquivalente": "p-metergroup",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Dados/OrderList",
+    "importPathAtual": "src/components/OrderList/OrderList.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "OrderList",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Coleções/OrderList"
+      }
+    ],
+    "stories": 11,
+    "playFns": 10,
+    "primengEquivalente": "p-orderList",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Dados/OrganizationChart",
+    "importPathAtual": "src/components/OrganizationChart/OrganizationChart.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "OrganizationChart",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Hierarquia/OrganizationChart"
+      }
+    ],
+    "stories": 7,
+    "playFns": 6,
+    "primengEquivalente": null,
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Dados/Pagination",
+    "importPathAtual": "src/components/Pagination/Pagination.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Pagination",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Navegação de dados/Pagination"
+      }
+    ],
+    "stories": 8,
+    "playFns": 6,
+    "primengEquivalente": "p-paginator",
+    "referenciaFigma": null,
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Dados/PickList",
+    "importPathAtual": "src/components/PickList/PickList.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "PickList",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Coleções/PickList"
+      }
+    ],
+    "stories": 6,
+    "playFns": 6,
+    "primengEquivalente": "p-pickList",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Dados/Search",
+    "importPathAtual": "src/components/Search/Search.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Search",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Busca/Search"
+      }
+    ],
+    "stories": 10,
+    "playFns": 9,
+    "primengEquivalente": null,
+    "referenciaFigma": null,
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Dados/Table",
+    "importPathAtual": "src/components/Table/Table.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Table",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Tabelas/Table"
+      }
+    ],
+    "stories": 7,
+    "playFns": 5,
+    "primengEquivalente": "p-table",
+    "referenciaFigma": null,
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Dados/Timeline",
+    "importPathAtual": "src/components/Timeline/Timeline.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Timeline",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Histórico/Timeline"
+      }
+    ],
+    "stories": 7,
+    "playFns": 5,
+    "primengEquivalente": null,
+    "referenciaFigma": null,
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Dados/Tree",
+    "importPathAtual": "src/components/Tree/Tree.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Tree",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Hierarquia/Tree"
+      }
+    ],
+    "stories": 11,
+    "playFns": 11,
+    "primengEquivalente": "p-tree",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Dados/TreeTable",
+    "importPathAtual": "src/components/TreeTable/TreeTable.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "TreeTable",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Tabelas/TreeTable"
+      }
+    ],
+    "stories": 11,
+    "playFns": 9,
+    "primengEquivalente": "p-treetable",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Dados/Widgets de dashboard",
+    "importPathAtual": "src/components/Widget/Widget.stories.tsx",
+    "acao": "dividir",
+    "destinos": [
+      {
+        "componente": "KpiWidget",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Painel/KpiWidget"
+      },
+      {
+        "componente": "ListaResumoWidget",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Painel/ListaResumoWidget"
+      }
+    ],
+    "stories": 11,
+    "playFns": 7,
+    "primengEquivalente": null,
+    "referenciaFigma": null,
+    "justificativa": "O arquivo concentra 2 componentes com responsabilidades próprias; a documentação passa a ter um título por componente."
+  },
+  {
+    "tituloAntigo": "Feedback/BlockUI",
+    "importPathAtual": "src/components/BlockUI/BlockUI.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "BlockUI",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Feedback/BlockUI"
+      }
+    ],
+    "stories": 5,
+    "playFns": 5,
+    "primengEquivalente": null,
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Feedback/EmptyState",
+    "importPathAtual": "src/components/EmptyState/EmptyState.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "EmptyState",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Feedback/EmptyState"
+      }
+    ],
+    "stories": 6,
+    "playFns": 2,
+    "primengEquivalente": null,
+    "referenciaFigma": null,
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Feedback/Progresso",
+    "importPathAtual": "src/components/Progress/Progress.stories.tsx",
+    "acao": "dividir",
+    "destinos": [
+      {
+        "componente": "Spinner",
+        "nivel": "atomo",
+        "tituloNovo": "Átomos/Feedback/Spinner"
+      },
+      {
+        "componente": "ProgressBar",
+        "nivel": "atomo",
+        "tituloNovo": "Átomos/Feedback/ProgressBar"
+      }
+    ],
+    "stories": 8,
+    "playFns": 4,
+    "primengEquivalente": null,
+    "referenciaFigma": null,
+    "justificativa": "O arquivo concentra 2 componentes com responsabilidades próprias; a documentação passa a ter um título por componente."
+  },
+  {
+    "tituloAntigo": "Feedback/Skeleton",
+    "importPathAtual": "src/components/Skeleton/Skeleton.stories.tsx",
+    "acao": "dividir",
+    "destinos": [
+      {
+        "componente": "Skeleton",
+        "nivel": "atomo",
+        "tituloNovo": "Átomos/Feedback/Skeleton"
+      },
+      {
+        "componente": "SkeletonComposicoes",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Feedback/SkeletonComposicoes"
+      }
+    ],
+    "stories": 4,
+    "playFns": 1,
+    "primengEquivalente": null,
+    "referenciaFigma": null,
+    "justificativa": "O arquivo concentra 2 componentes com responsabilidades próprias; a documentação passa a ter um título por componente."
+  },
+  {
+    "tituloAntigo": "Feedback/Terminal",
+    "importPathAtual": "src/components/Terminal/Terminal.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Terminal",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Feedback/Terminal"
+      }
+    ],
+    "stories": 10,
+    "playFns": 6,
+    "primengEquivalente": null,
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Feedback/Toast e Message",
+    "importPathAtual": "src/components/Feedback/Feedback.stories.tsx",
+    "acao": "dividir",
+    "destinos": [
+      {
+        "componente": "Toast",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Feedback/Toast"
+      },
+      {
+        "componente": "Message",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Feedback/Message"
+      }
+    ],
+    "stories": 9,
+    "playFns": 8,
+    "primengEquivalente": null,
+    "referenciaFigma": null,
+    "justificativa": "O arquivo concentra 2 componentes com responsabilidades próprias; a documentação passa a ter um título por componente."
+  },
+  {
+    "tituloAntigo": "Formulário/AutoComplete",
+    "importPathAtual": "src/components/AutoComplete/AutoComplete.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "AutoComplete",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Campos/AutoComplete"
+      }
+    ],
+    "stories": 13,
+    "playFns": 10,
+    "primengEquivalente": "p-autocomplete",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Formulário/CascadeSelect",
+    "importPathAtual": "src/components/CascadeSelect/CascadeSelect.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "CascadeSelect",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Campos/CascadeSelect"
+      }
+    ],
+    "stories": 14,
+    "playFns": 10,
+    "primengEquivalente": "p-cascadeselect",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Formulário/ColorPicker",
+    "importPathAtual": "src/components/ColorPicker/ColorPicker.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "ColorPicker",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Campos/ColorPicker"
+      }
+    ],
+    "stories": 9,
+    "playFns": 9,
+    "primengEquivalente": "p-colorPicker",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Formulário/DatePicker",
+    "importPathAtual": "src/components/DatePicker/DatePicker.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "DatePicker",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Campos/DatePicker"
+      }
+    ],
+    "stories": 8,
+    "playFns": 7,
+    "primengEquivalente": "p-datepicker",
+    "referenciaFigma": null,
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Formulário/Editor",
+    "importPathAtual": "src/components/Editor/Editor.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Editor",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Entrada/Editor"
+      }
+    ],
+    "stories": 9,
+    "playFns": 6,
+    "primengEquivalente": null,
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Formulário/Escolha",
+    "importPathAtual": "src/components/Choice/Choice.stories.tsx",
+    "acao": "dividir",
+    "destinos": [
+      {
+        "componente": "Checkbox",
+        "nivel": "atomo",
+        "tituloNovo": "Átomos/Escolha/Checkbox"
+      },
+      {
+        "componente": "Switch",
+        "nivel": "atomo",
+        "tituloNovo": "Átomos/Escolha/Switch"
+      },
+      {
+        "componente": "ToggleButton",
+        "nivel": "atomo",
+        "tituloNovo": "Átomos/Escolha/ToggleButton"
+      },
+      {
+        "componente": "RadioGroup",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Escolha/RadioGroup"
+      }
+    ],
+    "stories": 10,
+    "playFns": 7,
+    "primengEquivalente": null,
+    "referenciaFigma": null,
+    "justificativa": "O arquivo concentra 4 componentes com responsabilidades próprias; a documentação passa a ter um título por componente."
+  },
+  {
+    "tituloAntigo": "Formulário/Fieldset",
+    "importPathAtual": "src/components/Fieldset/Fieldset.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Fieldset",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Formulário/Fieldset"
+      }
+    ],
+    "stories": 5,
+    "playFns": 5,
+    "primengEquivalente": "p-fieldset",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Formulário/FloatLabel",
+    "importPathAtual": "src/components/FloatLabel/FloatLabel.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "FloatLabel",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Campos/FloatLabel"
+      }
+    ],
+    "stories": 13,
+    "playFns": 7,
+    "primengEquivalente": "p-floatlabel",
+    "referenciaFigma": null,
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Formulário/IftaLabel",
+    "importPathAtual": "src/components/IftaLabel/IftaLabel.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "IftaLabel",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Campos/IftaLabel"
+      }
+    ],
+    "stories": 11,
+    "playFns": 9,
+    "primengEquivalente": "p-iftalabel",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Formulário/Inplace",
+    "importPathAtual": "src/components/Inplace/Inplace.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Inplace",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Campos/Inplace"
+      }
+    ],
+    "stories": 6,
+    "playFns": 6,
+    "primengEquivalente": "p-inplace",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Formulário/Input",
+    "importPathAtual": "src/components/Input/Input.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Input",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Campos/Input"
+      }
+    ],
+    "stories": 13,
+    "playFns": 5,
+    "primengEquivalente": "pInputText",
+    "referenciaFigma": null,
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Formulário/InputOtp",
+    "importPathAtual": "src/components/InputOtp/InputOtp.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "InputOtp",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Campos/InputOtp"
+      }
+    ],
+    "stories": 7,
+    "playFns": 5,
+    "primengEquivalente": "p-inputotp",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Formulário/Knob",
+    "importPathAtual": "src/components/Knob/Knob.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Knob",
+        "nivel": "atomo",
+        "tituloNovo": "Átomos/Entrada/Knob"
+      }
+    ],
+    "stories": 5,
+    "playFns": 4,
+    "primengEquivalente": "p-knob",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Formulário/Listbox",
+    "importPathAtual": "src/components/Listbox/Listbox.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Listbox",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Campos/Listbox"
+      }
+    ],
+    "stories": 8,
+    "playFns": 8,
+    "primengEquivalente": "p-listbox",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Formulário/MultiSelect",
+    "importPathAtual": "src/components/MultiSelect/MultiSelect.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "MultiSelect",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Campos/MultiSelect"
+      }
+    ],
+    "stories": 10,
+    "playFns": 7,
+    "primengEquivalente": "p-multiselect",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Formulário/Rating",
+    "importPathAtual": "src/components/Rating/Rating.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Rating",
+        "nivel": "atomo",
+        "tituloNovo": "Átomos/Entrada/Rating"
+      }
+    ],
+    "stories": 5,
+    "playFns": 4,
+    "primengEquivalente": "p-rating",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Formulário/Select",
+    "importPathAtual": "src/components/Select/Select.stories.tsx",
+    "acao": "dividir",
+    "destinos": [
+      {
+        "componente": "Select",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Campos/Select"
+      },
+      {
+        "componente": "SelectButton",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Campos/SelectButton"
+      }
+    ],
+    "stories": 7,
+    "playFns": 6,
+    "primengEquivalente": "p-select",
+    "referenciaFigma": null,
+    "justificativa": "O arquivo concentra 2 componentes com responsabilidades próprias; a documentação passa a ter um título por componente."
+  },
+  {
+    "tituloAntigo": "Formulário/Slider",
+    "importPathAtual": "src/components/Slider/Slider.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Slider",
+        "nivel": "atomo",
+        "tituloNovo": "Átomos/Entrada/Slider"
+      }
+    ],
+    "stories": 6,
+    "playFns": 5,
+    "primengEquivalente": "p-slider",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Formulário/Textarea",
+    "importPathAtual": "src/components/Textarea/Textarea.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Textarea",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Campos/Textarea"
+      }
+    ],
+    "stories": 6,
+    "playFns": 3,
+    "primengEquivalente": "pTextarea",
+    "referenciaFigma": null,
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Formulário/TreeSelect",
+    "importPathAtual": "src/components/TreeSelect/TreeSelect.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "TreeSelect",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Campos/TreeSelect"
+      }
+    ],
+    "stories": 16,
+    "playFns": 12,
+    "primengEquivalente": "p-treeselect",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Formulário/Upload",
+    "importPathAtual": "src/components/Upload/Upload.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Upload",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Entrada/Upload"
+      }
+    ],
+    "stories": 8,
+    "playFns": 7,
+    "primengEquivalente": "p-fileupload",
+    "referenciaFigma": null,
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Fundações/Marca",
+    "importPathAtual": "src/fundacoes/Marca.stories.tsx",
+    "acao": "manter",
+    "destinos": [],
+    "stories": 3,
+    "playFns": 1,
+    "primengEquivalente": null,
+    "referenciaFigma": null,
+    "justificativa": "Página de fundação, permanece em Fundações."
+  },
+  {
+    "tituloAntigo": "Fundações/Tokens",
+    "importPathAtual": "src/fundacoes/Fundacoes.stories.tsx",
+    "acao": "manter",
+    "destinos": [],
+    "stories": 4,
+    "playFns": 2,
+    "primengEquivalente": null,
+    "referenciaFigma": null,
+    "justificativa": "Página de fundação, permanece em Fundações."
+  },
+  {
+    "tituloAntigo": "Layout/Card",
+    "importPathAtual": "src/components/Card/Card.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Card",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Contêineres/Card"
+      }
+    ],
+    "stories": 8,
+    "playFns": 2,
+    "primengEquivalente": "p-card",
+    "referenciaFigma": null,
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Layout/Divider",
+    "importPathAtual": "src/components/Divider/Divider.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Divider",
+        "nivel": "atomo",
+        "tituloNovo": "Átomos/Layout/Divider"
+      }
+    ],
+    "stories": 13,
+    "playFns": 5,
+    "primengEquivalente": null,
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Layout/Navegação",
+    "importPathAtual": "src/components/Navigation/Navigation.stories.tsx",
+    "acao": "dividir",
+    "destinos": [
+      {
+        "componente": "Breadcrumb",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Navegação/Breadcrumb"
+      },
+      {
+        "componente": "Stepper",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Navegação/Stepper"
+      },
+      {
+        "componente": "Sidebar",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Navegação/Sidebar"
+      }
+    ],
+    "stories": 7,
+    "playFns": 6,
+    "primengEquivalente": "p-breadcrumb",
+    "referenciaFigma": null,
+    "justificativa": "O arquivo concentra 3 componentes com responsabilidades próprias; a documentação passa a ter um título por componente."
+  },
+  {
+    "tituloAntigo": "Layout/Panel",
+    "importPathAtual": "src/components/Panel/Panel.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Panel",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Layout/Panel"
+      }
+    ],
+    "stories": 7,
+    "playFns": 7,
+    "primengEquivalente": "p-panel",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Layout/ScrollPanel",
+    "importPathAtual": "src/components/ScrollPanel/ScrollPanel.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "ScrollPanel",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Layout/ScrollPanel"
+      }
+    ],
+    "stories": 5,
+    "playFns": 3,
+    "primengEquivalente": "p-scrollpanel",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Layout/Splitter",
+    "importPathAtual": "src/components/Splitter/Splitter.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Splitter",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Layout/Splitter"
+      }
+    ],
+    "stories": 5,
+    "playFns": 5,
+    "primengEquivalente": "p-splitter",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Layout/Tabs e Accordion",
+    "importPathAtual": "src/components/Tabs/Tabs.stories.tsx",
+    "acao": "dividir",
+    "destinos": [
+      {
+        "componente": "Tabs",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Contêineres/Tabs"
+      },
+      {
+        "componente": "Accordion",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Contêineres/Accordion"
+      }
+    ],
+    "stories": 9,
+    "playFns": 6,
+    "primengEquivalente": "p-tabs",
+    "referenciaFigma": null,
+    "justificativa": "O arquivo concentra 2 componentes com responsabilidades próprias; a documentação passa a ter um título por componente."
+  },
+  {
+    "tituloAntigo": "Layout/Toolbar",
+    "importPathAtual": "src/components/Toolbar/Toolbar.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Toolbar",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Layout/Toolbar"
+      }
+    ],
+    "stories": 5,
+    "playFns": 5,
+    "primengEquivalente": "p-toolbar",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Mídia/Carousel",
+    "importPathAtual": "src/components/Carousel/Carousel.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Carousel",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Mídia/Carousel"
+      }
+    ],
+    "stories": 8,
+    "playFns": 8,
+    "primengEquivalente": "p-carousel",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Mídia/Galleria",
+    "importPathAtual": "src/components/Galleria/Galleria.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Galleria",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Mídia/Galleria"
+      }
+    ],
+    "stories": 8,
+    "playFns": 2,
+    "primengEquivalente": "p-galleria",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Mídia/Image",
+    "importPathAtual": "src/components/Image/Image.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Image",
+        "nivel": "atomo",
+        "tituloNovo": "Átomos/Mídia/Image"
+      }
+    ],
+    "stories": 9,
+    "playFns": 7,
+    "primengEquivalente": null,
+    "referenciaFigma": null,
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Mídia/ImageCompare",
+    "importPathAtual": "src/components/ImageCompare/ImageCompare.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "ImageCompare",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Mídia/ImageCompare"
+      }
+    ],
+    "stories": 6,
+    "playFns": 6,
+    "primengEquivalente": "p-imagecompare",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Navegação/Dock",
+    "importPathAtual": "src/components/Dock/Dock.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Dock",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Menus/Dock"
+      }
+    ],
+    "stories": 7,
+    "playFns": 4,
+    "primengEquivalente": "p-dock",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Navegação/MegaMenu",
+    "importPathAtual": "src/components/MegaMenu/MegaMenu.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "MegaMenu",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Menus/MegaMenu"
+      }
+    ],
+    "stories": 6,
+    "playFns": 6,
+    "primengEquivalente": "p-megamenu",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Navegação/Menu",
+    "importPathAtual": "src/components/Menu/Menu.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Menu",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Menus/Menu"
+      }
+    ],
+    "stories": 9,
+    "playFns": 9,
+    "primengEquivalente": "p-menu",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Navegação/Menubar",
+    "importPathAtual": "src/components/Menubar/Menubar.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "Menubar",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Menus/Menubar"
+      }
+    ],
+    "stories": 6,
+    "playFns": 6,
+    "primengEquivalente": "p-menubar",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Navegação/PanelMenu",
+    "importPathAtual": "src/components/PanelMenu/PanelMenu.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "PanelMenu",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Menus/PanelMenu"
+      }
+    ],
+    "stories": 8,
+    "playFns": 8,
+    "primengEquivalente": "p-panelmenu",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Navegação/ScrollTop",
+    "importPathAtual": "src/components/ScrollTop/ScrollTop.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "ScrollTop",
+        "nivel": "atomo",
+        "tituloNovo": "Átomos/Navegação/ScrollTop"
+      }
+    ],
+    "stories": 5,
+    "playFns": 4,
+    "primengEquivalente": "p-scrolltop",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Navegação/TieredMenu",
+    "importPathAtual": "src/components/TieredMenu/TieredMenu.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "TieredMenu",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Menus/TieredMenu"
+      }
+    ],
+    "stories": 7,
+    "playFns": 7,
+    "primengEquivalente": "p-tieredMenu",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Overlay/ConfirmPopup",
+    "importPathAtual": "src/components/ConfirmPopup/ConfirmPopup.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "ConfirmPopup",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Overlay/ConfirmPopup"
+      }
+    ],
+    "stories": 6,
+    "playFns": 3,
+    "primengEquivalente": "p-confirmpopup",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Overlay/ContextMenu",
+    "importPathAtual": "src/components/ContextMenu/ContextMenu.stories.tsx",
+    "acao": "mover",
+    "destinos": [
+      {
+        "componente": "ContextMenu",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Menus/ContextMenu"
+      }
+    ],
+    "stories": 6,
+    "playFns": 6,
+    "primengEquivalente": "p-contextmenu",
+    "referenciaFigma": "CitieOne",
+    "justificativa": "Componente único; muda apenas de título para o nível atômico correspondente."
+  },
+  {
+    "tituloAntigo": "Overlay/Dialog e Drawer",
+    "importPathAtual": "src/components/Overlay/Overlay.stories.tsx",
+    "acao": "dividir",
+    "destinos": [
+      {
+        "componente": "Dialog",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Overlay/Dialog"
+      },
+      {
+        "componente": "ConfirmDialog",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Overlay/ConfirmDialog"
+      },
+      {
+        "componente": "Drawer",
+        "nivel": "organismo",
+        "tituloNovo": "Organismos/Overlay/Drawer"
+      }
+    ],
+    "stories": 7,
+    "playFns": 4,
+    "primengEquivalente": "p-dialog",
+    "referenciaFigma": null,
+    "justificativa": "O arquivo concentra 3 componentes com responsabilidades próprias; a documentação passa a ter um título por componente."
+  },
+  {
+    "tituloAntigo": "Overlay/Tooltip e Popover",
+    "importPathAtual": "src/components/Tooltip/Tooltip.stories.tsx",
+    "acao": "dividir",
+    "destinos": [
+      {
+        "componente": "Tooltip",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Overlay/Tooltip"
+      },
+      {
+        "componente": "Popover",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Overlay/Popover"
+      }
+    ],
+    "stories": 4,
+    "playFns": 3,
+    "primengEquivalente": null,
+    "referenciaFigma": null,
+    "justificativa": "O arquivo concentra 2 componentes com responsabilidades próprias; a documentação passa a ter um título por componente."
+  }
+]

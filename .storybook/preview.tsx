@@ -3,6 +3,30 @@ import '../src/tokens/tokens.css';
 
 const preview: Preview = {
   parameters: {
+    options: {
+      /**
+       * Ordem do catálogo em Atomic Design, de baixo para cima: uma Fundação
+       * alimenta um Átomo, que compõe uma Molécula, que compõe um Organismo,
+       * que preenche um Template, que vira uma Página com dado real.
+       *
+       * O Storybook lê este valor por análise estática do arquivo, então a
+       * lista precisa estar literal aqui dentro: uma constante declarada fora
+       * quebra a geração do índice.
+       */
+      storySort: {
+        method: 'alphabetical',
+        order: [
+          'Visão geral',
+          'Fundações',
+          'Átomos',
+          'Moléculas',
+          'Organismos',
+          'Templates',
+          'Páginas',
+        ],
+        locales: 'pt-BR',
+      },
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,
