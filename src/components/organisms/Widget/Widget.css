@@ -56,6 +56,15 @@
 }
 
 /**
+ * Prévia da seleção no hover do indicador que filtra: o anel aparece em tom
+ * neutro antes do clique, o que declara a afordância de marcar e prova, em
+ * repouso e em hover, que a marcação não muda a caixa de ninguém.
+ */
+.citie-widget--filtro:hover:not(.citie-widget--ativo) {
+  --citie-widget-anel: inset 0 0 0 2px var(--citie-border-strong);
+}
+
+/**
  * Filtro aplicado. A seleção se lê parada, por anel e por fundo recuado, e o
  * `aria-pressed` do botão carrega a mesma informação para o leitor de tela.
  */

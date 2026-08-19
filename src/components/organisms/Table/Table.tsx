@@ -282,7 +282,25 @@ export function SemRegistro({ texto = 'Sem registro' }: { texto?: string }) {
   return <span className="citie-table__ausente">{texto}</span>;
 }
 
-/** CPF mascarado por padrão na listagem; valor completo só no detalhe. */
+/**
+ * CPF mascarado por padrão na listagem. O valor completo só aparece no detalhe,
+ * e só para quem tem permissão de leitura do dado pessoal.
+ *
+ * A versão anterior era `***.***.**${cpf.slice(-4)}`, e tinha dois defeitos.
+ * Expunha os **quatro** dígitos finais, o que é exposição desnecessária de dado
+ * pessoal num sistema público, e ainda produzia uma máscara malformada, sem o
+ * hífen que separa os dígitos verificadores.
+ *
+ * A regra agora é: nove dígitos ocultos, o nono visível como âncora de
+ * conferência, e os dois verificadores após o hífen. É o suficiente para o
+ * servidor confirmar que está no registro certo, e insuficiente para
+ * reconstituir o número cruzando telas.
+ *
+ * Aceita o CPF com ou sem pontuação. Entrada que não tenha 11 dígitos volta
+ * inalterada, porque mascarar dado inválido esconderia o defeito do cadastro.
+ */
 export function mascararCPF(cpf: string) {
-  return `***.***.**${cpf.slice(-4)}`;
+  const digitos = cpf.replace(/\D/g, '');
+  if (digitos.length !== 11) return cpf;
+  return `***.***.**${digitos[8]}-${digitos.slice(9)}`;
 }

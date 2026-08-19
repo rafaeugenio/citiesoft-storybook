@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
-import { KpiWidget } from './Widget';
+import { KpiWidget, type KpiProps } from './Widget';
 import { Sparkline } from '../../atoms/Sparkline/Sparkline';
 
 const meta = {
@@ -26,6 +26,19 @@ const meta = {
           '`StatusIndicator` ou `Tag` na linha da listagem; e valor único dentro de uma tela de',
           'detalhe ou de formulário, onde o cartão de painel rouba a hierarquia da tela e o certo é',
           'a lista de definições do `Card`.',
+          '',
+          '**Indicador que filtra e indicador que navega são coisas diferentes.** Com `onFiltrar`,',
+          'o indicador aplica e retira o recorte na listagem que vem logo abaixo: o operador',
+          'permanece na tela, o estado fica ligado, e por isso o cartão é um controle de',
+          'alternância, com `aria-pressed`, anel de seleção e fundo recuado. Com `onDrillDown`, ele',
+          'leva para outra tela: não sobra estado ligado, então é botão comum, sem `aria-pressed` e',
+          'sem estado ativo. Marcar um indicador de navegação como pressionado prometeria um filtro',
+          'que a tela não tem, e é a confusão que a separação das duas props existe para evitar.',
+          '',
+          'O anel de seleção é `inset` e fica reservado em transparente desde o repouso, então',
+          'aplicar um filtro não desloca nada. Sem essa reserva, a faixa inteira de indicadores',
+          'pula a cada clique do operador. Para a faixa contínua de 3 a 8 indicadores, use o',
+          '`KpiFaixa`.',
           '',
           'Peso B2G: um número grande sem período vira decisão errada em reunião. O campo `periodo`',
           'é obrigatório de propósito, e `variacao` exige `comparadoA` pelo mesmo motivo. Se o',
@@ -147,6 +160,12 @@ export const KpiComDrillDown: Story = {
   },
 };
 
+/** Demonstração da alternância: o estado do filtro vive na tela que hospeda o indicador. */
+function FiltroAlternavel(props: KpiProps) {
+  const [ativo, setAtivo] = useState(false);
+  return <KpiWidget {...props} ativo={ativo} onFiltrar={() => setAtivo((valor) => !valor)} />;
+}
+
 export const KpiComoFiltro: Story = {
   name: 'Estado · como filtro',
   args: {
@@ -169,10 +188,7 @@ export const KpiComoFiltro: Story = {
       },
     },
   },
-  render: (args) => {
-    const [ativo, setAtivo] = useState(false);
-    return <KpiWidget {...args} ativo={ativo} onFiltrar={() => setAtivo((valor) => !valor)} />;
-  },
+  render: (args) => <FiltroAlternavel {...args} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const indicador = canvas.getByRole('button', { name: /Em análise/ });

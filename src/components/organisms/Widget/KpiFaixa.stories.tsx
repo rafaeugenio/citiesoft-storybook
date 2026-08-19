@@ -192,6 +192,31 @@ export const FaixaEmpilhada: Story = {
   },
 };
 
+/**
+ * Demonstração da alternância: a escolha vive na tela que hospeda a faixa, e a
+ * faixa apenas reflete qual recorte está aplicado.
+ */
+function FaixaDeFiltros({ titulo }: { titulo: string }) {
+  const [filtro, setFiltro] = useState<string | null>(null);
+
+  return (
+    <KpiFaixa titulo={titulo}>
+      {FILA.map((indicador) => (
+        <KpiWidget
+          key={indicador.rotulo}
+          rotulo={indicador.rotulo}
+          valor={indicador.valor}
+          periodo="Fila atual"
+          ativo={filtro === indicador.rotulo}
+          onFiltrar={() =>
+            setFiltro((atual) => (atual === indicador.rotulo ? null : indicador.rotulo))
+          }
+        />
+      ))}
+    </KpiFaixa>
+  );
+}
+
 export const FaixaComoFiltro: Story = {
   name: 'Faixa · indicadores que filtram',
   args: {
@@ -210,27 +235,11 @@ export const FaixaComoFiltro: Story = {
       },
     },
   },
-  render: (args) => {
-    const [filtro, setFiltro] = useState<string | null>(null);
-    return (
-      <div style={{ padding: 24 }}>
-        <KpiFaixa titulo={args.titulo}>
-          {FILA.map((indicador) => (
-            <KpiWidget
-              key={indicador.rotulo}
-              rotulo={indicador.rotulo}
-              valor={indicador.valor}
-              periodo="Fila atual"
-              ativo={filtro === indicador.rotulo}
-              onFiltrar={() =>
-                setFiltro((atual) => (atual === indicador.rotulo ? null : indicador.rotulo))
-              }
-            />
-          ))}
-        </KpiFaixa>
-      </div>
-    );
-  },
+  render: (args) => (
+    <div style={{ padding: 24 }}>
+      <FaixaDeFiltros titulo={args.titulo} />
+    </div>
+  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const emAnalise = canvas.getByRole('button', { name: /Em análise/ });

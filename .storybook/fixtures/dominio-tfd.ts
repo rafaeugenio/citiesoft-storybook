@@ -28,6 +28,7 @@
  * checagem do dígito verificador.
  */
 
+import { mascararCPF } from '../../src';
 import type { EstadoDeFluxo, Serie } from '../../src';
 
 /* ------------------------------------------------------------------ */
@@ -110,11 +111,13 @@ export function rotuloDaCompetencia(competencia: string): string {
  * volta ao campo de edição do próprio registro, no cadastro de servidor,
  * onde a gravação exige o número inteiro.
  */
-export function mascararCPF(cpf: string): string {
-  const digitos = cpf.replace(/\D/g, '');
-  if (digitos.length !== 11) return cpf;
-  return `***.***.**${digitos[8]}-${digitos.slice(9)}`;
-}
+/*
+ * A implementação vive no design system e é reexportada aqui, em vez de
+ * duplicada. As duas cópias já divergiram uma vez: a do catálogo expunha os
+ * quatro dígitos finais e a daqui expunha três, então a mesma pessoa aparecia
+ * com máscaras diferentes conforme a tela. Regra de mascaramento é regra única.
+ */
+export { mascararCPF };
 
 /** CPF completo, formatado. Usado apenas em campo de edição do registro. */
 export function formatarCPF(cpf: string): string {

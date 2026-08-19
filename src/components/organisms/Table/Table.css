@@ -171,6 +171,13 @@
   gap: 6px;
   padding: 0;
   font: inherit;
+  /*
+   * O `font` abreviado não cobre estas duas, e elemento de formulário não as
+   * herda do `th`. Sem elas, a coluna ordenável ficava em caixa normal ao lado
+   * das não ordenáveis em maiúscula, e o cabeçalho parecia ter dois estilos.
+   */
+  text-transform: inherit;
+  letter-spacing: inherit;
   color: var(--citie-text-secondary);
   background: none;
   border: none;
