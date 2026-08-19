@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
-import { RadioGroup } from './Choice';
+import { RadioGroup } from './RadioGroup';
 
 const meta = {
   title: 'Moléculas/Escolha/RadioGroup',

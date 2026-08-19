@@ -9,8 +9,21 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Código de verificação. Origem: Figma CitieOne, página ❖ InputOtp (variante Size: Normal | Small | Large). As alturas seguem a escala de controle do DS (32 / 40 / 48). Equivalente PrimeNG: `p-inputotp`.',
+          '',
+          '**Quando usar:** código numérico curto, de uso único, que a pessoa acabou de receber e vai transcrever de outra tela: confirmação de login por SMS, validação de e-mail, autorização de uma operação sensível. As casas separadas dão o feedback de progresso e o `autoComplete="one-time-code"` deixa o celular oferecer o código do SMS.',
+          '',
+          '**Quando não usar:**',
+          '',
+          '- **Dado que a pessoa consulta em um documento e confere caractere a caractere.** CPF, matrícula, número de processo e CEP são lidos em blocos ("605.922.293-51"), e as casas isoladas apagam essa formatação. Use `Moléculas/Campos/Input` com máscara.',
+          '- **Código com letras.** A implementação filtra tudo que não for dígito (`replace(/\\D/g, \'\')`), então um código alfanumérico simplesmente não entra e a pessoa fica batendo numa casa que não aceita o que ela digita. Use `Moléculas/Campos/Input`.',
+          '- **Código longo.** Acima de oito casas a linha estoura em tela estreita e o avanço automático passa a atrapalhar quem revisa o que digitou. Use `Moléculas/Campos/Input`.',
+          '- **Senha.** Senha é editada, corrigida e colada inteira; o campo por casas impede tudo isso. Use `Moléculas/Campos/Input` do tipo senha. A propriedade `mask` daqui serve para ocultar um código de uso único em tela compartilhada, sem virar campo de senha.',
+          '- **Exibir um código gerado pelo sistema.** Protocolo e número de ofício que o servidor precisa copiar são texto selecionável, com botão de copiar ao lado. Casas de entrada sugerem que o valor é editável.',
+          '',
+          'Sempre acompanhe o campo de um caminho de saída visível: reenviar o código e trocar o canal. Sem isso, quem não recebe o SMS fica sem atendimento e o problema chega à ouvidoria.',
+        ].join('\n'),
       },
     },
   },

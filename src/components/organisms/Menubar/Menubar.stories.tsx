@@ -56,8 +56,25 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Barra horizontal de módulos do sistema. Página do Figma CitieOne `6738:52937` (❖ Menubar). Variantes do arquivo: `menubar` com Submenu False|True e `menubar-item` com State Idle|Hover|Focus|Active mais Show Icon e Show Submenu Icon. Equivalente PrimeNG: `p-menubar`. Não confundir com a Sidebar de `Navigation`, que é o menu lateral do produto.',
+          '',
+          '**O que separa este dos irmãos de menu:** o Menubar é a barra de topo com submenu simples,',
+          'em lista, com no máximo um nível aninhado. Ele aceita as áreas `inicio` e `fim` (logotipo à',
+          'esquerda, busca e usuário à direita), o que faz dele o chrome horizontal do sistema. Se cada',
+          'módulo precisa de colunas com título para caber, o componente é o `MegaMenu`. Se a navegação',
+          'principal do produto é lateral, é a `Sidebar`.',
+          '',
+          '**Quando não usar:** produto que já tem `Sidebar` como navegação principal, porque duas barras',
+          'de destino na mesma tela dividem a atenção e o servidor esporádico procura o módulo nas duas;',
+          'ações sobre um registro aberto, que pertencem ao `Menu` ou ao `SplitButton` perto do próprio',
+          'registro; módulo com dezenas de destinos, onde o suspenso vira uma coluna alta que exige',
+          'rolagem dentro do menu (use `MegaMenu`); navegação dentro de drawer ou painel lateral, que é',
+          'do `PanelMenu`; e telas estreitas, em que a barra quebra em duas linhas e empurra o conteúdo',
+          'do processo para baixo da dobra. Mantenha os rótulos como substantivos de módulo ("Pessoas",',
+          '"Processos"): verbo na barra de topo faz a pessoa esperar execução imediata, e aqui o clique',
+          'só abre o submenu.',
+        ].join('\n'),
       },
     },
   },

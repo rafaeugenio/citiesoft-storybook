@@ -46,7 +46,9 @@ setas entre as opções.
 
 ### Sidebar é organismo, Breadcrumb e Stepper são moléculas
 
-Os três viviam no mesmo arquivo. A Sidebar é chrome de aplicação, com seções,
+Os três viviam no mesmo arquivo; hoje a Sidebar tem pasta própria em
+`organisms/Sidebar/` e o `Navigation/` das moléculas ficou com Breadcrumb e
+Stepper. A Sidebar é chrome de aplicação, com seções,
 sub-itens expansíveis, skip link, estado colapsado e a regra de que item sem
 permissão não é renderizado. Breadcrumb e Stepper resolvem uma tarefa única cada.
 
@@ -61,12 +63,15 @@ estados de carga, vazio e erro, e a alternância para a tabela acessível.
 `Avatar` e `Skeleton` são átomos. `AvatarGroup` empilha avatares com limite e
 contador de excedente; `SkeletonParagrafo`, `SkeletonLista` e
 `SkeletonFormulario` montam padrões de tela a partir do bloco. Todos resolvem uma
-tarefa própria, então são moléculas.
+tarefa própria, então são moléculas, e cada um tem pasta própria em
+`molecules/`.
 
 ### MeterGroup é molécula, não organismo
 
 Resolve uma tarefa única, a distribuição proporcional com legenda, e depende
-apenas da paleta categórica. Não tem estado complexo nem dado tabular.
+apenas da paleta categórica. Não tem estado complexo nem dado tabular. A paleta
+mora em `src/tokens/paletas.ts`, como fundação: assim a molécula não precisa
+importar nada do organismo de gráficos.
 
 ## O que a reclassificação encontrou
 
@@ -97,6 +102,9 @@ O total de stories é a invariante que prova que o desmembramento redistribuiu
 documentação sem perder nada: **584 antes, 584 depois**, antes da adição de
 templates e páginas.
 
-Os imports ficaram estáveis por `src/index.ts`, que reexporta os 70 módulos. Se
-amanhã um átomo virar molécula, o arquivo muda de pasta e nenhum consumidor
-quebra.
+Os imports ficaram estáveis por `src/index.ts`, que reexporta todos os módulos.
+Se amanhã um átomo virar molécula, o arquivo muda de pasta e nenhum consumidor
+quebra — foi exatamente o que aconteceu com `Sparkline` (para `atoms/`),
+`RadioGroup`, `AvatarGroup` e as três composições de Skeleton (para
+`molecules/`) e `Sidebar` (para `organisms/`), sem uma exportação pública sequer
+mudar de nome.

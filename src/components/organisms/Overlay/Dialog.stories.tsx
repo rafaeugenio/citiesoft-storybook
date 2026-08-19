@@ -22,8 +22,25 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Diálogo modal para tarefa que exige foco total: um formulário, um preview ou um aceite que precisa interromper o fluxo até ser concluído. Spec: `03-components/modals-dialogs-drawers.md` v2.0.0. Equivalente PrimeNG: `p-dialog`. **Quando usar este e não os irmãos:** use o Dialog quando a pessoa vai *executar uma tarefa* dentro do overlay; use o [ConfirmDialog](?path=/docs/organismos-overlay-confirmdialog--docs) quando ela só precisa *decidir explicitamente* antes de prosseguir (sem botão de fechar, foco inicial na ação segura); use o [Drawer](?path=/docs/organismos-overlay-drawer--docs) quando o contexto da tela atrás precisa continuar visível, como em filtros, detalhe ou formulário lateral. Existe ainda o ConfirmPopup, irmão leve do ConfirmDialog, ancorado ao próprio gatilho para confirmação de baixo risco: ação destrutiva permanente usa sempre o diálogo modal, nunca o popup. Cada story abre pelo botão, como no produto.',
+          '',
+          '**Quando não usar:** formulário longo, com muitos campos, seções ou anexos, porque o `dialog`',
+          'nativo em modo modal deixa a tela de trás inerte e o servidor perde de vista o registro que',
+          'estava consultando para preencher; nesses casos a tarefa merece tela própria, com URL, ou um',
+          '`Drawer` quando a listagem atrás ainda precisa ser lida. Também não use para pergunta de sim',
+          'ou não sobre consequência já descrita, que é do `ConfirmDialog` (foco inicial na ação segura e',
+          'sem botão de fechar); para aviso do que já aconteceu, sem decisão a tomar, que é `Toast` ou',
+          '`Message`; para erro de validação de campo, que pertence à `Message` junto do campo; e para',
+          'conteúdo que a pessoa precisa imprimir, copiar, salvar como PDF ou enviar por link, já que o',
+          'modal não tem endereço próprio e some ao recarregar.',
+          '',
+          '**Peso em jornada longa:** abrir um modal por cima de quem está no meio de um preenchimento',
+          'de vinte minutos custa caro. O `dialog` nativo fecha por `Escape` e por clique no fundo, o',
+          'que dispara `onClose` e pode descartar o que foi digitado dentro. Se o conteúdo do modal tem',
+          'campos, guarde rascunho ou use `obrigatorio` para bloquear o fechamento acidental, e nunca',
+          'abra o modal a partir de evento automático, apenas de uma ação que a pessoa pediu.',
+        ].join('\n'),
       },
     },
   },

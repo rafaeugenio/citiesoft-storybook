@@ -1,0 +1,350 @@
+revisor: Engenharia e testes (compatibilidade de exports, integridade da reorganização física, qualidade e estabilidade da suíte)
+artefato_avaliado: commit 21ea8ba "Reorganiza o catálogo em Atomic Design e adiciona templates e páginas" — repositório /Users/rafaeleugenio/Documents/Cursor/Repositorios/citiesoft-storybook + build servido em http://localhost:6100
+veredito: REPROVADO
+nota_media_0_a_4: 2.86
+
+criterios_criticos:
+  - criterio: Gates executados (typecheck, lint, testes, build)
+    nota_0_a_4: 2
+    evidencia: |
+      ./node_modules/.bin/tsc -b --force  → exit 0, saída vazia.
+      npm run build-storybook             → exit 0, "Storybook build completed successfully", Vite built in 1.89s.
+      npm run test-storybook (execução única) → exit 0,
+        "Test Files 103 passed (103) / Tests 676 passed (676)", 19.45s.
+      npm run lint → EXIT 1. Erro real, não aviso:
+        src/components/organisms/Panel/Panel.stories.tsx:169:33
+        error react-hooks(rules-of-hooks): React Hook "useState" is called in function
+        "Anonymous" that is neither a React function component nor a custom React Hook.
+      Mais 24 warnings (only-export-components, set-state-in-effect, exhaustive-deps,
+      react(immutability) em Chart.tsx:362, react(refs) em Tooltip.tsx:46).
+      O requisito 7 exige lint passando. Três de quatro gates passam; o lint falha.
+
+  - criterio: Hierarquia atômica sem inversão de dependência
+    nota_0_a_4: 1
+    evidencia: |
+      src/components/molecules/MeterGroup/MeterGroup.tsx:2
+        import { PALETA_OFICIAL } from '../../organisms/Chart/Chart';
+      Molécula (nível 2) importando organismo (nível 3) em CÓDIGO DE PRODUÇÃO.
+      Também nas stories:
+        src/components/molecules/ConfirmPopup/ConfirmPopup.stories.tsx:5 → organisms/Overlay
+        src/components/molecules/MeterGroup/MeterGroup.stories.tsx:3     → organisms/Chart
+      Varredura completa: átomos com ZERO imports de moléculas/organismos;
+      src/components/primitives/ com ZERO imports para cima. Só a molécula erra.
+      Não há ciclo de módulo — Chart.tsx importa apenas react, atoms/Button e ./Chart.css
+      (linhas 1-3) — então o build não quebra. Mas a aresta aponta para cima.
+
+  - criterio: Compatibilidade e completude do src/index.ts
+    nota_0_a_4: 3
+    evidencia: |
+      Varredura de todo .tsx não-story sob src/ contra os 76 caminhos exportados em
+      src/index.ts: o único arquivo fora do barrel é src/main.tsx (entry do Vite,
+      corretamente excluído).
+      Extração de nomes exportados dos 76 módulos: 325 nomes, 0 colisões.
+      Os 71 títulos antigos em docs/atomic-design/legacy-story-map.json somam
+      exatamente 584 stories — o baseline — e apontam para 89 destinos, comprovando
+      o desmembramento exigido pelo requisito 3 (71 → 89, 18 componentes separados).
+      Desconto: o barrel propaga a inversão acima. Importar MeterGroup por
+      `from 'citiesoft'` arrasta o módulo Chart inteiro (SVG, atoms/Button) junto,
+      sem que o consumidor tenha pedido um gráfico.
+
+  - criterio: Integridade da reorganização física (70 pastas movidas)
+    nota_0_a_4: 3
+    evidencia: |
+      Zero arquivo .tsx órfão — script de referência cruzada sobre src/ e .storybook/
+      não achou nenhum arquivo sem consumidor.
+      Zero CSS perdido: 79 arquivos .css, cada um importado pelo seu .tsx.
+      Input/ e Textarea/ não têm .css próprio por consumirem
+      primitives/Field/Field.css (Input.tsx:3) — correto, não é omissão.
+      tsc -b --force e build-storybook limpos confirmam que nenhum caminho relativo
+      reescrito por script quebrou.
+      Desconto — caminhos corretos porém não idiomáticos, impressão digital do script:
+        src/components/atoms/Avatar/Avatar.tsx:3        '../../atoms/Badge/Badge.css'
+        src/.../molecules/IftaLabel/IftaLabel.stories.tsx:4  '../../molecules/Select/Select.css'
+      Ambos sobem dois níveis para voltar ao mesmo nível; o certo é '../Badge/Badge.css'.
+
+  - criterio: Testes verificam comportamento, não renderização
+    nota_0_a_4: 3
+    evidencia: |
+      472 play functions em 103 arquivos de story. Classificação do corpo de cada uma:
+        216 (45,8%) executam ação real de usuário
+                    (userEvent / fireEvent / click / type / keyboard / hover / tab)
+        6 (1,3%) são triviais — zero ação E apenas toBeVisible/toBeInTheDocument:
+          Inplace, InputOtp, Tabs, Fieldset, Menu, Table (.stories.tsx, 1 asserção cada)
+      As 250 restantes sem ação asseveram role, aria-*, atributo e conteúdo em átomos
+      apresentacionais (Divider, Badge, Chip, StatusIndicator) — legítimo para o papel.
+      A proporção de teatro de renderização é 1,3%, não os 54% que a contagem
+      ingênua "sem userEvent" sugeriria.
+      Desconto real: 676 stories para 472 plays → 204 stories (30%) sem verificação alguma.
+
+  - criterio: Estabilidade e determinismo
+    nota_0_a_4: 4
+    evidencia: |
+      Math.random() em src/ e .storybook/: ZERO ocorrências. A única string que casa é
+      a frase de documentação em .storybook/pages/PainelDeTFD.stories.tsx:293
+      ("sem Math.random(), sem data corrente e sem dado pessoal real").
+      Único new Date() é parâmetro default: src/.../DatePicker/DatePicker.tsx:72
+      `hoje = new Date()`, e toda story o sobrescreve — DatePicker.stories.tsx:20
+      `args: { label: 'Data de saída', hoje: HOJE }` — permitindo asserção em literal:
+      linha 47 `getByRole('button', { name: '15 de março de 2026' })` com
+      linha 48 `toHaveAttribute('aria-current', 'date')`.
+      As fixtures das Páginas repetem o padrão (constante HOJE em
+      .storybook/fixtures/solicitacao-tfd.ts e correlatas).
+      76 waitFor, vários com comentário justificando a espera contra animação
+      (.storybook/pages/SolicitacaoDeTFD.stories.tsx:705-711, showModal + foco inicial).
+      Suíte verde em execução única, sem retry, 19,45s.
+
+  - criterio: Índice do catálogo sem regressão
+    nota_0_a_4: 4
+    evidencia: |
+      http://localhost:6100/index.json: 771 entradas (676 story + 95 docs), 104 títulos.
+      Baseline: 655 entradas / 584 stories / 71 títulos. Nada regrediu; tudo cresceu.
+      Os 7 grupos existem, na ordem exigida pelo requisito 1, fixada em
+      .storybook/preview.tsx:16-28 (storySort.order literal, com comentário explicando
+      que constante declarada fora quebraria a análise estática do Storybook):
+        Visão geral 1 · Fundações 2 · Átomos 19 · Moléculas 34 · Organismos 37 ·
+        Templates 6 · Páginas 5
+      Stories por grupo: Fundações 7, Átomos 98, Moléculas 244, Organismos 235,
+      Templates 44, Páginas 48.
+      Dos 89 destinos declarados no legacy-story-map, 88 existem no build vivo.
+      Requisitos 4 e 5 atendidos: 6 templates (.storybook/templates/) e 5 páginas
+      (.storybook/pages/), com main.ts:5-11 documentando por que vivem fora de src.
+
+comparacao_com_referencias:
+  resultado: PERDE
+  evidencia: |
+    Contra GOV.UK Design System ("quando usar e quando não usar"): 39 dos 92 arquivos
+    de story mencionam "quando usar", mas apenas 11 trazem orientação NEGATIVA
+    ("não usar" / "não use"). O GOV.UK documenta "when not to use this component"
+    em praticamente todo componente do catálogo. O Citiesoft diz bem o que o
+    componente faz e mal quando recusá-lo — que é exatamente o valor que um DS B2G
+    entrega a um time que não tem designer em cada squad.
+
+    Contra Shopify Polaris e IBM Carbon em documentação de API: 92 de 92 arquivos têm
+    `component:` com descrição — cobertura total, mérito real e acima da média. Mas
+    apenas 3 de 92 declaram `argTypes`. Sem argTypes o autodocs mostra só o tipo
+    inferido do TypeScript: nenhuma prop tem descrição própria, narrativa de valor
+    default, marcação de obrigatória ou de depreciada. Polaris documenta prop a prop
+    com texto autoral. Perde nesse eixo, e é o eixo que mais dói em handoff.
+
+    Contra IBM Carbon na ligação fundação ↔ componente: aqui EMPATA e em um ponto
+    vence. ColorPicker lê os hexadecimais do :root em runtime
+    (ColorPicker.stories.tsx:204-212, `getComputedStyle(document.documentElement)`)
+    em vez de repetir hex na story, e Chart/MeterGroup pintam por
+    var(--citie-chart-cat-N). A amarração token → componente é executável, não prosa.
+    A ironia é que é justamente essa amarração que expõe o bug do achado MAIOR abaixo.
+
+achados:
+  - severidade: BLOQUEADOR
+    descricao: |
+      Molécula depende de organismo em código de produção. `MeterGroup` importa a
+      constante `PALETA_OFICIAL` de `organisms/Chart`. É exatamente a inversão que a
+      estrutura em níveis existe para impedir, e contradiz o requisito 8 (classificação
+      por papel e dependência de composição). Custo concreto e não hipotético:
+      `PALETA_OFICIAL` é uma lista de 8 strings `var(--citie-chart-cat-N)`
+      (Chart.tsx:6-15) — dado de fundação puro, sem uma linha de lógica — mas
+      importá-la puxa o módulo Chart inteiro (renderização SVG, atoms/Button) para o
+      grafo de dependência de qualquer consumidor de MeterGroup, através do barrel
+      público. O catálogo declara uma hierarquia que o próprio código viola.
+    evidencia: |
+      src/components/molecules/MeterGroup/MeterGroup.tsx:2
+        import { PALETA_OFICIAL } from '../../organisms/Chart/Chart';
+      src/components/organisms/Chart/Chart.tsx:6  export const PALETA_OFICIAL = [...]
+      src/components/organisms/Chart/Chart.tsx:18 export const PALETA_PROPOSTA = [...]
+      Propagado nas stories:
+        src/components/molecules/MeterGroup/MeterGroup.stories.tsx:3
+        src/components/molecules/ConfirmPopup/ConfirmPopup.stories.tsx:5
+    correcao_exigida: |
+      Mover PALETA_OFICIAL e PALETA_PROPOSTA para src/tokens/ (ou src/fundacoes/),
+      reexportar de lá em src/index.ts, e fazer Chart e MeterGroup importarem da
+      fundação. Nenhuma aresta molécula→organismo pode restar em código de produção.
+      Adicionar regra de lint de fronteira (import boundaries) que faça a inversão
+      quebrar o build, e não depender de revisão humana para pegá-la de novo.
+
+  - severidade: MAIOR
+    descricao: |
+      O gate de lint falha. `npm run lint` sai com código 1 por um erro de
+      rules-of-hooks: um `useState` é chamado dentro de uma arrow anônima que o oxlint
+      não reconhece como componente React. O requisito 7 exige lint passando, sem
+      qualificação. O repositório já contém o padrão correto para isso em outro
+      arquivo, o que torna a falha uma inconsistência interna, não uma limitação.
+    evidencia: |
+      npm run lint → LINT_EXIT=1
+      src/components/organisms/Panel/Panel.stories.tsx:169:33
+        error react-hooks(rules-of-hooks)
+      Corpo em Panel.stories.tsx:163-178:
+        render: (args) => { const [aberto, setAberto] = useState(false); ... }
+      Padrão correto já usado no mesmo repositório:
+        src/components/molecules/ColorPicker/ColorPicker.stories.tsx:201
+        function PaletaDosTokens() { ... }  →  render: () => <PaletaDosTokens />
+    correcao_exigida: |
+      Extrair o render de Panel.stories.tsx para um componente nomeado em maiúscula,
+      seguindo o padrão de ColorPicker.stories.tsx:201.
+      `npm run lint` deve sair 0.
+
+  - severidade: MAIOR
+    descricao: |
+      Defeito funcional e de acessibilidade no ColorPicker, mascarado por um teste raso
+      e não capturado pelo gate de a11y. Dois tokens distintos compartilham o mesmo
+      hexadecimal — `--citie-brand-hover` e `--citie-info-emphasis`, ambos #0e4db8. A
+      story "Paleta · marca Citiesoft (tokens)" lê os dois do :root em runtime e monta
+      uma paleta com `valor` duplicado. Quatro consequências encadeadas:
+        (a) React emite erro de chave duplicada — o componente chaveia por `opcao.valor`;
+        (b) `selecionada` é calculado por comparação de VALOR, então DOIS radios do mesmo
+            radiogroup ficam com aria-checked="true" — violação direta da semântica de
+            radiogroup, e o gate está em `test: 'error'` justamente por ser exigência
+            legal e-MAG / WCAG 2.2 AA em B2G;
+        (c) `nomeDaCor` resolve por `paleta.find(...)` e devolve sempre "Azul escuro",
+            de modo que escolher "Informação" é anunciado ao leitor de tela como outra cor;
+        (d) a navegação por seta opera por índice e fica ambígua entre as duas entradas.
+      O play da story assevera apenas a primeira amostra, então a suíte fica verde por
+      cima do defeito. Este é o achado mais grave em qualidade de teste: o argumento
+      central da entrega é que os testes provam comportamento, e aqui eles provam o
+      contrário do que está acontecendo na tela.
+    evidencia: |
+      Saída real de npm run test-storybook:
+        "[console.error] Encountered two children with the same key, `#0E4DB8`.
+         Keys should be unique so that components maintain their identity across updates."
+      src/tokens/tokens.css:15  --citie-brand-hover: #0e4db8;
+      src/tokens/tokens.css:51  --citie-info-emphasis: #0e4db8;
+      src/.../ColorPicker/ColorPicker.stories.tsx:190-198  (TOKENS_DA_MARCA inclui os dois)
+      src/.../ColorPicker/ColorPicker.stories.tsx:204-212  (lê getComputedStyle → valor)
+      src/.../ColorPicker/ColorPicker.tsx:256  key={opcao.valor}
+      src/.../ColorPicker/ColorPicker.tsx:253  selecionada = opcao.valor.toUpperCase() === corAtual
+      src/.../ColorPicker/ColorPicker.tsx:89   nomeDaCor = paleta.find(...)?.nome
+      src/.../ColorPicker/ColorPicker.stories.tsx:238-246 (play só assevera 'Citie Blue, #1261E4')
+    correcao_exigida: |
+      Chavear e resolver seleção por identidade estável (`token` ?? `nome`), nunca por
+      `valor`. O play deve asseverar que exatamente UM radio está marcado
+      (`getAllByRole('radio', { checked: true })` com length 1) e que o nome anunciado
+      corresponde à cor efetivamente escolhida. A suíte deve rodar sem nenhum
+      console.error. Investigar em seguida por que o gate a11y `test: 'error'`
+      (preview.tsx:38-40) não reprovou dois aria-checked no mesmo radiogroup — se o
+      gate não pega isso, ele não está protegendo o que promete proteger.
+
+  - severidade: MENOR
+    descricao: |
+      A documentação de rastreabilidade tem uma entrada desatualizada: o título de
+      destino registrado não existe no build. É o tipo exato de divergência que derruba
+      a confiança no mapa inteiro como prova de "nenhum componente perdido" — 88 acertos
+      não compensam a dúvida que 1 erro semeia sobre o método de verificação.
+    evidencia: |
+      docs/atomic-design/legacy-story-map.json, origem "Feedback/Skeleton":
+        destino declarado → "Moléculas/Feedback/SkeletonComposicoes"
+        título vivo no index.json → "Moléculas/Feedback/Composições de Skeleton"
+      88 dos 89 destinos batem; este é o único divergente.
+    correcao_exigida: |
+      Corrigir a entrada e adicionar ao CI uma verificação que compare
+      legacy-story-map.json com index.json, reprovando qualquer destino inexistente.
+      A rastreabilidade tem que ser executável, não conferida à mão.
+
+  - severidade: MENOR
+    descricao: |
+      A transição crítica de envio da página de TFD nunca é exercitada. A story
+      "Concluída · toast de sucesso" injeta o estado final por prop em vez de clicar em
+      "Enviar solicitação" e esperar a conclusão. O caminho clicar → enviando →
+      concluída → toast, que contém o único temporizador de 900ms do repositório, não
+      tem cobertura nenhuma. A story anterior para em "o botão está habilitado".
+      A escolha protege a suíte de flake, mas o fluxo mais importante da página fica
+      demonstrado e não verificado.
+    evidencia: |
+      .storybook/pages/SolicitacaoDeTFD.stories.tsx:623
+        args: { etapaInicial: 3, dadosIniciais: SOLICITACAO_COMPLETA, concluidaInicial: true }
+      .storybook/pages/SolicitacaoDeTFD.stories.tsx:597
+        await expect(canvas.getByRole('button', { name: 'Enviar solicitação' })).toBeEnabled();
+      .storybook/pages/SolicitacaoDeTFD.stories.tsx:198-210 (setTimeout de 900ms, o
+        estado real de envio, nunca alcançado por play)
+    correcao_exigida: |
+      Uma story que clique em "Enviar solicitação" e espere o estado concluído com
+      `waitFor(..., { timeout: ... })` explícito acima dos 900ms, asseverando o toast
+      "Solicitação de TFD enviada para análise" e o botão desabilitado.
+
+  - severidade: POLIMENTO
+    descricao: |
+      76 chamadas de waitFor e ZERO com `timeout:` explícito — todas correm sob o
+      default de 1000ms do testing-library. O temporizador simulado de 900ms deixa
+      folga de 100ms. Hoje não há asserção atravessando esse temporizador (achado
+      anterior), então a suíte é estável; no instante em que alguém cobrir o caminho de
+      envio, vira flake em máquina carregada. Os demais temporizadores têm folga
+      confortável, o que mostra que 900ms é o outlier e não o padrão da casa.
+    evidencia: |
+      grep "timeout:" em *.stories.tsx → 0 ocorrências; grep "waitFor(" → 76
+      .storybook/pages/SolicitacaoDeTFD.stories.tsx:210 → }, 900);
+      .storybook/pages/CadastroDeServidor.stories.tsx:136 → }, 300);
+      src/components/organisms/Tree/Tree.stories.tsx:357 → }, 400);
+    correcao_exigida: |
+      Baixar a latência simulada de 900ms para a faixa de 300-400ms já adotada no resto
+      do repositório, ou declarar timeout explícito em todo waitFor que atravesse um
+      temporizador.
+
+  - severidade: POLIMENTO
+    descricao: |
+      Aviso de act não tratado na execução da suíte, indicando componente que suspende
+      sem await dentro do play. Não reprova nada hoje, mas é ruído que mascara avisos
+      futuros e pode virar falha real em versão seguinte do React.
+    evidencia: |
+      Saída de npm run test-storybook:
+        "A component suspended inside an `act` scope, but the `act` call was not awaited.
+         When testing React components that depend on asynchronous data, you must await
+         the result: await act(() => ...)"
+    correcao_exigida: Execução da suíte sem avisos de act e sem console.error.
+
+qualidades_surpreendentes:
+  - |
+    Determinismo por construção, não por sorte. Zero `Math.random()` em todo o
+    repositório — a única string que casa é a frase de documentação em
+    PainelDeTFD.stories.tsx:293 explicando a própria regra ao leitor. O único
+    `new Date()` é parâmetro default (DatePicker.tsx:72 `hoje = new Date()`) e toda
+    story o sobrescreve com data fixa (DatePicker.stories.tsx:20
+    `args: { hoje: HOJE }`), o que permite asserção em literal por extenso:
+    `getByRole('button', { name: '15 de março de 2026' })` com
+    `toHaveAttribute('aria-current', 'date')` (linhas 47-48). As fixtures das Páginas
+    repetem o padrão HOJE. Resultado: 676 testes verdes em execução única, sem retry,
+    em 19,45s. Catálogos desse porte quase sempre carregam pelo menos uma story presa
+    ao relógio da máquina; aqui a ausência é sistemática e documentada.
+  - |
+    Os templates funcionam como teste de integração do próprio barrel público. Nenhum
+    deles importa por caminho profundo: `.storybook/templates/AppShell/AppShell.tsx:2`
+    faz `import { Breadcrumb, Button, Sidebar, type NivelDaTrilha, type SecaoDoMenu }
+    from '../../../src'` — 7 arquivos de template e página consomem `../../../src` ou
+    `../../src`. Se um export sumisse de src/index.ts, os templates quebrariam o build
+    antes de qualquer consumidor externo perceber; a compatibilidade do requisito 6
+    passa a ser verificada por construção. E o contrato de template é o correto de Brad
+    Frost, não implementação copiada com outro nome: `Listagem.tsx` e `Detalhe.tsx`
+    importam apenas `react` e o próprio CSS, expondo slots `ReactNode`, enquanto as
+    Páginas injetam os componentes reais (SolicitacaoDeTFD.stories.tsx:4-14 traz Button,
+    Card, ConfirmDialog, DatePicker, Input, Message, Select, ToastStack de `../../src`,
+    e o esqueleto de `../templates/Wizard/Wizard`). Layout e composição ficam de fato
+    separados, que é a parte que quase toda implementação de Atomic Design erra.
+
+motivo_do_veredito: |
+  Três dos quatro gates passam de forma limpa (tsc exit 0, build exit 0, 676/676 testes
+  verdes em execução única) e o índice não regrediu em nada: 771 entradas contra 655 do
+  baseline, 104 títulos contra 71, os 7 grupos na ordem exigida, 88 dos 89 destinos do
+  mapa legado confirmados no build vivo, templates e páginas entregues. A qualidade dos
+  testes é melhor do que a contagem bruta sugere — apenas 1,3% das play functions são
+  teatro de renderização — e o determinismo é estrutural, não acidental.
+
+  Mas o veredito trava em três pontos, e nenhum deles é acabamento.
+
+  Primeiro: o gate de lint FALHA (exit 1, rules-of-hooks em Panel.stories.tsx:169). O
+  requisito 7 é explícito e não admite leitura parcial.
+
+  Segundo: a hierarquia atômica, que é o objeto inteiro da entrega, tem uma inversão em
+  código de produção. Uma molécula importa de um organismo (MeterGroup.tsx:2 →
+  organisms/Chart) para buscar o que é, na prática, um token de fundação. Classificar
+  por dependência de composição foi o requisito 8, e ele está violado dentro do próprio
+  artefato que o proclama.
+
+  Terceiro, e mais sério: há um defeito funcional e de acessibilidade real que a suíte
+  verde não pegou. Dois tokens com o mesmo hexadecimal fazem o ColorPicker marcar dois
+  radios como aria-checked no mesmo radiogroup e anunciar a cor errada ao leitor de
+  tela. O React já grita chave duplicada na saída do teste, o gate de acessibilidade
+  está configurado como `test: 'error'` e passa batido, e o play olha apenas a primeira
+  amostra. Uma suíte que fica verde por cima de uma violação de radiogroup é o achado
+  mais grave possível aqui, porque o argumento central da entrega é que os testes provam
+  comportamento — e neste caso eles provam o contrário do que a tela faz.
+
+  Somado à documentação que perde do GOV.UK em orientação negativa (11 de 92 arquivos)
+  e do Polaris em documentação de prop (argTypes em 3 de 92), o resultado é sólido na
+  arquitetura de composição e na disciplina de dados, e reprovado nos gates e na própria
+  regra de níveis que ele estabeleceu.

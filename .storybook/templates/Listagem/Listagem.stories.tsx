@@ -4,6 +4,7 @@ import {
   Breadcrumb,
   Button,
   FilterBar,
+  Link,
   Pagination,
   Search,
   Select,
@@ -41,7 +42,13 @@ const COLUNAS: Coluna<RegistroGenerico>[] = [
     ordenavel: true,
     largura: '140px',
     // Regra fixa: o identificador leva ao detalhe por link, nunca por botão.
-    render: (linha) => <a href={`#/registros/${linha.id}`}>{linha.id}</a>,
+    // O átomo Link é obrigatório aqui. Como `<a>` cru, o identificador herdava o
+    // azul default do navegador e media 1,67:1 sobre a linha zebrada no escuro.
+    render: (linha) => (
+      <Link papel="identificador" href={`#/registros/${linha.id}`}>
+        {linha.id}
+      </Link>
+    ),
   },
   { chave: 'descricao', cabecalho: 'Descrição', render: (linha) => linha.descricao },
   { chave: 'responsavel', cabecalho: 'Responsável', render: (linha) => linha.responsavel },

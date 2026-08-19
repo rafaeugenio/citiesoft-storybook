@@ -1,0 +1,366 @@
+revisor: Acessibilidade (e-MAG / WCAG 2.2 AA), B2G
+artefato_avaliado: >-
+  /Users/rafaeleugenio/Documents/Cursor/Repositorios/citiesoft-storybook (árvore de
+  trabalho local, suíte executada em 19/08/2026); build navegável em
+  http://localhost:6100
+veredito: REPROVADO
+nota_media_0_a_4: 2.6
+
+criterios_criticos:
+  - criterio: Gate de acessibilidade real, não decorativo
+    nota_0_a_4: 3
+    evidencia: >-
+      `.storybook/preview.tsx:36-40` declara `a11y: { test: 'error' }`. Verifiquei
+      empiricamente, sem confiar na declaração: criei uma story de sonda com `<img>`
+      sem alt, `<button>` vazio e texto #CCCCCC sobre branco, rodei
+      `npx vitest --project=storybook --run` naquele arquivo e o resultado foi
+      `Test Files 1 failed / Tests 1 failed`, com o erro originado em
+      `@storybook/addon-a11y/.../chunk-P5J2FJ2Z.js:165 afterEach`. A sonda foi
+      removida em seguida. O gate quebra de verdade. A suíte completa fecha verde:
+      103 arquivos, 676 testes, 0 falhas, 19,22s.
+      As únicas 4 stories que desligam a varredura são `Button.stories.tsx:83`
+      (Success), `Button.stories.tsx:130` (Warn), `SplitButton.stories.tsx:128` e
+      `ConfirmPopup.stories.tsx:141`. Todas as 4 citam o mesmo achado real e medido
+      (#16A34A a 3,30:1 e #D97706 a 3,19:1 com rótulo branco, valores que confirmei
+      por cálculo), e Button ainda publica "Success · correção proposta" e
+      "Warn · correção proposta" com o valor que passa. Isso é documentação honesta,
+      não violação varrida para debaixo do tapete.
+      O desconto de 1 ponto: os mesmos dois tokens reprovados são usados sem qualquer
+      marcação em `Navigation.css:155-157` (indicador de etapa concluída do Stepper,
+      com `color: #ffffff`), `Timeline.css:61-76` e `Progress.css:15-23`. A exceção
+      foi registrada por story em vez de por token, então o mesmo defeito circula
+      silencioso em três outros componentes.
+
+  - criterio: Teclado nos papéis ARIA (5 componentes de níveis diferentes)
+    nota_0_a_4: 3
+    evidencia: >-
+      Menu (`src/components/organisms/Menu/Menu.stories.tsx:244-271`): ArrowDown, End,
+      circulação da última para a primeira, Home e Escape com devolução de foco ao
+      gatilho (`await expect(gatilho).toHaveFocus()`). Padrão completo, é o melhor do
+      repositório.
+      TreeSelect (`src/components/molecules/TreeSelect/TreeSelect.stories.tsx:64-130`):
+      aria-haspopup, aria-expanded, aria-level, aria-activedescendant e devolução de
+      foco ao gatilho após seleção. Muito bom.
+      Tabs (`src/components/molecules/Tabs/Tabs.stories.tsx:52-88`): ArrowRight, End e
+      circulação testados. Faltam ArrowLeft e Home, e a orientação vertical
+      (`Tabs.stories.tsx:126-131`) só verifica `aria-orientation`, sem testar que as
+      setas passam a ser ArrowUp/ArrowDown, que é a exigência do APG para tablist
+      vertical.
+      Dialog (`src/components/organisms/Overlay/Dialog.stories.tsx:99-120`): a story
+      principal fecha por clique e verifica `dialogo.open === false`, sem nenhuma
+      asserção de que o foco volta ao gatilho e sem teste de foco preso por Tab. A
+      única checagem de teclado do componente é a negativa em `:150` (Escape não fecha
+      modal obrigatório). O caminho positivo, Escape fecha o diálogo comum e devolve o
+      foco, não é verificado por teste nenhum.
+      Slider (`src/components/atoms/Slider/Slider.stories.tsx`): zero uso de
+      `userEvent.keyboard` no arquivo. As 4 play functions usam `fireEvent.change`, que
+      não passa pelo teclado. `Slider.tsx:9` documenta por escrito "entrega teclado
+      (setas, Home, End, PageUp)" e nenhum teste sustenta a frase. Na variante Range
+      (`Slider.stories.tsx:101-124`) o teste só confirma que as duas pontas têm nome
+      acessível, sem verificar que o mínimo não ultrapassa o máximo pelo teclado.
+
+  - criterio: Composição das telas (heading, main, landmarks, região rolável)
+    nota_0_a_4: 2
+    evidencia: >-
+      O acerto: `.storybook/templates/Formulario/Formulario.tsx:225-251` só emite
+      `<main>` na apresentação em página e devolve Drawer/Dialog no overlay, então
+      `.storybook/pages/CadastroDeServidor.stories.tsx:395` convive com ele sem duplicar
+      landmark. Hierarquia sem salto em `Dashboard.tsx:65-102` (h1 depois h2, com o h3
+      do Chart abaixo), `Detalhe.tsx:101-167` e `Wizard.tsx:118-157`. Duas navegações
+      nomeadas de forma distinta em `Navigation.tsx:29` ("Trilha de navegação") e `:168`
+      ("Menu principal"), mais a paginação em `Pagination.tsx:80`.
+      As falhas: o skip link (`Navigation.tsx:170`) mora dentro da Sidebar, que em
+      `AppShell.tsx` só aparece no DOM depois do `<header>` inteiro (`:198-241`). O
+      usuário de teclado precisa tabular por botão de menu, logotipo, busca, ações e
+      perfil antes de alcançar "Pular para o conteúdo", o que anula a função do recurso.
+      Pior no celular: `AppShell.css:212-232` aplica `visibility: hidden` na lateral
+      fechada abaixo de 768px, então a story de AppShell em viewport celular não tem
+      skip link nenhum (WCAG 2.4.1).
+      Região rolável: `src/components/organisms/Table/Table.tsx:85` renderiza
+      `<div className="citie-table-wrapper">` e `Table.css:4` dá a esse mesmo elemento
+      `overflow: auto`, sem `tabIndex`, sem `role` e sem nome. Toda tabela larga do
+      catálogo e das páginas fica inalcançável por teclado na rolagem horizontal
+      (WCAG 2.1.1). O axe tem a regra `scrollable-region-focusable`, mas ela só dispara
+      quando o elemento de fato transborda no tamanho renderizado, então o gate verde
+      não é evidência aqui.
+
+  - criterio: Cobertura do tema escuro
+    nota_0_a_4: 1
+    evidencia: >-
+      Uma única story em todo o catálogo exercita o tema escuro:
+      `.storybook/templates/AppShell/AppShell.stories.tsx:328`
+      (`globals: { theme: 'dark', ... }`). É 1 de 676 testes, 0,15%. O grep por
+      `theme: 'dark'` em `src` e `.storybook` não retorna mais nada; todos os outros
+      `globals` são de viewport.
+      `src/tokens/tokens.css:164-210` define 30 tokens escuros que nenhum componente do
+      catálogo testa, e o gate axe portanto nunca roda sobre eles. O risco é concreto,
+      não hipotético: `tokens.css:36-48` define `success-emphasis`, `warning-emphasis` e
+      `danger-emphasis` e o bloco escuro não redefine nenhum dos três, então o botão
+      Success continua a 3,30:1 no escuro; e `--citie-text-placeholder: #6b7177`
+      (`:204`) sobre `background-surface` escuro #1A1A1D dá 3,52:1 e reprova AA para
+      texto, exatamente o defeito que o comentário em `tokens.css:65-72` diz ter
+      corrigido no tema claro.
+
+  - criterio: Contraste verificado por cálculo
+    nota_0_a_4: 2
+    evidencia: >-
+      Calculei os pares com a fórmula de luminância relativa da WCAG sobre os valores
+      literais de `src/tokens/tokens.css` (script em
+      /Users/rafaeleugenio/.claude/jobs/87efdce7/tmp/c.mjs, 37 pares).
+      Passam: texto secundário #6B7177 sobre surface branco 4,94:1; helper #6B7177 sobre
+      `warning.background` #FFFBEB 4,76:1; helper sobre `danger.background` #FEF2F2
+      4,51:1, que é o pior caso de texto auxiliar sobre fundo de estado e ainda assim
+      passa; `success.strong` #15803D sobre `success.background` #ECFDF3 4,76:1; branco
+      sobre `brand.primary` #1261E4 5,45:1; `brand.contrast` #141414 sobre
+      `brand.primary` escuro #4D8BFC 5,63:1. Nesse recorte a paleta está bem construída.
+      Reprovam: branco sobre `success.emphasis` #16A34A 3,30:1 e branco sobre
+      `warning.emphasis` #D97706 3,19:1 (já assumidos); placeholder escuro #6B7177 sobre
+      #1A1A1D 3,52:1 (não assumido em lugar nenhum);
+      `--citie-form-field-border: #E8EAED` sobre surface branco 1,21:1 contra o mínimo
+      de 3:1 da WCAG 1.4.11, e esse token é a borda de todo campo do sistema
+      (`Field.css:62`, além de Select, MultiSelect, TreeSelect, AutoComplete,
+      CascadeSelect, InputOtp, ColorPicker, Listbox, Tree, PickList, OrderList, Slider e
+      Choice). No escuro o equivalente #34343A sobre #1A1A1D dá 1,40:1. O contorno do
+      campo é, na prática, invisível para baixa visão nos dois temas, e o axe não avalia
+      borda de componente.
+      Sobra ainda `--citie-chart-meta: #A8ACB3` (2,28:1 sobre branco) declarado em
+      `tokens.css:143` e não referenciado por nenhum CSS de componente: token morto, mas
+      armadilha pronta para quem for rotular eixo.
+
+  - criterio: Estado comunicado além da cor
+    nota_0_a_4: 4
+    evidencia: >-
+      Stepper (`Navigation.tsx:112-125`): indicador ✓ / ! / número visível,
+      `aria-current="step"` e `<span class="citie-visualmente-oculto">` com o rótulo do
+      estado por extenso. Timeline (`Timeline.tsx:90-104`): marcador com símbolo,
+      `aria-hidden`, e o estado repetido em texto oculto dentro do título do evento.
+      StatusIndicator (`Badge.tsx:118-134`): o estado é o próprio conteúdo textual do
+      componente, com ícone opcional marcado `aria-hidden`, então o rótulo nunca depende
+      do preenchimento. Gráficos (`Chart.tsx:73-135`): botão real "Ver tabela" que troca
+      o gráfico por `<table>` com `<th scope="col">` e `<th scope="row">`, legenda
+      obrigatória a partir de 2 séries, e `role="img"` com `aria-label` nos SVGs. É o
+      único critério que cumpri sem encontrar exceção.
+
+comparacao_com_referencias:
+  resultado: PERDE
+  evidencia: >-
+    Contra o GOV.UK Design System, no aspecto "evidência de acessibilidade": lá cada
+    componente publica o relatório de teste, os critérios WCAG que cobre e o histórico
+    de defeito conhecido em página própria, e o sistema é testado nos modos de contraste
+    alternativos. Aqui a evidência existe apenas como comentário dentro do código-fonte
+    de 4 stories, e o modo alternativo do produto (o tema escuro, com 30 tokens em
+    `tokens.css:164-210`) é exercitado por 1 story em 676. Quem abrir o catálogo em
+    http://localhost:6100 não encontra nenhuma página que liste os achados abertos;
+    `.storybook/docs/VisaoGeral.mdx` é o único documento que cita WCAG e não consolida
+    os defeitos conhecidos.
+    Contra o IBM Carbon, no aspecto "ligação fundação ↔ componente": Carbon publica a
+    razão de contraste de cada par de token, inclusive o par borda sobre fundo. Aqui
+    `--citie-form-field-border` a 1,21:1 atravessou 14 componentes sem que a
+    documentação de fundações registrasse o número, enquanto os pares de preenchimento
+    (#16A34A, #D97706) foram medidos com precisão de duas casas. A profundidade
+    documental é seletiva: excelente onde o axe aponta, ausente onde ele é cego.
+
+achados:
+  - severidade: MAIOR
+    descricao: >-
+      A região rolável horizontal de toda tabela do sistema não é alcançável por teclado
+      (WCAG 2.1.1). O envoltório tem `overflow: auto` e nenhum `tabIndex`, `role` ou nome
+      acessível, ao contrário do que o próprio time fez em Formulario e Wizard.
+    evidencia: >-
+      src/components/organisms/Table/Table.tsx:85 combinado com
+      src/components/organisms/Table/Table.css:4
+    correcao_exigida: >-
+      O envoltório recebe `tabIndex={0}`, `role="group"` e `aria-label` derivado da
+      legenda da tabela, no mesmo padrão de
+      .storybook/templates/Formulario/Formulario.tsx:166-172, mais uma story de tabela
+      larga em viewport estreita que prove a rolagem por teclado. Verificar também
+      TreeTable e ScrollPanel sob o mesmo critério.
+
+  - severidade: MAIOR
+    descricao: >-
+      O alvo focável da região rolável do template de formulário não tem estilo de foco
+      (WCAG 2.4.7). O elemento entra na ordem de tabulação e o usuário de teclado não vê
+      onde está. Wizard resolveu isso e Formulario não, dentro da mesma entrega.
+    evidencia: >-
+      .storybook/templates/Formulario/Formulario.tsx:166-172 cria `tabIndex={0}`, e
+      `grep -c ":focus" .storybook/templates/Formulario/Formulario.css` retorna 0,
+      enquanto .storybook/templates/Wizard/Wizard.css:82 define
+      `.citie-wizard__corpo:focus-visible`.
+    correcao_exigida: >-
+      `.citie-tpl-formulario__corpo--rolavel:focus-visible` com
+      `var(--citie-state-focus-ring)`, e um teste que tabula até a região e afirma
+      `toHaveFocus`.
+
+  - severidade: MAIOR
+    descricao: >-
+      O skip link não é o primeiro elemento focável e desaparece por completo no celular
+      (WCAG 2.4.1). No desktop ele vem depois de todo o cabeçalho; abaixo de 768px a
+      lateral fechada fica `visibility: hidden` e o link sai da ordem de foco.
+    evidencia: >-
+      .storybook/templates/AppShell/AppShell.tsx:198-241 (header antes da lateral),
+      src/components/molecules/Navigation/Navigation.tsx:170 (link dentro da Sidebar),
+      .storybook/templates/AppShell/AppShell.css:212-225 (`visibility: hidden`)
+    correcao_exigida: >-
+      O skip link sai da Sidebar e passa a ser o primeiro filho do AppShell, antes do
+      `<header>`, visível ao foco em qualquer viewport. Story em viewport celular com
+      play function que tabula uma vez e afirma que o elemento focado é
+      "Pular para o conteúdo".
+
+  - severidade: MAIOR
+    descricao: >-
+      O tema escuro não tem gate. Uma story em 676 roda no escuro, e o escuro tem defeito
+      real e mensurável que ninguém verificaria: placeholder a 3,52:1 e os três tokens
+      `*-emphasis` sem redefinição, o que mantém o botão Success a 3,30:1 também no
+      escuro.
+    evidencia: >-
+      .storybook/templates/AppShell/AppShell.stories.tsx:328 é a única ocorrência de
+      `theme: 'dark'`; src/tokens/tokens.css:164-210 não redefine `success-emphasis`,
+      `warning-emphasis` nem `danger-emphasis`; `--citie-text-placeholder: #6b7177` em
+      :204 sobre `background-surface` #1a1a1d dá 3,52:1.
+    correcao_exigida: >-
+      Uma story "Tema escuro" por componente, ou um modo de execução da suíte com
+      `theme: 'dark'` global que rode o mesmo conjunto duas vezes. Além disso, redefinir
+      os três tokens `*-emphasis` no bloco escuro e corrigir o placeholder escuro para no
+      mínimo 4,5:1.
+
+  - severidade: MAIOR
+    descricao: >-
+      A borda de campo reprova o contraste mínimo de componente da WCAG 1.4.11 nos dois
+      temas, e o defeito atravessa 14 componentes sem estar documentado em lugar nenhum,
+      enquanto defeitos de mesma natureza e menor alcance receberam comentário medido.
+    evidencia: >-
+      src/tokens/tokens.css:63 (#E8EAED sobre #FFFFFF = 1,21:1) e :202 (#34343A sobre
+      #1A1A1D = 1,40:1); consumido em Field.css:62, Select.css:24, MultiSelect.css:31,
+      TreeSelect.css:19, AutoComplete.css:18, CascadeSelect.css:22, InputOtp.css:30,
+      ColorPicker.css:30, Listbox.css:17, Tree.css:20, PickList.css:36, OrderList.css:44,
+      Slider.css:46, Choice.css:35.
+    correcao_exigida: >-
+      Elevar `--citie-form-field-border` para um valor com ao menos 3:1 sobre a superfície
+      em cada tema, ou registrar o achado com a razão medida na mesma página onde os
+      achados de preenchimento já estão, com prazo de decisão.
+
+  - severidade: MENOR
+    descricao: >-
+      Slider promete comportamento de teclado na documentação e nenhum teste verifica. As
+      play functions usam `fireEvent.change`, que não exercita tecla nenhuma, e a variante
+      de duas pontas não testa o travamento entre mínimo e máximo pelo teclado.
+    evidencia: >-
+      src/components/atoms/Slider/Slider.tsx:9 ("entrega teclado (setas, Home, End,
+      PageUp...)") contra src/components/atoms/Slider/Slider.stories.tsx:34 e :121, sem
+      nenhuma ocorrência de `userEvent.keyboard` no arquivo.
+    correcao_exigida: >-
+      Story "A11y · navegação por teclado" com ArrowRight, ArrowLeft, Home, End, PageUp e
+      PageDown afirmando o valor resultante, e um caso que prova que a ponta mínima não
+      ultrapassa a máxima.
+
+  - severidade: MENOR
+    descricao: >-
+      Dialog não testa o caminho positivo de fechamento por Escape nem a devolução de foco
+      ao gatilho, apesar de Menu, SplitButton e TreeSelect terem estabelecido esse padrão
+      de teste no mesmo repositório.
+    evidencia: >-
+      src/components/organisms/Overlay/Dialog.stories.tsx:113-120 fecha por clique sem
+      asserção de foco; :150 só testa que Escape NÃO fecha o modal obrigatório.
+    correcao_exigida: >-
+      Story que abre, pressiona Escape, afirma `dialogo.open === false` e
+      `expect(gatilho).toHaveFocus()`, mais um caso de Tab circulando dentro do diálogo.
+
+  - severidade: MENOR
+    descricao: >-
+      A paleta categórica que o próprio código declara reprovada na validação de
+      daltonismo continua sendo o padrão de todos os gráficos, e a paleta corrigida é
+      opcional.
+    evidencia: >-
+      src/tokens/tokens.css:113-123 descreve a falha (ΔE 5,7 em protanopia entre âmbar e
+      verde); src/components/organisms/Chart/Chart.tsx:55 e :146 usam
+      `paleta = PALETA_OFICIAL` como valor padrão.
+    correcao_exigida: >-
+      Inverter o padrão para a paleta alternativa e manter a oficial como escolha
+      explícita, ou acrescentar diferenciação por forma e traço nas séries, de modo que a
+      identidade da série não dependa do matiz.
+
+  - severidade: MENOR
+    descricao: >-
+      A exceção de contraste foi registrada por story, e não por token, então os mesmos
+      dois valores reprovados circulam sem marcação em três outros componentes.
+    evidencia: >-
+      src/components/molecules/Navigation/Navigation.css:155-157 (Stepper concluído,
+      `#ffffff` sobre `--citie-success-emphasis`), Timeline.css:61-76, Progress.css:15-23.
+      Nenhum desses arquivos ou stories cita o achado.
+    correcao_exigida: >-
+      Registro único do achado no nível do token, com a lista de consumidores, para que a
+      decisão de design corrija tudo de uma vez em vez de story a story.
+
+  - severidade: POLIMENTO
+    descricao: >-
+      O menu lateral no celular funciona como diálogo modal (foco preso, Escape fecha,
+      cortina) e não se declara como tal, então o conteúdo por trás continua legível em
+      modo de navegação do leitor de tela. A captura de Tab também só considera `a[href]`
+      e `button`, o que deixa escapar qualquer campo colocado em `rodapeDoMenu`.
+    evidencia: .storybook/templates/AppShell/AppShell.tsx:145-187 e :249-256
+    correcao_exigida: >-
+      `role="dialog"` com `aria-modal="true"` e `aria-label` na lateral quando aberta no
+      celular, `inert` no restante da tela, e seletor de focáveis que inclua input, select,
+      textarea e `[tabindex]:not([tabindex="-1"])`.
+
+  - severidade: POLIMENTO
+    descricao: >-
+      O SVG do gráfico anuncia "Consulte a tabela alternativa" mesmo quando a tabela não
+      está no DOM, e a troca entre gráfico e tabela não é anunciada.
+    evidencia: >-
+      src/components/organisms/Chart/Chart.tsx:60 (`verTabela` inicia false) e :161-162
+    correcao_exigida: >-
+      O rótulo passa a nomear o controle que revela a tabela, e a troca ganha uma região
+      viva discreta, ou a tabela permanece no DOM oculta visualmente.
+
+  - severidade: POLIMENTO
+    descricao: >-
+      O token de anel de foco é usado como decoração permanente no marcador de etapa atual
+      da Timeline, o que enfraquece o significado do anel como indicador de foco.
+    evidencia: >-
+      src/components/organisms/Timeline/Timeline.css:69-72
+      (`box-shadow: var(--citie-state-focus-ring)`)
+    correcao_exigida: >-
+      Token próprio de realce para o marcador, distinto de `--citie-state-focus-ring`.
+
+qualidades_surpreendentes:
+  - >-
+    O tratamento da região rolável como `role="group"` com nome e entrada de foco é um
+    detalhe da WCAG 2.1.1 que a maioria dos design systems ignora, e aqui ele veio com
+    comentário explicando por que existe só na apresentação em página:
+    .storybook/templates/Formulario/Formulario.tsx:160-172 ("Na página o corpo é a região
+    rolável, então precisa ser alcançável pelo teclado. No overlay quem rola é o corpo do
+    próprio Drawer/Dialog"). Wizard foi além e pareou o alvo focável com `:focus-visible`
+    em Wizard.css:82. É raciocínio de acessibilidade de verdade, não checklist.
+  - >-
+    O par "story oficial reprovada" mais "story de correção proposta com a razão medida"
+    em src/components/atoms/Button/Button.stories.tsx:74-107 transforma um defeito herdado
+    do design system em artefato navegável de decisão: o consumidor vê o token real
+    falhando a 3,30:1 e o valor #15803D que passa a 5,02:1 lado a lado, com a violação viva
+    no painel do axe sem quebrar o CI. Confirmei os dois números por cálculo e os dois
+    estão corretos. É mais honesto do que a prática comum de silenciar a regra e seguir.
+
+motivo_do_veredito: >-
+  O gate existe e morde, verifiquei por sonda injetada, e as quatro exceções são legítimas,
+  medidas e acompanhadas de correção proposta. Os estados nunca dependem só de cor, e a
+  composição das telas acerta landmark único, hierarquia de heading e nomeação de
+  navegação. Isso é bom trabalho. Mas o gate cobre exatamente o que o axe enxerga, e a
+  entrega não foi auditada onde ele é cego: o skip link é inalcançável no celular e chega
+  tarde no desktop, a rolagem horizontal de toda tabela do sistema é inacessível por
+  teclado, o alvo focável do template de formulário não tem estilo de foco enquanto o do
+  Wizard tem, a borda de campo está a 1,21:1 em 14 componentes sem registro, e o tema
+  escuro, com 30 tokens e defeitos que calculei, é exercitado por uma story em 676. São
+  cinco achados MAIOR, três deles com impacto direto sobre usuário de teclado em sistema de
+  governo. Reprova.
+
+evidencia_bruta:
+  suite_completa: >-
+    npm run test-storybook → 103 arquivos, 676 testes, 0 falhas, 19,22s (rodada única,
+    conforme o pacote).
+  sonda_do_gate: >-
+    Story com `<img>` sem alt criada em .storybook/pages/, executada e removida →
+    Test Files 1 failed / Tests 1 failed, erro originado em
+    @storybook/addon-a11y/.../chunk-P5J2FJ2Z.js:165.
+  calculo_de_contraste: >-
+    /Users/rafaeleugenio/.claude/jobs/87efdce7/tmp/c.mjs, 37 pares avaliados pela fórmula
+    de luminância relativa da WCAG sobre os valores literais de src/tokens/tokens.css.

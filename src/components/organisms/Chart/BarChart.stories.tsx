@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
-import { BarChart, PALETA_OFICIAL, PALETA_PROPOSTA } from './Chart';
+import { BarChart } from './Chart';
+import { PALETA_OFICIAL, PALETA_PROPOSTA } from '../../../tokens/paletas';
 
 const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
 

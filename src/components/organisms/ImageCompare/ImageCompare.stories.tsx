@@ -103,8 +103,24 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Compara duas imagens do mesmo enquadramento com um divisor deslizante. Origem: Figma CitieOne, página ❖ ImageCompare, cuja única parte com eixos é `imagecompare-handle` (State Idle | Hover, Focus False | True) — aqui traduzidos em `:hover` e `:focus-visible`. Cores e medidas seguem os tokens Citiesoft do vault, não o azul padrão do PrimeOne. Equivalente PrimeNG: `p-imagecompare`. A alça é um `role="slider"` focável: setas e Page Up/Down movem, Home e End vão aos extremos, e o arraste é apenas um atalho de ponteiro.',
+          '',
+          '**Quando usar:** duas fotografias do mesmo ponto, no mesmo enquadramento e na mesma escala,',
+          'separadas por um evento que o processo precisa comprovar: a rua antes e depois da pavimentação,',
+          'a sala antes e depois da reforma.',
+          '',
+          '**Quando não usar:** imagens de enquadramento, ângulo ou escala diferentes, porque o divisor',
+          'promete continuidade entre os dois lados e o servidor lê como mudança da obra o que é só',
+          'mudança de posição da câmera (use `Galleria`, que mostra cada foto inteira com legenda e data);',
+          'mais de duas imagens, já que o componente só admite `antes` e `depois`; o momento em que a',
+          'pessoa precisa ver as duas por completo lado a lado para descrever cada uma no parecer, pois',
+          'aqui um lado sempre está parcialmente coberto; diferença que está no dado e não no pixel, como',
+          'valor empenhado contra valor pago (use `Table`); e qualquer conteúdo destinado à impressão ou',
+          'ao PDF do processo, onde o divisor não existe e a captura congela em uma posição só. A alça',
+          'exige apontar e arrastar ou usar as setas: em documento que precisa valer como prova, mantenha',
+          'as duas imagens também disponíveis inteiras.',
+        ].join('\n'),
       },
     },
   },

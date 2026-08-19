@@ -3,7 +3,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { Pagination, janelaDePaginas } from './Pagination';
 
 const meta = {
-  title: 'Moléculas/Navegação de dados/Pagination',
+  title: 'Moléculas/Navegação/Pagination',
   component: Pagination,
   tags: ['autodocs'],
   parameters: {

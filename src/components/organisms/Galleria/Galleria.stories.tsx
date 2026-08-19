@@ -75,8 +75,24 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Galleria: imagem em destaque, tira de miniaturas e modo tela cheia. Página do Figma CitieOne `6738:54005` (seção Mídia). Variantes cobertas: Thumbnail e Thumbnail Location (Bottom/Top/Left/Right), Indicator e Indicator Location, Inset Indicator, Navigator e Show Caption. Equivalente PrimeNG: `p-galleria`. Cada imagem carrega o texto alternativo vindo do próprio anexo, nunca um rótulo genérico.',
+          '',
+          '**Quando usar:** conjunto de fotografias do mesmo objeto de processo que o servidor examina',
+          'uma a uma para instruir parecer, como as fotos de uma vistoria ou os anexos de imagem de um',
+          'auto de infração.',
+          '',
+          '**Quando não usar:** anexo único, em que a tira de miniaturas e as setas ocupam altura sem',
+          'oferecer navegação nenhuma (use `Image`, que já abre em tela cheia); lista de anexos com tipos',
+          'misturados, como ofício em PDF ao lado de foto, porque a miniatura não representa o documento',
+          'e o servidor perde nome do arquivo, data de juntada e autor, que são justamente o dado do',
+          'processo (use `Table` ou `DataView` com essas colunas e o link para abrir); comparação de duas',
+          'imagens do mesmo enquadramento antes e depois de uma obra, em que ver uma de cada vez obriga a',
+          'guardar a primeira de memória (use `ImageCompare`); e rotação de cards ou destaques em página',
+          'inicial, que é outro componente (`Carousel`). Evite também galeria com dezenas de anexos: a',
+          'tira de miniaturas passa a exigir rolagem própria e encontrar a foto certa fica mais caro que',
+          'em uma listagem com legenda e data.',
+        ].join('\n'),
       },
     },
   },

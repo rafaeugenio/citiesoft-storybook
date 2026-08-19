@@ -1,0 +1,267 @@
+revisor: DesignOps — governança, naming, documentação e manutenção
+artefato_avaliado: commit 21ea8ba (280 arquivos, +12.966/-1.527) + build em http://localhost:6100/index.json (771 entradas, 676 stories, 104 títulos)
+veredito: REPROVADO
+nota_media_0_a_4: 2.5
+
+criterios_criticos:
+  - criterio: Migração dos 71 títulos (contrato legacy-story-map.json)
+    nota_0_a_4: 3
+    evidencia: >
+      Os 71 títulos antigos estão todos no mapa, sem duplicata (56 mover, 13 dividir,
+      2 manter), e a soma bate: 89 destinos + 16 títulos novos = 104 títulos no build.
+      Mas 1 destino de 89 não existe: "Feedback/Skeleton -> Moléculas/Feedback/SkeletonComposicoes",
+      enquanto o build publica "Moléculas/Feedback/Composições de Skeleton"
+      (docs/atomic-design/legacy-story-map.json, entrada de Feedback/Skeleton;
+      src/components/atoms/Skeleton/SkeletonComposicoes.stories.tsx, campo title).
+      Os 2 "manter" (Fundações/Marca, Fundações/Tokens) vêm com `destinos: []`, então o
+      contrato não é auto-suficiente para eles.
+
+  - criterio: Consistência de nomenclatura
+    nota_0_a_4: 2
+    evidencia: >
+      A pasta contradiz o título publicado em 6 arquivos, ou seja, o repositório tem duas
+      taxonomias que discordam: atoms/Avatar/AvatarGroup.stories.tsx -> "Moléculas/…",
+      atoms/Choice/RadioGroup.stories.tsx -> "Moléculas/…",
+      atoms/Skeleton/SkeletonComposicoes.stories.tsx -> "Moléculas/…",
+      molecules/Navigation/Sidebar.stories.tsx -> "Organismos/…",
+      organisms/Chart/Sparkline.stories.tsx -> "Átomos/Gráficos/Sparkline",
+      organisms/Filters/Filters.stories.tsx -> "Organismos/Busca/FilterBar" (arquivo e
+      componente com nomes diferentes). Famílias sem critério único: "Entrada" em Átomos e
+      em Organismos mas "Campos" em Moléculas; "Contêineres" em Moléculas contra "Layout"
+      em Átomos/Organismos; "Navegação" e "Navegação de dados" convivem no mesmo nível.
+      Um único folheado é frase em português ("Composições de Skeleton") num catálogo em
+      que os outros 89 são PascalCase.
+
+  - criterio: Nomes de story descritivos de estado
+    nota_0_a_4: 3.5
+    evidencia: >
+      Amostra completa, não de 15: 676 stories, zero genéricas (nenhuma "Default", "Basic",
+      "Primary", "Story1" em nenhum dos 7 níveis) e 654 de 676 (96,7%) no padrão
+      "<Eixo> · <estado>". Distribuição: Estado 177, Variante 81, Comportamento 46,
+      Responsivo 24, A11y 18. O que tira o 4: 34 stories em 11 títulos usam o eixo em
+      inglês num catálogo em português — "State · idle" (16), "Size · 32 / 40 / 48px" (8),
+      "Type" (5), "Direction" (2), "Mode" (2) — concentradas nos componentes portados por
+      agentes distintos (Moléculas/Campos/MultiSelect 6, CascadeSelect 4, TreeSelect 4,
+      AutoComplete 3, ColorPicker 3, Listbox 3, Organismos/Layout/Splitter 3,
+      Organismos/Menus/Menu 3), o que mostra que a convenção existia mas não era verificada.
+
+  - criterio: Documentação da entrega serve quem chega amanhã
+    nota_0_a_4: 2
+    evidencia: >
+      O ADR-001 é excelente (alternativas descartadas com custo, consequências negativas
+      assumidas, três gatilhos de revisão). Os outros documentos não sustentam os próprios
+      números: classification.md:38 afirma "18 átomos, 34 moléculas e 37 organismos" e o
+      build publica 19 átomos; classificacao.json tem 89 componentes e
+      component-inventory.csv 89 linhas, mas o Sparkline não está em nenhum dos dois
+      (`grep -c Sparkline component-inventory.csv` = 0), embora classification.md:53 tenha
+      uma seção inteira explicando por que ele é átomo. classification.md:88 afirma "zero
+      órfãos e zero destinos inventados" — há 1 destino inventado e 1 componente órfão do
+      inventário. A coluna `arquivo` do CSV ("Button/Button") não resolve para caminho
+      nenhum: os 89 valores omitem justamente o segmento `atoms|molecules|organisms` que
+      esta entrega criou (verificado: 89 de 89 inexistentes). O ADR afirma como mitigação
+      que "todo componente cita o equivalente PrimeNG" — 77 de 90 arquivos citam, e 33 de
+      89 linhas do CSV têm a coluna `primeng` vazia. A coluna `figma` está vazia em 48 de
+      89 e isso não aparece como lacuna em lugar nenhum.
+
+  - criterio: Manutenibilidade — o repositório diz onde entra um componente novo
+    nota_0_a_4: 1
+    evidencia: >
+      O README.md:64 diz "É leitura obrigatória antes de acrescentar componente novo" e
+      aponta para docs/PORT-GUIDE.md. Esse guia, não tocado pelo commit, ensina a taxonomia
+      apagada: PORT-GUIDE.md:115 "Título: '<Seção>/<Componente>'. Seções em uso: Formulário,
+      Ação, Dados, Feedback, Overlay, Layout, Navegação, Mídia" e PORT-GUIDE.md:47
+      "src/components/<NomeDoComponente>/" sem o nível atômico. Quem seguir o guia
+      obrigatório do repo cria o componente na taxonomia que esta entrega destruiu, na
+      pasta errada. O README.md:45-58 também segue inteiro na taxonomia antiga ("583
+      stories, 71 arquivos de story", contra 584/92 do próprio baseline.md).
+      GUIA-DESMEMBRAMENTO.md é retrospectivo ("Use exatamente os títulos que a tabela da sua
+      tarefa indicar"), não serve para componente novo. Não existe script de verificação:
+      package.json tem 7 scripts e nenhum valida cobertura, apesar de classification.md:86
+      afirmar que "a verificação de cobertura roda contra o inventário real e acusa órfãos".
+
+  - criterio: Achados abertos do design system com evidência e correção
+    nota_0_a_4: 3.5
+    evidencia: >
+      Os 6 achados do README.md:79-154 são o ponto mais forte da documentação: cada um traz
+      o valor medido e o substituto proposto (success #16A34A 3,30:1 -> #15803D 5,02:1;
+      paleta de gráfico com ΔE 5,7 em protanopia e 4 cores abaixo de 3:1, com paleta de 6
+      slots proposta e comando reproduzível; placeholder #A8ACB3 2,27:1). O achado 6 é
+      honesto ao separar "resolvido por inferência" de "decidido". Desconto: o ponteiro do
+      achado 2 aponta para título deletado — README.md:112 manda ver a story
+      "Dados/Gráficos -> Paleta · validação", que hoje é "Organismos/Gráficos/BarChart ->
+      Paleta · validação". O único link navegável dos achados quebrou na própria migração.
+
+  - criterio: Versionamento e rastreabilidade
+    nota_0_a_4: 2.5
+    evidencia: >
+      A mensagem de 21ea8ba é acima da média: quantifica (71 títulos, 13 desmembramentos,
+      584/676 stories), declara o critério de classificação e cita os achados com número
+      (Sidebar 4,39:1, Avatar 1,90:1). O git detectou os renames, então `git log --follow`
+      funciona por arquivo. Mas é um commit único de 280 arquivos e +12.966 linhas que
+      mistura mover, desmembrar, criar 11 templates/páginas e corrigir 2 defeitos de
+      contraste: reverter a correção do Avatar exige reverter a reorganização inteira. Além
+      disso a mensagem afirma "Zero órfãos entre os títulos antigos" (falso, ver bloqueador)
+      e "Sete desvios do mapa inicial", enquanto 3 dos 7 registros em
+      classificacao.json.desvios_do_mapa_sugerido têm `sugerido === adotado` (Tooltip e
+      Popover, Fieldset, Menu) — não são desvios, são confirmações. Desvios reais: 4.
+
+comparacao_com_referencias:
+  resultado: PERDE
+  evidencia: >
+    Contra GOV.UK no aspecto "quando usar e quando não usar": a Visão geral do próprio
+    catálogo (.storybook/docs/VisaoGeral.mdx) apresenta "quando usar e quando não usar, que
+    é a parte que evita o erro mais caro" como seção padrão da página de componente.
+    Medido: apenas 7 de 92 arquivos de story contêm "quando não usar" (FloatLabel, Stepper,
+    Sidebar, Breadcrumb, ColorPicker, Inplace, Terminal) e 34 de 92 contêm "quando usar".
+    No GOV.UK, "When to use this component / When not to use this component" é seção
+    obrigatória de praticamente toda página. O catálogo promete a régua do GOV.UK e entrega
+    8% dela.
+    Contra IBM Carbon no aspecto governança de contribuição: Carbon publica um "Contributing"
+    que diz explicitamente onde um componente novo entra e o que ele precisa antes de ser
+    aceito. Aqui o documento que o README declara obrigatório antes de acrescentar
+    componente novo (PORT-GUIDE.md) ainda ensina a taxonomia deletada.
+    Contra Shopify Polaris no aspecto documentação de API: Polaris publica props com tipo,
+    default e descrição por componente; aqui a tabela de props é gerada do TypeScript pelo
+    autodocs (o que é bom), mas o inventário que deveria ser o índice de governança tem 48
+    de 89 componentes sem referência de Figma e 33 sem equivalente PrimeNG, sem que nenhum
+    documento registre isso como lacuna.
+
+achados:
+  - severidade: BLOQUEADOR
+    descricao: >
+      O contrato de migração aponta para um título que não existe no catálogo publicado, e o
+      arquivo declarado como fonte da classificação não contém um dos componentes publicados.
+    evidencia: >
+      docs/atomic-design/legacy-story-map.json, entrada "Feedback/Skeleton", destino
+      "Moléculas/Feedback/SkeletonComposicoes" — ausente das 104 chaves de título do
+      /index.json, que traz "Moléculas/Feedback/Composições de Skeleton".
+      docs/atomic-design/classificacao.json (89 componentes) e component-inventory.csv (89
+      linhas) não contêm "Sparkline", publicado como "Átomos/Gráficos/Sparkline".
+      classification.md:88 afirma o oposto: "zero órfãos e zero destinos inventados".
+    correcao_exigida: >
+      Destino do mapa igual ao título publicado, Sparkline presente em classificacao.json e
+      no CSV, e a afirmação de cobertura sustentada por um script versionado
+      (ex.: `npm run verify-catalogo`) que compara mapa × classificação × /index.json e
+      falha com órfão ou destino inventado. Corrigir também "18 átomos" para 19 em
+      classification.md:38.
+
+  - severidade: BLOQUEADOR
+    descricao: >
+      O guia que o README declara leitura obrigatória antes de acrescentar componente novo
+      ensina a taxonomia e a estrutura de pastas que esta entrega apagou. Um componente
+      criado amanhã pelo processo oficial do repo nasce fora do Atomic Design.
+    evidencia: >
+      README.md:62-64 aponta docs/PORT-GUIDE.md como obrigatório; PORT-GUIDE.md:115 lista as
+      8 seções antigas como "seções em uso"; PORT-GUIDE.md:47 prescreve
+      `src/components/<NomeDoComponente>/` sem o nível. README.md:45-58 mantém a tabela de
+      cobertura nos 9 grupos funcionais e o número 583 (baseline.md diz 584). Nenhum arquivo
+      do commit 21ea8ba toca README.md nem PORT-GUIDE.md.
+    correcao_exigida: >
+      PORT-GUIDE e README atualizados para a taxonomia atômica, com uma regra explícita de
+      como classificar um componente novo (a árvore de decisão do classification.md virada
+      para o futuro, não para a migração), a pasta de destino por nível e a lista de famílias
+      válidas por nível.
+
+  - severidade: MAIOR
+    descricao: >
+      A tag de nível atômico, que o próprio guia manda aplicar e que é o único handle legível
+      por máquina da classificação, está ausente em mais da metade do catálogo — e o outro
+      guia do repo contradiz a regra.
+    evidencia: >
+      60 de 101 títulos não carregam a tag do seu nível (Átomos 7, Moléculas 21, Organismos
+      28, Templates 2, Páginas 2), incluindo "Átomos/Ações/Button", "Organismos/Tabelas/Table"
+      e "Templates/Listagem/Listagem com filtros". GUIA-DESMEMBRAMENTO.md exige
+      `tags: ['autodocs', '<atom|molecule|organism>']`; PORT-GUIDE.md:117 exige apenas
+      `tags: ['autodocs']`.
+    correcao_exigida: >
+      Tag de nível em 101 de 101 títulos, regra única entre os dois guias e verificação no
+      mesmo script de cobertura (tag diferente do prefixo do título reprova).
+
+  - severidade: MAIOR
+    descricao: >
+      classificacao.json e classification.md, na mesma pasta, discordam sobre quais foram os
+      desvios de classificação, e 3 dos 7 registros do JSON não são desvios.
+    evidencia: >
+      classificacao.json.desvios_do_mapa_sugerido = [Input/Textarea/Select, Tooltip e Popover,
+      Avatar e AvatarGroup, Skeleton, MeterGroup, Fieldset, Menu]. Destes, Tooltip e Popover,
+      Fieldset e Menu têm `sugerido` idêntico a `adotado`. classification.md documenta em
+      prosa RadioGroup, Sidebar e Sparkline como desvios — os três ausentes do JSON. A
+      mensagem do commit repete o número inflado: "Sete desvios".
+    correcao_exigida: >
+      Uma lista só de desvios, com `sugerido != adotado` como critério de entrada, gerada do
+      JSON para a prosa, e o número do commit corrigido no CHANGELOG ou em nota de correção.
+
+  - severidade: MAIOR
+    descricao: >
+      A pasta do arquivo contradiz o nível publicado em 6 componentes, e o inventário CSV
+      aponta para caminhos que não existem, então nenhuma das duas fontes leva ao arquivo.
+    evidencia: >
+      atoms/Avatar/AvatarGroup, atoms/Choice/RadioGroup, atoms/Skeleton/SkeletonComposicoes
+      publicados como Moléculas; molecules/Navigation/Sidebar como Organismo;
+      organisms/Chart/Sparkline como Átomo; organisms/Filters/Filters publicado como
+      "FilterBar". Coluna `arquivo` do component-inventory.csv: 89 de 89 valores
+      ("Button/Button", "Skeleton/Skeleton") não resolvem, por omitirem o segmento de nível.
+    correcao_exigida: >
+      Ou o arquivo mora na pasta do seu nível, ou o inventário documenta explicitamente a
+      regra de que implementação compartilhada fica na pasta do átomo-base. Em qualquer caso,
+      a coluna `arquivo` precisa conter o caminho real a partir da raiz do repo.
+
+  - severidade: MENOR
+    descricao: 34 stories em 11 títulos usam eixo em inglês num catálogo em português.
+    evidencia: >
+      "State · idle" (16 ocorrências), "Size · 32 / 40 / 48px" (8), "Type" (5),
+      "Direction" (2), "Mode" (2). Concentradas em Moléculas/Campos/MultiSelect (6),
+      CascadeSelect (4), TreeSelect (4), AutoComplete (3), ColorPicker (3), Listbox (3),
+      Organismos/Layout/Splitter (3), Organismos/Menus/Menu (3).
+    correcao_exigida: >
+      Eixo sempre em português (Estado, Tamanho, Variante, Tipo, Direção, Modo), com lista
+      fechada de eixos no guia.
+
+  - severidade: MENOR
+    descricao: >
+      O único ponteiro navegável dos achados abertos aponta para um título deletado pela
+      própria migração.
+    evidencia: >
+      README.md:112 — "Está na story 'Dados/Gráficos -> Paleta · validação'"; o título atual
+      é "Organismos/Gráficos/BarChart -> Paleta · validação".
+    correcao_exigida: >
+      Ponteiro corrigido e varredura por outras referências a títulos da taxonomia antiga
+      fora do legacy-story-map.
+
+  - severidade: POLIMENTO
+    descricao: Afirmação de autoridade sem fonte, usada para justificar decisão de estrutura.
+    evidencia: >
+      .storybook/main.ts:8 e template-inventory.md:96 — "vivem fora de `src` … seguindo a
+      recomendação do Brad Frost". A decisão é razoável, mas Frost não prescreve isso; a
+      justificativa real (não fazem parte do pacote distribuído) já está na frase anterior e
+      basta.
+    correcao_exigida: >
+      Manter a justificativa técnica e remover o apelo à autoridade, ou citar a passagem exata.
+
+qualidades_surpreendentes:
+  - >
+    A classificação foi derivada do grafo de imports, não de opinião, e o baseline publica o
+    grafo medido: 34 componentes sem dependência, 36 com, `Field` consumido por 13, `Button`
+    por 11, cadeia mais profunda em DataView (Card + EmptyState + Pagination + Select +
+    Skeleton). É o mesmo dado que o classification.md usa para defender cada desvio — Carbon
+    e Polaris publicam a taxonomia, não a evidência que a produziu.
+  - >
+    A entrega descobriu um furo no próprio gate ao construir a primeira tela composta: todas
+    as stories de componente rodavam em tema claro, então o axe nunca inspecionou o escuro.
+    Dois defeitos reais saíram daí, com contraste medido e corrigido (item ativo da Sidebar
+    4,39:1; inicial do Avatar sobre superfície colorida 1,90:1), registrados em
+    template-inventory.md como gap de processo e não como bug avulso. Um catálogo que
+    encontra a cegueira do próprio teste é raro.
+
+motivo_do_veredito: >
+  A migração em si é sólida: os 71 títulos estão mapeados um a um, 88 dos 89 destinos existem
+  no build, 584 stories sobreviveram e nenhuma das 676 tem nome genérico. O que reprova é a
+  camada de governança em volta dela. O contrato tem um destino que não existe e o arquivo
+  declarado como fonte da classificação perdeu um componente publicado, enquanto o documento
+  afirma "zero órfãos e zero destinos inventados" e nenhum script verifica isso. Pior para
+  quem chega amanhã: o único guia que o README declara obrigatório antes de criar componente
+  novo ainda ensina os 8 grupos funcionais apagados e a pasta sem nível, o README segue
+  inteiro na taxonomia antiga com um número de stories que discorda do próprio baseline, e a
+  tag de nível falta em 60 de 101 títulos. A entrega documentou muito bem a mudança que fez e
+  não atualizou os documentos que governam a próxima. Contra o GOV.UK perde no aspecto que ela
+  mesma prometeu na Visão geral: "quando não usar" existe em 7 de 92 arquivos.

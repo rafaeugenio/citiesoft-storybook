@@ -9,8 +9,24 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Família de entrada de linha. Spec: `03-components/inputs.md` v2.0.0. Equivalente PrimeNG: `pInputText`, `p-inputnumber`, `p-password`, `p-inputgroup`.',
+          '',
+          '**O Input é o padrão de entrada do DS e o ponto de partida de qualquer campo.** Ele é a escolha certa quando o valor é texto livre de uma linha, sem conjunto fechado de respostas: nome, matrícula, número de ofício, valor monetário, senha. Todo campo especializado abaixo existe porque digitar livremente naquele dado produziria erro caro.',
+          '',
+          '**Quando não usar:**',
+          '',
+          '- **O valor pertence a uma lista fechada.** Digitar "S. Luis", "Sao Luiz" e "São Luís" gera três municípios distintos no processo, e a correção depois exige abrir chamado. Use `Moléculas/Campos/Select` para lista plana, `Moléculas/Campos/AutoComplete` quando o catálogo for grande demais para rolar, `Moléculas/Campos/CascadeSelect` ou `Moléculas/Campos/TreeSelect` quando a lista for hierárquica, e `Moléculas/Campos/MultiSelect` quando couber mais de um valor.',
+          '- **O valor é uma data.** Data digitada sem máscara chega ao processo em formatos misturados. Use `Moléculas/Campos/DatePicker`, que exibe e devolve sempre em dd/mm/aaaa.',
+          '- **O texto passa de uma linha.** Justificativa de afastamento ou parecer técnico truncam no Input, e a pessoa perde de vista o que já escreveu. Use `Moléculas/Campos/Textarea`.',
+          '- **O valor é um código curto de verificação.** Use `Moléculas/Campos/InputOtp`, que divide o código em casas e avança sozinho.',
+          '- **O campo filtra uma listagem em vez de gravar dado.** Use `Moléculas/Busca/Search`, que já traz o ícone, o botão de limpar, a contagem de resultados em região `aria-live` e o mínimo de caracteres.',
+          '- **Só há duas ou três respostas possíveis.** Use `Átomos/Escolha/Checkbox`, `Átomos/Escolha/Switch` ou `Moléculas/Escolha/RadioGroup`, que mostram as alternativas sem exigir que a pessoa adivinhe o vocabulário aceito.',
+          '',
+          '**Sobre o rótulo:** o Input embute rótulo fixo acima do campo pelo `FieldWrapper`, que é o padrão do DS. Se a tela precisar economizar altura, `Moléculas/Campos/IftaLabel` e `Moléculas/Campos/FloatLabel` são as exceções documentadas, e a escolha vale para a tela inteira.',
+          '',
+          '**Sobre o `addonStart` e o `addonEnd`:** eles marcam unidade fixa ("R$", "@", "kg") e não substituem o rótulo. Um addon que precise mudar o significado do campo pede um campo separado.',
+        ].join('\n'),
       },
     },
   },

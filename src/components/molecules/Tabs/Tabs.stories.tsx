@@ -20,6 +20,8 @@ const meta = {
           '',
           '**Quando usar Tabs e não Accordion:** Tabs mostra uma seção por vez, para conteúdo paralelo e de mesmo peso, que o usuário consulta em qualquer ordem e alterna várias vezes na mesma sessão (ficha de servidor, detalhe de processo). Se o usuário precisa ver mais de uma seção ao mesmo tempo, ou o conteúdo é de leitura sequencial ou de consulta pontual, use `Accordion`. Etapas sequenciais de um fluxo são Stepper, não Tabs.',
           '',
+          '**Quando não usar:** mais de 7 abas, porque a fileira quebra em duas linhas e a posição de cada aba muda a cada redimensionamento, apagando a memória espacial de quem abre a tela todo dia; etapas com ordem obrigatória e validação por etapa, que pedem `Moléculas/Navegação/Stepper`; conteúdo que precisa ser conferido de uma vez antes de um parecer, já que a aba escondida escapa da busca do navegador e da impressão, e dado de processo passa despercebido na conferência; e uma única seção, onde a barra de abas só ocupa altura. Para ver várias seções ao mesmo tempo, use `Moléculas/Contêineres/Accordion`. Para trocar de módulo do sistema, o caminho é roteamento com `Organismos/Menus/Menubar` ou `Organismos/Navegação/Sidebar`.',
+          '',
           '**Diferença de papel ARIA:** Tabs monta `tablist` com `tab` e `tabpanel`, então o leitor de tela anuncia a aba ativa dentro de um conjunto e o painel correspondente. O Accordion usa cabeçalho com `aria-expanded` mais região, e anuncia cada seção como aberta ou fechada de forma independente.',
         ].join('\n'),
       },

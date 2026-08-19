@@ -2,7 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { Card } from './Card';
 import { Button } from '../../atoms/Button/Button';
-import { Skeleton, SkeletonParagrafo } from '../../atoms/Skeleton/Skeleton';
+import { Skeleton } from '../../atoms/Skeleton/Skeleton';
+import { SkeletonParagrafo } from '../SkeletonParagrafo/SkeletonParagrafo';
 import { StatusIndicator } from '../../atoms/Badge/Badge';
 
 const meta = {
@@ -12,8 +13,19 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Card. Spec: `03-components/cards.md` v2.0.0. Equivalente PrimeNG: `p-card`. Máximo de 3 ações no rodapé, e ação destrutiva nunca fica exposta em card de lista densa.',
+          '',
+          '**Quando usar:** um registro por vez, com poucos atributos heterogêneos que valem ser lidos juntos (resumo do servidor, ficha do processo aberto, bloco de KPI). O card ganha quando o conteúdo tem forma própria e nenhuma comparação item a item é esperada.',
+          '',
+          '**Quando não usar:**',
+          '',
+          '- **Conjunto de registros com os mesmos atributos.** Cards empilhados repetem os rótulos em cada cartão e tiram do servidor a leitura em coluna, que é como ele confere 40 lançamentos de diária sem ler cada um. Use `Organismos/Tabelas/Table`, ou `Organismos/Coleções/DataView` quando a mesma coleção precisar alternar entre grade e lista.',
+          '- **Agrupar campos de um formulário.** O card não expõe legenda de grupo para leitor de tela; use `Organismos/Formulário/Fieldset`, que entrega `fieldset` e `legend`.',
+          '- **Só para desenhar uma caixa em volta de conteúdo.** Borda sem hierarquia acrescenta ruído em tela densa. Use `Organismos/Layout/Panel` quando houver cabeçalho e conteúdo recolhível, ou `Átomos/Layout/Divider` quando bastar separar.',
+          '- **Card clicável com botões dentro.** Com `href` o componente vira um `<a>` que envolve todo o conteúdo, então qualquer botão no rodapé fica dentro do link e o alvo do teclado passa a ser ambíguo. Escolha entre o card inteiro navegável ou o rodapé com ações, nunca os dois.',
+          '- **Conteúdo transitório que precisa de resposta.** Aviso que some sozinho é `Moléculas/Feedback/Toast`; alerta ancorado à seção é `Moléculas/Feedback/Message`; ausência de dados é `Moléculas/Feedback/EmptyState`.',
+        ].join('\n'),
       },
     },
   },

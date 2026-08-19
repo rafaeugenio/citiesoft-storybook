@@ -1,0 +1,347 @@
+revisor: Crítico independente de produto B2G e conteúdo (domínio, microcopy, estados, dado pessoal, densidade)
+artefato_avaliado: build servindo em http://localhost:6100 (771 entradas no índice) + .storybook/pages/*.stories.tsx e .storybook/fixtures/*.ts
+veredito: REPROVADO
+nota_media_0_a_4: 2.2
+criterios_criticos:
+  - criterio: Plausibilidade da tarefa B2G (o fluxo é TFD de verdade?)
+    nota_0_a_4: 3
+    evidencia: >-
+      As 5 telas cobrem tarefas reais (regulação de TFD, encaminhamento, painel gerencial,
+      cadastro de servidor) com vocabulário correto (protocolo, laudo, CRM, competência,
+      empenho, Fundo Estadual de Saúde, ajuda de custo, acompanhante). Não é SaaS genérico
+      com nome brasileiro por cima. Perde ponto porque a tela de criação inventa um ator:
+      em .storybook/fixtures/processo-tfd.ts:129-152 os eventos "Solicitação criada",
+      "Solicitação enviada para análise" e "Documentação anexada" têm ator
+      "Maria de Fátima Souza", a própria paciente, enquanto SolicitacaoDeTFD.stories.tsx:535
+      justifica o formato wizard dizendo "em tela única, o servidor da regulação erra por
+      sobrecarga". Duas páginas do mesmo catálogo discordam sobre quem executa a tarefa.
+  - criterio: Realismo dos estados (carregando, vazio de primeiro uso, vazio por filtro, erro, sem permissão)
+    nota_0_a_4: 3
+    evidencia: >-
+      Consulta de processos cobre os cinco e prova a distinção entre os dois vazios por teste,
+      não por prosa: VazioPrimeiroUso assere a ausência de "Limpar filtros"
+      (ConsultaDeProcessos.stories.tsx:633) e VazioPorFiltro clica em "Limpar filtros" e
+      assere que os 24 registros voltam (:653-658). Causa, texto e ação são de fato distintos
+      (:297-315). Fora dessa tela o conjunto desaba. Pelo index.json do build: Painel de TFD
+      tem 6 stories e nenhuma de permissão; Cadastro de servidor tem 10 e nenhuma de permissão
+      nem de falha ao salvar; Nova solicitação tem 12 e nenhuma de carregamento, permissão ou
+      falha no envio. Em rede de secretaria, falha de gravação é o erro mais comum e não
+      existe em nenhuma das cinco páginas.
+  - criterio: Qualidade do português e microcopy
+    nota_0_a_4: 2
+    evidencia: >-
+      Erro de concordância renderizado no build: o Painel exibe "548 solicitações encontrados"
+      (raiz em src/components/organisms/Filters/Filters.tsx:46, que fixa o particípio no
+      masculino). A Consulta contornou o mesmo defeito trocando o substantivo do glossário
+      para "processo" (comentário assumido em ConsultaDeProcessos.stories.tsx:364-369),
+      consertando a gramática ao custo do termo. Erro de campo "Obrigatório."
+      (CadastroDeServidor.stories.tsx:140) é literalmente o texto que content-ux-writing.md
+      lista na coluna incorreta. Do lado bom, nenhuma mensagem culpa o usuário, nenhum "Ops!",
+      nenhum botão "OK", nenhum empty state "Sem dados", e os erros do wizard seguem a fórmula
+      "[o que aconteceu] + [como resolver]" (SolicitacaoDeTFD.stories.tsx:66-118).
+  - criterio: Conteúdo de domínio (dados fictícios plausíveis e coerentes entre telas)
+    nota_0_a_4: 1
+    evidencia: >-
+      Valores de diária isolados são plausíveis (R$ 415,80 a R$ 2.440,30 por solicitação, com
+      o painel a R$ 647 por solicitação no trimestre). O problema é a coerência: o processo
+      2025/0481 aparece em três telas com dados incompatíveis, o painel exibe dois totais de
+      dinheiro contraditórios na mesma viewport, o glossário de situação muda de tela para
+      tela, e há três listas conflitantes de municípios e de especialidades. Detalhado nos achados.
+  - criterio: Dado pessoal (ausência de dado real e mascaramento de CPF)
+    nota_0_a_4: 2
+    evidencia: >-
+      Nenhum dado real e nenhum CPF com dígito verificador válido: 045.812.330-91
+      (fixtures/solicitacao-tfd.ts:98) falha na checagem do primeiro DV, e os CPFs da listagem
+      são sequências óbvias (fixtures/processos.ts:35 em diante). O CPF está mascarado na
+      listagem, como exigido. Mas o mascaramento é malformado, inconsistente entre telas e
+      reversível quando as duas são cruzadas.
+  - criterio: Densidade por perfil (servidor operacional, gestor, cidadão)
+    nota_0_a_4: 2
+    evidencia: >-
+      Servidor e gestor estão bem separados: Table com densidade="compacta" nas telas de
+      operação (ConsultaDeProcessos.stories.tsx:269,329,385) e Dashboard só de leitura, com
+      drill-down levando à listagem onde a escrita acontece (PainelDeTFD.stories.tsx:289).
+      O cidadão não existe: grep por alvoDeToque/touchTarget nas 5 páginas retorna zero, e o
+      único uso de touchTarget="comfortable" está em templates/AppShell/AppShell.tsx:210,263.
+      O sistema tem a camada de 44px pronta (Button.tsx:40, tokens.css:108, Pagination.tsx:13)
+      e nenhuma página a exercita, apesar de content-ux-writing.md usar "cidadão acompanhando
+      solicitação de TFD" como exemplo canônico do perfil.
+comparacao_com_referencias:
+  resultado: PERDE
+  evidencia: >-
+    Contra GOV.UK Design System, no aspecto clareza de linguagem. Primeiro: o GDS não publica
+    contador com erro de concordância, e aqui o build renderiza "548 solicitações encontrados".
+    Segundo, mais grave, o padrão de confirmação: o GDS exige que o botão de confirmação nomeie
+    a ação sem colidir com o botão de saída; em ConsultaDeProcessos.stories.tsx:455 a
+    confirmação é "Cancelar solicitações" ao lado do "Cancelar" do próprio ConfirmDialog (o
+    teste da linha 587 clica em um, o da linha 713 clica no outro), e o servidor não sabe qual
+    desiste. Terceiro: o GDS trata registro transacional com trilha de auditoria como não
+    deletável ("withdraw", "close"), enquanto o Detalhe oferece "Excluir processo" que apaga o
+    histórico exibido na aba ao lado. Na prosa de "quando usar e quando não usar" o catálogo
+    empata com o GOV.UK, porque os stories carregam esse tipo de justificativa; na linguagem
+    exibida ao usuário, perde.
+achados:
+  - severidade: BLOQUEADOR
+    descricao: >-
+      O mesmo processo 2025/0481 carrega dados incompatíveis em telas que se linkam entre si.
+      A listagem diz destino "São Luís", unidade de origem "Hospital Regional de Imperatriz",
+      diárias R$ 1.240,50 e viagem em 12/03/2025. O detalhe do mesmo processo diz trecho
+      "São Luís (MA) → São Paulo (SP)" (São Luís vira origem), município de origem
+      "Barreirinhas (MA)", valor total de diárias R$ 3.200,00 e saída prevista 02/04/2025.
+      Quem clica no protocolo na listagem cai num processo diferente em tudo menos no nome da
+      paciente. Ainda: o wizard usa "2025/0481" como número de laudo médico e o cadastro de
+      servidor usa o mesmo número como portaria de nomeação, ou seja quatro objetos distintos
+      com um único identificador.
+    evidencia: >-
+      .storybook/fixtures/processos.ts:31-40 contra .storybook/fixtures/processo-tfd.ts:46-88;
+      .storybook/fixtures/solicitacao-tfd.ts:113 e helper em SolicitacaoDeTFD.stories.tsx:471;
+      .storybook/fixtures/cadastro-servidor.ts:110
+    correcao_exigida: >-
+      Fixture única de domínio compartilhada pelas páginas, com o processo 2025/0481 idêntico
+      em listagem, detalhe e painel. Faixas de numeração distintas e visivelmente diferentes
+      para protocolo, laudo e portaria.
+  - severidade: BLOQUEADOR
+    descricao: >-
+      O Painel de TFD exibe dois valores contraditórios para a mesma grandeza, duas vezes.
+      Renderizado no build, período Mês: o stat card "Ajuda de custo empenhada" diz R$ 336.480
+      e, três blocos abaixo, "Empenho por situação do lançamento" diz "R$ 378.120 no total",
+      R$ 41.640 a mais. E o stat card "Solicitações recebidas" diz 512 enquanto a barra de
+      filtros da mesma tela anuncia 548 solicitações. Dois totais divergentes na mesma
+      viewport destroem a confiança do gestor na tela inteira. A causa do primeiro é dado
+      fabricado por multiplicação em vez de fixture (totalRecebidas × 420/180/90), que ainda
+      produz proporção Pago:Empenhado:Conferência constante em 60,9% / 26,1% / 13% em qualquer
+      período filtrado, o que nenhuma execução orçamentária real faz. A causa do segundo é o
+      KPI de recebidas não fechar com a soma da rosca: semana 128 contra 146, mês 512 contra
+      548, e só o trimestre fecha, em 1.486.
+    evidencia: >-
+      Texto extraído da página renderizada em
+      /iframe.html?id=páginas-processos-painel-de-tfd--com-dados: "Ajuda de custo empenhada /
+      R$ 336.480" e "Empenho por situação do lançamento / R$ 378.120 no total";
+      "Solicitações recebidas / 512" e "548 solicitações encontrados". Código:
+      PainelDeTFD.stories.tsx:77 e :230-237; .storybook/fixtures/painel-tfd.ts:145-190
+    correcao_exigida: >-
+      Valores financeiros vindos de fixture, nunca derivados de contagem. Soma das fatias de
+      situação igual ao KPI de recebidas nos três períodos, como já ocorre no trimestre.
+  - severidade: MAIOR
+    descricao: >-
+      Erro de concordância exibido ao usuário: "548 solicitações encontrados" no Painel. A raiz
+      é o Filters, que fixa "encontrado/encontrados" no masculino. A Consulta de processos
+      resolveu trocando o substantivo do glossário: o h1 diz "Solicitações de TFD", o empty
+      state diz "Nenhuma solicitação de TFD cadastrada" e a contagem diz "24 processos
+      encontrados". Isso viola o princípio 4 de content-ux-writing.md, consistência de termos
+      como dado estrutural, que usa exatamente esse tipo de troca como exemplo do que não
+      fazer. O título no Storybook agrava, "Consulta de processos" para uma tela cujo h1 é
+      "Solicitações de TFD".
+    evidencia: >-
+      src/components/organisms/Filters/Filters.tsx:46; PainelDeTFD.stories.tsx:93;
+      ConsultaDeProcessos.stories.tsx:364-370 e :469
+    correcao_exigida: >-
+      Filters aceitar o gênero do substantivo e concordar. Um único termo por objeto em título,
+      contagem, empty state e breadcrumb.
+  - severidade: MAIOR
+    descricao: >-
+      O CPF é reconstituível cruzando duas telas do próprio catálogo, e a máscara da listagem é
+      malformada. A listagem renderiza "***.***.**8901", quatro dígitos finais expostos, sem
+      hífen, num agrupamento que não existe no formato de CPF. O detalhe do mesmo registro
+      mostra "***.456.789-**", expondo seis dígitos do meio. A união revela os dígitos 4 a 11
+      de 11; com os dois verificadores conhecidos, restam pouquíssimos candidatos para os três
+      primeiros. Além disso o comentário do próprio componente diz "valor completo só no
+      detalhe" e o detalhe mascara, ou seja regra declarada e implementada divergem, e o
+      telefone usa outro caractere de máscara, "(98) 98•••-••12", contra o asterisco do CPF.
+    evidencia: >-
+      src/components/organisms/Table/Table.tsx:210-212; render em
+      /iframe.html?id=páginas-processos-consulta-de-processos--com-dados;
+      .storybook/fixtures/processo-tfd.ts:64 e :69
+    correcao_exigida: >-
+      Função única de mascaramento, formato "***.***.**9-01" válido, mesmo recorte de dígitos e
+      mesmo caractere em toda tela, com regra escrita de qual perfil vê o valor completo.
+  - severidade: MAIOR
+    descricao: >-
+      A exclusão de processo contradiz o domínio e a própria tela. O ConfirmDialog promete que
+      "os anexos, o histórico e os lançamentos vinculados serão removidos permanentemente",
+      isto é, apaga a trilha de auditoria que a aba Atividade exibe ao lado. Processo
+      administrativo público não se apaga, se anula ou arquiva. Pior: confirmada a exclusão, o
+      toast oferece a ação "Desfazer" logo depois de dizer "permanentemente", e afirma "Você
+      voltou para a lista de solicitações de TFD" sem que nenhuma navegação tenha ocorrido, ou
+      seja o sistema informa um fato falso.
+    evidencia: DetalheDoProcesso.stories.tsx:306 e :311-317
+    correcao_exigida: >-
+      Trocar por "Cancelar processo" ou "Arquivar processo", preservando o histórico, e remover
+      a contradição permanente/Desfazer. Toast nunca afirma navegação que não aconteceu.
+  - severidade: MAIOR
+    descricao: >-
+      Colisão semântica no diálogo destrutivo em lote: a confirmação é "Cancelar solicitações"
+      e o botão de saída do ConfirmDialog é "Cancelar". Os dois convivem no mesmo diálogo com
+      significados opostos, e o próprio texto avisa que o cancelamento não pode ser desfeito.
+    evidencia: >-
+      ConsultaDeProcessos.stories.tsx:455 (rotuloConfirmar) contra o botão "Cancelar" exercido
+      em :587 e :713
+    correcao_exigida: >-
+      Confirmação nomeando o efeito sem o verbo colidente ("Confirmar cancelamento") e saída
+      explícita ("Manter solicitações").
+  - severidade: MAIOR
+    descricao: >-
+      O glossário de situação não fecha entre telas. A listagem filtra por Rascunho, Enviado,
+      Em Análise, Aprovado, Devolvido e Cancelado. O painel usa Autorizada, Em análise,
+      Devolvida e Cancelada, ou seja o mesmo estado é "Aprovado" numa tela e "Autorizada" na
+      outra, com o gênero mudando junto. A fila de atenção do painel usa "Pendente" e
+      "Aguardando Assinatura", e o detalhe usa "Homologado" e "Suspenso", estados que o filtro
+      da listagem não consegue filtrar: o gestor que clica em "Ver processos com prazo crítico"
+      cai numa listagem sem o status que estava vendo.
+    evidencia: >-
+      .storybook/fixtures/processos.ts:230-237 contra .storybook/fixtures/painel-tfd.ts:56-70 e
+      :164-169; .storybook/fixtures/processo-tfd.ts:216-233
+    correcao_exigida: >-
+      Enum único de situação, com os mesmos rótulos e o mesmo gênero em filtro, badge, gráfico
+      e timeline.
+  - severidade: MAIOR
+    descricao: >-
+      Erro de campo genérico. O cadastro marca cada campo inválido com "Obrigatório.", o texto
+      reprovado pela fundação de conteúdo, que exige "Competência obrigatória. Selecione o mês
+      e o ano antes de continuar." O leitor de tela, ao chegar no campo com aria-invalid, lê só
+      "Obrigatório.", sem regra nem correção, porque o texto útil ficou na Message do topo,
+      longe do foco. A consolidação no topo é a decisão certa e não obriga a esvaziar o erro
+      inline.
+    evidencia: >-
+      CadastroDeServidor.stories.tsx:139-140; régua em
+      01-foundations/content-ux-writing.md, tabela "Erro de validação de campo (inline)"
+    correcao_exigida: >-
+      Erro inline curto e específico por campo ("Matrícula obrigatória. Informe os oito
+      dígitos."), mantendo a lista consolidada no topo.
+  - severidade: MAIOR
+    descricao: >-
+      Cobertura de estados incompleta em 4 das 5 páginas. Sem permissão existe só na Consulta e,
+      parcialmente, no Detalhe (sem permissão de edição). Painel, Cadastro e Nova solicitação
+      não têm nenhum estado de perfil sem acesso, que num sistema com perfis de regulação, RH e
+      coordenação é o estado mais frequente depois do caminho feliz. E nenhuma das cinco páginas
+      tem falha de gravação: salvar e enviar sempre dão certo.
+    evidencia: >-
+      index.json do build, títulos "Páginas/*": Painel 6 stories, Cadastro 10, Nova solicitação
+      12, nenhuma com estado de permissão; CadastroDeServidor.stories.tsx:119-137 e
+      SolicitacaoDeTFD.stories.tsx:196-210 sem caminho de erro
+    correcao_exigida: >-
+      Estado sem permissão e estado de falha de gravação em cada página, com a fórmula "[o que
+      não foi possível fazer]. Tente novamente ou [alternativa]", preservando o preenchido.
+  - severidade: MAIOR
+    descricao: >-
+      O perfil cidadão não é exercitado por nenhuma página, apesar de o sistema ter a camada
+      pronta e o domínio pedir. A fundação de conteúdo dedica uma seção ao cidadão usando
+      "cidadão acompanhando solicitação de TFD" como exemplo, o Button documenta alvo de toque
+      de 44px "para contexto de cidadão", e a timeline do processo diz que a própria paciente
+      criou, enviou e anexou documentos. Ainda assim as cinco páginas são densas, com a sigla
+      TFD crua em todos os títulos e nenhum uso de alvo de toque ampliado.
+    evidencia: >-
+      grep por alvoDeToque/touchTarget em .storybook/pages/ retorna zero; único uso em
+      .storybook/templates/AppShell/AppShell.tsx:210,263; src/components/atoms/Button/Button.tsx:40;
+      .storybook/fixtures/processo-tfd.ts:145,152 (ator igual à paciente)
+    correcao_exigida: >-
+      Uma sexta página de acompanhamento pelo cidadão, com alvo de toque de 44px, sigla
+      explicada na primeira menção e status em linguagem de benefício, ou uma variante
+      "cidadão" de uma das páginas existentes.
+  - severidade: MENOR
+    descricao: >-
+      Opções implausíveis no domínio: a "Secretaria responsável pelo encaminhamento" de um
+      paciente de TFD oferece Secretaria de Meio Ambiente e Secretaria de Educação, quando TFD é
+      encaminhado pela Saúde. As mesmas secretarias ainda aparecem com convenção de nome
+      diferente em outra tela, "Secretaria de Educação" contra "Secretaria de Estado da Educação".
+    evidencia: >-
+      .storybook/fixtures/solicitacao-tfd.ts:17-21 contra .storybook/fixtures/cadastro-servidor.ts:12-17
+    correcao_exigida: Lista única de secretarias, com nomenclatura oficial, filtrada pelo domínio da tela.
+  - severidade: MENOR
+    descricao: >-
+      Campo editável pré-preenchido com valor mascarado: o registro de edição traz
+      cpf "***.481.297-**" dentro de um Input de CPF, e salvar grava a máscara como valor.
+    evidencia: >-
+      .storybook/fixtures/cadastro-servidor.ts:98, consumido em CadastroDeServidor.stories.tsx:251-258
+    correcao_exigida: >-
+      Campo de edição recebe o valor real, ou fica somente leitura com ação explícita de revelar.
+  - severidade: MENOR
+    descricao: >-
+      Vocabulário de referência divergente entre telas. Municípios: Imperatriz é origem na
+      listagem e no wizard e destino no painel; Belém existe na listagem e não no painel;
+      São Paulo existe no painel e no wizard e não na listagem. Especialidades: o painel tem
+      Ortopedia, que o wizard não oferece, e o detalhe usa "Cardiologia intervencionista",
+      subespecialidade ausente das outras duas. Cartão SUS: a mesma paciente tem
+      706 0012 3456 7890 no detalhe e 708 4048 1220 3317 no wizard, sendo que o número é único
+      por pessoa.
+    evidencia: >-
+      fixtures/processos.ts:227; fixtures/painel-tfd.ts:135-142; fixtures/solicitacao-tfd.ts:23-42;
+      fixtures/processo-tfd.ts:66 e :74
+    correcao_exigida: Listas de referência compartilhadas entre as páginas.
+  - severidade: MENOR
+    descricao: >-
+      Quatro presentes diferentes no mesmo catálogo: Consulta em março e abril de 2025, Detalhe
+      em março de 2025, Nova solicitação com HOJE em 15/03/2026, Cadastro com HOJE em
+      18/08/2026, Painel em julho de 2026. O painel do mês jamais conteria qualquer das 24
+      solicitações da listagem, e o filtro de competência da listagem só chega até maio de 2025.
+    evidencia: >-
+      fixtures/solicitacao-tfd.ts:14; fixtures/cadastro-servidor.ts:11; fixtures/painel-tfd.ts:148;
+      fixtures/processos.ts:242-246
+    correcao_exigida: Uma data de referência única para todo o catálogo de páginas.
+  - severidade: MENOR
+    descricao: >-
+      Textos com gênero fixado no dado da fixture: "Dados cadastrais da solicitante" e "A
+      paciente precisará abrir uma nova solicitação" quebram assim que o registro for o João
+      Batista Ferreira, que está na mesma listagem.
+    evidencia: DetalheDoProcesso.stories.tsx:88 e :306
+    correcao_exigida: >-
+      Redação neutra ("Dados cadastrais do paciente", "Será necessária uma nova solicitação").
+  - severidade: MENOR
+    descricao: >-
+      O sistema tem estado Rascunho na listagem, com dois registros, mas o fluxo de criação não
+      permite produzir um: as únicas saídas do wizard são enviar ou descartar. Além disso "Sair
+      sem enviar" abre "Descartar a solicitação de TFD?" e o confirmar apenas zera os campos e
+      volta para a etapa 1, sem sair de lugar nenhum e sem confirmar o descarte.
+    evidencia: >-
+      fixtures/processos.ts:88,190 contra SolicitacaoDeTFD.stories.tsx:278-282 e :355-360
+    correcao_exigida: >-
+      Ação "Salvar rascunho" no wizard, e rótulo do descarte coerente com o que acontece depois.
+  - severidade: POLIMENTO
+    descricao: >-
+      As fixtures reciclam o número 481 em objetos sem relação: protocolo 2025/0481, matrícula
+      00481297, portaria 2025/0481, arquivo portaria-nomeacao-2025-0481.pdf, telefone
+      (98) 3212-0481, número do endereço 481 e CPF digitado 000.481.297-00. Some-se Maria de
+      Fátima Souza sendo paciente de TFD e servidora da SES ao mesmo tempo, e o Dr. Carlos
+      Andrade, médico do laudo, assinando alteração de cadastro de RH. O conjunto lê como sintético.
+    evidencia: fixtures/cadastro-servidor.ts:95-113; CadastroDeServidor.stories.tsx:43 e :584
+    correcao_exigida: Numeração independente por domínio e pessoas distintas por papel.
+  - severidade: POLIMENTO
+    descricao: >-
+      Inconsistências de rótulo entre páginas irmãs: "Salvando..." com reticências no cadastro
+      contra "Enviando solicitação" sem elas no wizard; "Cartão Nacional de Saúde" no label,
+      "Cartão SUS" no resumo e no helper do campo ao lado; toast de sucesso com o nome cravado
+      ("Maria de Fátima Souza entrou na listagem de servidores") mesmo quando o usuário digitou
+      outro nome.
+    evidencia: >-
+      CadastroDeServidor.stories.tsx:219 e :133; SolicitacaoDeTFD.stories.tsx:273, :377, :389, :293
+    correcao_exigida: >-
+      Padrão único de rótulo em estado de carregamento, um termo por objeto, e toast lendo o
+      valor digitado.
+qualidades_surpreendentes:
+  - >-
+    Coerência aritmética cruzada nas fixtures do painel, em três eixos e três períodos: viagens
+    autorizadas é igual à soma das viagens por município e igual à soma das autorizações por
+    especialidade, em 96 na semana (38+21+14+12+11 e 29+24+18+15+10), 401 no mês
+    (156+88+61+52+44 e 121+98+74+63+45) e 1.184 no trimestre (452+261+189+148+134 e
+    356+289+218+186+135), em .storybook/fixtures/painel-tfd.ts. Dado de demonstração quase nunca
+    sobrevive a um gestor com calculadora, e este sobrevive em três recortes, o que torna ainda
+    mais grave o único eixo que não fecha.
+  - >-
+    A distinção entre vazio de primeiro uso e vazio por filtro é executada por teste que prova a
+    causa, não apenas descrita: VazioPorFiltro clica em "Limpar filtros" e assere que os 24
+    registros voltam (ConsultaDeProcessos.stories.tsx:653-658), demonstrando que o vazio vinha do
+    filtro, e VazioPrimeiroUso assere que "Limpar filtros" nem existe naquela tela (:633). A ação
+    primária do empty state de primeiro uso é a mesma do cabeçalho, "Nova solicitação",
+    cumprindo a regra 3 de empty state da fundação de conteúdo.
+motivo_do_veredito: >-
+  O trabalho tem coluna vertebral B2G real e uma tela exemplar, a Consulta de processos, que
+  sozinha bate a régua em estados, microcopy e mascaramento. O problema é que as cinco páginas
+  não formam um sistema: o processo 2025/0481 tem destino, origem, valor e data diferentes entre
+  a listagem e o detalhe que ela linka, o painel exibe dois totais financeiros contraditórios e
+  dois totais de solicitações na mesma viewport, e o glossário de situação muda de tela para
+  tela. Some-se o erro de concordância exposto no build, o CPF reconstituível cruzando duas
+  telas, a exclusão que apaga a trilha de auditoria e depois oferece "Desfazer", e a colisão
+  entre "Cancelar" e "Cancelar solicitações" no diálogo destrutivo. Nenhum desses é questão de
+  acabamento: num sistema que serve secretaria de saúde, são exatamente os defeitos que o
+  servidor reporta como bug e que o gestor usa para desconfiar do painel inteiro. Dois achados
+  bloqueadores e nove maiores fecham o veredito em REPROVADO.

@@ -12,8 +12,22 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Seleção de data. Spec: `03-components/date-picker.md` v2.0.0. Equivalente PrimeNG: `p-datepicker`. Exibição sempre em dd/mm/aaaa.',
+          '',
+          '**Quando usar:** a data precisa ser situada no calendário para ser respondida. Data de saída de um encaminhamento, agendamento de perícia e prazo de entrega dependem de saber em que dia da semana caem, se há feriado por perto e quantos dias faltam. O painel responde isso; um campo de texto não.',
+          '',
+          '**Quando não usar:**',
+          '',
+          '- **Data de nascimento e outras datas distantes que a pessoa já sabe de cor.** O campo deste componente é somente leitura e o cabeçalho do painel navega de mês em mês, sem seletor de ano: chegar a 14/07/1962 a partir do mês corrente pede centenas de cliques, e não existe caminho de digitação para escapar disso. Use `Moléculas/Campos/Input` com máscara dd/mm/aaaa.',
+          '- **Só o mês e o ano importam.** Competência de folha ("Março/2025") não tem dia, e o calendário obriga a escolher um, o que grava no processo um dado que ninguém informou. Use `Moléculas/Campos/Input` com máscara mm/aaaa, ou dois `Moléculas/Campos/Select` para mês e ano.',
+          '- **Período com início e fim.** Este componente grava uma data por vez. Monte dois campos rotulados "De" e "Até", com validação de ordem entre eles, e mostre o intervalo escolhido em texto abaixo. Em barra de filtros, o par pertence a `Organismos/Busca/FilterBar`.',
+          '- **A resposta é uma faixa nomeada.** "Últimos 30 dias", "Este mês" e "Este ano" são escolhas de conjunto fechado. Use `Moléculas/Campos/SelectButton` ou `Moléculas/Campos/Select`, e ofereça o calendário só na opção "Período personalizado".',
+          '- **Hora, ou data com hora.** O painel cobre apenas o dia. Colete a hora em campo separado.',
+          '- **Exibir uma data já registrada.** Campo com calendário sugere que o valor é editável. Para leitura, use texto simples, `Átomos/Marcadores/Tag` ou `Organismos/Histórico/Timeline`.',
+          '',
+          'Observação que pesa na escolha: como o campo é somente leitura, o calendário é o único caminho até o valor, inclusive para quem usa teclado ou leitor de tela. Isso é aceitável para datas próximas, que o painel resolve com poucas teclas (setas andam entre dias, Page Up e Page Down trocam de mês), e vira barreira para qualquer data fora do horizonte de alguns meses.',
+        ].join('\n'),
       },
     },
   },

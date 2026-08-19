@@ -82,7 +82,15 @@ export function Table<T>({
     );
 
   return (
-    <div className="citie-table-wrapper">
+    <div
+      className="citie-table-wrapper"
+      // A rolagem horizontal do envoltório é conteúdo alcançável só por gesto
+      // ou arraste da barra sem isto: tabIndex, role e nome tornam a região
+      // navegável e nomeada por teclado (WCAG 2.1.1 Keyboard, 4.1.2 Name Role Value).
+      tabIndex={0}
+      role="group"
+      aria-label={`Rolagem horizontal de ${legenda}`}
+    >
       {acoesEmMassa && selecionados.length > 0 ? (
         <div className="citie-table__acoes-massa" role="status">
           <span>{selecionados.length} selecionados</span>

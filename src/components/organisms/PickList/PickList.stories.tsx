@@ -28,8 +28,23 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Duas listas lado a lado com transferência por botão. Origem: Figma CitieOne, página ❖ PickList, nó `picklist` (sem eixos de variante: `controls` · `listbox` · `controls` · `listbox` · `controls`, com as colunas das pontas reordenando e a central transferindo). Cada lista tem nome acessível próprio, é `role="listbox"` com `aria-multiselectable` e itens `role="option"` navegáveis por setas, Home e End; Espaço ou Enter marca. Toda transferência é anunciada em região `aria-live="polite"` com a contagem das duas listas. Arrastar não é oferecido como caminho único: os botões são a via principal. Equivalente PrimeNG: `p-pickList`.',
+          '',
+          '**Quando usar:** atribuição em que o servidor precisa revisar o antes e o depois na mesma tela',
+          'antes de salvar, como perfis de acesso de um usuário ou unidades vinculadas a uma secretaria.',
+          'A lista de destino é o resultado, e ele fica auditável à vista.',
+          '',
+          '**Quando não usar:** escolha em que só importa quais itens ficaram marcados, sem revisão lado',
+          'a lado, porque duas colunas mais três blocos de botões custam muito mais altura e cliques do',
+          'que uma lista com caixas de seleção (use `MultiSelect` ou `Checkbox`); origem com centenas de',
+          'itens, já que o componente não tem busca e a coluna vira rolagem longa até achar o item (use',
+          '`MultiSelect` ou `AutoComplete`, que filtram por digitação); reordenar uma lista só, que é do',
+          '`OrderList`; vínculo que carrega dado próprio por item, como vigência, matrícula ou data de',
+          'início, porque aqui o item é apenas rótulo e descrição, sem campo editável (use `Table`); e',
+          'telas estreitas, onde as duas listas e as colunas de controle não cabem lado a lado e a',
+          'comparação, que é a razão de existir do componente, se perde.',
+        ].join('\n'),
       },
     },
   },

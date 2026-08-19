@@ -59,11 +59,25 @@
   font-size: var(--citie-font-size-body-md);
   color: var(--citie-text-primary);
   background-color: var(--citie-background-surface);
+  /*
+   * --citie-form-field-border reprova o contraste mínimo de componente da
+   * WCAG 1.4.11 (#E8EAED sobre #FFFFFF = 1,21:1 no claro; #34343A sobre
+   * #1A1A1D = 1,40:1 no escuro), e o token não pode ser editado a partir
+   * daqui. Correção local, escopada a este seletor, com valores que passam
+   * de 3:1 nos dois temas (calculados pela fórmula de luminância relativa da
+   * WCAG): #8F8F8F sobre #FFFFFF = 3,23:1; #6B6B6B sobre #1A1A1D = 3,26:1. O
+   * ajuste definitivo é no token global; ver laudo de acessibilidade.
+   */
+  --citie-form-field-border: #8f8f8f;
   border: 1px solid var(--citie-form-field-border);
   border-radius: var(--citie-radius-md);
   transition:
     border-color 120ms ease-out,
     background-color 120ms ease-out;
+}
+
+[data-theme='dark'] .citie-field-control {
+  --citie-form-field-border: #6b6b6b;
 }
 
 @media (prefers-reduced-motion: reduce) {

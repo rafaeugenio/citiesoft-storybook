@@ -20,8 +20,26 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Diálogo de confirmação para decisão explícita antes de prosseguir: `role="alertdialog"`, sem botão de fechar e com foco inicial na ação segura ("Cancelar"), padrão defensivo contra clique acidental. Spec: `03-components/modals-dialogs-drawers.md` v2.0.0. Equivalente PrimeNG: `p-confirmdialog`. **Quando usar este e não os irmãos:** use o ConfirmDialog quando a pessoa só precisa dizer sim ou não a uma consequência já descrita; use o [Dialog](?path=/docs/organismos-overlay-dialog--docs) quando houver uma tarefa a executar dentro do overlay, com foco total; use o [Drawer](?path=/docs/organismos-overlay-drawer--docs) quando o contexto da tela atrás precisa permanecer visível. Existe ainda o ConfirmPopup, irmão leve deste componente, ancorado ao próprio gatilho para confirmação de baixo risco e reversível: ação destrutiva permanente usa sempre este diálogo modal, nunca o popup. Cada story abre pelo botão, como no produto.',
+          '',
+          '**Quando não usar:** ação reversível e de baixo risco, como remover um filtro ou desfazer uma',
+          'marcação, em que o modal cobra dois cliques por algo que a pessoa poderia simplesmente refazer',
+          '(use o [ConfirmPopup](?path=/docs/moléculas-overlay-confirmpopup--docs), ancorado ao próprio',
+          'gatilho); aviso de resultado já ocorrido, sem decisão pendente, que é `Toast` ou `Message`;',
+          'erro de preenchimento de campo, que pertence à `Message` ao lado do campo; e decisão que',
+          'depende de um dado a mais, como o motivo do indeferimento ou a data de efeito, porque o',
+          '`alertdialog` só comporta título, descrição e dois botões (use o',
+          '[Dialog](?path=/docs/organismos-overlay-dialog--docs) com o formulário dentro, senão a pessoa',
+          'confirma e ainda cai em outro overlay para digitar). Nunca encadeie duas confirmações',
+          'seguidas: a segunda ensina o servidor a clicar sem ler, e a proteção deixa de existir.',
+          '',
+          '**Peso em jornada longa:** este diálogo interrompe e prende o foco, então reserve-o para o que',
+          'é permanente ou tem efeito para o cidadão do outro lado (excluir processo, encerrar prazo,',
+          'indeferir pedido). Se aparecer no meio de um preenchimento, a descrição precisa nomear o',
+          'objeto e a consequência mais grave logo na primeira frase, porque quem está com a atenção na',
+          'digitação lê no máximo essa linha antes de decidir.',
+        ].join('\n'),
       },
     },
   },

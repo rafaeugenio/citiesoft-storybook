@@ -224,7 +224,7 @@
       {
         "componente": "Pagination",
         "nivel": "molecula",
-        "tituloNovo": "Moléculas/Navegação de dados/Pagination"
+        "tituloNovo": "Moléculas/Navegação/Pagination"
       }
     ],
     "stories": 8,
@@ -424,9 +424,19 @@
         "tituloNovo": "Átomos/Feedback/Skeleton"
       },
       {
-        "componente": "SkeletonComposicoes",
+        "componente": "SkeletonParagrafo",
         "nivel": "molecula",
-        "tituloNovo": "Moléculas/Feedback/SkeletonComposicoes"
+        "tituloNovo": "Moléculas/Feedback/SkeletonParagrafo"
+      },
+      {
+        "componente": "SkeletonLista",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Feedback/SkeletonLista"
+      },
+      {
+        "componente": "SkeletonFormulario",
+        "nivel": "molecula",
+        "tituloNovo": "Moléculas/Feedback/SkeletonFormulario"
       }
     ],
     "stories": 4,

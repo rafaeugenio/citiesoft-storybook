@@ -16,7 +16,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Botão da família de ação Citiesoft. Spec: `design-system/03-components/buttons.md` v2.0.0. Equivalente PrimeNG: `p-button`.',
+          'Botão da família de ação Citiesoft. Spec: `design-system/03-components/buttons.md` v2.0.0. Equivalente PrimeNG: `p-button`.\n\n**Quando usar:** para executar uma ação na tela atual (salvar, enviar, aprovar, excluir, filtrar), com no máximo um `primary` por contexto visível para o olho saber qual é o caminho principal.\n\n**Quando não usar:** para navegar entre telas. Navegação de rota pede um link de verdade, e um botão que troca a rota tira do servidor o clique do meio, o "abrir em nova aba" e o menu de copiar endereço, coisas que quem trabalha com dois processos abertos usa o dia inteiro; a navegação estrutural fica em `Menubar`, `Menu`, `Sidebar` e `Breadcrumb`. Para empilhar várias ações na mesma linha de uma listagem (a linha cresce até estourar a largura da tabela e a ação principal se perde entre as secundárias): use `SplitButton`, que deixa a ação frequente à vista e recolhe o resto. Para estado que fica ligado ou desligado, como um filtro rápido: o botão comum não comunica que está ativo depois do clique, e o servidor volta a clicar sem saber se aplicou; use `ToggleButton` ou `SelectButton`. Para ação irreversível sobre dado de processo (excluir lançamento, cancelar solicitação), o botão sozinho não basta: encadeie `ConfirmPopup` ou `ConfirmDialog`. Para comunicar situação, o lugar é outro: etapa do registro fica em `StatusIndicator` e atributo fica em `Tag`, porque um retângulo clicável que só informa faz o servidor clicar à toa.',
       },
     },
   },

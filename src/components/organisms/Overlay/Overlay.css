@@ -10,7 +10,7 @@
 
 .citie-dialog::backdrop,
 .citie-drawer::backdrop {
-  background-color: rgba(16, 24, 40, 0.45);
+  background-color: var(--citie-scrim);
 }
 
 /* ---------- Dialog ---------- */

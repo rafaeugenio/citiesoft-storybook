@@ -1,0 +1,6 @@
+/* Sparkline (charts-data-viz.md). Ocupa a largura do espaço que recebe. */
+
+.citie-sparkline {
+  width: 100%;
+  height: 44px;
+}

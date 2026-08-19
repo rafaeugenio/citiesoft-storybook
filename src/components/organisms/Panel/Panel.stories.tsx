@@ -11,8 +11,22 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Panel. Figma CitieOne, página `6738:49736` (component set `panel`). Variantes do arquivo: `Toggleable` (False/True), `Toggle Status` (Expanded/Collapsed/N/A), `Show Footer` (False/True) e `Custom Icon` (False/True), esta última mapeada para a área de ações do cabeçalho. Equivalente PrimeNG: `p-panel`. Agrupa **um** bloco de conteúdo com título; para várias seções empilhadas use o `Accordion` em `Navegação/Tabs`.',
+          '',
+          '**Quando não usar:** várias seções empilhadas que se abrem e fecham, porque uma pilha de',
+          'painéis colapsáveis independentes deixa a página sem estado previsível e o servidor não sabe',
+          'o que já leu (use `Accordion`); grupo de campos de formulário, já que o Panel é `section` com',
+          '`h3` e não associa os campos a um nome de grupo para o leitor de tela (use `Fieldset`, que é',
+          '`fieldset` com `legend`, exigência de e-MAG e WCAG); indicador numérico com variação, que é do',
+          '`KpiWidget`; item de listagem repetido em grade, que é `Card` dentro de `DataView`; e',
+          'alternativas mutuamente exclusivas do mesmo espaço, que são `Tabs`.',
+          '',
+          '**Cuidado com `colapsavel`:** painel recolhido esconde o que está dentro. Se houver campo',
+          'obrigatório, mensagem de erro ou prazo do processo ali, o servidor tenta salvar e recebe uma',
+          'validação apontando para algo que não está na tela. Em formulário, deixe aberto o painel que',
+          'contém campo obrigatório, ou abra-o automaticamente quando o erro aparecer.',
+        ].join('\n'),
       },
     },
   },
@@ -160,22 +174,28 @@ export const ComRodapeEAcoes: Story = {
   },
 };
 
+/**
+ * O estado precisa viver num componente nomeado, e não numa arrow function anônima
+ * dentro do `render`: hook chamado ali viola a regra de hooks do React e reprova o lint.
+ */
+function PainelControladoPeloPai(args: React.ComponentProps<typeof Panel>) {
+  const [aberto, setAberto] = useState(false);
+  return (
+    <div style={{ display: 'grid', gap: '12px' }}>
+      <Button size="small" variant="secondary" onClick={() => setAberto((atual) => !atual)}>
+        {aberto ? 'Recolher pelo pai' : 'Expandir pelo pai'}
+      </Button>
+      <Panel {...args} aberto={aberto} onAlternar={setAberto} />
+    </div>
+  );
+}
+
 export const Controlado: Story = {
   name: 'Estado · controlado pelo pai',
   args: {
     colapsavel: true,
   },
-  render: (args) => {
-    const [aberto, setAberto] = useState(false);
-    return (
-      <div style={{ display: 'grid', gap: '12px' }}>
-        <Button size="small" variant="secondary" onClick={() => setAberto((atual) => !atual)}>
-          {aberto ? 'Recolher pelo pai' : 'Expandir pelo pai'}
-        </Button>
-        <Panel {...args} aberto={aberto} onAlternar={setAberto} />
-      </div>
-    );
-  },
+  render: (args) => <PainelControladoPeloPai {...args} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const externo = canvas.getByRole('button', { name: 'Expandir pelo pai' });

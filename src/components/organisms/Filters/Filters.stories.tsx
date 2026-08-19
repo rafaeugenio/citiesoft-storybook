@@ -33,8 +33,23 @@ const meta = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component:
+        component: [
           'Barra de filtros de listagem. Spec: `03-components/filters.md` v2.0.0. Cada filtro é um chip nomeado: o chip genérico "3 filtros ativos" é proibido.',
+          '',
+          '**Quando usar:** listagem que o servidor recorta por mais de uma dimensão ao mesmo tempo',
+          '(secretaria, período, situação) e precisa enxergar quais recortes estão valendo antes de',
+          'exportar, imprimir ou tomar decisão sobre o resultado.',
+          '',
+          '**Quando não usar:** listagem com um único critério de busca por texto, onde a barra inteira',
+          'vira moldura vazia em volta de um campo (use o `Search` sozinho); alternância entre visões',
+          'fechadas e mutuamente exclusivas do mesmo dado, como "Em análise · Deferidos · Indeferidos",',
+          'em que o chip removível sugere combinação que não existe (use `Tabs` ou `SelectButton`);',
+          'listagem curta que cabe inteira na tela, onde filtrar custa mais atenção do que ler tudo;',
+          'e formulário de parâmetros de relatório, que tem botão de gerar e precisa de validação antes',
+          'de rodar (use `Drawer` com os campos e um `Button` de emissão). A contagem de resultados vive',
+          'em região `aria-live="polite"`: sem ela, quem usa leitor de tela remove um chip e não recebe',
+          'nenhum retorno de que a listagem mudou.',
+        ].join('\n'),
       },
     },
   },

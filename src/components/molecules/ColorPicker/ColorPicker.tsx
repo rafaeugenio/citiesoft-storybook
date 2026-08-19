@@ -68,6 +68,16 @@ function normalizarHex(texto: string): string | null {
   return null;
 }
 
+/**
+ * Identidade estável de uma entrada da paleta: o token do DS quando existe,
+ * senão o nome. Nunca o hexadecimal, porque duas entradas podem compartilhar
+ * o mesmo valor de cor (dois tokens acidentalmente iguais, por exemplo) e aí
+ * o hex sozinho não diferencia qual delas foi escolhida.
+ */
+function identidadeDaOpcao(opcao?: OpcaoDeCor): string | undefined {
+  return opcao ? (opcao.token ?? opcao.nome) : undefined;
+}
+
 export function ColorPicker({
   label,
   tipo = 'inline',
@@ -82,15 +92,31 @@ export function ColorPicker({
   const [valorInterno, setValorInterno] = useState(valorInicial);
   const corAtual = (valor ?? valorInterno).toUpperCase();
 
+  /**
+   * Identidade da opção selecionada (ver `identidadeDaOpcao`), não o hex.
+   * É o que resolve qual das entradas duplicadas por valor foi de fato
+   * escolhida, tanto para marcar um único radio como `aria-checked="true"`
+   * quanto para o nome anunciado no gatilho (WCAG 4.1.2 Name, Role, Value).
+   */
+  const [identidadeSelecionada, setIdentidadeSelecionada] = useState<string | undefined>(() =>
+    identidadeDaOpcao(paleta.find((opcao) => opcao.valor.toUpperCase() === valorInicial.toUpperCase())),
+  );
+
   const [aberto, setAberto] = useState(false);
   const gatilhoRef = useRef<HTMLButtonElement>(null);
   const painelRef = useRef<HTMLDivElement>(null);
 
-  const nomeDaCor = paleta.find((opcao) => opcao.valor.toUpperCase() === corAtual)?.nome;
+  const opcaoAtual =
+    paleta.find((opcao) => identidadeDaOpcao(opcao) === identidadeSelecionada) ??
+    paleta.find((opcao) => opcao.valor.toUpperCase() === corAtual);
+  const nomeDaCor = opcaoAtual?.nome;
   const nomeAcessivel = nomeDaCor ? `${label}: ${nomeDaCor}, ${corAtual}` : `${label}: ${corAtual}`;
 
-  const aplicar = (proximo: string) => {
+  const aplicar = (proximo: string, opcao?: OpcaoDeCor) => {
     if (valor === undefined) setValorInterno(proximo);
+    setIdentidadeSelecionada(
+      identidadeDaOpcao(opcao ?? paleta.find((o) => o.valor.toUpperCase() === proximo.toUpperCase())),
+    );
     onChange?.(proximo);
   };
 
@@ -130,6 +156,7 @@ export function ColorPicker({
       label={label}
       paleta={paleta}
       corAtual={corAtual}
+      identidadeSelecionada={identidadeSelecionada}
       descricao={descricao}
       desabilitado={desabilitado}
       aplicar={aplicar}
@@ -189,9 +216,11 @@ interface PainelProps {
   label: string;
   paleta: OpcaoDeCor[];
   corAtual: string;
+  /** Identidade da opção selecionada; ver `identidadeDaOpcao`. */
+  identidadeSelecionada: string | undefined;
   descricao?: string;
   desabilitado: boolean;
-  aplicar: (valor: string) => void;
+  aplicar: (valor: string, opcao?: OpcaoDeCor) => void;
   focarAoMontar: boolean;
   ref: RefObject<HTMLDivElement | null>;
 }
@@ -201,6 +230,7 @@ function PainelDeCor({
   label,
   paleta,
   corAtual,
+  identidadeSelecionada,
   descricao,
   desabilitado,
   aplicar,
@@ -221,14 +251,15 @@ function PainelDeCor({
     if (focarAoMontar) campoRef.current?.focus();
   }, [focarAoMontar]);
 
-  const indiceAtual = paleta.findIndex((opcao) => opcao.valor.toUpperCase() === corAtual);
+  const indiceAtual = paleta.findIndex((opcao) => identidadeDaOpcao(opcao) === identidadeSelecionada);
   /** Sem cor da paleta selecionada, o primeiro item guarda a tabulação. */
   const indiceTabulavel = indiceAtual >= 0 ? indiceAtual : 0;
 
   const mover = (destino: number) => {
     const indice = (destino + paleta.length) % paleta.length;
+    const opcao = paleta[indice];
     opcoesRef.current[indice]?.focus();
-    aplicar(paleta[indice].valor.toUpperCase());
+    aplicar(opcao.valor.toUpperCase(), opcao);
   };
 
   const confirmarTexto = () => {
@@ -250,10 +281,13 @@ function PainelDeCor({
         aria-disabled={desabilitado || undefined}
       >
         {paleta.map((opcao, indice) => {
-          const selecionada = opcao.valor.toUpperCase() === corAtual;
+          // Comparação por identidade, não por hex: dois tokens do DS podem
+          // acabar com o mesmo valor de cor, e nesse caso o hex sozinho
+          // marcaria os dois radios como selecionados ao mesmo tempo.
+          const selecionada = identidadeDaOpcao(opcao) === identidadeSelecionada;
           return (
             <button
-              key={opcao.valor}
+              key={identidadeDaOpcao(opcao) ?? opcao.valor}
               type="button"
               role="radio"
               aria-checked={selecionada}
@@ -265,7 +299,7 @@ function PainelDeCor({
               }}
               className={`citie-colorpicker__opcao${selecionada ? ' citie-colorpicker__opcao--selecionada' : ''}`}
               onClick={() => {
-                if (!desabilitado) aplicar(opcao.valor.toUpperCase());
+                if (!desabilitado) aplicar(opcao.valor.toUpperCase(), opcao);
               }}
               onKeyDown={(evento) => {
                 if (desabilitado) return;

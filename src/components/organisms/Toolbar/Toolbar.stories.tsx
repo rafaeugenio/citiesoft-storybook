@@ -92,8 +92,29 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Barra de ações de uma listagem. Página do Figma CitieOne `6738:49741` (❖ Toolbar), componente `toolbar` com `space-between` e três áreas: botões de ícone no início, busca no centro e ação principal no fim. Equivalente PrimeNG: `p-toolbar` (`start`, `center`, `end`). A toolbar só agrupa: os controles são `Button`, `ToggleButton` e `Search` do próprio design system.',
+          '',
+          '**Use a Toolbar quando as ações valem para o conjunto que está listado abaixo dela:**',
+          'criar registro, exportar, imprimir, alternar densidade, buscar dentro da lista. Ela fica',
+          'sempre visível, no topo da área de conteúdo, e é o lugar único onde o servidor procura',
+          'esses comandos em toda tela do sistema.',
+          '',
+          '**Quando não usar:** ações que valem para uma linha específica, que pertencem à coluna de',
+          'ações da `Table` ou ao `ContextMenu` da linha (na toolbar elas ficam desabilitadas até',
+          'que algo seja selecionado, e o servidor clica sem entender por que nada acontece);',
+          'navegação entre módulos ou entre seções, papel do `Menubar`, do `PanelMenu` e do',
+          '`Breadcrumb`; filtros com vários critérios e chips do que está ativo, papel do',
+          '`FilterBar`, porque a toolbar não guarda estado de filtro nem mostra o que está aplicado;',
+          'confirmar ou cancelar um formulário, que pede o rodapé do `Dialog` ou do `Drawer`, junto',
+          'do conteúdo que está sendo confirmado; e barra flutuante de ação em massa sobre a',
+          'seleção, que a própria `Table` renderiza por `acoesEmMassa`.',
+          '',
+          'Limite real: a barra quebra em várias linhas quando não cabe (`flex-wrap`), sem esconder',
+          'nada em menu de excesso. Acima de seis ou sete controles ela come duas alturas da tela em',
+          'monitor de 1366px, que é o parque de máquinas comum no serviço público. Mantenha o',
+          'essencial visível e mande o resto para um `Menu` de mais ações.',
+        ].join('\n'),
       },
     },
   },

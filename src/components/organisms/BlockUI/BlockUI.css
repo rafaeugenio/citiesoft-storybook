@@ -13,9 +13,8 @@
   align-items: center;
   justify-content: center;
   padding: var(--citie-spacing-4);
-  /* Não há token de máscara. O Figma traz preto a 40%; usamos o mesmo valor já
-     aplicado no backdrop de Dialog e Drawer, que é a máscara irmã desta. */
-  background-color: rgba(16, 24, 40, 0.45);
+  /* Mesmo véu do backdrop de Dialog e Drawer, que é a máscara irmã desta. */
+  background-color: var(--citie-scrim);
   animation: citie-blockui-entrada 160ms ease-out;
 }
 

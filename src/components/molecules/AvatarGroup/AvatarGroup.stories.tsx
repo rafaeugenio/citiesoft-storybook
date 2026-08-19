@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
-import { AvatarGroup } from './Avatar';
+import { AvatarGroup } from './AvatarGroup';
 
 const meta = {
   title: 'Moléculas/Identidade/AvatarGroup',

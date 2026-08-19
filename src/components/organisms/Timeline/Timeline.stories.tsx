@@ -42,8 +42,27 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Timeline e audit log. Spec: `03-components/timeline-audit-log.md` v2.0.0. Título do evento é verbo no passado em voz ativa, e data mais ator são obrigatórios em todo evento humano.',
+          '',
+          '**Use a Timeline quando o que importa é o que já aconteceu, em ordem, e quem fez.** É a',
+          'tramitação do processo e a trilha de auditoria: cada evento carrega data, ator e, quando',
+          'preciso, o detalhe da mudança. O registro é imutável e serve de prova do que o órgão fez',
+          'com o pedido do cidadão.',
+          '',
+          '**Quando não usar:** etapas de um fluxo que o usuário ainda vai percorrer, com avançar e',
+          'voltar, que é o `Stepper` (na Timeline o servidor não tem o que clicar para prosseguir e',
+          'passa a procurar o botão que não existe); eventos que o servidor precisa filtrar por',
+          'período, ordenar por autor e exportar, porque a Timeline não ordena nem pagina e uma',
+          'trilha de centenas de registros vira rolagem infinita, caso da `Table`; contagem de',
+          'ocorrências por período, que é gráfico (`LineChart` ou `BarChart`); estado atual de um',
+          'único registro, que se resolve com `StatusIndicator` ou `Tag` no cabeçalho da tela; e',
+          'aviso pontual sobre o que acabou de ser feito, papel do `Toast` ou do `Message`.',
+          '',
+          'Não use a Timeline como fonte única do histórico de um processo longo. Ela mostra o',
+          'recorte recente dentro da tela de detalhe; a trilha completa, que a auditoria precisa',
+          'percorrer inteira, pede a listagem tabular com filtro por competência e por ator.',
+        ].join('\n'),
       },
     },
   },

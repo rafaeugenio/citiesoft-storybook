@@ -3,6 +3,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { SemRegistro, Table, mascararCPF, type Coluna } from './Table';
 import { StatusIndicator, type EstadoDeFluxo } from '../../atoms/Badge/Badge';
 import { Button } from '../../atoms/Button/Button';
+import { Link } from '../../atoms/Link/Link';
 import { EmptyState } from '../../molecules/EmptyState/EmptyState';
 
 interface Solicitacao {
@@ -31,7 +32,13 @@ const COLUNAS: Coluna<Solicitacao>[] = [
     chave: 'processo',
     cabecalho: 'Processo',
     ordenavel: true,
-    render: (linha) => <a href="#detalhe">{linha.processo}</a>,
+    // O identificador usa o átomo Link. Como `<a>` cru, ele herdava o azul
+    // default do navegador e media 1,67:1 sobre a linha zebrada no tema escuro.
+    render: (linha) => (
+      <Link papel="identificador" href="#detalhe">
+        {linha.processo}
+      </Link>
+    ),
   },
   { chave: 'servidor', cabecalho: 'Servidor', ordenavel: true, render: (linha) => linha.servidor },
   { chave: 'cpf', cabecalho: 'CPF', render: (linha) => mascararCPF(linha.cpf) },
@@ -74,8 +81,42 @@ const meta = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component:
+        component: [
           'Tabela operacional. Spec: `03-components/tables-data-grid.md` v2.0.0. Equivalente PrimeNG: `p-table`, `p-treetable`.',
+          '',
+          '**Este é o padrão do DS Citiesoft para exibir conjunto de registros.** Use a `Table`',
+          'sempre que as linhas forem do mesmo tipo, sem relação de pai e filho entre elas, e o',
+          'servidor precisar comparar registros atributo a atributo, ordenar por uma coluna e agir',
+          'sobre vários de uma vez. É a listagem de processos, de servidores, de diárias e de',
+          'lançamentos. Quando houver dúvida entre esta e outra forma de listar, a resposta padrão',
+          'é a tabela.',
+          '',
+          '**Quando não usar:**',
+          '',
+          '- **As linhas se agrupam em pai e filho e o pai soma os filhos** (plano de contas,',
+          '  estrutura de despesa, secretaria com suas unidades). Na tabela plana a hierarquia vira',
+          '  texto indentado à mão e o total do pai deixa de ser conferível: use a `TreeTable`.',
+          '- **A relação entre os itens é a informação principal e cada item tem um rótulo só**',
+          '  (estrutura organizacional, categorias). Uma tabela de uma coluna gasta a largura toda',
+          '  para mostrar hierarquia que a `Tree` mostra melhor, com expandir e colapsar por',
+          '  teclado. Para escolher um nó dentro de um formulário, use o `TreeSelect`.',
+          '- **Cada registro é lido inteiro, um por vez, e não comparado com os outros** (galeria de',
+          '  documentos anexados, catálogo com imagem, cartão com resumo em texto corrido). A',
+          '  tabela obriga a espremer descrição longa em célula que trunca: use o `DataView`, que',
+          '  alterna lista e grade e já traz ordenação e paginação.',
+          '- **São dois ou três atributos de um único registro.** Uma tabela de uma linha é um',
+          '  cabeçalho gasto sem ganho: use a lista de definições do detalhe do processo, ou o',
+          '  `Card`.',
+          '- **O número é um só e serve de indicador de painel** (total do mês, prazo médio): use o',
+          '  `KpiWidget`; para a fila curta de itens que exigem atenção, o `ListaResumoWidget`.',
+          '- **Sequência de eventos com data e autor** (tramitação, auditoria): a ordem cronológica',
+          '  e o encadeamento se perdem em linhas de grade, use a `Timeline`.',
+          '',
+          'Limites reais da implementação: a `Table` não pagina nem filtra sozinha (componha com',
+          '`Pagination` e `FilterBar`) e renderiza todas as linhas recebidas, sem virtualização.',
+          'Passe para a tela um recorte paginado no servidor em vez de milhares de linhas de uma',
+          'vez, senão a jornada longa do servidor público paga em travamento de rolagem.',
+        ].join('\n'),
       },
     },
   },

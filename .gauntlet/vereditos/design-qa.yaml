@@ -1,0 +1,323 @@
+revisor: Design QA — consistência visual e fidelidade ao design system
+artefato_avaliado: >
+  build servido em http://localhost:6100 (771 entradas no índice / 676 stories / 104 títulos),
+  inspecionado com Playwright em 375, 768, 1200 e 1366px nos temas claro e escuro;
+  fonte em /Users/rafaeleugenio/Documents/Cursor/Repositorios/citiesoft-storybook
+veredito: REPROVADO
+nota_media_0_a_4: 1.8
+
+criterios_criticos:
+  - criterio: Ritmo visual e coesão entre níveis
+    nota_0_a_4: 2
+    evidencia: |
+      Superfícies de mesmo papel com padding e raio diferentes, medidos no DOM a 1366px:
+      `.citie-widget` padding 16px / radius 12px; `.citie-chart` padding 24px / radius 12px;
+      `.citie-wizard__corpo` padding 20px / radius 12px; `.citie-fieldset` e
+      `.citie-table-wrapper` radius 8px. Três paddings e dois raios para o mesmo nível
+      "contêiner de seção", sem regra que explique a troca.
+      Título de página (H1) tem quatro especificações entre seis templates:
+      Listagem 24px/700 Red Hat Display; Dashboard 24px/600; Formulário 22px/600;
+      Shell de aplicação 32px/700 **Inter**. As regras estão redeclaradas por template com px
+      literal (.storybook/templates/Listagem/Listagem.css:43, Dashboard.css:28,
+      Formulario.css:31, Detalhe.css:46) e Listagem/Detalhe omitem font-weight, herdando 700
+      do default do navegador — é daí que sai a divergência 600 vs 700.
+
+  - criterio: Fidelidade aos tokens
+    nota_0_a_4: 2
+    evidencia: |
+      O azul Tailwind #3b82f6 NÃO vazou: as duas únicas ocorrências em `src` e `.storybook`
+      são comentários explicativos (src/components/molecules/SpeedDial/SpeedDial.css:4 e
+      .storybook/docs/VisaoGeral.mdx:27). Raio está 100% tokenizado — zero
+      `border-radius: <n>px` no repositório inteiro. Fora isso:
+      • src/tokens/tokens.css:5 declara a escala oficial como "radius.sm 4 / md 6 / lg 8" e a
+        linha 81 cria `--citie-radius-xl: 12px`, valor sem origem no DS citado, usado em 15
+        pontos — inclusive no raio dominante de card em todos os templates e páginas.
+      • Não existe escala tipográfica de título: os tokens param em
+        `--citie-font-size-body-lg: 16px` (tokens.css:96). Consequência: 48 declarações
+        `font-size: <n>px` literais em 24 arquivos, em 14 valores distintos
+        (9, 10, 11, 12, 13, 14, 16, 17, 18, 20, 22, 24, 30, 32px). Cinco componentes escolhem
+        11px independentemente para o mesmo papel de metadado (Tabs.css:69, DatePicker.css:88,
+        Listbox.css:80, Tree.css:118, Widget.css:129); Timeline.css:59 usa 9px e
+        Badge.css:69 usa 10px.
+      • src/components/atoms/Button/Button.css:131-173 fixa hover e active de success, danger
+        e warn em hex literal (#15803d, #166534, #b91c1c, #991b1b, #b45309, #92400e) enquanto
+        primary, secondary e info usam token (linhas 95-101 e 184-187). O cabeçalho do próprio
+        tokens.css:9 diz "componente consome token semântico por nome, nunca valor literal".
+
+  - criterio: Estados visuais coerentes entre componentes do mesmo nível
+    nota_0_a_4: 3
+    evidencia: |
+      Foco é exemplar e verificado por medição: Button primary, Button secondary, Input,
+      Textarea, Checkbox e Switch resolvem todos para
+      `box-shadow: rgba(18,97,228,0.4) 0 0 0 3px`, com raio por papel (6px controle,
+      4px checkbox, 9999px switch) e offset 2px onde o controle é pequeno. Nenhum outlier.
+      A incoerência está na escolha de variante para o mesmo papel de ação. A composição
+      canônica documentada no átomo (`átomos-ações-button--barra-de-acoes-de-formulario`)
+      usa Cancelar = `secondary`. Já `templates-formulário-cadastro--pagina-cheia` e
+      `páginas-pessoas-cadastro-de-servidor--pagina-cheia` usam Cancelar = `text`, e
+      `templates-wizard-fluxo-em-etapas` usa Voltar = `secondary`. Dentro de uma única página,
+      `páginas-processos-nova-solicitação-de-tfd--resumo-final` tem "Sair sem enviar" = `text`
+      e "Cancelar" = `secondary`: duas ações de desistência, dois tratamentos, mesma tela.
+      Em tema escuro o hover inverte de direção entre variantes do mesmo átomo: primary
+      clareia (#4d8bfc → #84aefd, via token) e success escurece (#16a34a → #15803d, hex fixo
+      que ignora o override escuro de tokens.css:183).
+
+  - criterio: Tema escuro pensado (não inversão automática)
+    nota_0_a_4: 1
+    evidencia: |
+      • `visão-geral-como-este-catálogo-funciona--docs` com `globals=theme:dark` renderiza
+        100% em claro — não existe `[data-theme=dark]` na página (medido no DOM). A porta de
+        entrada do catálogo ignora o toggle.
+      • Nas páginas de docs de componente o tema chega só ao canvas da story: a superfície de
+        documentação (prosa, tabela de props, barra "Show code") continua clara enquanto cada
+        preview é preto. Visível em `átomos-ações-button--docs` no escuro: a página vira uma
+        sequência listrada claro/preto do topo ao fim, ao longo de 22 previews.
+        Causa: .storybook/preview.tsx aplica o tema apenas no decorator de story; não há tema
+        de manager/docs configurado.
+      • `templates-estrutura-shell-de-aplicação--desktop` em escuro mantém
+        `/marca/LogoHorizontal3.svg` (medido no atributo src, idêntico em claro e escuro)
+        sobre barra #1a1a1d — a assinatura "Citiesoft" fica em cinza escuro sobre quase-preto,
+        praticamente ilegível. A troca de logotipo está amarrada só ao prop `fundoDaBarra`,
+        não ao tema; e o play test em AppShell.stories.tsx:340 só verifica o caso
+        `fundoDaBarra=escuro`, então a suíte passa com o tema escuro real quebrado.
+      • A story chamada "Tema escuro" não documenta o tema escuro: ela documenta
+        `fundoDaBarra: 'escuro'` (barra azul da marca, AppShell.css:35). O tema escuro de fato
+        do shell não tem story dedicada.
+      • `--citie-shadow-card` no escuro é `0 1px 3px rgba(0,0,0,0.35)` (tokens.css:209):
+        sombra preta sobre fundo #141414 não produz elevação nenhuma.
+
+  - criterio: Responsividade em 375 e 768
+    nota_0_a_4: 1
+    evidencia: |
+      Três stories de breakpoint têm vazamento horizontal de página real
+      (scrollWidth vs clientWidth medidos no documento):
+      • `templates-estrutura-shell-de-aplicação--celular` em 375: **448 vs 375** (73px).
+        Offender `.citie-app-shell__barra` / `.citie-search-bloco`. No screenshot o fundo da
+        página termina em x=375 e a barra e o conteúdo continuam até 448.
+      • `templates-dashboard-painel-de-indicadores--telefone` em 375: **401 vs 375**.
+        Offender `.citie-chart__legenda--coluna`: os valores da legenda do donut
+        (40 / 32 / 24 / 16) ficam cortados fora da viewport.
+      • `páginas-processos-painel-de-tfd--telefone` em 375: **429 vs 375** (54px).
+      Além do vazamento, o Dashboard em 375 não reflui: mantém KPI e gráficos em 2 colunas,
+      os títulos dos cards quebram em três linhas ("Gráfico / de / linha") colidindo com o
+      link "Ver tabela" ao lado, e "Ver listagem da série A" e "Ver listagem por categoria"
+      se sobrepõem na mesma linha.
+      Em 768 os templates se comportam: Dashboard e Detalhe fecham em 768/768, e o overflow
+      das tabelas fica contido no próprio wrapper com rolagem, como esperado.
+
+comparacao_com_referencias:
+  resultado: PERDE
+  evidencia: |
+    Contra IBM Carbon, no acabamento e na coerência entre níveis:
+    1. Carbon publica um type set completo (heading-01..07, fluid type) e nenhum componente do
+       catálogo declara font-size em px. Aqui a escala tipográfica para de crescer em 16px e o
+       catálogo compensa com 48 px literais em 14 valores — a rampa de título é inferida por
+       arquivo, não definida. É a diferença entre ter escala e ter improviso.
+    2. Carbon trata o texto de gráfico como texto do sistema, tamanho fixo em qualquer largura.
+       Aqui LineChart e BarChart declaram o mesmo `font-size: 12px` dentro do mesmo viewBox
+       `0 0 640 240`, mas o Line renderiza a 605px de largura (altura de texto efetiva ~14px) e
+       o Bar a 1276px (~29px), na mesma tela do template Dashboard. Duas escalas tipográficas
+       2× diferentes lado a lado; em 375 o mesmo mecanismo reduz os rótulos do Line a manchas
+       de ~4px.
+    3. Carbon tema o site de documentação junto com os componentes (g10/g100). Aqui o tema
+       escuro não atravessa a camada de docs, e a página de abertura do catálogo não escurece
+       de forma alguma.
+    Onde o resultado empata: disciplina de foco e de raio (ver qualidades surpreendentes), e
+    honestidade documental, onde chega a passar à frente de Carbon.
+
+achados:
+  - severidade: BLOQUEADOR
+    descricao: >
+      Link de identificador em tabela é `<a>` cru, sem classe e sem token: renderiza no azul
+      default do navegador #0000EE. Em tema escuro dá 1,85:1 e 1,67:1 contra a linha zebrada —
+      ilegível. Em tema claro não é o Citie Blue #1261E4, é uma cor fora da marca.
+    evidencia: >
+      Medido no DOM em `páginas-processos-consulta-de-processos--com-dados` (link "2025/0481",
+      className vazio, color rgb(0,0,238) em claro E em escuro) e em
+      `templates-listagem-listagem-com-filtros--estrutura` (R-1001..R-1006, contraste 1,85:1
+      sobre rgb(26,26,29) e 1,67:1 sobre a linha zebrada rgb(35,35,39)).
+      Fonte: .storybook/pages/ConsultaDeProcessos.stories.tsx:113,
+      .storybook/templates/Listagem/Listagem.stories.tsx:44,
+      src/components/organisms/Table/Table.stories.tsx:34.
+      Não existe átomo de link nem token de link no catálogo (19 átomos, nenhum de navegação
+      textual).
+    correcao_exigida: >
+      Criar o átomo de link com token de cor próprio e override no bloco `[data-theme='dark']`
+      atingindo pelo menos 4,5:1, e consumi-lo nos três pontos. Nenhum `<a>` sem classe pode
+      sair em template ou página.
+
+  - severidade: BLOQUEADOR
+    descricao: >
+      Stories de breakpoint com vazamento horizontal de página em 375, incluindo texto
+      renderizado fora da viewport.
+    evidencia: >
+      `templates-estrutura-shell-de-aplicação--celular` 448/375;
+      `templates-dashboard-painel-de-indicadores--telefone` 401/375 com os valores da legenda
+      do donut (40/32/24/16) cortados; `páginas-processos-painel-de-tfd--telefone` 429/375.
+    correcao_exigida: >
+      scrollWidth == clientWidth em 375 e 768 em toda story de breakpoint, e nenhum conteúdo
+      renderizado além da borda direita.
+
+  - severidade: MAIOR
+    descricao: >
+      Tema escuro não alcança a camada de documentação. A Visão geral não escurece de forma
+      alguma; as páginas de docs de componente ficam claras com canvases pretos embutidos.
+    evidencia: >
+      `visão-geral-como-este-catálogo-funciona--docs` com theme:dark não tem nenhum
+      `[data-theme=dark]` no documento. `átomos-ações-button--docs` em escuro: prosa, tabela de
+      props e barras "Show code" claras, com 22 previews pretos intercalados.
+      Causa: .storybook/preview.tsx aplica o tema só no decorator de story; não há tema de
+      manager/docs configurado.
+    correcao_exigida: >
+      O toggle de tema deve trocar também a superfície de docs, incluindo a página MDX de
+      abertura, que hoje não recebe o decorator por não ter story associada.
+
+  - severidade: MAIOR
+    descricao: >
+      Em tema escuro o Shell mantém o logotipo de fundo claro (LogoHorizontal3.svg) sobre a
+      barra #1a1a1d, deixando a assinatura ilegível. Viola a regra de marca da Citiesoft
+      (LogoHorizontal3 em fundo branco, LogoHorizontal2 em fundo escuro ou azul).
+    evidencia: >
+      src medido em `templates-estrutura-shell-de-aplicação--desktop`:
+      `/marca/LogoHorizontal3.svg` em claro E em escuro. A regra de troca em
+      .storybook/templates/AppShell só olha `fundoDaBarra`; o play test em
+      AppShell.stories.tsx:340 só cobre `fundoDaBarra=escuro`, então o teste passa com o
+      defeito em pé.
+    correcao_exigida: >
+      A seleção do logotipo deve considerar a luminância do fundo resultante (tema + prop), e a
+      asserção do play test deve cobrir o caso tema escuro com barra padrão.
+
+  - severidade: MAIOR
+    descricao: >
+      Texto de gráfico escala com a largura do contêiner, produzindo duas escalas tipográficas
+      2× diferentes na mesma tela e rótulos ilegíveis no celular.
+    evidencia: >
+      Em `templates-dashboard-painel-de-indicadores--estrutura` a 1366px: LineChart e BarChart
+      declaram `font-size: 12px` no mesmo viewBox `0 0 640 240`; o Line renderiza a 605px de
+      largura (altura de texto efetiva 14px) e o Bar a 1276px (29px). O eixo do gráfico de
+      barras fica visivelmente maior que o H1 da própria tela. Em 375 o efeito inverte e os
+      rótulos do Line viram traços de ~4px.
+    correcao_exigida: >
+      Rótulo de eixo e de legenda em tamanho fixo do sistema, independente da largura do SVG
+      (vector-effect, texto fora do viewBox escalado, ou viewBox calculado por largura).
+
+  - severidade: MAIOR
+    descricao: >
+      Escala tipográfica ausente nos tokens: o conjunto para em `body-lg: 16px`, então todo
+      título do sistema é px literal. É a causa direta da divergência de H1 entre templates.
+    evidencia: >
+      src/tokens/tokens.css:94-96 (único trio de tamanhos). 48 `font-size: <n>px` em 24
+      arquivos fora do tokens.css, em 14 valores. H1 medido: 22px (Formulário, Cadastro de
+      servidor); 24px/600 (Dashboard, Detalhe, Wizard, Nova solicitação); 24px/700 (Listagem,
+      Consulta de processos); 32px/700 Inter (Shell — `<h1 style="margin:...">` sem classe
+      nenhuma, default do navegador).
+    correcao_exigida: >
+      Publicar a rampa de título como token, converter os 48 literais e dar classe ao H1 do
+      Shell.
+
+  - severidade: MAIOR
+    descricao: >
+      Variante de botão para o mesmo papel de ação diverge entre a documentação do átomo e os
+      templates e páginas que deveriam consumi-la.
+    evidencia: >
+      `átomos-ações-button--barra-de-acoes-de-formulario` (padrão canônico):
+      Cancelar = secondary. `templates-formulário-cadastro--pagina-cheia` e
+      `páginas-pessoas-cadastro-de-servidor--pagina-cheia`: Cancelar = text.
+      `páginas-processos-nova-solicitação-de-tfd--resumo-final`: "Sair sem enviar" = text e
+      "Cancelar" = secondary na mesma tela.
+    correcao_exigida: >
+      Uma regra única de barra de ações, escrita no átomo e obedecida por todo template e
+      página, ou variação justificada por densidade documentada.
+
+  - severidade: MAIOR
+    descricao: >
+      `--citie-radius-xl: 12px` não pertence à escala de raio que o próprio arquivo declara
+      como oficial, e é o raio dominante de card em templates e páginas.
+    evidencia: >
+      src/tokens/tokens.css:5 declara "radius.sm 4 / md 6 / lg 8"; a linha 81 cria o xl 12px,
+      usado em 15 pontos. Resultado medido: `.citie-card`, `.citie-widget`, `.citie-chart` e
+      `.citie-wizard__corpo` em 12px convivendo com `.citie-fieldset`, `.citie-table-wrapper` e
+      `.citie-wizard__navegacao` em 8px, no mesmo papel de contêiner.
+    correcao_exigida: >
+      Ou o DS de origem incorpora radius.xl e a regra de qual raio vale para contêiner, ou os
+      contêineres voltam para radius.lg.
+
+  - severidade: MENOR
+    descricao: >
+      Hover e active de success, danger e warn ignoram o sistema de token e por isso ignoram o
+      override do tema escuro; o hover passa a escurecer no escuro enquanto o primary clareia.
+    evidencia: >
+      src/components/atoms/Button/Button.css:131-173 (hex literais) contra as linhas 95-101 e
+      184-187 (primary e info em token). tokens.css:183-190 redefine `success-strong`,
+      `warning-strong` e `danger-strong` no escuro — overrides que o Button nunca consulta.
+    correcao_exigida: >
+      Hover e active das três variantes em token semântico, com par claro/escuro definido.
+
+  - severidade: MENOR
+    descricao: >
+      Tabela markdown não renderiza na página de abertura do catálogo: sai como texto cru com
+      pipes.
+    evidencia: >
+      `visão-geral-como-este-catálogo-funciona--docs`, seção "De onde vem cada coisa":
+      "| Fonte | O que manda | | --- | --- | | Design System no Obsidian Vault | A marca. ..."
+      em um parágrafo corrido. Contagem de `.sbdocs table` na página: 0.
+    correcao_exigida: Tabela renderizada como tabela.
+
+  - severidade: MENOR
+    descricao: >
+      Diagrama da cadeia de composição quebra na dobra: sobra uma seta pendurada na borda
+      direita da primeira linha, apontando para fora do fluxo.
+    evidencia: >
+      Visão geral, bloco Fundação → Átomo → Molécula → Organismo →, seta em x≈1090 na
+      largura 1200.
+    correcao_exigida: Seta suprimida no último item de cada linha.
+
+  - severidade: POLIMENTO
+    descricao: Cabeçalho de coluna numérica não acompanha o alinhamento dos dados.
+    evidencia: >
+      `templates-listagem-listagem-com-filtros--estrutura`: o `th` "Valor" tem
+      `text-align: start` enquanto os valores (R$ 1.200,00 …) renderizam alinhados à direita.
+      Carbon e Polaris alinham o cabeçalho numérico com o dado.
+    correcao_exigida: Alinhamento do cabeçalho herdado da definição de alinhamento da coluna.
+
+  - severidade: POLIMENTO
+    descricao: >
+      Densidade do menu lateral inconsistente entre grupos: itens de OPERAÇÃO têm ícone e recuo
+      de 47px; "Perfis de acesso", em SISTEMA, não tem ícone e começa em 38px, sem alinhar com
+      a coluna de texto acima.
+    evidencia: `templates-estrutura-shell-de-aplicação--desktop`, 1366px.
+    correcao_exigida: Ou todo item tem ícone, ou o recuo do rótulo é o mesmo com e sem ícone.
+
+qualidades_surpreendentes:
+  - >
+    O catálogo documenta um defeito do próprio design system em vez de escondê-lo, e mostra a
+    correção ao lado do valor oficial. `átomos-ações-button--success` traz na descrição
+    "Reproduz o token oficial. **Falha WCAG AA (3,30:1)** com rótulo branco em 14px. Achado
+    aberto do design system", e a story vizinha `Success · correção proposta`
+    (src/components/atoms/Button/Button.stories.tsx:93-107) renderiza a mesma variante com
+    `--citie-success-emphasis` sobrescrito para #15803D, declarando o ganho medido (5,02:1).
+    O mesmo par existe para warn (linhas 134 e 140-154). Nem Carbon nem Polaris expõem assim,
+    no próprio catálogo, um token que reprova e a correção esperando decisão do time de
+    Design. É honestidade em nível GOV.UK.
+  - >
+    O anel de foco é rigorosamente o mesmo em todos os controles reais, e isso resiste à
+    medição, não só ao olho: Button primary, Button secondary, Input, Textarea, Checkbox e
+    Switch resolvem todos para `box-shadow: rgba(18,97,228,0.4) 0 0 0 3px`, com o raio variando
+    só por papel (6px em controle, 4px em checkbox, 9999px em switch) e offset 2px onde o
+    controle é pequeno. Combina com raio 100% tokenizado — zero `border-radius: <n>px` em todo
+    o repositório. É a parte do sistema onde a disciplina empata com Carbon.
+
+motivo_do_veredito: >
+  Reprovado por dois bloqueadores e sete achados maiores dentro do recorte de consistência
+  visual. O link primário de navegação das duas telas mais importantes é um `<a>` sem estilo no
+  azul default do navegador, com 1,67:1 no tema escuro; três stories de breakpoint vazam
+  horizontalmente em 375, com texto cortado fora da viewport. O tema escuro não foi pensado
+  como camada: ele para na borda da story, deixa toda a documentação clara, a página de
+  abertura sem escurecer, o logotipo de fundo claro sobre barra preta e o hover das variantes
+  de feedback invertendo de direção. A fidelidade aos tokens é forte onde existe token (raio e
+  foco estão exemplares, e o azul Tailwind do kit Figma comprovadamente não vazou) e cede onde
+  o token falta: sem escala de título, o sistema improvisa 14 tamanhos em 48 literais e produz
+  quatro H1 diferentes em seis templates. O acabamento existe em pontos isolados de alta
+  qualidade, mas a coerência entre níveis — que é justamente o que Atomic Design deveria
+  garantir — ainda não se sustenta: o template contradiz a composição documentada no átomo que
+  ele deveria consumir.

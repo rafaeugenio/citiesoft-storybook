@@ -59,26 +59,6 @@
   }
 }
 
-.citie-skeleton-stack {
-  display: flex;
-  flex-direction: column;
-  gap: var(--citie-spacing-2);
-}
-
-.citie-skeleton-stack--flex {
-  flex: 1;
-}
-
-.citie-skeleton-stack--largo {
-  gap: var(--citie-spacing-4);
-}
-
-.citie-skeleton-item {
-  display: flex;
-  align-items: center;
-  gap: var(--citie-spacing-3);
-}
-
 .citie-skeleton-region {
   display: block;
 }

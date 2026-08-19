@@ -46,7 +46,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Agrupamento semântico de campos em `<fieldset>`/`<legend>`, para que o leitor de tela anuncie a legenda junto de cada campo interno. Figma CitieOne, página `6738:49735` (sets `fieldset` e `fieldset-legend`, eixos Toggleable, Collapsed, Hover e Expanded). Equivalente PrimeNG: `p-fieldset`.',
+          'Agrupamento semântico de campos em `<fieldset>`/`<legend>`, para que o leitor de tela anuncie a legenda junto de cada campo interno. Figma CitieOne, página `6738:49735` (sets `fieldset` e `fieldset-legend`, eixos Toggleable, Collapsed, Hover e Expanded). Equivalente PrimeNG: `p-fieldset`.\n\n**Quando usar:** dois ou mais campos que só fazem sentido juntos e cuja legenda precisa ser repetida a cada campo pelo leitor de tela (endereço, dados bancários, período de afastamento, filiação).\n\n**Quando não usar:** campo único, porque a legenda repete o rótulo e o leitor de tela anuncia a mesma informação duas vezes seguidas, alongando a leitura de um formulário que já é longo. Agrupamento só visual, sem relação semântica entre os campos, pede `Moléculas/Contêineres/Card` ou `Organismos/Layout/Panel`, que agrupam sem prometer um vínculo que não existe. Separar blocos de conteúdo de leitura é `Átomos/Layout/Divider` ou `Organismos/Layout/Panel`. Seções paralelas que o servidor alterna dentro da mesma ficha são `Moléculas/Contêineres/Tabs`, e um passo a passo com validação por etapa é `Moléculas/Navegação/Stepper`.\n\nNa variante `toggleable`, evite recolher grupo com campo obrigatório: a validação acusa erro dentro de área fechada e o foco vai parar num campo que não está na tela, ponto em que o servidor abandona o formulário sem saber o que faltou.',
       },
     },
   },

@@ -21,8 +21,29 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Painel lateral para filtros, detalhe de registro ou formulário que mantém o contexto da tela atrás visível. Spec: `03-components/modals-dialogs-drawers.md` v2.0.0. Equivalente PrimeNG: `p-drawer`. **Quando usar este e não os irmãos:** use o Drawer quando a pessoa precisa continuar enxergando a listagem ou a tela de origem enquanto opera o painel; use o [Dialog](?path=/docs/organismos-overlay-dialog--docs) quando a tarefa exige foco total e a tela atrás deve sair de cena; use o [ConfirmDialog](?path=/docs/organismos-overlay-confirmdialog--docs) quando for apenas uma decisão explícita antes de prosseguir, sem botão de fechar e com foco inicial na ação segura. Existe ainda o ConfirmPopup, irmão leve do ConfirmDialog, ancorado ao próprio gatilho para confirmação de baixo risco: ação destrutiva permanente usa sempre o diálogo modal, nunca o popup. Cada story abre pelo botão, como no produto.',
+          '',
+          '**Limite real desta implementação:** o Drawer usa o `dialog` nativo em modo modal, igual ao',
+          '`Dialog`. A tela de trás continua **visível**, e é para isso que ele serve, mas fica inerte:',
+          'não dá para rolar a listagem, clicar em uma linha nem copiar um número de matrícula enquanto',
+          'o painel está aberto. Se a pessoa precisa operar os dois lados ao mesmo tempo, o caminho é',
+          'dividir a tela com `Splitter` ou colocar o conteúdo em um `Panel` fixo na coluna lateral.',
+          '',
+          '**Quando não usar:** navegação principal do sistema, que é da `Sidebar` e precisa ficar sempre',
+          'disponível, sem exigir abertura; confirmação de sim ou não, que é do',
+          '[ConfirmDialog](?path=/docs/organismos-overlay-confirmdialog--docs); tarefa que não tem',
+          'nenhuma relação com a tela atrás, em que manter a listagem à vista só divide a atenção (use o',
+          '[Dialog](?path=/docs/organismos-overlay-dialog--docs)); cadastro longo, com muitas seções e',
+          'anexos, que merece tela própria com URL, rascunho e possibilidade de voltar depois; e telas',
+          'estreitas, onde o painel ocupa quase toda a largura e o contexto que justificava o Drawer',
+          'desaparece.',
+          '',
+          '**Peso em jornada longa:** o painel fecha por `Escape` e por clique no fundo, e os dois',
+          'caminhos chamam `onClose`. Em drawer com campos preenchidos, isso significa perda silenciosa',
+          'de dado de processo por um clique fora de alvo. Guarde o que foi digitado ao fechar, ou peça',
+          'confirmação antes de descartar.',
+        ].join('\n'),
       },
     },
   },

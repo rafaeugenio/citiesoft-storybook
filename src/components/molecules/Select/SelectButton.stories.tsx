@@ -14,6 +14,8 @@ const meta = {
           '',
           '**Quando usar este e não o Select:** use o SelectButton para alternar a visão de uma tabela ou lista logo acima dela (situação da solicitação, modo de exibição, filtro rápido), quando as poucas opções valem estar sempre à vista. Ele não serve para coletar dado de cadastro: para escolher uma opção entre muitas em lista fechada, com o painel oculto até abrir, use `Moléculas/Campos/Select`.',
           '',
+          '**Quando não usar:** mais de 4 opções, porque os segmentos comprimem o rótulo e a barra estoura a largura útil em 1366px, resolução comum das estações das secretarias; escolha obrigatória de cadastro, que precisa de rótulo, texto de ajuda e mensagem de erro e por isso pede `Moléculas/Campos/Select` ou `Moléculas/Escolha/RadioGroup`; opção solitária que liga e desliga um estado, papel do `Átomos/Escolha/ToggleButton`; troca de seção de conteúdo dentro da ficha do servidor, que pede `Moléculas/Contêineres/Tabs` e o papel `tablist`; e rótulos longos, que só cabem no segmento depois de abreviados, deixando a tela ilegível para quem entra nela uma vez por mês.',
+          '',
           'Diferente do Select, o SelectButton **não usa o `FieldWrapper`**, porque não é campo com rótulo, texto de ajuda e mensagem de erro, e sim um grupo de botões: o nome acessível vem do `legend` no `role="group"` e o segmento ativo é anunciado como pressionado via `aria-pressed`.',
         ].join('\n'),
       },

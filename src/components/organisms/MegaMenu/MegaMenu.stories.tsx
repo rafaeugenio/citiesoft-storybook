@@ -91,8 +91,26 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Barra de módulos com painel de várias colunas agrupadas por categoria. Port da página `❖ MegaMenu` do Figma CitieOne (6738:52938). Variantes do arquivo: `Orientation` (Horizontal | Vertical) e `Overlay` (True | False) no set `megamenu`; `State` (Idle | Hover | Focus | Active), `Show Icon` e `Show Submenu Icon` no set `megamenu-item`. Equivalente PrimeNG: `p-megamenu`.',
+          '',
+          '**O que separa este dos irmãos de menu:** o MegaMenu é o único que abre um painel com',
+          '**colunas tituladas**, para que o servidor veja o módulo inteiro de uma vez sem abrir nível',
+          'por nível. Use quando o sistema tem muitos destinos por módulo e a categoria precisa aparecer',
+          'como título. Para submenu simples de um nível, sem colunas, o componente é o `Menubar`.',
+          'Para navegação em cascata de três níveis dentro de um painel, é o `TieredMenu`. Para o menu',
+          'lateral fixo do produto, é a `Sidebar`.',
+          '',
+          '**Quando não usar:** sistema com poucos módulos e cinco ou seis destinos no total, onde o',
+          'painel largo aparece quase vazio e cobre a listagem que a pessoa estava lendo (use `Menubar`);',
+          'ações sobre um registro já aberto, como "Encerrar processo" ou "Gerar ofício", que não são',
+          'destinos de navegação e pedem `Menu` ou `SplitButton`; navegação dentro de um painel lateral',
+          'ou drawer de filtros, onde várias seções precisam ficar abertas ao mesmo tempo (use',
+          '`PanelMenu`); e telas de largura reduzida, em que as colunas do painel se espremem e os',
+          'rótulos quebram. Em jornada longa, lembre que o painel sobreposto (`sobreposto`) tapa o',
+          'conteúdo atrás: quem abriu o menu por engano no meio de um preenchimento precisa de `Escape`',
+          'para voltar exatamente ao ponto onde estava, que é o que este componente faz.',
+        ].join('\n'),
       },
     },
   },

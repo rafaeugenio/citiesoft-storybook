@@ -9,8 +9,30 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Envio de arquivos. Spec: `03-components/upload.md` v2.0.0. Equivalente PrimeNG: `p-fileupload`. O modo Advanced é o padrão quando o anexo é peça central do processo.',
+          '',
+          '**Use o Upload quando o arquivo é peça do processo e o servidor precisa acompanhar o',
+          'envio:** laudo médico, comprovante de residência, ofício digitalizado. A variante',
+          '`advanced` mostra área de arrastar, nome, tamanho, progresso e erro por arquivo; a',
+          '`basic` reduz tudo a um botão, para o anexo opcional dentro de formulário já denso.',
+          '',
+          '**Quando não usar:** documentos que já estão no processo e só precisam ser consultados ou',
+          'baixados, porque a lista do Upload é a fila do envio atual e não o acervo do processo,',
+          'que pede `Table` ou `DataView` com data, autor e ação de baixar; texto formatado que o',
+          'servidor redige na hora, caso do `Editor`, em vez de exigir que ele monte um arquivo',
+          'fora do sistema; foto ou imagem que precisa ser vista antes de confirmar, já que o item',
+          'da lista mostra um ícone genérico de arquivo e nunca a miniatura (exiba o resultado',
+          'depois com `Image` ou `Galleria`); e importação de planilha que dispara processamento em',
+          'lote, onde o servidor precisa do relatório de linhas aceitas e recusadas, coisa que',
+          'nenhum estado deste componente comunica.',
+          '',
+          'Limite real da implementação: o componente é controlado por quem monta a tela. Ele não',
+          'restringe extensão nem tamanho por conta própria (o texto de `instrucao` é orientação, e',
+          'não regra aplicada), não envia nada sozinho e não pede confirmação ao remover. Em dado',
+          'de processo, ligue `onRemover` a um `ConfirmDialog`: em jornada longa, o X ao lado do',
+          'arquivo é clicado por engano, e o anexo perdido volta como pendência para o cidadão.',
+        ].join('\n'),
       },
     },
   },

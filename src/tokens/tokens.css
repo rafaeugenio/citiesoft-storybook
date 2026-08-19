@@ -47,6 +47,41 @@
   --citie-danger-strong: #b91c1c;
   --citie-danger-background: #fef2f2;
 
+  /**
+   * Feedback — rampa de preenchimento do controle cheio.
+   *
+   * Mesma estrutura da família de marca: `*-emphasis` é o repouso (equivale a
+   * `--citie-brand-primary`), `*-hover` e `*-active` são os estados, e
+   * `*-contrast` é o rótulo por cima (equivale a `--citie-brand-contrast`).
+   *
+   * NÃO reaproveitar `*-strong` aqui: aquele token é cor de TEXTO sobre
+   * superfície, e é por isso que o escuro o vira tinta clara (#4ADE80,
+   * #FCA5A5, #FCD34D). Usado como fundo, daria rótulo branco sobre #4ADE80 no
+   * escuro, 1,87:1.
+   *
+   * Contraste do rótulo `*-contrast` (#FFFFFF no claro) sobre cada degrau:
+   *   success  repouso #16A34A 3,30:1  hover #15803D 5,02:1  active #166534 7,13:1
+   *   danger   repouso #DC2626 4,83:1  hover #B91C1C 6,47:1  active #991B1B 8,31:1
+   *   warning  repouso #D97706 3,19:1  hover #B45309 5,02:1  active #92400E 7,09:1
+   *
+   * ACHADO ABERTO DO DS: no claro o repouso de success (3,30:1) e de warning
+   * (3,19:1) reprova WCAG AA 1.4.3 para texto normal com rótulo branco. Os
+   * valores foram mantidos por ordem explícita de não regredir a identidade
+   * visual do tema claro; hover e active passam. Precisa de decisão do DS:
+   * escurecer o repouso ou trocar o rótulo por texto escuro.
+   */
+  --citie-success-hover: #15803d;
+  --citie-success-active: #166534;
+  --citie-success-contrast: #ffffff;
+
+  --citie-danger-hover: #b91c1c;
+  --citie-danger-active: #991b1b;
+  --citie-danger-contrast: #ffffff;
+
+  --citie-warning-hover: #b45309;
+  --citie-warning-active: #92400e;
+  --citie-warning-contrast: #ffffff;
+
   /* Feedback — informação */
   --citie-info-emphasis: #0e4db8;
   --citie-info-text: #1261e4;
@@ -99,6 +134,14 @@
   /* Elevação — sombra de overlay para painéis, menus e diálogos */
   --citie-shadow-overlay: 0 4px 12px rgba(16, 24, 40, 0.12);
   --citie-shadow-card: 0 1px 3px rgba(16, 24, 40, 0.08);
+
+  /**
+   * Véu (scrim) de bloqueio: fundo escurecido atrás de diálogo, drawer,
+   * BlockUI e cortina do shell. Valor único para a tela inteira — antes cada
+   * componente escolhia o seu, e a cortina do shell chegou a sobrepor um véu
+   * de cor diferente sobre o backdrop de Dialog na mesma tela.
+   */
+  --citie-scrim: rgba(16, 24, 40, 0.45);
 
   /* Altura de controle */
   --citie-control-height-small: 32px;
@@ -188,6 +231,40 @@
 
   --citie-danger-strong: #fca5a5;
   --citie-danger-background: rgba(239, 68, 68, 0.12);
+
+  /**
+   * Rampa de preenchimento no escuro. O repouso continua sendo `*-emphasis`,
+   * que é o mesmo nos dois temas — verde, vermelho e âmbar saturados leem bem
+   * tanto sobre #FAFAFA quanto sobre #141414. O que muda é a direção do
+   * estado: no escuro o hover CLAREIA, porque escurecer aproximaria o botão do
+   * fundo até ele sumir (#166534 sobre #141414 quase não se separa).
+   *
+   * Success e warning ganham rótulo escuro no escuro, o que de quebra conserta
+   * o repouso: hoje o rótulo é branco fixo e dá 3,30:1 e 3,19:1 também no
+   * escuro. Danger mantém rótulo branco — #DC2626 com #141414 daria 3,81:1,
+   * reprova — e por isso a rampa dele escurece, que é o sentido que funciona
+   * com texto branco.
+   *
+   * Contraste sobre cada degrau, tema escuro:
+   *   success  (rótulo #141414) repouso #16A34A 5,59:1  hover #22C55E 8,08:1  active #4ADE80 10,57:1
+   *   warning  (rótulo #141414) repouso #D97706 5,78:1  hover #F59E0B 8,58:1  active #FCD34D 12,78:1
+   *   danger   (rótulo #FFFFFF) repouso #DC2626 4,83:1  hover #B91C1C 6,47:1  active #991B1B 8,31:1
+   * Todos passam AA.
+   */
+  --citie-success-hover: #22c55e;
+  --citie-success-active: #4ade80;
+  --citie-success-contrast: #141414;
+
+  --citie-warning-hover: #f59e0b;
+  --citie-warning-active: #fcd34d;
+  --citie-warning-contrast: #141414;
+
+  --citie-danger-hover: #b91c1c;
+  --citie-danger-active: #991b1b;
+  --citie-danger-contrast: #ffffff;
+
+  /** Véu mais denso no escuro: 45% sobre fundo já escuro não separa camada. */
+  --citie-scrim: rgba(0, 0, 0, 0.65);
 
   --citie-info-emphasis: #4d8bfc;
   --citie-info-text: #84aefd;

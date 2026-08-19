@@ -41,8 +41,29 @@ const preview: Preview = {
     backgrounds: { disable: true },
   },
 
+  /**
+   * Gate de acessibilidade do tema escuro.
+   *
+   * O axe só varre o tema com que a story de fato renderiza. Sem isto, o
+   * padrão fixo 'light' fazia 675 das 676 stories nunca exercitarem os 30
+   * tokens do bloco `[data-theme='dark']` de tokens.css: qualquer regressão
+   * de contraste exclusiva do escuro passava o gate sem ser vista (achado
+   * MAIOR do laudo de acessibilidade e-MAG / WCAG 2.2 AA).
+   *
+   * `VITE_CITIE_TEMA_PADRAO` troca o tema padrão de TODAS as stories de uma
+   * vez, no nível de configuração, sem editar nenhum arquivo de story: é a
+   * mesma suíte de 676 testes rodando por cima do outro tema. A story que já
+   * fixa `globals.theme` (AppShell.stories.tsx:328) continua fixa no escuro
+   * independente desta variável, porque `globals` de story tem prioridade
+   * sobre `initialGlobals`.
+   *
+   * O que falta para o gate morder de verdade: um segundo script no
+   * `package.json` (`"test-storybook:dark": "VITE_CITIE_TEMA_PADRAO=dark
+   * vitest --project=storybook --run"`) e uma etapa a mais no CI que rode os
+   * dois. Fora do escopo deste arquivo; ver laudo de acessibilidade.
+   */
   initialGlobals: {
-    theme: 'light',
+    theme: import.meta.env.VITE_CITIE_TEMA_PADRAO === 'dark' ? 'dark' : 'light',
   },
 
   globalTypes: {

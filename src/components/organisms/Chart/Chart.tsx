@@ -1,28 +1,7 @@
-import { useId, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Button } from '../../atoms/Button/Button';
+import { PALETA_OFICIAL } from '../../../tokens/paletas';
 import './Chart.css';
-
-/** Ordem oficial da spec. Nunca pular cor, nunca reatribuir entre telas. */
-export const PALETA_OFICIAL = [
-  'var(--citie-chart-cat-1)',
-  'var(--citie-chart-cat-2)',
-  'var(--citie-chart-cat-3)',
-  'var(--citie-chart-cat-4)',
-  'var(--citie-chart-cat-5)',
-  'var(--citie-chart-cat-6)',
-  'var(--citie-chart-cat-7)',
-  'var(--citie-chart-cat-8)',
-];
-
-/** Proposta aprovada na validação de daltonismo e contraste. */
-export const PALETA_PROPOSTA = [
-  'var(--citie-chart-alt-1)',
-  'var(--citie-chart-alt-2)',
-  'var(--citie-chart-alt-3)',
-  'var(--citie-chart-alt-4)',
-  'var(--citie-chart-alt-5)',
-  'var(--citie-chart-alt-6)',
-];
 
 export interface Serie {
   rotulo: string;
@@ -402,44 +381,5 @@ export function DonutChart({ fatias, ...resto }: DonutProps) {
         </ul>
       </div>
     </ChartCard>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Sparkline                                                           */
-/* ------------------------------------------------------------------ */
-
-export interface SparklineProps {
-  valores: number[];
-  /** Nome acessível: o sparkline nunca fica sem descrição. */
-  label: string;
-  cor?: string;
-}
-
-export function Sparkline({ valores, label, cor = 'var(--citie-chart-cat-1)' }: SparklineProps) {
-  const id = useId();
-  const maximo = Math.max(...valores, 1);
-  const minimo = Math.min(...valores, 0);
-  const amplitude = maximo - minimo || 1;
-
-  const pontos = valores
-    .map((valor, indice) => {
-      const x = (100 / Math.max(1, valores.length - 1)) * indice;
-      const y = 40 - ((valor - minimo) / amplitude) * 36;
-      return `${indice === 0 ? 'M' : 'L'} ${x} ${y}`;
-    })
-    .join(' ');
-
-  return (
-    <svg
-      className="citie-chart__sparkline"
-      viewBox="0 0 100 44"
-      preserveAspectRatio="none"
-      role="img"
-      aria-labelledby={id}
-    >
-      <title id={id}>{label}</title>
-      <path d={pontos} fill="none" stroke={cor} strokeWidth="2" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
-    </svg>
   );
 }

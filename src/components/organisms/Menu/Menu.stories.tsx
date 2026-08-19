@@ -64,8 +64,25 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Lista de ações em orientação vertical. Origem: Figma CitieOne, página ❖ Menu — `menu` (Type: Basic | Popup, Show Menu, Show Button), `menu-item` (Show Icon, Icon, Text, State: Idle | Hover | Focus), `menu-submenu-label` e `menu-separator`. Item com atalho, item desabilitado e item destrutivo são extensões da marca, não desenhadas no arquivo. Equivalente PrimeNG: `p-menu`.',
+          '',
+          '**O que separa este dos irmãos de menu:** o Menu é o único plano, de um nível só, e reúne',
+          '**ações sobre um objeto** já identificado (o processo aberto, a linha da listagem). É',
+          '`role="menu"`, o que significa que cada item executa um comando. Quando as ações se abrem em',
+          'níveis encadeados, o componente é o `TieredMenu`. Quando o menu nasce do botão direito sobre',
+          'a linha, é o `ContextMenu`. Quando o assunto é ir para outra tela, é `Sidebar`, `Menubar`,',
+          '`MegaMenu` ou `PanelMenu`, conforme o lugar.',
+          '',
+          '**Quando não usar:** navegação entre telas, porque `role="menu"` faz o leitor de tela anunciar',
+          'os destinos como comandos e a pessoa não percebe que vai trocar de página; uma ou duas ações',
+          'apenas, em que esconder o comando dentro de um popup cobra um clique extra em cada linha da',
+          'listagem (use `Button` ou `SplitButton`, que já deixa a ação principal à vista); escolha de um',
+          'valor de campo, já que o Menu não guarda seleção, não marca o item escolhido e não envia nada',
+          'no formulário (use `Select` ou `Listbox`); e lista longa de opções filtráveis, que pede',
+          '`AutoComplete`. Ação destrutiva pode viver aqui com `destrutivo`, mas a confirmação continua',
+          'sendo do `ConfirmDialog`: o Menu executa no clique, sem rede de proteção.',
+        ].join('\n'),
       },
     },
   },

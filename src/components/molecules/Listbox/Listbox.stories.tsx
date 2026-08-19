@@ -18,8 +18,22 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Lista sempre visível, sem overlay. Origem: Figma CitieOne, página ❖ Listbox (State: Idle | Invalid | Disabled, Show Filter, e a opção com State, Group e Checkmark). Equivalente PrimeNG: `p-listbox`.',
+          '',
+          '**O padrão do DS para escolher um valor num formulário é o campo fechado** (`Moléculas/Campos/Select`, `Moléculas/Campos/MultiSelect`). O Listbox é a exceção para quando ver o conjunto inteiro faz parte da tarefa: painel de transferência lado a lado, tela de conferência onde o servidor marca especialidades e confere o que marcou sem reabrir nada, seleção que fica visível enquanto o resultado é lido ao lado. Ele ocupa altura fixa (`altura`, 220px por padrão) e essa altura é o preço.',
+          '',
+          '**Quando não usar:**',
+          '',
+          '- **Formulário de cadastro comum.** Uma lista aberta de 12 especialidades entre dois campos de texto quebra o ritmo de leitura da coluna e empurra os campos seguintes para fora da dobra. Use `Moléculas/Campos/Select` ou `Moléculas/Campos/MultiSelect`.',
+          '- **Duas a cinco opções.** A caixa com borda e rolagem custa mais atenção que as opções soltas. Use `Moléculas/Escolha/RadioGroup` para escolha única e `Átomos/Escolha/Checkbox` em grupo para múltipla.',
+          '- **Catálogo longo.** Mesmo com `comFiltro`, rolar milhares de linhas dentro de 220px é penoso. Use `Moléculas/Campos/AutoComplete`.',
+          '- **Opções hierárquicas.** O `grupo` deste componente entrega um nível de cabeçalho e nada além. Para secretaria, departamento e setor, use `Moléculas/Campos/CascadeSelect` ou `Moléculas/Campos/TreeSelect`.',
+          '- **Mover itens entre duas listas ou ordenar o que foi escolhido.** Use `Organismos/Coleções/PickList` para transferência e `Organismos/Coleções/OrderList` para ordem.',
+          '- **Listar registros para consulta, sem escolher nada.** Um `role="listbox"` sobre conteúdo que ninguém seleciona faz o leitor de tela anunciar opções inexistentes. Use `Organismos/Tabelas/Table` ou `Organismos/Coleções/DataView`.',
+          '',
+          'Sobre acessibilidade: o foco fica no container da lista, com setas, Home, End, Enter e espaço operando a opção ativa. Isso mantém um único ponto de parada no Tab, o que ajuda em formulário longo, e exige que o rótulo acima descreva o conjunto, porque é ele que o leitor de tela anuncia ao entrar na região.',
+        ].join('\n'),
       },
     },
   },

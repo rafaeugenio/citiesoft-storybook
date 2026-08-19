@@ -1,5 +1,5 @@
 import { useId, type CSSProperties, type ReactNode } from 'react';
-import { PALETA_OFICIAL } from '../../organisms/Chart/Chart';
+import { PALETA_OFICIAL } from '../../../tokens/paletas';
 import './MeterGroup.css';
 
 /**
@@ -11,7 +11,7 @@ import './MeterGroup.css';
  * part `metergroup-indicator` (`Type`: Marker · Icon).
  *
  * Cor: as faixas são séries categóricas, então a cor vem da paleta categórica já
- * definida em `Chart.tsx`, nunca de valor solto. O default é a `PALETA_OFICIAL` da
+ * definida em `tokens/paletas.ts`, nunca de valor solto. O default é a `PALETA_OFICIAL` da
  * spec; `PALETA_PROPOSTA` fica disponível como opção porque a oficial reprova a
  * validação de daltonismo (ver descrição da story).
  */

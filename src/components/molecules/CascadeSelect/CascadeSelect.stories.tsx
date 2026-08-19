@@ -87,8 +87,22 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Escolha única dentro de uma hierarquia, com o painel em colunas: o item ativo de um nível define o conteúdo do nível seguinte, até 3 níveis. Origem: Figma CitieOne, página 6738:22639 (`cascadeselect` State: Idle | Open | Hover e Hierarchy: 1 | 2 | 3; `cascadeselect-input` State, Invalid, Disabled, Filled, Size, Show Label, Show Helper, Show Clear Icon; `cascadeselect-option` State: Default | Hover / Focus | Selected e Group). O campo mostra o caminho inteiro, porque a folha isolada ("Regulação") não diz de qual secretaria veio. Teclado: seta direita entra no nível seguinte, seta esquerda volta, Escape fecha e devolve o foco ao gatilho. Equivalente PrimeNG: `p-cascadeselect`.',
+          '',
+          '**CascadeSelect ou TreeSelect?** Os dois resolvem hierarquia, e a diferença decide o registro que vai para o processo. **Neste componente só a folha é selecionável:** acionar um item que tem filhos abre o nível seguinte e nunca grava valor. Use o CascadeSelect quando a profundidade for previsível (até 3 níveis) e a resposta válida for sempre o último nível, como Estado, Município e Unidade de saúde. Use `Moléculas/Campos/TreeSelect` quando a profundidade variar entre os ramos ou quando um nó intermediário for resposta válida por si só, como lotar um servidor diretamente na secretaria sem passar por departamento.',
+          '',
+          '**Quando não usar:**',
+          '',
+          '- **Lista plana.** Sem filhos, o painel vira uma coluna única com o custo visual de três. Use `Moléculas/Campos/Select`.',
+          '- **Hierarquia com ramos de profundidades diferentes.** No exemplo desta página, "Gabinete do Prefeito" não tem filhos e é selecionável no primeiro nível, enquanto "Secretaria de Saúde" só grava valor no terceiro. Esse comportamento assimétrico é aceitável em lista curta e conhecida, e vira armadilha em estrutura grande, onde o servidor não sabe se já pode parar. Nesse caso, `Moléculas/Campos/TreeSelect`.',
+          '- **Mais de um valor.** O componente grava um caminho por vez. Use `Moléculas/Campos/TreeSelect` no modo `checkbox` ou `Moléculas/Campos/MultiSelect` se a hierarquia puder ser achatada.',
+          '- **Muitos itens por nível.** As colunas não têm filtro, então uma coluna com 200 municípios exige rolagem dentro do painel. Use `Moléculas/Campos/AutoComplete`, com o caminho completo no texto de cada sugestão.',
+          '- **A pessoa já sabe o nome da folha.** Quem digita "Hospital Ophir Loyola" não precisa percorrer Pará e Belém antes. Ofereça `Moléculas/Campos/AutoComplete` como caminho principal e deixe o CascadeSelect para quem está explorando a estrutura.',
+          '- **Navegar entre telas do sistema.** Painel em colunas com submenus é `Organismos/Menus/TieredMenu` ou `Organismos/Menus/MegaMenu`. O CascadeSelect é campo de formulário e grava dado.',
+          '',
+          'Uma restrição de espaço a considerar antes de escolher: cada coluna do painel tem no mínimo 180px e elas ficam lado a lado, então três níveis abertos pedem perto de 570px de largura livre a partir da borda esquerda do campo. Em drawer estreito ou em coluna lateral de formulário, o `TreeSelect`, que cresce para baixo, se comporta melhor.',
+        ].join('\n'),
       },
     },
   },

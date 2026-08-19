@@ -9,8 +9,29 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Divide a área em dois painéis redimensionáveis por uma barra. Origem: Figma CitieOne, página ❖ Splitter (variantes de Layout Horizontal, Vertical e Nested, mais a peça splitter-handle com Direction e Focus). O Nested do arquivo é um Splitter dentro de um painel, então aqui sai por composição. A barra é `separator` focalizável: arrasto pelo ponteiro, setas e PageUp/PageDown pelo passo, Home e End nos limites. Cores e medidas seguem os tokens Citiesoft do vault, não o azul padrão do PrimeOne. Equivalente PrimeNG: `p-splitter`.',
+          '',
+          '**O padrão do DS Citiesoft para dividir a tela é o grid fixo de colunas.** O Splitter é',
+          'exceção, reservada ao caso em que o servidor precisa comparar dois conteúdos ao mesmo',
+          'tempo e a proporção certa entre eles muda de processo para processo: detalhe do processo',
+          'ao lado do histórico, formulário ao lado do documento digitalizado que está sendo',
+          'conferido. Quando a proporção é sempre a mesma, o grid entrega o mesmo resultado sem',
+          'gastar uma interação de arrasto.',
+          '',
+          '**Quando não usar:** tela usada de forma esporádica por quem não decora a interface (a',
+          'barra parece decoração, o servidor nunca descobre que ela arrasta e trabalha a vida',
+          'inteira na proporção inicial); painel lateral de navegação ou de filtros, onde o certo é',
+          'o `Sidebar` ou o `FilterBar`; conteúdo secundário que aparece sob demanda e some depois,',
+          'caso do `Drawer` e do `Dialog`; seções empilhadas que o usuário abre e fecha uma de cada',
+          'vez, papel do `Accordion` ou do `Panel`; e tela abaixo de 1024px, porque o componente',
+          'não quebra os painéis em pilha por conta própria e cada lado fica com metade de uma',
+          'largura que já era estreita, truncando rótulo e valor.',
+          '',
+          'Limite real da implementação: a proporção vive no estado do componente e se perde ao',
+          'recarregar a página. Se a divisão precisa ser lembrada entre sessões, guarde o valor',
+          'devolvido por `onRedimensionar` na preferência do usuário.',
+        ].join('\n'),
       },
     },
   },

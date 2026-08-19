@@ -20,7 +20,7 @@ const meta = {
           '**Quando usar este e não as composições:** o bloco é a peça crua, para montar um esqueleto',
           'sob medida de uma tela que ainda não tem padrão pronto, ou para preencher um único vão',
           '(um título, um avatar, um card). Quando o padrão já existe — parágrafo de texto, lista de',
-          'registros, formulário — use `Moléculas/Feedback/Composições de Skeleton`, que já resolve',
+          'registros, formulário — use as composições `Moléculas/Feedback/SkeletonParagrafo`, `SkeletonLista` e `SkeletonFormulario`, que já resolve',
           'contagem de linhas, ritmo e a largura reduzida da última linha.',
         ].join('\n'),
       },

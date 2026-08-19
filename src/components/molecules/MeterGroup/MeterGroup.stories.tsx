@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
-import { PALETA_PROPOSTA } from '../../organisms/Chart/Chart';
+import { PALETA_PROPOSTA } from '../../../tokens/paletas';
 import { MeterGroup } from './MeterGroup';
 
 const PROCESSOS = [
@@ -63,7 +63,7 @@ const meta = {
           '`metergroup-indicator` (`Type`: Marker · Icon).',
           '',
           '**Cor.** As faixas são séries categóricas, então a cor sai da paleta categórica já',
-          'definida em `Chart.tsx`, nunca de valor inventado. O default é a `PALETA_OFICIAL` da',
+          'definida em `tokens/paletas.ts`, nunca de valor inventado. O default é a `PALETA_OFICIAL` da',
           'spec `charts-data-viz.md`, mas o achado registrado no Chart vale aqui igual: **a paleta',
           'oficial reprova a validação de daltonismo** (as faixas 3 e 4, verde `#22c55e` e âmbar',
           '`#f59e0b`, colapsam sob deuteranopia e protanopia, e o par 1/2 fica ambíguo sob',

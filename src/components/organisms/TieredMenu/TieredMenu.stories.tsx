@@ -87,8 +87,31 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Menu com submenus em cascata, um painel por nível. Origem: Figma CitieOne, página ❖ TieredMenu (`tieredmenu` com Level 0 | 1 | 2, `tieredmenu-item` com State Idle | Hover | Focus | Active mais Show Icon e Show Submenu Icon, `tieredmenu-popup` com Menu True | False e `tieredmenu-separator`). Equivalente PrimeNG: `p-tieredMenu`. Cada nível é um `role="menu"` próprio: seta direita abre o submenu e foca o primeiro item, seta esquerda volta ao item pai, cima e baixo circulam no nível, Escape fecha tudo.',
+          '',
+          '**O padrão do DS Citiesoft para lista de comandos é o `Menu`, de um nível só.** O',
+          'TieredMenu é exceção, para quando os comandos têm de fato uma hierarquia de duas ou três',
+          'camadas que o usuário reconhece do próprio domínio: relatórios agrupados por assunto e',
+          'depois por competência, por exemplo. Cada nível a mais é um painel que se abre por cima',
+          'do anterior e cobre a tela atrás.',
+          '',
+          '**Quando não usar:** menos de sete comandos ou um nível só, caso do `Menu`; navegação',
+          'permanente entre módulos do sistema, papel do `Menubar` na horizontal e do `PanelMenu`',
+          'na coluna lateral, que mantém o caminho aberto e visível enquanto o servidor trabalha;',
+          'catálogo largo de destinos que precisa ser visto de uma vez, com colunas e títulos de',
+          'seção, papel do `MegaMenu`; ações sobre a linha ou o registro sob o cursor, papel do',
+          '`ContextMenu`; escolha de um valor que vai ser gravado no processo, que é campo de',
+          'formulário e pede `Select`, `CascadeSelect` ou `TreeSelect`, porque menu não guarda',
+          'seleção nem mostra o que está escolhido; e passo a passo de um processo, papel do',
+          '`Stepper`.',
+          '',
+          'Peso B2G: em cascata, o rótulo do nível anterior fica coberto assim que o submenu abre,',
+          'então quem usa a tela de forma esporádica perde a referência de onde está. Acima de três',
+          'níveis, prefira uma página de índice de relatórios com títulos de seção, que fica',
+          'inteira na tela, é lida por leitor de tela na ordem natural e sobrevive ao zoom de 200%',
+          'exigido pelo e-MAG e pela WCAG 2.2 AA.',
+        ].join('\n'),
       },
     },
   },

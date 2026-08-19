@@ -10,8 +10,21 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Estado vazio. Spec: `03-components/empty-state.md` v2.0.0. Regra central: primeiro uso e busca sem resultado nunca compartilham conteúdo, porque a causa é diferente.',
+          '',
+          '**Quando usar:** a região que deveria conter uma coleção ficou sem nenhum item, e a pessoa precisa entender a causa e o próximo passo. As quatro situações (`primeiro-uso`, `busca-sem-resultado`, `erro`, `permissao`) existem porque cada causa pede um texto e uma ação diferentes.',
+          '',
+          '**Quando não usar:**',
+          '',
+          '- **Enquanto os dados carregam.** O estado vazio afirma que não há nada, e durante o carregamento essa afirmação é falsa: o servidor vê "Nenhum lançamento registrado ainda" e sai da tela um instante antes da lista aparecer. Use `Átomos/Feedback/Skeleton` no formato do conteúdo esperado.',
+          '- **Um campo do formulário ficou sem valor.** Isso é mensagem de erro do próprio campo, entregue pelo `error` do `Moléculas/Campos/Input` e dos demais campos.',
+          '- **A operação falhou sem esvaziar a tela.** Quando a lista continua visível e o que quebrou foi a ação (salvar, enviar, aprovar), o aviso pertence a `Moléculas/Feedback/Message` ancorado à seção, ou a `Moléculas/Feedback/Toast` se for efêmero. O `situacao="erro"` daqui cobre o caso em que a coleção inteira não carregou.',
+          '- **Uma célula ou um campo de detalhe está sem preenchimento.** Um bloco ilustrado dentro de uma linha de tabela ou de uma ficha estoura a densidade. Use um traço curto ou "Não informado" no próprio lugar do valor.',
+          '- **Publicidade de recurso não contratado.** O estado vazio explica a ausência de dado. Convite para adquirir módulo é conteúdo de outra natureza e não deve ocupar esse espaço.',
+          '',
+          'Dois cuidados de implementação: o bloco tem `role="status"` com `aria-live="polite"`, então ele é anunciado quando aparece depois de um carregamento, e no tamanho `lg` o botão primário recebe foco automaticamente. Por causa disso, use `size="lg"` apenas quando o estado vazio ocupa a página inteira; dentro de um card ou de uma coluna lateral, prefira `sm` ou `md`, para não roubar o foco de outra área da tela.',
+        ].join('\n'),
       },
     },
   },

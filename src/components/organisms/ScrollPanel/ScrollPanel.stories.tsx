@@ -98,8 +98,23 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'ScrollPanel. Página do Figma CitieOne `6738:49737`. Variantes do arquivo: `scrollpanel` Type = Default | Custom Bar (aqui `variante` padrão/personalizada) e `scrollpanel-bar` Focus = False | True (estado de foco da região). Equivalente PrimeNG: `p-scrollpanel`. A rolagem é a nativa do navegador, só estilizada por `scrollbar-width` e `::-webkit-scrollbar`, para preservar teclado, toque e leitor de tela.',
+          '',
+          '**Quando usar:** bloco de altura conhecida e conteúdo naturalmente longo dentro de uma tela que',
+          'já tem outra coisa embaixo: histórico de tramitação de um processo, log de alterações, lista',
+          'de anexos dentro de um `Dialog` ou `Drawer`, texto de termo que precisa ficar ao lado do',
+          'formulário de aceite.',
+          '',
+          '**Quando não usar:** como saída para conteúdo que não coube na tela, porque a rolagem interna',
+          'esconde o que existe e passa a competir com a rolagem da página, e o servidor esporádico',
+          'simplesmente não descobre que havia mais coisa; listagem de registros, que pede `Table` com',
+          '`Pagination` ou `DataView`, onde a quantidade fica declarada e o resultado é linkável e',
+          'imprimível; formulário inteiro, já que a altura fixa costuma cortar o último campo e empurrar',
+          'o botão de salvar para fora do campo de visão; e conteúdo curto, em que o painel só desenha',
+          'uma moldura sem nada para rolar. Em relatório destinado à impressão, lembre que só o trecho',
+          'visível é capturado.',
+        ].join('\n'),
       },
     },
   },

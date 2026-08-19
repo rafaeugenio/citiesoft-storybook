@@ -1,0 +1,230 @@
+revisor: Atomic Design e arquitetura de Design System
+artefato_avaliado: /Users/rafaeleugenio/Documents/Cursor/Repositorios/citiesoft-storybook + build em http://localhost:6100 (index.json com 771 entradas, 676 stories)
+veredito: REPROVADO
+nota_media_0_a_4: 2.0
+criterios_criticos:
+  - criterio: Classificação atômica defensável contra o código
+    nota_0_a_4: 2
+    evidencia: >-
+      O grafo de composição real (36 arestas extraídas de src/components/**/*.tsx) sustenta a maior
+      parte das decisões, mas quatro componentes estão classificados num nível cuja pasta eles não
+      habitam: RadioGroup (molecula), AvatarGroup (molecula) e SkeletonComposicoes (molecula) vivem
+      em src/components/atoms/, e Sidebar (organismo) vive em src/components/molecules/Navigation/.
+      Isso contradiz o princípio declarado em classification.md:100-102 ("Se amanhã um átomo virar
+      molécula, o arquivo muda de pasta"). Pior: Sparkline não existe em classificacao.json
+      (grep -c Sparkline = 0), é publicado como "Átomos/Gráficos/Sparkline" e está definido dentro do
+      arquivo do organismo, em src/components/organisms/Chart/Chart.tsx:419. O átomo mora dentro do
+      organismo. Por isso a contagem de classification.md:22 ("18 átomos") diverge do build, que
+      publica 19 títulos de átomo.
+  - criterio: Cadeia de composição visível e verificável
+    nota_0_a_4: 1
+    evidencia: >-
+      .storybook/docs/VisaoGeral.mdx:80-89, sob o título "O mesmo exemplo, percorrido de verdade",
+      afirma que "O Search combina Button, campo e mensagem de contagem" e que "A Table usa Search,
+      Checkbox, StatusIndicator e Pagination". O código diz outra coisa:
+      src/components/molecules/Search/Search.tsx importa apenas Spinner (nenhum Button), e
+      src/components/organisms/Table/Table.tsx:1-4 importa apenas Checkbox e Skeleton — grep de
+      "Pagination|Search|StatusIndicator" em Table.tsx retorna 0 ocorrências. Três das quatro
+      dependências alegadas no elo central da narrativa são falsas, num parágrafo que se apresenta
+      explicitamente como percorrido de verdade.
+  - criterio: Reuso real dos componentes em Templates e Páginas
+    nota_0_a_4: 4
+    evidencia: >-
+      Nenhum caso de recriação. Todos os imports de .storybook/templates e .storybook/pages vêm do
+      ponto único de exportação (11 de '../../../src' e 5 de '../../src'); não há um único <button>,
+      <input>, <select> ou <table> escrito à mão nas duas pastas. Listagem.tsx e Detalhe.tsx são
+      shells puramente de região, com as zonas numeradas e a origem na spec citadas no cabeçalho;
+      Wizard.tsx:2 consome Stepper, Button e ProgressBar reais e ainda impõe uma regra da spec sobre
+      eles (Wizard.tsx:111-115, apaga o sublabel de etapa pendente para que a página não consiga
+      violá-la).
+  - criterio: Disciplina de token
+    nota_0_a_4: 2
+    evidencia: >-
+      src/tokens/tokens.css:9 grava a regra do DS: "componente consome token semântico por nome,
+      nunca valor literal". O Button, o átomo carro-chefe, a viola doze vezes:
+      Button.css:131,132,136,137 usam #15803d e #166534 onde existe --citie-success-strong;
+      :149,150,154,155 usam #b91c1c e #991b1b onde existe --citie-danger-strong; :167,168,172,173
+      usam #b45309 e #92400e onde existe --citie-warning-strong. Como [data-theme='dark']
+      (tokens.css:183-190) redefine justamente esses tokens, o hover das variantes success, danger e
+      warn é o único estado do Button que não acompanha o tema escuro. Além disso não existe token de
+      scrim: Overlay.css e BlockUI.css repetem rgba(16, 24, 40, 0.45) e o template
+      .storybook/templates/AppShell/AppShell.css:238 inventa rgb(0 0 0 / 45%), uma cor de véu
+      diferente da do sistema na mesma tela.
+  - criterio: Taxonomia das famílias
+    nota_0_a_4: 2
+    evidencia: >-
+      "Moléculas/Navegação de dados" existe só para hospedar Pagination, ao lado de
+      "Moléculas/Navegação" (Breadcrumb, Stepper) — duas famílias no mesmo nível separadas por duas
+      palavras, sem critério que as distinga de fato. E "Moléculas/Feedback/Composições de Skeleton"
+      não é nome de componente, é descrição de um agrupamento: o arquivo
+      src/components/atoms/Skeleton/SkeletonComposicoes.stories.tsx documenta três componentes
+      (SkeletonParagrafo, SkeletonLista, SkeletonFormulario) sob um título só, com
+      component: SkeletonParagrafo, então a tabela de props do autodocs descreve apenas um dos três.
+      É exatamente o agrupamento que o requisito 3 mandou desmembrar, sobrevivendo na entrega final.
+  - criterio: Rastreabilidade dos 71 títulos legados
+    nota_0_a_4: 2
+    evidencia: >-
+      Dos 89 destinos de legacy-story-map.json conferidos contra os títulos reais do /index.json, 88
+      existem e 1 é inventado: "Moléculas/Feedback/SkeletonComposicoes" não existe no catálogo (o
+      título publicado é "Moléculas/Feedback/Composições de Skeleton"). E Sparkline não aparece uma
+      única vez no mapa (grep -c = 0), embora classification.md:76-77 afirme que "Dados/Gráficos
+      documentava quatro componentes" e a entrada correspondente do mapa liste só três destinos.
+      Ou seja: a afirmação de classification.md:94, "hoje são zero órfãos e zero destinos inventados",
+      é falsa nas duas metades, e a verificação de cobertura descrita evidentemente não roda contra o
+      índice publicado.
+  - criterio: Gates de qualidade (requisito 7)
+    nota_0_a_4: 1
+    evidencia: >-
+      ./node_modules/.bin/tsc -b --force passa (exit 0). npm run lint falha: exit 1, com
+      "src/components/organisms/Panel/Panel.stories.tsx:169:33: error react-hooks(rules-of-hooks):
+      React Hook useState is called in function Anonymous...". O lint é um dos quatro comandos de
+      verificação que o próprio pacote lista, e ele está vermelho na entrega.
+comparacao_com_referencias:
+  resultado: PERDE
+  evidencia: >-
+    Contra GOV.UK, no aspecto "quando usar e quando não usar": VisaoGeral.mdx:99 promete isso como o
+    primeiro item de cada página de componente, "a parte que evita o erro mais caro". Na prática,
+    apenas 7 dos 90 arquivos de story de componente contêm a orientação de quando não usar (grep -l
+    "não usar"). No GOV.UK, "When to use this component" e "When not to use this component" são
+    seções obrigatórias em toda página do catálogo, sem exceção — 100% contra 7,8%. Contra IBM
+    Carbon, no aspecto ligação fundação ↔ componente: Carbon publica a tabela de token por elemento e
+    por estado de cada componente, e nenhum estado escapa do token; aqui o átomo mais usado do
+    sistema tem três variantes cujo hover é hex literal (Button.css:131-173), então a ligação
+    fundação↔componente que a Visão geral vende em VisaoGeral.mdx:91 ("Trocar o azul na Fundação muda
+    os seis níveis de uma vez") não se sustenta para as cores de feedback. Contra Polaris, no aspecto
+    documentação de API, o resultado empata: a tabela de props vem do TypeScript e as props têm
+    comentário de uso real (ex.: Wizard.tsx:51 "Verbo da ação: Avançar nas etapas, Enviar solicitação
+    no resumo"), que é o nível de microcopy documentada que o Polaris pratica.
+achados:
+  - severidade: BLOQUEADOR
+    descricao: >-
+      A narrativa central da Visão geral, apresentada sob a promessa explícita de ser o exemplo
+      "percorrido de verdade", descreve dependências que não existem no código. Search não usa
+      Button; Table não usa Search, StatusIndicator nem Pagination.
+    evidencia: >-
+      .storybook/docs/VisaoGeral.mdx:82-89 contra src/components/molecules/Search/Search.tsx:1-3 e
+      src/components/organisms/Table/Table.tsx:1-4
+    correcao_exigida: >-
+      O parágrafo deve descrever a cadeia real de imports, ou os componentes devem passar a compor o
+      que o texto afirma. Um catálogo que documenta composição não pode errar a própria composição na
+      sua página de abertura.
+  - severidade: BLOQUEADOR
+    descricao: >-
+      Sparkline é publicado no catálogo como átomo mas não existe na fonte de verdade da
+      classificação nem no mapa de rastreabilidade, e sua implementação vive dentro do arquivo do
+      organismo Chart. A afirmação documentada de "zero órfãos e zero destinos inventados" é falsa.
+    evidencia: >-
+      grep -c Sparkline em docs/atomic-design/classificacao.json = 0 e em
+      docs/atomic-design/legacy-story-map.json = 0; definição em
+      src/components/organisms/Chart/Chart.tsx:419; título publicado "Átomos/Gráficos/Sparkline" no
+      /index.json; contradição com classification.md:22 ("18 átomos", contra 19 títulos de átomo no
+      build) e classification.md:94.
+    correcao_exigida: >-
+      Sparkline entra em classificacao.json e em legacy-story-map.json como destino do agrupamento
+      "Dados/Gráficos" (que passa a ter os quatro destinos que a prosa alega), muda para
+      src/components/atoms/, e a contagem de classification.md é corrigida. A checagem de cobertura
+      passa a rodar contra os títulos do /index.json publicado, não contra uma lista paralela.
+  - severidade: MAIOR
+    descricao: >-
+      Destino inventado no mapa legado: "Moléculas/Feedback/SkeletonComposicoes" não existe no
+      catálogo publicado.
+    evidencia: >-
+      docs/atomic-design/legacy-story-map.json, entrada "Feedback/Skeleton", destino 2; título real
+      no /index.json é "Moléculas/Feedback/Composições de Skeleton".
+    correcao_exigida: Destino batendo com o título publicado, verificado por checagem automática contra /index.json.
+  - severidade: MAIOR
+    descricao: >-
+      O Button hardcoda doze valores de cor que já existem como token semântico, quebrando o tema
+      escuro exatamente nos estados hover e active das variantes success, danger e warn, e violando a
+      regra escrita no topo do próprio arquivo de tokens.
+    evidencia: >-
+      src/components/atoms/Button/Button.css:131,132,136,137,149,150,154,155,167,168,172,173 contra
+      src/tokens/tokens.css:9 e :183-190
+    correcao_exigida: >-
+      Substituir por var(--citie-success-strong), var(--citie-danger-strong),
+      var(--citie-warning-strong) e criar o token que falta para o estado active de cada uma. Nenhum
+      literal de cor em CSS de componente.
+  - severidade: MAIOR
+    descricao: >-
+      Agrupamento sobrevivente contra o requisito 3: três moléculas distintas documentadas sob um
+      único título descritivo, com a tabela de props gerada para apenas uma delas.
+    evidencia: >-
+      src/components/atoms/Skeleton/SkeletonComposicoes.stories.tsx:11-12 (title "Moléculas/Feedback/
+      Composições de Skeleton", component SkeletonParagrafo) e as três stories Paragrafo, Lista e
+      Formulario nas linhas 44, 70 e 79.
+    correcao_exigida: >-
+      Três títulos, um por componente, cada um com o seu component: correto, na família Feedback.
+  - severidade: MAIOR
+    descricao: >-
+      npm run lint falha na entrega, com erro (não aviso) de regra de hooks.
+    evidencia: "npm run lint → exit 1; src/components/organisms/Panel/Panel.stories.tsx:169:33 error react-hooks(rules-of-hooks)"
+    correcao_exigida: Lint verde. Se o render inline precisa de estado, extrair para um componente nomeado com inicial maiúscula.
+  - severidade: MAIOR
+    descricao: >-
+      Quatro componentes são classificados num nível e implementados na pasta de outro, contradizendo
+      o princípio de organização que a própria documentação usa como argumento de estabilidade.
+    evidencia: >-
+      RadioGroup, AvatarGroup e SkeletonComposicoes em src/components/atoms/ com nivel "molecula";
+      Sidebar em src/components/molecules/Navigation/ com nivel "organismo"
+      (docs/atomic-design/classificacao.json vs. layout real de src/components/).
+    correcao_exigida: >-
+      Ou os arquivos multi-export são divididos para que cada componente viva na pasta do seu nível,
+      ou classification.md abandona a promessa de classification.md:100-102 e documenta explicitamente
+      que a pasta segue o arquivo de origem, não o nível.
+  - severidade: MENOR
+    descricao: >-
+      Não existe token de véu (scrim), e o template inventa um valor divergente do que o sistema usa.
+    evidencia: >-
+      rgba(16, 24, 40, 0.45) repetido em src/components/organisms/Overlay/Overlay.css e
+      src/components/organisms/BlockUI/BlockUI.css, contra rgb(0 0 0 / 45%) em
+      .storybook/templates/AppShell/AppShell.css:238
+    correcao_exigida: Um --citie-scrim em tokens.css, com valor claro e escuro, consumido pelos três.
+  - severidade: MENOR
+    descricao: >-
+      Duas famílias quase homônimas no mesmo nível, uma delas criada para um item só.
+    evidencia: '"Moléculas/Navegação de dados" (só Pagination) ao lado de "Moléculas/Navegação" (Breadcrumb, Stepper), no /index.json'
+    correcao_exigida: Pagination na família Navegação, ou um critério escrito que justifique a separação.
+  - severidade: MENOR
+    descricao: >-
+      Avatar, classificado como átomo sob o critério "não depende de outro componente do catálogo",
+      importa o tipo e a folha de estilo inteira de Badge; Image importa e renderiza Skeleton no
+      estado de carregamento, que não é slot opcional.
+    evidencia: src/components/atoms/Avatar/Avatar.tsx:2-3 e src/components/atoms/Image/Image.tsx:2,126-130
+    correcao_exigida: >-
+      Ou o critério de átomo em classification.md:16 admite explicitamente dependência entre átomos,
+      ou os dois sobem de nível — hoje o texto do critério exclui o que o código faz.
+  - severidade: POLIMENTO
+    descricao: >-
+      A paleta categórica de gráfico é exportada de dentro do organismo Chart, criando uma aresta de
+      import molécula → organismo que qualquer auditoria de grafo vai apontar.
+    evidencia: src/components/molecules/MeterGroup/MeterGroup.tsx:2 importando PALETA_OFICIAL de src/components/organisms/Chart/Chart.tsx:6
+    correcao_exigida: >-
+      A paleta é fundação. Move para src/tokens ou src/fundacoes e as duas peças passam a consumir de
+      lá. Isso também elimina dois dos avisos only-export-components do lint.
+qualidades_surpreendentes:
+  - >-
+    Os templates são shells de região honestos, não componentes disfarçados. Listagem.tsx tem 99
+    linhas, zero import de componente e documenta as seis zonas com a origem na spec
+    (Listagem.tsx:7 cita "09-templates/tela-listagem.md v1.0.0"), incluindo a regra de que a barra
+    de ações em massa substitui as zonas 2 e 3 em vez de coexistir (Listagem.tsx:79-83). Uma
+    reorganização com pressa quase sempre produz templates que embutem Table e Pagination; esse
+    resistiu.
+  - >-
+    O template impõe regra de spec sobre a página, em vez de confiar nela: Wizard.tsx:111-115 apaga
+    o sublabel de toda etapa pendente antes de passar ao Stepper, com o comentário "o template apaga
+    o sublabel das pendentes para que a página não consiga violá-la". Isso é governança de design
+    executável, não documentada — o tipo de coisa que Carbon descreve em prosa e não consegue fazer
+    valer em código.
+motivo_do_veredito: >-
+  O trabalho de arquitetura é real e a parte mais difícil saiu bem: templates e páginas reusam
+  exclusivamente o ponto único de exportação, sem uma linha de componente recriado, e o
+  desmembramento redistribuiu 584 stories em 89 destinos sem perder documentação. O que reprova é a
+  camada de verdade. A página de abertura afirma uma cadeia de composição que o código desmente em
+  três dos quatro elos do exemplo central; a fonte de verdade da classificação não contém um dos
+  componentes publicados, que ainda por cima é um átomo morando dentro de um organismo; o mapa de
+  rastreabilidade tem um destino inexistente e a documentação declara "zero órfãos e zero destinos
+  inventados" com os dois falsos; o átomo mais usado do sistema quebra a regra de token escrita no
+  cabeçalho do próprio arquivo de tokens e perde o tema escuro em três variantes; e o lint está
+  vermelho na entrega. Um catálogo de design system vale pela confiança de que o que ele afirma é
+  verificável — aqui, cada afirmação que eu conferi contra o código tinha chance real de estar
+  errada.

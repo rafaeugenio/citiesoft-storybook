@@ -1,0 +1,88 @@
+/**
+ * Link de texto.
+ *
+ * Todo valor vem de token. O defeito que originou este componente foi
+ * justamente a ausência dele: sem átomo, o `<a>` cru herdava o azul default do
+ * navegador, que não pertence à marca e reprova contraste no tema escuro.
+ */
+
+.citie-link {
+  color: var(--citie-brand-primary);
+  /* Sublinhado permanente: cor sozinha não identifica link (WCAG 1.4.1). */
+  text-decoration: underline;
+  /* Afasta o traço das descidentes, para o sublinhado não cortar o "ç" e o "g". */
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+  border-radius: var(--citie-radius-sm);
+  /*
+   * ACHADO ABERTO DO DS: não existe token de motion. O `120ms ease-out` abaixo
+   * repete o literal do Button, que é o idioma atual da casa, em vez de inventar
+   * um token só para este componente. Registrado como achado nº 13.
+   */
+  transition:
+    color 120ms ease-out,
+    text-decoration-thickness 120ms ease-out;
+}
+
+.citie-link:hover {
+  color: var(--citie-brand-hover);
+  text-decoration-thickness: 2px;
+}
+
+.citie-link:active {
+  color: var(--citie-brand-hover);
+}
+
+.citie-link:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+/* ---------- Papel ---------- */
+
+/*
+ * Identificador de registro numa listagem: número de processo, matrícula,
+ * protocolo. É o alvo principal de navegação da tela, então ganha peso, e o
+ * tabular-nums mantém os dígitos alinhados de uma linha para a outra, que é o
+ * que permite varrer a coluna com o olho.
+ */
+.citie-link--identificador {
+  font-weight: var(--citie-font-weight-action);
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Link secundário dentro de área densa, onde vários links competem entre si.
+ * Continua sublinhado e continua usando cor de marca: o que muda é o peso.
+ */
+.citie-link--discreto {
+  font-size: var(--citie-font-size-body-sm);
+}
+
+/* ---------- Nova aba ---------- */
+
+.citie-link__icone-externo {
+  display: inline-block;
+  margin-inline-start: 0.25em;
+  vertical-align: -0.05em;
+}
+
+.citie-link__apenas-leitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Preferência de movimento ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-link {
+    transition: none;
+  }
+}

@@ -26,8 +26,22 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Lista reordenável por botões de mover (para cima, para o topo, para baixo, para o fim). Origem: Figma CitieOne, página ❖ OrderList, com um componente `orderlist` sem eixos de variante, composto por uma coluna `controls` com quatro botões `Severity: Secondary` + `Icon Only: True` (angle-up, angle-double-up, angle-down, angle-double-down) ao lado de uma instância de `listbox`, com exemplos em Mode Light e Mode Dark. Equivalente PrimeNG: `p-orderList`.\n\nOs botões são o caminho principal de reordenação, não o secundário: arrastar sozinho exclui quem usa teclado ou leitor de tela. Cada botão nomeia o item que move e todo movimento é anunciado em região `aria-live="polite"` com a nova posição. Pelo teclado, as setas movem a seleção e `Alt` + setas movem o item; `Alt + Home` e `Alt + End` levam ao início e ao fim.',
+          '',
+          '**Quando usar:** a ordem em si é o dado que o sistema guarda e alguém decide manualmente, como',
+          'a sequência de etapas de um fluxo de aprovação ou a ordem de exibição de itens em um edital.',
+          '',
+          '**Quando não usar:** ordem que sai de um campo do próprio registro (data de protocolo,',
+          'prioridade, nome), porque a posição arrastada à mão não sobrevive à próxima consulta e cria',
+          'duas verdades sobre a mesma listagem (use `Table` com ordenação por coluna); mover itens entre',
+          'dois conjuntos, como atribuir perfis a um servidor, que é do `PickList`; escolher vários itens',
+          'sem que a sequência signifique nada, que é `MultiSelect` ou `Listbox`; e listas com dezenas de',
+          'itens, onde levar um item da posição 40 para perto do topo exige repetir o clique dezenas de',
+          'vezes e o item sai da área visível durante o percurso. Nesse volume, prefira um campo de',
+          'posição digitável em `Table`. Se a lista precisa também de filtro ou busca, o OrderList não',
+          'oferece nenhum dos dois: reordenar um recorte filtrado deixaria a ordem final ambígua.',
+        ].join('\n'),
       },
     },
   },

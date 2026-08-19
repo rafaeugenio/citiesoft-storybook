@@ -1,0 +1,13 @@
+/* Entre campos o respiro é maior; dentro do campo, rótulo e caixa ficam juntos. */
+
+.citie-skeleton-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-4);
+}
+
+.citie-skeleton-formulario__campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-2);
+}

@@ -9,8 +9,21 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
+        component: [
           'Busca de listagem e busca global. Spec: `03-components/search.md` v2.0.0. Regra dura: o placeholder informa o escopo, e "sem resultado" nunca se confunde com "vazio estrutural".',
+          '',
+          '**Quando usar:** reduzir um conjunto já exibido, ou alcançar um registro dentro de um escopo declarado. O componente é uma ferramenta de navegação e não grava nada: o termo digitado desaparece quando a pessoa sai da tela.',
+          '',
+          '**Quando não usar:**',
+          '',
+          '- **Coletar um valor de formulário.** O Search não tem `<label>` ligado ao campo (o nome acessível vem de `aria-label`), não tem estado obrigatório, não participa do envio do formulário e não guarda o que foi digitado. Para escolher um registro e gravá-lo, use `Moléculas/Campos/AutoComplete`, que devolve a opção escolhida e mantém rótulo, ajuda e erro pelo `FieldWrapper`.',
+          '- **O filtro tem critérios estruturados.** Período, competência, situação e órgão não cabem numa caixa de texto, e forçá-los ali faz o servidor decorar sintaxe. Use `Organismos/Busca/FilterBar`, que expõe cada critério e mostra os aplicados como chips.',
+          '- **Poucos itens, todos visíveis.** Em uma lista de doze linhas, a caixa de busca ocupa altura e ainda cobra do usuário formular o termo. Deixe a lista.',
+          '- **A escolha vem de uma lista fechada e conhecida.** Para município, órgão ou tipo de processo, `Moléculas/Campos/Select` e `Moléculas/Campos/AutoComplete` protegem contra grafia divergente, que a busca livre não faz.',
+          '- **Substituir o estado vazio.** A mensagem interna de "nenhum resultado" atende o caso de busca dentro do próprio bloco. Quando a tela inteira fica sem conteúdo, o lugar da explicação é `Moléculas/Feedback/EmptyState` na situação `busca-sem-resultado`, que mostra os filtros aplicados e a ação de limpar.',
+          '',
+          'Duas exigências que vêm com o componente: o `placeholder` declara os campos pesquisados ("Buscar por nome, CPF ou matrícula"), porque sem isso o servidor não sabe se pode digitar o CPF, e o `label` repete esse escopo para quem usa leitor de tela. A contagem e as mensagens ficam em região `aria-live="polite"`, então o resultado é anunciado sem interromper a digitação.',
+        ].join('\n'),
       },
     },
   },

@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test-storybook": "vitest --project=storybook --run"
+    "test-storybook": "vitest --project=storybook --run",
+    "verificar-catalogo": "node scripts/verificar-catalogo.mjs"
   },
   "dependencies": {
     "react": "^19.2.8",

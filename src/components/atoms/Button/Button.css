@@ -124,17 +124,17 @@
 .citie-button--success {
   background-color: var(--citie-success-emphasis);
   border-color: var(--citie-success-emphasis);
-  color: #ffffff;
+  color: var(--citie-success-contrast);
 }
 
 .citie-button--success:hover:not(:disabled):not([aria-disabled='true']) {
-  background-color: #15803d;
-  border-color: #15803d;
+  background-color: var(--citie-success-hover);
+  border-color: var(--citie-success-hover);
 }
 
 .citie-button--success:active:not(:disabled):not([aria-disabled='true']) {
-  background-color: #166534;
-  border-color: #166534;
+  background-color: var(--citie-success-active);
+  border-color: var(--citie-success-active);
 }
 
 /* ---------- Variante: Danger (cheio, só ação destrutiva) ---------- */
@@ -142,17 +142,17 @@
 .citie-button--danger {
   background-color: var(--citie-danger-emphasis);
   border-color: var(--citie-danger-emphasis);
-  color: #ffffff;
+  color: var(--citie-danger-contrast);
 }
 
 .citie-button--danger:hover:not(:disabled):not([aria-disabled='true']) {
-  background-color: #b91c1c;
-  border-color: #b91c1c;
+  background-color: var(--citie-danger-hover);
+  border-color: var(--citie-danger-hover);
 }
 
 .citie-button--danger:active:not(:disabled):not([aria-disabled='true']) {
-  background-color: #991b1b;
-  border-color: #991b1b;
+  background-color: var(--citie-danger-active);
+  border-color: var(--citie-danger-active);
 }
 
 /* ---------- Variante: Warn (cheio) ---------- */
@@ -160,17 +160,17 @@
 .citie-button--warn {
   background-color: var(--citie-warning-emphasis);
   border-color: var(--citie-warning-emphasis);
-  color: #ffffff;
+  color: var(--citie-warning-contrast);
 }
 
 .citie-button--warn:hover:not(:disabled):not([aria-disabled='true']) {
-  background-color: #b45309;
-  border-color: #b45309;
+  background-color: var(--citie-warning-hover);
+  border-color: var(--citie-warning-hover);
 }
 
 .citie-button--warn:active:not(:disabled):not([aria-disabled='true']) {
-  background-color: #92400e;
-  border-color: #92400e;
+  background-color: var(--citie-warning-active);
+  border-color: var(--citie-warning-active);
 }
 
 /* ---------- Variante: Info ---------- */

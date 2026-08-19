@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
-import { Sparkline } from './Chart';
+import { Sparkline } from './Sparkline';
 
 const meta = {
   title: 'Átomos/Gráficos/Sparkline',

@@ -232,7 +232,16 @@ export function TreeTable<T>({
   const chaveTabulavel = chaveFocada ?? linhas[0]?.no.chave;
 
   return (
-    <div className="citie-treetable-wrapper">
+    <div
+      className="citie-treetable-wrapper"
+      // Mesma correção do Table: o envoltório rolável precisa de tabIndex, role
+      // e nome próprios para a rolagem horizontal ser alcançável por teclado
+      // (WCAG 2.1.1 Keyboard, 4.1.2 Name Role Value). Não conflita com o roving
+      // tabindex das linhas: são dois alvos de foco distintos e sequenciais.
+      tabIndex={0}
+      role="group"
+      aria-label={`Rolagem horizontal de ${legenda}`}
+    >
       {titulo ? <div className="citie-treetable__titulo">{titulo}</div> : null}
 
       <table

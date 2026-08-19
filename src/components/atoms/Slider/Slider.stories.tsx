@@ -10,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Entrada numérica por arrasto. Origem: Figma CitieOne, página ❖ Slider (variantes Slide, Input, Range, Direction, Disabled). Cores e medidas seguem os tokens Citiesoft do vault, não o azul padrão do PrimeOne. Equivalente PrimeNG: `p-slider`.',
+          'Entrada numérica por arrasto. Origem: Figma CitieOne, página ❖ Slider (variantes Slide, Input, Range, Direction, Disabled). Cores e medidas seguem os tokens Citiesoft do vault, não o azul padrão do PrimeOne. Equivalente PrimeNG: `p-slider`.\n\n**Quando usar:** para valor aproximado dentro de uma faixa curta e conhecida, em que ver a posição no trilho ajuda mais do que digitar, como um percentual de meta ou um intervalo de filtro.\n\n**Quando não usar:** para valor que entra no processo e será auditado (valor em reais, quantidade de diárias, número de dias de afastamento). O arrasto erra por um pixel, o servidor grava 47 no lugar de 45 e o erro só aparece na prestação de contas; use `Input` numérico ou, se o trilho for mesmo desejado, ative `comEntrada` para o campo numérico ficar ao lado. Para faixa larga, de 0 a 10000: cada pixel do trilho passa a valer dezenas de unidades e chegar ao número desejado vira tentativa e erro, mesmo pelas setas do teclado. Para escolher entre poucas opções nomeadas (Baixa, Média, Alta): o slider obriga a memorizar que 2 significa Média, e quem usa a tela de forma esporádica não memoriza; use `RadioGroup` ou `SelectButton`. Para mostrar andamento sem permitir ajuste, use `ProgressBar`, porque o trilho com alça convida ao arrasto e sugere que o dado pode ser mudado ali. Intervalo de datas também não é caso de `RangeSlider`: use `DatePicker`, que fala em dia e mês.',
       },
     },
   },

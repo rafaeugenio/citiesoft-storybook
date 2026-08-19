@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { KpiWidget } from './Widget';
-import { Sparkline } from '../../organisms/Chart/Chart';
+import { Sparkline } from '../../atoms/Sparkline/Sparkline';
 
 const meta = {
   title: 'Organismos/Painel/KpiWidget',
@@ -10,8 +10,28 @@ const meta = {
   parameters: {
     docs: {
       description: {
-        component:
-          'Widget de indicador do painel. Spec: `03-components/dashboard-widgets.md` v2.0.0. O valor principal nunca trunca, e a variação sempre traz ícone direcional mais número, nunca só cor.\n\n**Quando usar este e não o `ListaResumoWidget`:** o KPI responde "qual é o número agora". Ele mostra uma medida única do período, e toda variação vem acompanhada do período de comparação explícito ("12,4% acima de fevereiro"), nunca sinalizada só por cor. Se a pergunta do usuário não for um número, e sim "o que exige minha atenção agora" — uma fila nominal de 3 a 7 itens com link para ver tudo —, o componente certo é o `ListaResumoWidget`.',
+        component: [
+          'Widget de indicador do painel. Spec: `03-components/dashboard-widgets.md` v2.0.0. O valor principal nunca trunca, e a variação sempre traz ícone direcional mais número, nunca só cor.',
+          '',
+          '**Quando usar este e não o `ListaResumoWidget`:** o KPI responde "qual é o número agora". Ele mostra uma medida única do período, e toda variação vem acompanhada do período de comparação explícito ("12,4% acima de fevereiro"), nunca sinalizada só por cor. Se a pergunta do usuário não for um número, e sim "o que exige minha atenção agora" — uma fila nominal de 3 a 7 itens com link para ver tudo —, o componente certo é o `ListaResumoWidget`.',
+          '',
+          '**Quando não usar:** número que só significa alguma coisa junto da sua composição',
+          '(solicitações abertas separadas por secretaria), porque o KPI mostra um valor só e o',
+          'servidor fica sem saber de onde ele veio, caso do `BarChart` ou da `Table`; série',
+          'histórica em que a forma da curva é a informação, papel do `LineChart` (o `Sparkline`',
+          'dentro do KPI é apoio, e não substitui o gráfico com eixo e rótulo); progresso de uma',
+          'operação em andamento, que é `ProgressBar`, já que a barra de meta do KPI descreve',
+          'atingimento de alvo e não avanço de tarefa; situação de um processo específico, que é',
+          '`StatusIndicator` ou `Tag` na linha da listagem; e valor único dentro de uma tela de',
+          'detalhe ou de formulário, onde o cartão de painel rouba a hierarquia da tela e o certo é',
+          'a lista de definições do `Card`.',
+          '',
+          'Peso B2G: um número grande sem período vira decisão errada em reunião. O campo `periodo`',
+          'é obrigatório de propósito, e `variacao` exige `comparadoA` pelo mesmo motivo. Se o',
+          'painel tem filtro de competência ou de unidade, o recorte aplicado precisa aparecer no',
+          '`rotulo` ou no `periodo`, senão dois servidores leem o mesmo cartão com números',
+          'diferentes e nenhum dos dois percebe.',
+        ].join('\n'),
       },
     },
   },

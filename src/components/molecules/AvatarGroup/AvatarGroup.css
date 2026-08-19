@@ -1,0 +1,24 @@
+/**
+ * AvatarGroup (avatar.md). Empilhamento com sobreposição de 8px e anel de 2px
+ * na cor do fundo para separar um avatar do outro.
+ */
+
+.citie-avatar-group {
+  display: inline-flex;
+  align-items: center;
+}
+
+.citie-avatar-group > * {
+  box-shadow: 0 0 0 2px var(--citie-background-default);
+  border-radius: var(--citie-radius-full);
+}
+
+.citie-avatar-group > * + * {
+  margin-inline-start: -8px;
+}
+
+.citie-avatar--overflow {
+  background-color: var(--citie-background-subtle);
+  color: var(--citie-text-base);
+  cursor: pointer;
+}

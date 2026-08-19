@@ -122,25 +122,3 @@ button.citie-avatar:focus-visible {
   border-radius: var(--citie-radius-full);
   box-shadow: 0 0 0 2px var(--citie-background-default);
 }
-
-/* ---------- AvatarGroup ---------- */
-
-.citie-avatar-group {
-  display: inline-flex;
-  align-items: center;
-}
-
-.citie-avatar-group > * {
-  box-shadow: 0 0 0 2px var(--citie-background-default);
-  border-radius: var(--citie-radius-full);
-}
-
-.citie-avatar-group > * + * {
-  margin-inline-start: -8px;
-}
-
-.citie-avatar--overflow {
-  background-color: var(--citie-background-subtle);
-  color: var(--citie-text-base);
-  cursor: pointer;
-}

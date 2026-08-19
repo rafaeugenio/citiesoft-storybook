@@ -55,6 +55,15 @@
   padding-block: var(--citie-spacing-2);
 }
 
+/* O corpo em página cheia entra na ordem de tabulação (Formulario.tsx:170,
+   tabIndex={0}) para a rolagem ser alcançável por teclado (WCAG 2.1.1). Sem
+   o anel abaixo o alvo focável ficava mudo: quem tabula até aqui não via
+   onde estava (WCAG 2.4.7 Focus Visible). */
+.citie-tpl-formulario__corpo--rolavel:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
 /* ---------- Grade de 12 colunas ---------- */
 
 .citie-tpl-formulario__grade {
