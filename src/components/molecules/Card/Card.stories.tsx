@@ -23,7 +23,9 @@ const meta = {
           '- **Conjunto de registros com os mesmos atributos.** Cards empilhados repetem os rótulos em cada cartão e tiram do servidor a leitura em coluna, que é como ele confere 40 lançamentos de diária sem ler cada um. Use `Organismos/Tabelas/Table`, ou `Organismos/Coleções/DataView` quando a mesma coleção precisar alternar entre grade e lista.',
           '- **Agrupar campos de um formulário.** O card não expõe legenda de grupo para leitor de tela; use `Organismos/Formulário/Fieldset`, que entrega `fieldset` e `legend`.',
           '- **Só para desenhar uma caixa em volta de conteúdo.** Borda sem hierarquia acrescenta ruído em tela densa. Use `Organismos/Layout/Panel` quando houver cabeçalho e conteúdo recolhível, ou `Átomos/Layout/Divider` quando bastar separar.',
-          '- **Card clicável com botões dentro.** Com `href` o componente vira um `<a>` que envolve todo o conteúdo, então qualquer botão no rodapé fica dentro do link e o alvo do teclado passa a ser ambíguo. Escolha entre o card inteiro navegável ou o rodapé com ações, nunca os dois.',
+          '- **Só para desenhar uma caixa em volta de conteúdo interativo solto.** Se o que existe ali é um formulário, ele já tem contêiner próprio no catálogo.',
+          '',
+          '**Card navegável com ação no rodapé, e por que agora pode.** Com `href` e `titulo`, quem carrega o link é o título, e a área de clique dele é esticada até as bordas do card. Antes o componente envolvia tudo num `<a>`, e então qualquer botão de rodapé ficava dentro do link: aninhamento inválido, alvo de teclado ambíguo e nome anunciado ao leitor de tela igual ao card lido por inteiro. O consumidor vinha contornando sozinho, e o `DataView` até hoje suprime as ações do item quando há `href`. A regra que fica: **conteúdo interativo de um card navegável vai no rodapé**, porque no corpo ele ficaria coberto pela área do link. Sem `titulo` não há texto para nomear o destino, então o card inteiro vira o link e aí o rodapé com ação continua proibido.',
           '- **Conteúdo transitório que precisa de resposta.** Aviso que some sozinho é `Moléculas/Feedback/Toast`; alerta ancorado à seção é `Moléculas/Feedback/Message`; ausência de dados é `Moléculas/Feedback/EmptyState`.',
         ].join('\n'),
       },
@@ -70,20 +72,123 @@ export const Clicavel: Story = {
     docs: {
       description: {
         story:
-          'O card inteiro é alvo de navegação, então vira link nativo. Nunca um contêiner genérico com manipulador de clique.',
+          'O card inteiro é alvo de navegação por link nativo, nunca por contêiner genérico com manipulador de clique. Quem carrega o `href` é o título, e a área de clique dele é esticada até as bordas do card, então o nome anunciado ao leitor de tela é o título sozinho, sem o subtítulo e o corpo atrás.',
       },
     },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     // Elemento nativo: alcançável por teclado e anunciado como link.
-    await expect(canvas.getByRole('link', { name: /Dados do servidor/ })).toBeVisible();
+    const link = canvas.getByRole('link', { name: /Dados do servidor/ });
+    await expect(link).toBeVisible();
+
+    // O nome do destino é o título sozinho: o subtítulo e o corpo
+    // ficam fora do link. Antes, com o `<a>` envolvendo tudo, o leitor de tela
+    // anunciava "Dados do servidor Atualizado em 18/03/2025 Maria de Fátima…".
+    await expect(link).toHaveAccessibleName('Dados do servidor');
+  },
+};
+
+export const ClicavelComAcoes: Story = {
+  name: 'Variante · clicável com ação no rodapé',
+  args: {
+    href: '#processo-2025-0481',
+    rodape: (
+      <Button variant="secondary" size="small">
+        Ver histórico
+      </Button>
+    ),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A combinação que antes era proibida. O link vive no título e cobre o card por um pseudo-elemento; o rodapé se levanta acima dessa área, então o botão fica fora do link, recebe o próprio clique e mantém a própria parada de tabulação.',
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // DOM válido: o botão não está dentro do link.
+    const link = canvas.getByRole('link', { name: 'Dados do servidor' });
+    const botao = canvas.getByRole('button', { name: 'Ver histórico' });
+    await expect(link.contains(botao)).toBe(false);
+
+    // Duas paradas de tabulação distintas, cada uma com o seu alvo.
+    botao.focus();
+    await expect(botao).toHaveFocus();
+    link.focus();
+    await expect(link).toHaveFocus();
+  },
+};
+
+export const ClicavelSemTitulo: Story = {
+  name: 'Regra · navegável sem título recusa o rodapé',
+  args: {
+    titulo: undefined,
+    subtitulo: undefined,
+    href: '#processo-2025-0481',
+    rodape: (
+      <Button variant="secondary" size="small">
+        Ver histórico
+      </Button>
+    ),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: [
+          'Sem `titulo` falta texto para nomear o destino, então o card inteiro é que vira o link.',
+          'Nessa forma o rodapé com ação seria um botão dentro de um `<a>`, e o componente recusa:',
+          'o rodapé é descartado e o desenvolvimento recebe aviso no console dizendo o caminho de',
+          'saída, que é dar `titulo` ao card para o link ir para ele.',
+          '',
+          'A regra vivia só na documentação, e quem consumia descobria pelo axe. Agora ela vale no',
+          'runtime.',
+        ].join('\n'),
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // O card inteiro é o link, e o rodapé foi recusado junto com o botão dele.
+    const link = canvas.getByRole('link');
+    await expect(link).toHaveClass('citie-card');
+    await expect(canvas.queryByRole('button', { name: 'Ver histórico' })).toBeNull();
+    await expect(canvasElement.querySelector('.citie-card__rodape')).toBeNull();
+
+    // Nenhum interativo aninhado sobrou no documento.
+    await expect(canvasElement.querySelector('a a, a button, button a')).toBeNull();
   },
 };
 
 export const Selecionado: Story = {
   name: 'Estado · selecionado',
-  args: { selecionado: true },
+  render: (args) => (
+    <div style={{ display: 'grid', gap: 16, width: 420 }}>
+      <Card {...args} titulo="Em repouso" />
+      <Card {...args} titulo="Selecionado" selecionado />
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'O trilho de seleção é sombra interna. Com `border-inline-start: 3px` a caixa de conteúdo encolhia 2px e todo o conteúdo do card escorregava para a direita ao ser selecionado: medido, o título saía de 45,00px para 47,00px. Numa lista em que a seleção passa de um card para outro, era um tranco de 2px por troca.',
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const [repouso, selecionado] = Array.from(
+      canvasElement.querySelectorAll('.citie-card__titulo'),
+    );
+    // Selecionar não desloca conteúdo: a régua vertical dos títulos não se move.
+    await expect(selecionado.getBoundingClientRect().left).toBe(
+      repouso.getBoundingClientRect().left,
+    );
+  },
 };
 
 export const ComErro: Story = {

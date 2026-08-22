@@ -28,6 +28,25 @@
  * ---------------------------------------------------------------------------
  */
 
+/**
+ * Véu de realce sob o ponteiro, registrado com tipo.
+ *
+ * Ele existe para o realce de ponteiro se SOMAR ao fundo de estado da linha em
+ * vez de substituí-lo. Sem isso, uma linha selecionada parava de responder ao
+ * ponteiro (a cor de seleção vencia a de hover na cascata) e a mesma linha
+ * zebrada perdia a zebra ao ser apontada.
+ *
+ * O registro com `syntax` é o que torna a propriedade interpolável: propriedade
+ * personalizada não registrada não transiciona, e o véu apareceria e sumiria de
+ * golpe. Fica aqui, e não no componente, porque `@property` é declaração de
+ * documento e precisa existir antes do primeiro uso.
+ */
+@property --citie-veu-de-realce {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
+}
+
 :root {
   /* Marca */
   --citie-brand-primary: #1261e4;
@@ -108,6 +127,17 @@
 
   /* Estados */
   --citie-state-focus-ring: 0 0 0 3px rgba(18, 97, 228, 0.4);
+  /**
+   * Anel de foco de campo inválido.
+   *
+   * Um campo com erro que recebe foco trocava a identidade de perigo pelo azul
+   * de marca: borda vermelha virava borda azul com anel azul, e a pista de que
+   * ali existe um problema sumia justo no momento da correção. Este anel mantém
+   * o halo na matiz de perigo, com a mesma anatomia e opacidade do anel de
+   * marca (halo de 3px; halo não carrega texto, então não tem piso de WCAG,
+   * e a borda sólida por baixo segue medida: #dc2626 dá 4,83:1 sobre #ffffff).
+   */
+  --citie-state-focus-ring-danger: 0 0 0 3px rgba(220, 38, 38, 0.4);
   --citie-state-disabled-background: #e8eaed;
   --citie-state-disabled-text: #a8acb3;
   --citie-state-selected: #eff5ff;
@@ -125,6 +155,22 @@
    * `primitives/Field`.
    */
   --citie-form-field-border: #8f8f8f;
+  /**
+   * Degrau de ponteiro e de preenchimento da borda de campo.
+   *
+   * O hover apontava para `--citie-border-strong` (#d6d8dc), que mede **1,43:1**
+   * sobre o branco: mais claro que o repouso de 3,23:1. O campo respondia ao
+   * ponteiro APAGANDO a própria fronteira, o oposto do que um controle editável
+   * deve comunicar. No escuro a mesma inversão media 1,83:1.
+   *
+   * Este token é o degrau mais escuro da mesma família, espelhando a regra do
+   * Button (borda no degrau de hover): claro #6b7177 = **4,94:1** sobre
+   * #ffffff; escuro #8f8f8f = **5,37:1** sobre #1a1a1d. Ele serve a dois
+   * estados que pedem a mesma força: o ponteiro sobre o campo e o campo com
+   * valor preenchido, que precisa se distinguir do vazio de relance numa tela
+   * com trinta campos.
+   */
+  --citie-form-field-border-hover: #6b7177;
   --citie-form-helper: #6b7177;
   /**
    * ACHADO ABERTO DO DS: a spec define `color.text.placeholder` como #A8ACB3,
@@ -269,6 +315,109 @@
   --citie-shadow-card: var(--citie-shadow-raised);
 
   /**
+   * Âncora de controle.
+   *
+   * Sombra curtíssima que assenta um controle preenchido na superfície. Não é
+   * elevação: o botão continua no plano da página, e a sombra existe só para o
+   * olho registrar que ele é um objeto, e não um retângulo pintado.
+   *
+   * O diagnóstico que a criou: o botão primário era preenchimento chapado com
+   * a borda na mesma cor do fundo, ou seja, uma borda que não fazia nada. Ele
+   * lia como cor de marca aplicada ao botão padrão do navegador.
+   *
+   * Fica separada de `raised` de propósito. `raised` é para superfície que
+   * flutua sobre o fundo (card, painel); esta é para peça que está apoiada nele.
+   */
+  --citie-shadow-controle: 0 1px 2px rgba(16, 24, 40, 0.1);
+
+  /**
+   * Poço de campo.
+   *
+   * O inverso da âncora de controle: botão é objeto apoiado NA superfície e a
+   * sombra dele cai para fora; campo é depressão cavada na superfície para
+   * receber conteúdo, e a sombra dele cai para dentro, na aresta superior.
+   * É a distinção física que separa "aperte-me" de "preencha-me" antes de
+   * qualquer rótulo, e ela não aparece em captura parada de um campo só:
+   * aparece quando botão e campo dividem a mesma tela.
+   *
+   * Curtíssima e de opacidade baixa de propósito: profundidade de 1px de
+   * leitura, não skeuomorfismo. Campo somente leitura zera este valor, porque
+   * superfície que não recebe conteúdo não tem por que parecer cavada.
+   */
+  --citie-shadow-poco: inset 0 1px 2px rgba(16, 24, 40, 0.06);
+
+  /**
+   * Deslocamento de pressão.
+   *
+   * O controle desce este tanto enquanto está pressionado e volta ao soltar. É
+   * a devolução de sensação física que faz o clique parecer respondido, e ela
+   * não aparece em captura de tela parada: só existe no uso.
+   *
+   * 1px é o teto. Acima disso o texto do rótulo tremula na leitura, o que num
+   * sistema usado oito horas por dia vira cansaço.
+   */
+  --citie-pressao-deslocamento: 1px;
+
+  /**
+   * Opacidade da aresta de preenchimento.
+   *
+   * Um controle preenchido ganha definição quando a borda é a própria matiz um
+   * degrau mais escura, e não uma cor neutra por cima. Cada variante aponta a
+   * borda para o próprio token de hover, e este valor é a força do reforço
+   * aplicado por dentro na aresta superior, que separa o topo do controle do
+   * fundo claro atrás dele.
+   *
+   * A primeira versão usava 12% e um revisor mediu: **1,24:1** contra o
+   * preenchimento de marca, ou seja, invisível. Era código morto fingindo
+   * trabalhar, exatamente o risco que a tese desta rodada nomeia. Os valores
+   * atuais foram escolhidos medindo, e não estimando:
+   *   claro  28% sobre #1261E4 = 1,66:1
+   *   escuro 40% sobre #4D8BFC = 1,61:1
+   * Reforço de 1px não carrega informação e por isso não tem piso de WCAG; o
+   * piso aqui é perceptual, e o critério foi aparecer na captura de tela.
+   */
+  --citie-aresta-preenchimento: rgba(255, 255, 255, 0.28);
+
+  /**
+   * Aresta tonal.
+   *
+   * Força da borda de 1px que define o contorno de uma superfície tonal de
+   * severidade (Toast, Message default): a borda é a própria tinta da
+   * severidade (`--sev-fg`) misturada nesta proporção sobre o fundo tonal,
+   * via `color-mix`. É a mesma regra da aresta do controle preenchido, "borda
+   * da própria matiz, um degrau mais escura", aplicada à superfície de aviso,
+   * que antes era um retângulo pastel sem contorno nenhum.
+   *
+   * O valor foi medido, e não estimado, contra o fundo tonal de cada
+   * severidade nos dois temas:
+   *   claro  30% → success 1,50:1 · info 1,54:1 · warn 1,51:1 · danger 1,67:1
+   *   escuro 25% → success 1,79:1 · info 1,65:1 · warn 1,95:1 · danger 1,76:1
+   * A faixa alvo é a da aresta do botão (1,61 a 1,66): presente na captura de
+   * tela sem virar moldura. Borda de 1px não carrega informação, então não há
+   * piso WCAG aqui; o piso é perceptual.
+   */
+  --citie-aresta-tonal: 30%;
+
+  /**
+   * Entrelinha do corpo de texto.
+   *
+   * Existe para a anatomia de linha ser calculável: o líder (ícone de 20px)
+   * precisa se alinhar à PRIMEIRA linha do texto, e não ao centro do bloco,
+   * senão um corpo de três linhas empurra o ícone para o meio do parágrafo.
+   * Com a entrelinha em token, a caixa da primeira linha vira um valor
+   * derivável (`font-size × entrelinha`) e o líder ocupa exatamente essa
+   * altura, centrado nela. 14px × 1.45 = 20,3px, que abriga o ícone de 20px
+   * com folga de menos de 1px.
+   */
+  --citie-entrelinha-corpo: 1.45;
+
+  /**
+   * Largura do toast. Estava como literal `350px` repetido em dois seletores;
+   * vira token porque a pilha e o toast precisam concordar entre si.
+   */
+  --citie-largura-toast: 350px;
+
+  /**
    * Motion. Não existia token nenhum, então cada componente repetia
    * `120ms ease-out` como literal ou inventava o próprio tempo.
    *
@@ -279,6 +428,15 @@
   --citie-motion-rapido: 140ms;
   --citie-motion-padrao: 220ms;
   --citie-motion-lento: 320ms;
+
+  /**
+   * Ciclo da varredura de carregamento (shimmer do Skeleton). Fica fora da
+   * escala de transição porque tem papel diferente: as durações acima medem
+   * uma mudança de estado, e esta mede o ciclo de uma espera contínua. Estava
+   * como literal `1400ms` dentro do componente, que é exatamente o desvio que
+   * a escala de motion existe para impedir.
+   */
+  --citie-motion-ciclo-varredura: 1400ms;
 
   /**
    * Curvas. Entrada é mais lenta que saída de propósito: o que entra precisa
@@ -295,6 +453,50 @@
    * de cor diferente sobre o backdrop de Dialog na mesma tela.
    */
   --citie-scrim: rgba(16, 24, 40, 0.45);
+
+  /**
+   * Espessura do indicador de seleção: o sublinhado da aba ativa e a barra
+   * lateral da variante vertical. Um valor só para o traço de "você está aqui"
+   * em todo componente de navegação, para o peso do indicador não divergir
+   * entre Tabs, Sidebar e afins. 2px separa o indicador da borda de 1px do
+   * trilho sem virar uma barra que compete com o rótulo.
+   */
+  --citie-espessura-indicador: 2px;
+
+  /**
+   * Anatomia de linha de tabela.
+   *
+   * Os sete valores abaixo estavam duplicados como literais entre `Table.css` e
+   * `TreeTable.css`, e já tinham divergido num deles: a largura máxima de célula
+   * era 320px numa e 360px na outra, sem motivo declarado. Duplicata de número é
+   * divergência esperando acontecer, e a `TreeTable` herda quase tudo da `Table`.
+   *
+   * `--citie-linha-da-celula` é comprimento, e não proporção, de propósito. Com
+   * `line-height: 1.4` sobre corpo de 14px a caixa de linha mede 19,6px, e uma
+   * célula de duas linhas caía em altura fracionária: medido, a linha de valor
+   * com reembolso em densidade compacta tinha **41,39px**, contra 37,00px das
+   * vizinhas. Altura fracionária desloca a base de todas as linhas abaixo dela
+   * por frações de pixel, e a varredura vertical de uma tabela longa é
+   * exatamente o que sofre com isso. Em comprimento, N linhas medem N × 20px.
+   */
+  --citie-altura-de-linha-confortavel: 48px;
+  --citie-altura-de-linha-compacta: 36px;
+  --citie-linha-da-celula: 20px;
+  --citie-largura-maxima-da-celula: 320px;
+  --citie-largura-da-coluna-de-selecao: 48px;
+  /**
+   * Espessura do trilho vertical que marca o estado de uma linha na borda de
+   * início: seleção feita pelo usuário e destaque por condição do dado. Fica
+   * separado de `--citie-espessura-indicador` (2px, o sublinhado de "você está
+   * aqui" na navegação) porque o papel é outro: aqui o trilho precisa se ler de
+   * relance numa varredura vertical de dezenas de linhas.
+   */
+  --citie-espessura-do-trilho: 3px;
+  /**
+   * Camada do cabeçalho fixo de tabela. Estava como `1020` literal nos dois
+   * arquivos de tabela, sem escala declarada em lugar nenhum.
+   */
+  --citie-camada-cabecalho-fixo: 1020;
 
   /* Altura de controle */
   --citie-control-height-small: 32px;
@@ -424,6 +626,13 @@
   --citie-info-background: rgba(77, 139, 252, 0.14);
 
   --citie-state-focus-ring: 0 0 0 3px rgba(77, 139, 252, 0.5);
+  /**
+   * Halo na matiz clara de perigo do tema escuro (#fca5a5, a mesma tinta de
+   * `--citie-danger-foreground`), com a opacidade do anel de marca escuro. A
+   * borda sólida por baixo continua #dc2626, 3,60:1 sobre #1a1a1d, acima do
+   * mínimo de 3:1 da WCAG 1.4.11.
+   */
+  --citie-state-focus-ring-danger: 0 0 0 3px rgba(252, 165, 165, 0.5);
   --citie-state-disabled-background: #34343a;
   --citie-state-disabled-text: #6b7177;
   --citie-state-selected: rgba(77, 139, 252, 0.14);
@@ -431,6 +640,10 @@
 
   /* `#34343a` media 1,40:1 sobre `#1a1a1d`. `#6b6b6b` mede 3,26:1 e passa. */
   --citie-form-field-border: #6b6b6b;
+  /* Degrau mais claro da mesma família: 5,37:1 sobre #1a1a1d. No escuro o
+     estado clareia, pela mesma razão da rampa de preenchimento: escurecer
+     aproximaria a borda do fundo até ela sumir. */
+  --citie-form-field-border-hover: #8f8f8f;
   --citie-form-helper: #9a9da3;
   --citie-text-placeholder: #6b7177;
   --citie-danger-foreground: #fca5a5;
@@ -451,4 +664,24 @@
     0 4px 8px rgba(0, 0, 0, 0.5),
     0 24px 56px -12px rgba(0, 0, 0, 0.65);
   --citie-shadow-card: var(--citie-shadow-raised);
+
+  --citie-shadow-controle: 0 1px 2px rgba(0, 0, 0, 0.45);
+  /* Como toda sombra do escuro: mais opacidade para ainda ser percebida
+     sobre um fundo que já é escuro. */
+  --citie-shadow-poco: inset 0 1px 2px rgba(0, 0, 0, 0.35);
+
+  /**
+   * No escuro os fundos tonais são véus de 12 a 14% sobre a página, então a
+   * mesma proporção de tinta rende uma aresta mais visível do que no claro.
+   * 25% mantém a faixa perceptual alvo (1,65 a 1,95 medidos); os 30% do claro
+   * chegariam a 2,23 no warn e a aresta viraria moldura.
+   */
+  --citie-aresta-tonal: 25%;
+
+  /*
+   * No escuro a aresta clara por dentro tem efeito oposto ao do claro: ali ela
+   * separava o topo do controle do fundo, aqui ela é a única coisa que impede
+   * o controle de se fundir com a superfície atrás. Por isso é mais forte.
+   */
+  --citie-aresta-preenchimento: rgba(255, 255, 255, 0.4);
 }

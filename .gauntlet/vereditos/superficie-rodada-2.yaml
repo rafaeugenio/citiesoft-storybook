@@ -1,0 +1,239 @@
+revisor: superfície de controle e transição de valor (revisor independente, rodada 2)
+componente: >-
+  tokens de superfície (--citie-shadow-controle, --citie-pressao-deslocamento,
+  --citie-aresta-preenchimento), Button (CSS e stories) e Widget
+  (ValorEmTransicao, Widget, KpiFaixa, KpiWidget.stories)
+veredito: REPROVADO
+veredito_anti_slop: VOLTA PARA REFINO
+
+gate_tecnico:
+  typecheck: "./node_modules/.bin/tsc -b --force → exit 0, sem diagnóstico"
+  lint: "npm run lint (oxlint) → 0 erro; warnings pré-existentes de react-hooks e only-export-components, nenhum nos arquivos deste recorte"
+  testes: >-
+    tema claro 766 de 766 passaram.
+    Tema escuro 681 de 766 (85 falhas).
+    Recorte medido isoladamente no escuro: 4 falhas na árvore de trabalho contra
+    3 falhas na mesma árvore com o recorte revertido (git stash dos 6 arquivos +
+    remoção de ValorEmTransicao.tsx). A quarta falha é NOVA e foi introduzida por
+    esta rodada. As 3 restantes (Success/Warn com rótulo escuro no dark, KpiFaixa
+    oito indicadores) já existiam antes e ficam fora deste veredito.
+  stories_antes_depois: >-
+    recorte: 32 para 35 (Button 20→21, KpiWidget 12→14, KpiFaixa 5→5).
+    Nenhuma story perdida.
+
+achados:
+  - severidade: BLOQUEADOR
+    id_anti_slop: nenhum
+    descricao: >-
+      A story de regressão do anel de foco, criada nesta rodada, escreve a cor do
+      anel como literal do tema claro e por isso reprova no tema escuro. O gate
+      da casa (npm run gate) inclui test-storybook:dark, então a rodada entrega o
+      recorte com o gate vermelho. É literal onde deveria haver leitura de token,
+      exatamente o desvio que o repositório existe para impedir.
+    evidencia: >-
+      src/components/atoms/Button/Button.stories.tsx:520
+      `await expect(estilo.boxShadow).toContain('rgba(18, 97, 228, 0.4)')`.
+      Saída de `npm run test-storybook:dark -- src/components/atoms/Button`:
+      Expected "rgba(18, 97, 228, 0.4)" /
+      Received "rgba(77, 139, 252, 0.5) 0px 0px 0px 3px, rgba(255, 255, 255, 0.4) 0px 1px 0px 0px inset, rgba(0, 0, 0, 0.45) 0px 1px 2px 0px".
+      Confirmado que é regressão nova: com o recorte revertido, o mesmo comando
+      devolve 3 falhas em vez de 4, e nenhuma delas nesta story.
+    correcao_exigida: >-
+      A asserção lê a cor do anel do token em tempo de execução
+      (getComputedStyle da raiz temática, --citie-state-focus-ring) e compara com
+      o que o botão computou, de modo que a story passe nos dois temas sem
+      afrouxar o que mede.
+
+  - severidade: MAIOR
+    id_anti_slop: nenhum
+    descricao: >-
+      A transição de valor não dispara no caso real que a justifica. A guarda
+      `de.molde.length !== para.molde.length` troca direto sempre que o número
+      muda de quantidade de dígitos, e no Painel de TFD isso é a regra, e não a
+      exceção. Medido no build servido, com os dados de fixture reais: trocando
+      de Mês para Trimestre, 2 dos 4 indicadores animam; trocando de Trimestre
+      para Semana, 0 dos 4 animam. Pior, os que ficam de fora são justamente os
+      de maior variação, então o movimento aponta para o indicador errado. A
+      documentação da story afirma que "a distância percorrida diz o tamanho da
+      mudança", e o comportamento medido contradiz isso.
+    evidencia: >-
+      src/components/organisms/Widget/ValorEmTransicao.tsx:95.
+      Playwright sobre storybook-static em :6100,
+      id=páginas-processos-painel-de-tfd--com-dados:
+      Mês→Trimestre 595→1.673 (direto), 103→287 (anima), 368→1.036 (direto),
+      R$ 308.247→R$ 872.010 (anima).
+      Trimestre→Semana 1.673→130, 287→22, 1.036→80, R$ 872.010→R$ 67.948:
+      os quatro trocam direto, nenhum anima.
+      Réplica isolada de separar()/vestir() confirma a causa:
+      998→1.004 = TROCA DIRETA (molde 3 vs 5); 128→0 = TROCA DIRETA (3 vs 1).
+    correcao_exigida: >-
+      Ou a interpolação passa a cobrir mudança de quantidade de dígitos com
+      pontuação recalculada de forma correta a cada quadro, ou a documentação
+      para de prometer o que o código não faz e a story deixa explícito que a
+      contagem só ocorre entre valores da mesma casa decimal, com o custo
+      declarado no Painel de TFD.
+
+  - severidade: MAIOR
+    id_anti_slop: nenhum
+    descricao: >-
+      A correção de WCAG 2.2 4.1.3 do item 3 não tem nenhum consumidor, nenhuma
+      story e nenhuma asserção. A prop `recorte` aparece uma única vez no
+      repositório inteiro, na própria definição de KpiFaixa. Nenhuma das cinco
+      stories de KpiFaixa a passa, o gate não a exercita, e a página que motivou
+      a correção (Painel de TFD, que tem story dedicada de troca de período) usa
+      KpiWidget solto dentro do template Dashboard e nunca instancia KpiFaixa.
+      Ou seja, a região viva foi instalada num componente que a tela em questão
+      não usa: no Painel de TFD a troca de período continua sem anunciar a
+      atualização dos indicadores. Num catálogo cujo contrato é documentação
+      executável, isto é código sem prova.
+    evidencia: >-
+      `grep -rn recorte src` devolve KpiFaixa.tsx:31,46,59,61 e mais nada de
+      código; KpiFaixa.stories.tsx cita a palavra só em prosa.
+      .storybook/pages/PainelDeTFD.stories.tsx:115 monta `<KpiWidget>` direto,
+      sem KpiFaixa. Varredura de regiões vivas na página renderizada devolve
+      apenas `P[polite]: 1673 solicitações encontrados`, que é a FilterBar e é
+      anterior a esta rodada.
+    correcao_exigida: >-
+      Story de KpiFaixa que troca o `recorte` e assere o conteúdo da região viva
+      única (uma região por faixa, e não uma por widget), mais o Painel de TFD
+      passando a usar a faixa ou a ganhar a mesma região viva, de forma que a
+      correção alcance a tela que a originou.
+
+  - severidade: MAIOR
+    id_anti_slop: nenhum
+    descricao: >-
+      O texto que o leitor de tela ouve tem erro de concordância. A frase é
+      montada como `${titulo} atualizados para ${recorte}`, com o particípio no
+      plural masculino fixo, enquanto o título é livre e no catálogo é sempre
+      singular. Com os títulos das próprias stories a locução sai "Resumo da
+      fila de solicitações atualizados para ..." e "Regulação atualizados para
+      ...". Texto lido a usuário de leitor de tela é texto client-facing e a
+      norma da casa sobre português impecável se aplica inteira.
+    evidencia: src/components/organisms/Widget/KpiFaixa.tsx:61
+    correcao_exigida: >-
+      Frase que não dependa da flexão do título, por exemplo
+      "Indicadores atualizados para <recorte>" com o título fora da oração, ou
+      prop separada para o texto do anúncio.
+
+  - severidade: MENOR
+    id_anti_slop: nenhum
+    descricao: >-
+      Valor negativo perde o sinal e produz um número que nunca existiu. A
+      expressão de `separar` é `/[\d.,]*\d/` e não captura o menos, que vai parar
+      no prefixo e é descartado quando o destino não tem prefixo. Indo de 48 para
+      -12, o prefixo do destino é "-" e a magnitude interpolada parte de 48, de
+      modo que o primeiro quadro exibe -48, um valor quatro vezes maior e de
+      sinal trocado em relação ao que estava na tela. Num painel B2G com saldo,
+      diferença ou empenho negativo, isso é um número falso exibido por cerca de
+      320 ms.
+    evidencia: >-
+      src/components/organisms/Widget/ValorEmTransicao.tsx:37.
+      Réplica isolada, caso "48 → -12":
+      -48 | -36 | -27 | -21 | -17 | -14 | -13 | -12.
+      Caso "-12 → 48" parte de 12, e não de -12.
+    correcao_exigida: >-
+      Ou o sinal entra no miolo numérico e a interpolação atravessa o zero, ou a
+      guarda de troca direta passa a rejeitar mudança de sinal, com o caso
+      coberto por story.
+
+  - severidade: MENOR
+    id_anti_slop: TXT-002
+    descricao: >-
+      Negação paralela em texto novo. O comentário do token de âncora traz duas
+      na mesma frase: "Não é elevação: o botão continua no plano da página" e
+      "que ele é um objeto, e não um retângulo pintado". O catálogo classifica a
+      construção como PROIBIDO, em qualquer forma e em todos os contextos. Em
+      favor da rodada, a figura já aparece em quatro pontos anteriores do
+      repositório (Fundacoes.stories.tsx:25, SpeedDial.css:18, PanelMenu.tsx:55,
+      PanelMenu.stories.tsx:82), ou seja, é voz estabelecida da casa e não drift
+      desta rodada. A correção aqui é de uma linha; a decisão sobre o resto é do
+      dono.
+    evidencia: src/tokens/tokens.css:301-303
+    correcao_exigida: >-
+      Afirmar direto: "Sombra curtíssima que assenta um controle preenchido na
+      superfície, mantendo o botão no plano da página. Existe para o olho
+      registrar o botão como objeto."
+
+  - severidade: MENOR
+    id_anti_slop: nenhum
+    descricao: >-
+      O mesmo comentário de seis linhas sobre a borda no degrau de hover está
+      repetido palavra por palavra em quatro variantes. Comentário duplicado
+      envelhece em quatro lugares e explica o mesmo porquê quatro vezes, quando o
+      token que ele justifica já vive num lugar só.
+    evidencia: >-
+      src/components/atoms/Button/Button.css:131-137, 177-183, 205-211, 233-239
+    correcao_exigida: >-
+      Um comentário na primeira variante cheia, ou no bloco do token
+      --citie-aresta-preenchimento, e referência curta nas demais.
+
+  - severidade: POLIMENTO
+    id_anti_slop: nenhum
+    descricao: >-
+      O comentário do token declara 1,61:1 para a aresta no tema escuro; a
+      medição no build renderizado dá 1,66:1, o mesmo valor do tema claro. A
+      diferença é irrelevante para o resultado, e o ponto é que o comentário
+      afirma um número medido que não confere com a medição.
+    evidencia: >-
+      src/tokens/tokens.css:355-356.
+      Medido em :6100 com deviceScaleFactor 3:
+      claro, branco 28% sobre rgb(18,97,228) → rgb(84,141,236), razão 1,659:1;
+      escuro, branco 40% sobre rgb(77,139,252) → rgb(148,185,253), razão 1,656:1.
+    correcao_exigida: Corrigir o número declarado, ou registrar o método que produz 1,61.
+
+o_que_me_surpreendeu:
+  - >-
+    Os dois testes resistem à sabotagem, e eu os sabotei antes de acreditar.
+    Devolvendo a reserva para `var(--citie-elevacao-do-botao, none)` e removendo
+    a sombra nula da classe base, a story "Regressão · anel de foco existe em
+    toda variante" reprova (1 falha de 21 no tema claro). Trocando a guarda do
+    ValorEmTransicao por `if (true)`, para forçar troca direta em todo caso, a
+    story "Acabamento · valor transita ao trocar o período" reprova (1 falha de
+    20). Nenhuma das duas é decorativa: a primeira mede o box-shadow computado
+    das oito variantes por navegação real de teclado, e a segunda assere a
+    existência de um quadro que não é a partida nem a chegada, que é a única
+    prova possível de que o laço de interpolação roda. Árvore restaurada byte a
+    byte depois de cada sabotagem.
+  - >-
+    A aresta deixou de ser código morto, e isso se vê na captura. O revisor da
+    rodada 1 mediu 1,24:1 e chamou de invisível. Medi eu mesmo no build
+    renderizado, nos dois temas, e dá 1,66:1 em ambos; no recorte ampliado do
+    topo do botão primário a faixa clara superior e a borda mais escura são
+    distinguíveis a olho, nos dois temas. A escolha de apontar a borda para o
+    degrau de hover de cada família, em vez de aplicar um neutro por cima, é
+    decisão de sistema, e a variante contrast, que não tem degrau de hover
+    próprio, recebeu tratamento nomeado em vez de exceção silenciosa.
+
+o_que_faltou_para_surpreender:
+  - >-
+    Fechar o laço entre a correção e a tela que a motivou. As duas correções de
+    acessibilidade desta rodada nasceram do Painel de TFD, e nenhuma das duas
+    chega lá: a região viva mora num componente que a página não usa, e a
+    transição não dispara nos indicadores que mais mudam. Uma verificação no
+    nível da página, e não só no do componente, teria pegado as duas antes de
+    mim.
+  - >-
+    Rodar o gate inteiro antes de entregar. O tema escuro é metade do gate desta
+    casa e a rodada entregou uma story nova que reprova nele, por causa de um
+    literal de cor. Foi a primeira coisa que eu rodei.
+  - >-
+    Atacar a própria função. Bastaram dezesseis casos numa réplica isolada de
+    `vestir` e `separar` para achar o sinal negativo perdido e para descobrir que
+    a guarda de molde cobre bem mais casos do que a documentação admite.
+
+motivo_do_veredito: >-
+  O andar técnico não fecha. A rodada acrescenta ao gate uma story que reprova no
+  tema escuro por escrever a cor do anel como literal, e o gate da casa roda os
+  dois temas. Só isso já reprova, e não é o achado mais grave. Os dois defeitos
+  de mérito são que as duas correções de acessibilidade desta rodada não chegam à
+  tela que as originou: a região viva de WCAG 4.1.3 vive num componente sem
+  nenhum consumidor, story ou asserção, e o Painel de TFD continua trocando o
+  período em silêncio; e a transição de valor, medida com os dados reais da
+  página, dispara em 2 de 4 indicadores numa direção e em 0 de 4 na outra,
+  deixando de fora exatamente as maiores variações, o que faz o movimento apontar
+  para o indicador errado e contradiz o que a documentação promete. Somam-se um
+  erro de concordância na frase que o leitor de tela ouve e a perda de sinal em
+  valor negativo. O trabalho tem qualidade real onde foi verificado: os dois
+  testes sobrevivem à sabotagem e a aresta ficou de fato visível nos dois temas,
+  o que responde ao veredito anterior. Falta cobrir o percurso até a tela e rodar
+  o gate completo antes de entregar.

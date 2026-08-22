@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { Button } from './Button';
 
 /**
@@ -437,4 +437,109 @@ export const AntiPadraoDuasPrimarias: Story = {
       </Button>
     </div>
   ),
+};
+
+/**
+ * Resolve `--citie-state-focus-ring` pelo próprio navegador, criando uma sonda
+ * descartável que consome o token e devolve o valor computado. É o que mantém a
+ * asserção independente de tema: no claro e no escuro o token tem valores
+ * diferentes, e nenhum deles precisa ser escrito aqui.
+ */
+function anelDoSistema(referencia: Element) {
+  const sonda = document.createElement('span');
+  sonda.style.boxShadow = 'var(--citie-state-focus-ring)';
+  referencia.parentElement?.appendChild(sonda);
+  const valor = getComputedStyle(sonda).boxShadow;
+  sonda.remove();
+  return valor;
+}
+
+const TODAS_AS_VARIANTES = [
+  'primary',
+  'secondary',
+  'text',
+  'success',
+  'danger',
+  'warn',
+  'info',
+  'contrast',
+] as const;
+
+export const FocoEmTodasAsVariantes: Story = {
+  name: 'Regressão · anel de foco existe em toda variante',
+  parameters: {
+    // Esta story existe para medir o ANEL DE FOCO, e por isso precisa render as
+    // oito variantes juntas. Duas delas, `success` e `warn`, carregam o achado
+    // aberto de contraste do design system (3,30:1 e 3,19:1 com rótulo branco),
+    // já documentado nas stories próprias e ainda sem decisão do dono da marca.
+    // A varredura fica visível no painel sem derrubar o CI, no mesmo tratamento
+    // que as stories daquelas variantes já recebem. O que esta verificação mede
+    // continua sendo asseverado de forma dura na `play`.
+    a11y: { test: 'todo' },
+    docs: {
+      description: {
+        story: [
+          'Esta story existe por causa de um defeito real, encontrado por um revisor independente',
+          'e não pela suíte.',
+          '',
+          'O anel de foco compõe a elevação da variante numa lista de sombras. A versão anterior',
+          'usava `var(--citie-elevacao-do-botao, none)` como reserva. Acontece que `box-shadow`',
+          'aceita `none` apenas como valor único: `sombra, none` é lista inválida, e o navegador',
+          'descarta a declaração inteira. Com `outline: none` já aplicado por cima, as variantes',
+          'que não definiam a propriedade (`secondary`, `text`, `info`, `contrast`) ficavam',
+          '**sem indicador de foco nenhum**, o que reprova a WCAG 2.4.7.',
+          '',
+          'A suíte não pegou porque a story de foco cobria apenas a `primary`, que define a',
+          'propriedade e por isso funcionava. A correção foi declarar uma sombra nula válida',
+          '(`0 0 0 0 transparent`) na classe base.',
+          '',
+          'Esta verificação percorre as oito variantes e mede o `box-shadow` computado de cada',
+          'uma sob foco. Se alguém reintroduzir o defeito, ela reprova.',
+        ].join('\n'),
+      },
+    },
+  },
+  render: () => (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--citie-spacing-3)' }}>
+      {TODAS_AS_VARIANTES.map((variante) => (
+        <Button key={variante} variant={variante}>
+          {variante}
+        </Button>
+      ))}
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // Navegação por teclado de verdade, e não `.focus()` programático: o
+    // `:focus-visible` depende de heurística do navegador sobre a última forma
+    // de interação, e foco por script pode não acioná-lo. Testar com `.focus()`
+    // mediria um estado que o usuário de teclado nunca vê.
+    for (const variante of TODAS_AS_VARIANTES) {
+      await userEvent.tab();
+
+      const botao = canvas.getByRole('button', { name: variante });
+      await expect(botao).toHaveFocus();
+
+      // A medição espera a transição assentar. `box-shadow` está na lista de
+      // transições do botão, então ler o computado no instante do foco devolve
+      // o valor de PARTIDA, ainda em curso, e não o de chegada. Foi esse
+      // artefato que fez a primeira versão desta verificação acusar defeito
+      // onde não havia.
+      await waitFor(async () => {
+        const estilo = getComputedStyle(botao);
+        // O anel precisa existir de fato: lista inválida vira `none`, e o
+        // `outline` já está suprimido, então `none` aqui é foco invisível.
+        await expect(estilo.boxShadow).not.toBe('none');
+        // E precisa ser o anel do sistema, e não qualquer sombra sobrando.
+        //
+        // A comparação lê o token pelo navegador em vez de trazer o valor para
+        // cá. A primeira versão desta asserção escrevia a cor do anel claro
+        // como literal, e por isso reprovava no tema escuro, onde o token tem
+        // outro valor: era literal justamente na verificação que existe para
+        // provar que o sistema de token funciona.
+        await expect(estilo.boxShadow.startsWith(anelDoSistema(botao))).toBe(true);
+      });
+    }
+  },
 };

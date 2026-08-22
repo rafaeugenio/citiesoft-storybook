@@ -1,0 +1,250 @@
+revisor: acessibilidade, motion e comportamento de overlay/feedback (B2G, e-MAG + WCAG 2.2 AA) — segunda rodada
+componente: >
+  Feedback (Toast, ToastStack, Message), ConfirmPopup, ConfirmDialog
+  (Organismos/Overlay) e os tokens do recorte: --citie-aresta-tonal,
+  --citie-entrelinha-corpo, --citie-largura-toast.
+veredito: REPROVADO
+veredito_anti_slop: PASSOU
+gate_tecnico:
+  typecheck: "./node_modules/.bin/tsc -b --force: saída vazia, exit 0"
+  lint: >
+    npm run lint: apenas warnings, nenhum erro. Todos pré-existentes e em outros
+    componentes (Chart, Tooltip, Menu, Filters, DatePicker, Table, Pagination).
+    O único warning no recorte é `only-export-components` em Feedback.tsx:14,
+    que já existia antes deste diff (DURACAO_POR_SEVERIDADE é export de
+    constante desde HEAD).
+  testes: >
+    Recorte isolado (Feedback, ConfirmPopup, Overlay): 22 de 22 no claro e 22 de
+    22 no escuro, 6 arquivos em cada.
+    Suíte completa clara: 775 de 776 (1 falha em
+    src/components/atoms/../Input/Input.stories.tsx > "Estado · ponteiro sobre o
+    campo", recorte de outro produtor, sem relação com os três tokens deste).
+    Suíte completa escura: 700 de 776, 76 falhas em 12 arquivos, NENHUM deles do
+    recorte: PainelDeTFD, Dashboard, Listagem, Button, Filters, MegaMenu,
+    Menubar, PanelMenu, Terminal, TieredMenu, Tree, Cores. Confirmei por grep
+    que --citie-aresta-tonal, --citie-entrelinha-corpo e --citie-largura-toast
+    não são referenciados por nenhum desses arquivos: eles só aparecem em
+    Feedback.css, ConfirmPopup.css, Overlay.css e tokens.css. Dívida antiga,
+    não imputável a este produtor. NÃO rodei `git stash` para confirmar: a
+    árvore de trabalho é compartilhada por vários produtores ativos nesta
+    rodada, e o stash arrancaria o trabalho em curso de todos eles. A evidência
+    acima (recorte isolado verde no escuro + zero interseção de arquivos e de
+    tokens) sustenta a mesma conclusão sem destruir trabalho alheio.
+  stories_antes_depois: >
+    Toast 4 para 4 · Message 5 para 5 · ConfirmPopup 6 para 6 ·
+    ConfirmDialog 2 para 2. Contado com
+    `git show HEAD:<arquivo> | grep -c '^export const .*: Story'` contra o
+    arquivo atual. Nenhuma story perdida.
+
+o_bloqueador_da_rodada_1: >
+  CORRIGIDO, e verificado no artefato, não no servidor de desenvolvimento.
+  A pré-condição do defeito continua existindo: em
+  storybook-static/assets/iframe-CKQdutBQ.css o token está gravado como
+  `citie-motion-rapido:.14s`, e no navegador
+  `getComputedStyle(document.documentElement).getPropertyValue('--citie-motion-rapido')`
+  devolve `".14s"`. Ainda assim, medindo com MutationObserver e
+  `performance.now()` o intervalo entre a classe `--saindo` chegar ao item e o
+  nó deixar o DOM, o build servido dá **167,1ms** (contra os 2,7ms que a rodada
+  1 mediu). No tema escuro, mesmo caminho: 168ms. A coreografia roda no
+  artefato. `tempoCssEmMs` trata o sufixo explicitamente e o piso
+  `Math.max(duracao * 2, MOTION_RAPIDO_NOMINAL_MS)` cobre inclusive o caso de
+  a leitura falhar por completo.
+
+achados:
+  - severidade: MAIOR
+    id_anti_slop: nenhum
+    descricao: >
+      O `margin-block-end: 0` da classe de saída NUNCA é aplicado, e a pilha
+      dá exatamente o salto de 12px que o comentário do próprio arquivo diz ter
+      eliminado. A regra base é
+      `.citie-toast-stack__item:not(:last-child) { margin-block-end: var(--citie-spacing-3) }`,
+      cuja especificidade é 0,2,0 (uma classe mais o `:last-child` dentro do
+      `:not`). A regra de saída é `.citie-toast-stack__item--saindo`, 0,1,0.
+      A base vence, independentemente da ordem no arquivo. Consequência: o item
+      que sai colapsa a altura de 48,2px até 0 em movimento contínuo, mas
+      carrega os 12px de margem inteiros até o último quadro; a margem some de
+      golpe quando o nó é removido do DOM. A promessa central da rodada, escrita
+      na descrição da story ("os toasts abaixo sobem acompanhando o colapso em
+      vez de saltar para a nova posição") e no cabeçalho do CSS ("Com `gap`, a
+      remoção do nó deixaria um salto de 12px no final da transição"), é
+      cumprida em 76% do percurso e quebrada nos 24% finais. A justificativa
+      documentada para trocar `gap` por margem é literalmente evitar este salto
+      de 12px, e a alternativa escolhida reproduz o mesmo salto de 12px.
+    evidencia: >
+      `src/components/molecules/Feedback/Feedback.css` — a regra base é a de
+      `:not(:last-child)` e a de saída é `.citie-toast-stack__item--saindo`.
+      Amostragem quadro a quadro com `requestAnimationFrame` no build servido em
+      :6187, pela URL do manager (index.html?path=/story/...), story
+      `moléculas-feedback-toast--toast-empilhado`, campos `t` em ms,
+      `margemSaindo` = marginBlockEnd computado do item marcado, `topoUltimo` =
+      getBoundingClientRect().top do último item da pilha.
+
+      Tema claro:
+        t=0    margem 12px  hSaindo 48,2  topoUltimo 261,55
+        t=50   margem 12px  hSaindo 39,3  topoUltimo 256,81
+        t=100  margem 12px  hSaindo 20,3  topoUltimo 243,64
+        t=148  margem 12px  hSaindo  0    topoUltimo 224,31
+        t=166  (nó removido)             topoUltimo 212,31   <-- 12,00px num quadro
+
+      Tema escuro, idêntico: 260,70 -> 224,31 contínuo, depois 212,31 de golpe.
+      Deslocamento total do último toast: 49,24px, dos quais 37,24px são
+      animados e 12,00px acontecem num único quadro, no fim.
+
+      Prova direta da causa, sem depender da transição: adicionando a classe
+      `citie-toast-stack__item--saindo` à mão no primeiro item e lendo o estilo
+      computado na mesma hora, `marginBlockEnd` continua `"12px"` (e o item não
+      é `:last-child`). Ou seja, a declaração de saída é código morto.
+    correcao_exigida: >
+      A margem do item que sai precisa chegar a zero junto com a altura, para o
+      deslocamento inteiro ser animado e o último quadro não mover nada. Igualar
+      ou superar a especificidade da regra base resolve (por exemplo
+      `.citie-toast-stack__item--saindo:not(:last-child)`, ou trocar a base por
+      `.citie-toast-stack__item + .citie-toast-stack__item { margin-block-start }`,
+      ou ainda mover o respiro para dentro do elemento que já colapsa). Depois
+      da correção, a amostragem quadro a quadro precisa mostrar `topoUltimo`
+      chegando ao valor final ANTES da remoção do nó, sem degrau no último
+      quadro. O comentário do CSS e a descrição da story só ficam verdadeiros
+      quando isso acontecer.
+
+  - severidade: MENOR
+    id_anti_slop: nenhum
+    descricao: >
+      A asserção nova mede a coisa certa, mas não pega a classe de defeito para
+      a qual foi escrita. `PISO_DA_COREOGRAFIA_MS` só reprova quando a saída de
+      fato acontece rápido demais no ambiente do teste, e o ambiente do teste
+      nunca minifica CSS: `vitest --project=storybook` serve o token como
+      `140ms` literal. Reintroduzindo a leitura ingênua exata da rodada 1
+      (`Number.parseFloat(bruto)` e `espera = duracao * 2`, sem o piso), a suíte
+      do Toast passa 4 de 4. O defeito da rodada 1 voltaria inteiro ao build e a
+      suíte continuaria verde.
+    evidencia: >
+      Sabotagem A, em `Feedback.tsx`, trocando as duas linhas do `useEffect` da
+      rede de segurança por `const duracao = Number.parseFloat(bruto);` e
+      `const espera = duracao * 2;`: `npm run test-storybook -- Toast` devolveu
+      "Test Files 1 passed (1) / Tests 4 passed (4)".
+      Sabotagem B, com o erro de unidade forçado a acontecer também em
+      desenvolvimento (`Number.parseFloat(bruto) / 1000`): a asserção reprova,
+      "AssertionError: expected 2.099999964237213 to be greater than or equal to
+      80". Arquivo restaurado do backup em seguida; `git diff --stat` de
+      Feedback.tsx voltou aos 150 insertions/5 deletions originais e a linha 261
+      é de novo `const duracao = tempoCssEmMs(bruto) ?? MOTION_RAPIDO_NOMINAL_MS;`.
+      Ou seja: a asserção detecta "saiu rápido demais", e não "a unidade foi
+      lida errado". O que hoje protege o build é o piso em código, não o teste.
+    correcao_exigida: >
+      Ou uma asserção unitária direta sobre `tempoCssEmMs` (exportá-la e afirmar
+      140 para `"140ms"`, `".14s"`, `"0.14s"`, `"140MS"` e `" .14s "`, e `null`
+      para entrada inválida), ou uma story que force o token para `.14s` num
+      escopo local antes de medir. Qualquer uma das duas faz a suíte morder a
+      regressão de unidade em vez de depender do piso.
+
+  - severidade: POLIMENTO
+    id_anti_slop: nenhum
+    descricao: >
+      Fora do escopo deste diff, registrado porque apareceu ao ler o Message:
+      a linha de excedente da lista de erros não concorda em número. Com 6
+      erros, `excedente` vale 1 e o texto sai "e mais 1 erros".
+    evidencia: >
+      `src/components/molecules/Feedback/Feedback.tsx:378`. Pré-existente e não
+      tocado nesta rodada: `git show HEAD:...Feedback.tsx` traz a mesma linha na
+      233. Não conta contra este veredito.
+    correcao_exigida: >
+      Quando alguém revisitar o Message, concordar o substantivo:
+      "e mais 1 erro" no singular.
+
+  - severidade: POLIMENTO
+    id_anti_slop: nenhum
+    descricao: >
+      Existe um `src/tokens/tokens 2.css` não rastreado na árvore, cópia do
+      tokens.css com os mesmos tokens do recorte (aresta-tonal nas linhas 399 e
+      679, entrelinha na 412, largura-toast na 418). Não é importado por
+      ninguém, então não afeta o produto, mas é um segundo arquivo de tokens
+      convidando quem editar a mexer no lugar errado. Padrão conhecido de
+      duplicação do iCloud nesta pasta; o mesmo sufixo " 2" aparece em vários
+      CSS de storybook-static.
+    evidencia: >
+      `git status --short src/tokens/` mostra `?? "src/tokens/tokens 2.css"`.
+      `grep -rn "tokens 2" src .storybook` não retorna nada.
+    correcao_exigida: >
+      Apagar o duplicado ou colocá-lo no .gitignore. Não é trabalho deste
+      produtor.
+
+o_que_verifiquei_e_esta_correto:
+  - >
+    A aresta tonal é reprodutível, e os números documentados são os números
+    reais. Medi eu mesmo no artefato servido, compondo a cor da borda sobre o
+    fundo tonal do próprio toast (a borda vem como `color(srgb ... / 0.3)`, que
+    precisa ser lida em 0 a 1 e não em 0 a 255; na primeira tentativa errei
+    isso e obtive números falsos, refiz). Claro: success 1,50 · info 1,54 ·
+    warn 1,52 · danger 1,67. Escuro: success 1,80 · info 1,66 · warn 1,94 ·
+    danger 1,75. O comentário em tokens.css afirma 1,50 / 1,54 / 1,51 / 1,67 e
+    1,79 / 1,65 / 1,95 / 1,76. Bate em todas as oito casas dentro do
+    arredondamento. O token também troca de valor por tema como documentado
+    (30% no claro, 25% no escuro, lido do elemento com `data-theme`).
+  - >
+    A colisão de id da story `ToastEmpilhado` foi corrigida: o gerador agora é
+    um `useRef` monotônico. Sob estresse (8 disparos com 40ms entre eles), a
+    pilha fecha em 3 itens, zero itens marcados como saindo presos, títulos
+    "Notificação 10, 11, 12", nenhum duplicado.
+  - >
+    A rede de segurança faz o que promete no cenário de exceção. Pondo a pilha
+    em `display: none` (onde `transitionend` nunca dispara) e fechando os três
+    toasts: depois de 2 segundos restam 0 toasts e 0 itens no DOM. Nenhum nó
+    fica preso e anunciável ao leitor de tela.
+  - >
+    Movimento reduzido não tem fase de saída: com `reducedMotion: 'reduce'`,
+    `matchMedia` dá true, fechar um toast leva a pilha de 3 para 2 sem nenhum
+    item marcado como saindo, como o comentário descreve.
+  - >
+    ConfirmDialog: `justify-content: space-between` no rodapé de confirmação,
+    "Cancelar" primeiro na ordem do DOM e com o foco inicial. A separação
+    física se mantém em telas estreitas e nunca vira botões adjacentes: 133,4px
+    de folga a 420px de viewport, 73,4px a 360px e 33,4px a 320px, sem scroll
+    horizontal em nenhuma das três.
+  - >
+    O líder do ConfirmPopup e do Message ocupa a caixa da primeira linha
+    (`font-size × --citie-entrelinha-corpo`) e centra o ícone nela. Verificado
+    na captura com mensagem de três linhas: o ícone fica na primeira linha, não
+    no meio do parágrafo.
+
+o_que_me_surpreendeu:
+  - >
+    Que os oito valores de contraste da aresta tonal, medidos por mim do zero e
+    no artefato servido, tenham batido com os oito valores escritos no
+    comentário do token, incluindo a diferença de 30% para 25% entre os temas e
+    a justificativa de por que 30% no escuro viraria moldura (medi warn escuro a
+    1,94; a 30% passaria de 2,2 como o comentário prevê). É raro um comentário
+    de token sobreviver à conferência independente casa por casa.
+
+o_que_faltou_para_surpreender:
+  - >
+    A mesma disciplina de medição que produziu a aresta tonal não foi aplicada à
+    peça central da rodada. O produtor mediu o intervalo de tempo da saída e
+    acertou, mas não mediu a POSIÇÃO dos toasts de baixo durante a saída, que é
+    exatamente o que a rodada prometeu consertar. Bastava uma amostragem por
+    quadro do `getBoundingClientRect().top` para ver o degrau de 12px no último
+    quadro, e para descobrir que a declaração escrita para evitá-lo é código
+    morto por especificidade. Medir o tempo e não medir o deslocamento é o
+    mesmo tipo de ponto cego que, na rodada 1, foi testar no servidor de
+    desenvolvimento e não no build.
+  - >
+    A rede de segurança foi consertada em código com dois cintos (sufixo
+    explícito mais piso nominal), o que é bom, mas a suíte continua sem morder
+    a regressão de unidade. Uma asserção de três linhas sobre `tempoCssEmMs`
+    teria transformado um conserto pontual numa garantia permanente.
+
+motivo_do_veredito: >
+  O bloqueador da rodada 1 está de fato resolvido, e resolvido no lugar certo:
+  o token continua chegando como ".14s" no artefato e a coreografia mede 167ms
+  no build, contra os 2,7ms de antes. A aresta tonal resiste a conferência
+  independente nos dois temas, o ConfirmDialog mantém as três defesas contra o
+  clique acidental até 320px de largura, e a rede de segurança cobre região
+  oculta e movimento reduzido sem deixar nó preso. Nada disso é pouco. Mas a
+  amostragem quadro a quadro da pilha, que a rodada 1 não chegou a fazer,
+  mostra que a promessa mais visível desta entrega é cumprida pela metade: o
+  `margin-block-end: 0` do item que sai é código morto por especificidade, os
+  12px de respiro atravessam a transição inteira e desaparecem num único
+  quadro na remoção do nó. É 24% de um deslocamento de 49px acontecendo de
+  golpe, e é literalmente o salto de 12px que o comentário do arquivo cita como
+  a razão de não usar `gap`. Documentação afirmando o que o código não faz, num
+  achado maior: reprova pela regra do briefing, sem discussão de mérito, e o
+  conserto é de uma linha de seletor.

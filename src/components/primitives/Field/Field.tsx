@@ -27,7 +27,8 @@ export interface FieldWrapperProps {
   /** Substantivo que nomeia o dado, sem verbo ("Data de nascimento"). */
   label: string;
   required?: boolean;
-  /** Regra de preenchimento. Substituído pela mensagem de erro quando houver erro. */
+  /** Regra de preenchimento. Convive com a mensagem de erro: quando o usuário
+   *  erra, a instrução de como preencher é o que ele mais precisa ler. */
   helper?: string;
   /** Mensagem no padrão o que aconteceu mais como resolver. */
   error?: string;
@@ -54,12 +55,14 @@ export function FieldWrapper({
 }: FieldWrapperProps) {
   const uid = useId();
   const id = `campo-${uid}`;
-  const mensagemId = `${id}-mensagem`;
+  const erroId = `${id}-erro`;
+  const helperId = `${id}-helper`;
   const contadorId = `${id}-contador`;
 
-  const temMensagem = Boolean(error ?? helper);
+  // O erro vem primeiro no describedby: o leitor de tela anuncia o que
+  // aconteceu antes da regra de preenchimento que ajuda a resolver.
   const describedBy =
-    [temMensagem ? mensagemId : null, counter ? contadorId : null]
+    [error ? erroId : null, helper ? helperId : null, counter ? contadorId : null]
       .filter(Boolean)
       .join(' ') || undefined;
 
@@ -78,15 +81,21 @@ export function FieldWrapper({
 
       {children({ id, describedBy, invalid: Boolean(error) })}
 
-      {temMensagem || counter ? (
+      {error || helper || counter ? (
         <div className="citie-field__footer">
-          {temMensagem ? (
-            <span
-              id={mensagemId}
-              className={`citie-field__helper${error ? ' citie-field__helper--error' : ''}`}
-            >
-              {error ? <AlertIcon /> : null}
-              {error ?? helper}
+          {error || helper ? (
+            <span className="citie-field__mensagens">
+              {error ? (
+                <span id={erroId} className="citie-field__helper citie-field__helper--error">
+                  <AlertIcon />
+                  {error}
+                </span>
+              ) : null}
+              {helper ? (
+                <span id={helperId} className="citie-field__helper">
+                  {helper}
+                </span>
+              ) : null}
             </span>
           ) : (
             <span />

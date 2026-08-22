@@ -1,0 +1,116 @@
+revisor: acessibilidade e comportamento de overlay/feedback (B2G, e-MAG + WCAG 2.2 AA)
+componente: >
+  Feedback (Toast, ToastStack, Message), ConfirmPopup e ConfirmDialog
+  (Organismos/Overlay), mais os tokens novos de tokens.css:
+  --citie-aresta-tonal, --citie-entrelinha-corpo, --citie-largura-toast.
+veredito: REPROVADO
+veredito_anti_slop: PASSOU
+gate_tecnico:
+  typecheck: "./node_modules/.bin/tsc -b --force: limpo, sem erros"
+  lint: "npm run lint: só warnings pré-existentes em outros componentes (HoverCard, DatePicker, Filters etc.); nenhum novo no recorte revisado"
+  testes: >
+    772 de 772 passaram na íntegra da suíte (claro e escuro). As 2 falhas que
+    apareceram em `npm run test-storybook` (HoverCard e Select) são de outro
+    recorte: não usam nenhum dos tokens novos (`entrelinha-corpo`,
+    `aresta-tonal`, `largura-toast`) e Select.css pertence a outro produtor
+    nesta rodada. Isoladas em Feedback/ConfirmPopup/Overlay: 9+6+7 = 22 de 22
+    passaram, claro e escuro.
+  stories_antes_depois: "Toast 4 para 4 · ConfirmDialog 2 para 2 · ConfirmPopup 6 para 6 (nenhuma perdida)"
+achados:
+  - severidade: BLOQUEADOR
+    id_anti_slop: nenhum
+    descricao: >
+      A rede de segurança do `ToastStack` (o temporizador que deveria só agir
+      quando a transição de saída não roda) dispara em praticamente TODO
+      fechamento no build servido, e não apenas no cenário de exceção para o
+      qual foi escrita. Ela lê `--citie-motion-rapido` via
+      `getComputedStyle(document.documentElement)` e faz
+      `Number.parseFloat(bruto) * 2` assumindo que o valor sempre vem como
+      "140ms". No build gerado por `npm run build-storybook` (o próprio
+      artefato que o briefing manda servir e capturar), o minificador de CSS do
+      Vite reserializa o custom property para ".14s". `parseFloat(".14s")` dá
+      `0.14`, não `140`, e o temporizador de segurança dispara em
+      aproximadamente 0,28ms em vez de 280ms. Resultado: a coreografia inteira
+      (esmaecer, colapsar altura, pilha subindo em movimento contínuo) nunca
+      chega a rodar visualmente. O toast desaparece de golpe, do mesmo jeito
+      que a versão anterior ao refino, porque a rede de segurança "vence" a
+      corrida contra a própria transição CSS de 140ms que ela deveria só
+      cobrir como plano B.
+    evidencia: >
+      `src/components/molecules/Feedback/Feedback.tsx:226-239` (o
+      `useEffect` da rede de segurança). Reproduzido com Playwright against o
+      `storybook-static` construído por `npm run build-storybook` e servido em
+      `:6100`: `getComputedStyle(document.documentElement).getPropertyValue('--citie-motion-rapido')`
+      retorna `".14s"` nesse artefato (confirmado também lendo
+      `storybook-static/assets/iframe-*.css`, que contém literalmente
+      `citie-motion-rapido:.14s`). Um `MutationObserver` no
+      `.citie-toast-stack` mostra a classe `--saindo` sendo aplicada e o nó
+      sendo removido do DOM **2,7ms depois**, muito antes dos 140ms da
+      transição `grid-template-rows`/`margin-block-end`. Rodando o mesmo teste
+      contra `npm run storybook` (dev, CSS não minificado, token literal
+      `"140ms"`), a coreografia funciona como descrito: classe aplicada aos
+      ~86ms (dois `requestAnimationFrame`) e nó removido aos ~253ms, uma
+      diferença de ~167ms compatível com a transição real. A suíte automatizada
+      (`ToastEmpilhado` em `Toast.stories.tsx`) não pega isso porque só afirma
+      "eventualmente sai do DOM e sobra 3", sem medir o tempo entre os dois
+      eventos, então passa igual nos dois cenários.
+    correcao_exigida: >
+      Parar de inferir a unidade a partir da string computada. Ou (a) tratar
+      explicitamente o sufixo (`ms` vs `s`) ao converter, ou (b) não depender
+      de `getComputedStyle` para esse valor (usar uma constante JS espelhando
+      o token, ou capturar a duração real via evento `transitionrun`/
+      `transitionstart` com `event.elapsedTime`), ou (c) impor um piso mínimo
+      sensato (p. ex. nunca deixar o temporizador de segurança disparar abaixo
+      de metade do valor nominal do design, mesmo que o parse falhe). Qualquer
+      uma resolve; a atual quebra em qualquer pipeline de build que reserialize
+      tempos de CSS, o que inclui provavelmente o build de produção real do
+      design system, não só o Storybook.
+  - severidade: MENOR
+    id_anti_slop: nenhum
+    descricao: >
+      Fora do escopo desta rodada, mas registrado porque apareceu durante o
+      teste de estresse do ToastStack: a story `ToastEmpilhado` gera `id` e
+      `titulo` do toast a partir de `atual.length + 1` dentro do próprio
+      componente de demonstração. Isso é código da story (não do `ToastStack`
+      nem do `Toast`), pré-existente e não tocado por este diff (só a
+      descrição e as asserções da story mudaram). Sob mais de 4 disparos, ou
+      disparos entrelaçados com a coreografia de saída ainda em andamento,
+      dois toasts podem herdar o mesmo `id`/título, o que quebra a garantia de
+      `key` única do React dentro do `.map` do `ToastStack`. Não reprova este
+      veredito porque o `ToastStack` em si está correto (ele só depende do
+      chamador fornecer ids estáveis, o que qualquer serviço de toast real
+      faz); é aviso para quem for tocar essa story depois.
+    evidencia: >
+      Clicando "Disparar notificação" 4 vezes bem espaçadas (400ms) o DOM
+      chegou a mostrar duas entradas com o título "Notificação 4" (uma ativa,
+      uma "saindo"), porque o contador usa o tamanho atual do array, que pode
+      coincidir entre dois disparos quando o mais antigo já foi removido do
+      estado do array em paralelo à criação do novo.
+    correcao_exigida: >
+      Se a story for revisitada, trocar o gerador de id por um contador
+      monotônico (`useRef` incremental) em vez de `atual.length + 1`.
+o_que_me_surpreendeu: []
+o_que_faltou_para_surpreender:
+  - >
+    A aresta tonal e a anatomia de linha foram medidas de verdade (conferi eu
+    mesmo, independentemente do comentário do produtor, com os valores reais
+    de `--sev-*` dos dois temas): claro 1,50 a 1,67:1, escuro 1,64 a 1,95:1,
+    ambos batendo com o que está documentado. Isso é rigor, mas é o rigor que
+    já devia existir; a mesma disciplina de medição não impediu que a peça
+    central desta rodada, a coreografia de saída, falhasse silenciosamente no
+    artefato que o revisor foi orientado a testar. Uma decisão que teria
+    virado espanto de verdade: testar a própria promessa de movimento contra o
+    build, não só contra o dev server, já que é o dev server que dá a
+    sensação de que "funciona".
+motivo_do_veredito: >
+  O andar técnico reprova: o teste automatizado passa (772 de 772), a
+  medição de contraste da aresta tonal é real e a separação física do
+  ConfirmDialog (Cancelar primeiro na leitura, no Tab e no foco inicial;
+  ação destrutiva na ponta oposta, comprovado com teclado) está correta. Mas a
+  peça mais visível e mais anunciada desta entrega, a coreografia contínua de
+  saída da pilha de toasts, não roda no build que o próprio processo de
+  revisão manda gerar e servir: uma rede de segurança pensada para um caso raro
+  vira o caminho principal por um erro de parsing de unidade, e o usuário final
+  vê exatamente o comportamento antigo (sumiço abrupto) que esta rodada disse
+  ter corrigido. Achado bloqueador na definição do próprio briefing: reprova
+  sem discussão de mérito, independentemente de o resto estar bem feito.

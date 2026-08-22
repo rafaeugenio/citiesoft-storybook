@@ -1,0 +1,239 @@
+revisor: "Comportamento de overlay e integração de camadas (top layer, portal, inércia de modal, especificidade em CSS composto), revisão independente com sonda Playwright própria sobre o build estático"
+componente: "HoverCard, InputGroup, ButtonGroup, Kbd (recaptura da rodada 3)"
+veredito: SURPREENDEU
+veredito_anti_slop: PASSOU
+gate_tecnico:
+  typecheck: "./node_modules/.bin/tsc -b --force sai com código 0, sem erro"
+  lint: "oxlint sai com código 0. Dois avisos em HoverCard.tsx (318 refs-durante-render, 210 setState-em-effect), das mesmas famílias já presentes em Tooltip, Menu, Menubar, ColorPicker e Image, todas anteriores a este lote"
+  testes: >
+    18 passados de 18 no tema claro e 18 de 18 no escuro
+    (VITE_CITIE_TEMA_PADRAO=dark), axe em modo error nas duas passadas, exit 0
+    nas duas. Grep por "cannot contain", "validateDOMNesting", "In HTML, " e
+    "console.error" sobre a saída completa das duas suítes devolve zero linhas.
+    build-storybook termina com "Storybook build completed successfully" (o
+    exit 1 vem do invólucro rtk, e não do build). node
+    scripts/verificar-catalogo.mjs com todas as invariantes verdes, 885
+    entradas, 774 stories, 120 títulos, 100 componentes em classificacao.json.
+    A falha de Organismos/Tabelas/Medicao que a rodada 2 registrou como ruído
+    de ambiente já não aparece.
+  stories_antes_depois: >
+    18 para 18 nos quatro componentes, nenhuma perdida e nenhuma acrescentada.
+    Índice do build: 7 no HoverCard, 4 no InputGroup, 4 no ButtonGroup, 3 no
+    Kbd, mais as 4 páginas de docs dos títulos Átomos/Marcadores/Kbd,
+    Moléculas/Ações/ButtonGroup, Moléculas/Campos/InputGroup e
+    Moléculas/Overlay/HoverCard.
+achados:
+  - severidade: POLIMENTO
+    id_anti_slop: nenhum
+    descricao: >
+      A frase do docstring que compara portal e top layer afirma o recorte do
+      diálogo de forma incondicional ("o portalizado para dentro dele é
+      recortado pelo `overflow: auto` que a folha do navegador dá ao `dialog`").
+      Medi os dois estados com a API de popover apagada. Com o diálogo em
+      repouso (`translate: none`), o painel `position: fixed` resolve contra a
+      viewport, escapa do `overflow: auto` e continua apontável 187,5px abaixo
+      do rodapé, com o diálogo sem rolagem (scrollHeight 217 igual a
+      clientHeight 217). Com `translate` no diálogo, que é exatamente o estado
+      de entrada animada, o diálogo vira bloco de contenção, passa a rolar
+      (scrollHeight 407 contra clientHeight 217) e o painel deixa de ser
+      apontável tanto no centro quanto abaixo do rodapé. A afirmação vale na
+      condição que importa, porque é durante a entrada que o painel pode ser
+      aberto, e o próprio arquivo declara essa condição duzentas linhas abaixo
+      ("sem suporte a popover o painel fica sujeito ao ancestral, como acontece
+      dentro do `Dialog`, que entra com `translate` animado"). O que falta é a
+      condição aparecer também na frase de cima.
+    evidencia: >
+      HoverCard.tsx linhas 39 a 42 contra linhas 251 a 259. Medição em
+      /Users/rafaeleugenio/Documents/Cursor/Repositorios/citiesoft-storybook/.probe-rev3/p4.mjs,
+      seções A1 e A2 (A1 passaDoRodape -154,5 e ponto apontável falso por estar
+      dentro do diálogo; A2 passaDoRodape 190, centroEhPainel false,
+      pontoAbaixoEhPainel false, scrollHeight 407 contra clientHeight 217).
+    correcao_exigida: >
+      Nenhuma mudança de comportamento. Acrescentar a condição na frase de cima,
+      por exemplo "recortado pelo `overflow: auto` do `dialog` enquanto ele for
+      bloco de contenção, que é o estado da entrada animada".
+  - severidade: POLIMENTO
+    id_anti_slop: nenhum
+    descricao: >
+      O comentário que justifica a classe dobrada no bloco do botão afirma que
+      "as regras de variante do Button têm a mesma especificidade de um seletor
+      de duas classes". As regras do Button que atribuem
+      `--citie-elevacao-do-botao` são de uma classe só
+      (`.citie-button--primary`, `.citie-button--secondary` e irmãs, linhas 131,
+      140, 159, 177, 205, 233, 261 e 305 de Button.css), ou seja (0,1,0), então
+      um seletor simples de duas classes já venceria. A dobra em si está certa e
+      é obrigatória três regras acima: `.citie-field-control[aria-invalid='true']:focus`
+      no primitivo Field é (0,3,0) e empata exatamente com a regra de foco do
+      trilho, que sem a dobra cairia para (0,2,0) e perderia. A dobra também
+      empata de propósito com as regras de primeiro e último filho do mesmo
+      arquivo, resolvidas pela ordem interna, e esse comentário está correto.
+      A imprecisão é de um número num dos três comentários, sem efeito sobre o
+      resultado pintado.
+    evidencia: >
+      InputGroup.css linhas 129 a 132 contra Button.css linhas 131 a 143 e
+      Field.css linha 238. Comportamento medido em p2.mjs seção 7b e p3.mjs
+      seção B: o anel acende no campo com o trilho inteiro
+      (rgba(18,97,228,0.4) 0 0 0 3px mais o poço) e migra para o botão no Tab
+      seguinte, com o trilho apagando.
+    correcao_exigida: >
+      Corrigir o número no comentário, ou trocá-lo pela razão que se sustenta,
+      que é manter a mesma dobra em todo o arquivo por causa do empate real com
+      o primitivo Field.
+  - severidade: POLIMENTO
+    id_anti_slop: nenhum
+    descricao: >
+      Quatro stories do HoverCard ainda usam `<button>` cru como gatilho, e no
+      tema escuro isso pinta um botão claro do navegador sobre a superfície
+      escura. É o elemento mais destoante das capturas do lote. A story do
+      modal e a `PorTeclado` já usam o `Link` do catálogo, então o caminho certo
+      está demonstrado. Achado repetido da rodada 2, registrado de novo porque
+      continua visível.
+    evidencia: >
+      HoverCard.stories.tsx linhas 49, 107, 194, 242 e 391. Captura
+      /Users/rafaeleugenio/.claude/jobs/87efdce7/tmp/shots3/estrutura-dark.png,
+      onde o gatilho "Ver estrutura" aparece como botão claro sobre a superfície
+      escura, ao lado de um painel corretamente escuro.
+    correcao_exigida: "Gatilho do catálogo nas stories, ou nenhuma mudança se a casa aceitar o botão cru como andaime de vitrine."
+  - severidade: POLIMENTO
+    id_anti_slop: COR-009
+    descricao: >
+      A aresta inferior do Kbd é uma `box-shadow` escrita na regra
+      (`inset 0 -1px 0 var(--citie-border-strong)`) em vez de vir de token de
+      elevação. Registro o ID para a casa arbitrar em vez de contar como
+      violação: a categoria do COR-009 é QUALIDADE INSUFICIENTE, a cor vem de
+      token, é uma sombra só, ela é interna e não projetada, e o papel dela é
+      relevo físico da tecla, e não degrau de elevação. O próprio comentário
+      declara a escolha ("sem gradiente, sem sombra projetada e sem ganhar
+      altura"). Fora isso, os quatro componentes não têm nenhum literal de cor:
+      grep por `#`, `rgb(`, `rgba(`, `hsl(` nos quatro CSS devolve zero.
+    evidencia: "Kbd.css linhas 40 a 45. Grep de literais de cor nos quatro CSS: nenhuma ocorrência."
+    correcao_exigida: "Decisão da casa sobre relevo interno de 1px; nenhuma mudança exigida por este gate."
+o_que_me_surpreendeu:
+  - >
+    A separação entre o que a top layer resolve e o que o portal resolve, com o
+    alvo do portal escolhido pela inércia do modal, e não pela pintura. Ataquei
+    o argumento em vez de aceitá-lo: com o painel aberto dentro do diálogo,
+    movi o próprio painel para o contêiner de tema mantendo o popover aberto. O
+    resultado é o que o código prevê, e é contraintuitivo: o painel continua
+    casando `:popover-open`, continua pintado com 320px de largura, e mesmo
+    assim `elementFromPoint` no centro dele devolve DIALOG. Visível e não
+    apontável, exatamente porque modal deixa inerte tudo o que está fora dele,
+    inclusive quem está na top layer. Confirmei a mesma inércia por um segundo
+    caminho: com o modal aberto, o Playwright não consegue clicar no botão
+    "Abrir processo" que está fora dele, e o log de acionabilidade diz
+    "<dialog open> intercepts pointer events". O alvo `dialog[open]` do portal
+    é a única escolha que sobrevive a essa medição.
+    Evidência: .probe-rev3/p2.mjs seções 2 e 6.
+  - >
+    A restrição de aninhamento sumiu de verdade, e não foi silenciada. Medi os
+    dois lados no DOM vivo, nos dois temas: `painel.closest('p')` é null e
+    `gatilho.closest('p')` é P, com a cadeia inteira do painel até o body sendo
+    DIALOG, DIV, DIV, DIV, sem nenhum P no caminho. A story que causou a
+    reprovação da rodada 2 continua com o parágrafo e agora funciona como prova
+    de que a restrição não existe. As duas suítes não emitem uma linha de
+    console (grep por "cannot contain" e por "console.error" na saída completa
+    devolve zero), e a sonda também não captura nenhum erro de console em
+    nenhum dos temas. A solução manteve `dt`/`dd`, que é o que faz o leitor de
+    tela anunciar rótulo e valor como par, em vez de comprar validade pagando
+    com semântica.
+    Evidência: .probe-rev3/p2.mjs seção 1 nos dois temas, mais os logs
+    test-light.log e test-dark.log.
+  - >
+    A guarda de compatibilidade passou a ser condicionada a estado, e o efeito
+    é medível nos dois modos de falha, que era o buraco que a rodada 2 apontou.
+    Testei API que recusa (`showPopover` lançando DOMException) e API ausente
+    (`showPopover`, `hidePopover` e `togglePopover` apagados do protótipo). Os
+    dois cenários dão exatamente o mesmo painel utilizável: atributo `popover`
+    removido, `display: block`, 320 por 279, `z-index` 1100, fundo de token,
+    apontável no centro, dentro da janela, e ainda escapando 266px do
+    `overflow: hidden` da moldura da tabela porque o portal já o tirou dali. A
+    rodada 2 mediu 0 por 0 no cenário de API ausente. A correção atacou a causa,
+    que é a folha do navegador esconder `[popover]` fora da top layer, em vez de
+    reescrever o comentário.
+    Evidência: .probe-rev3/p2.mjs seção 5 nos dois modos, mais a seção 5b, que
+    repete o cenário de API ausente dentro do modal e devolve painel de 320px
+    dentro do diálogo, sem atributo e sem parágrafo ancestral.
+  - >
+    A dobra de classe no InputGroup como defesa contra a ordem dos arquivos no
+    bundle, e não contra especificidade em geral. Conferi o empate que ela
+    resolve de verdade: `.citie-field-control[aria-invalid='true']:focus` no
+    primitivo Field é (0,3,0), e a regra de foco do trilho sem a dobra seria
+    (0,2,0) e perderia justamente no campo inválido em foco. Com a dobra ela
+    também chega a (0,3,0) e empata de propósito com as regras de primeiro e
+    último filho do mesmo arquivo, deixando a ordem interna decidir que a peça
+    de ponta ganha canto mesmo sendo botão. É um modo de falha que nenhum teste
+    pega até um empacotador reordenar o CSS, e ninguém pediu para resolver.
+    A companhia disso é a sombra nula: o botão emendado zera a âncora com
+    `0 0 0 0 transparent` em vez de `none`, porque o anel do Button compõe uma
+    lista de sombras e um `none` dentro da lista invalidaria a lista inteira.
+    Medi com Tab real: no botão em foco a sombra final é
+    "rgba(18,97,228,0.4) 0 0 0 3px, rgba(0,0,0,0) 0 0 0 0", com o anel de pé e
+    a sombra nula preservada no fim.
+    Evidência: InputGroup.css linhas 95 a 99, 129 a 143 e 145 a 165, contra
+    Field.css linha 238 e Button.css linhas 131 a 143. Medição em
+    .probe-rev3/p3.mjs seção B, quatro passos de Tab.
+  - >
+    A concentricidade do raio é derivada, e não copiada. O trilho usa
+    `--citie-radius-md` e as peças de ponta usam
+    `calc(var(--citie-radius-md) - 1px)`, que é a prescrição literal do LAY-005
+    (raio interno igual ao externo menos a borda). Medido no navegador: trilho
+    6px, adorno "5px 0 0 5px", campo 0, botão "0 5px 5px 0". Se o token mudar,
+    a concentricidade acompanha sozinha. O mesmo rigor aparece no ButtonGroup,
+    onde as junções medem exatamente -1px de recuo entre as três peças, os
+    raios saem "6px 0 0 6px", "0px" e "0 6px 6px 0", e a peça em foco sobe para
+    o plano 2 com o anel inteiro por cima da junção do vizinho.
+    Evidência: .probe-rev3/p2.mjs seções 7b e 7e.
+o_que_faltou_para_surpreender:
+  - >
+    Nada em escopo. Os quatro itens acima são de polimento e nenhum deles muda
+    o que a tela faz. O mais útil de fechar é a condição na frase do docstring
+    sobre o recorte do diálogo, porque é a última afirmação do lote que só vale
+    sob uma condição não escrita no lugar em que ela é lida.
+motivo_do_veredito: >
+  Julguei o estado de hoje, e ele é sólido nos dois andares. O gate técnico
+  passa inteiro e desta vez sem ressalva de ambiente: typecheck e lint em
+  código 0, 18 de 18 nos dois temas com axe em modo error, build concluído,
+  catálogo com todas as invariantes verdes, nenhuma story perdida, e as duas
+  suítes silenciosas no console. Os dois defeitos que reprovaram as rodadas
+  anteriores estão resolvidos na causa. O aninhamento inválido sumiu por
+  construção, medido dos dois lados no DOM vivo e nos dois temas, com o
+  parágrafo mantido na story como prova em vez de removido como fuga. A guarda
+  de compatibilidade passou a derrubar o atributo `popover` em qualquer falha,
+  e conferi os dois modos que ela precisa cobrir, com painel utilizável nos
+  dois. A alegação que sustenta a escolha do alvo do portal foi a que mais
+  ataquei, e ela sobrevive: painel portalizado para fora do modal fica visível
+  e não apontável, com `elementFromPoint` devolvendo DIALOG, e o próprio
+  Playwright recusa clique em elemento fora do modal dizendo que o diálogo
+  intercepta o ponteiro. A combinação de portal e popover foi exercitada nas
+  quatro situações pedidas: dentro do modal (25 acertos de 25 numa grade sobre
+  o painel, 190px abaixo do rodapé, tokens por herança com rgb(255,255,255) no
+  claro e rgb(26,26,29) no escuro), fora do modal (alvo [data-theme], folga de
+  8px lida do token `--citie-spacing-2`), dentro de tabela recortada (escape de
+  266px, apontável abaixo da borda) e modal aberto sobre moldura recortada
+  injetada por mim dentro do diálogo (escape de 348px, apontável, painel
+  íntegro de 320 por 279). O que as rodadas anteriores validaram continua de
+  pé sob medição minha: travessia da lacuna com ponteiro real em quatro passos,
+  com o painel sobrevivendo e o CPF "605.922.293-51" selecionado dentro dele;
+  Escape em camadas fechando só o painel com o diálogo aberto; virada para cima
+  na borda em janela de 360 por 640, inteira dentro da área visível; anel do
+  InputGroup acendendo pelo campo e migrando para o botão; concentricidade
+  derivada por calc; ButtonGroup com role, rótulo, recuo de -1px e foco no
+  plano 2; Kbd em 20 por 20 dentro de linha de 32px, com nome acessível
+  "Command K" e contraste medido por mim em 10,11:1 no claro e 10,46:1 no
+  escuro, os números exatos do comentário. Movimento reduzido devolve
+  `animation-name: none` com o painel opaco e visível. Anti-slop passa: zero
+  travessão, zero negação paralela nas formas que o catálogo manda detectar,
+  zero literal de cor, microcopy toda específica do TFD (CPF, Cartão SUS,
+  processo, CID, São Luís), sem gradiente, sem vidro, sem faísca e sem seta em
+  loop. Dou SURPREENDEU porque consigo nomear mais de duas decisões que não
+  esperava encontrar e que verifiquei por medida própria, não por leitura de
+  comentário: a inércia do modal como razão do alvo do portal, a guarda por
+  estado provada nos dois modos de falha, e a dobra de classe contra a ordem
+  dos arquivos no bundle, que é um empate real de (0,3,0) com o primitivo Field
+  e que nenhum teste pegaria. Registro quatro polimentos, todos sem efeito
+  sobre comportamento, e um deles é imprecisão de um número em comentário, que
+  vale corrigir porque este lote já foi reprovado duas vezes por motivo
+  gravado que não sobreviveu à medição. Nota de escopo: a evidência de
+  acessibilidade aqui é o gate axe do repositório nos dois temas mais as
+  medidas de contraste, foco e teclado que fiz; o laudo e-MAG 3.1 e WCAG 2.2 AA
+  segue sendo entrega separada do responsável por acessibilidade.

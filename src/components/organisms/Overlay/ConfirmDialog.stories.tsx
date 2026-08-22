@@ -21,7 +21,7 @@ const meta = {
     docs: {
       description: {
         component: [
-          'Diálogo de confirmação para decisão explícita antes de prosseguir: `role="alertdialog"`, sem botão de fechar e com foco inicial na ação segura ("Cancelar"), padrão defensivo contra clique acidental. Spec: `03-components/modals-dialogs-drawers.md` v2.0.0. Equivalente PrimeNG: `p-confirmdialog`. **Quando usar este e não os irmãos:** use o ConfirmDialog quando a pessoa só precisa dizer sim ou não a uma consequência já descrita; use o [Dialog](?path=/docs/organismos-overlay-dialog--docs) quando houver uma tarefa a executar dentro do overlay, com foco total; use o [Drawer](?path=/docs/organismos-overlay-drawer--docs) quando o contexto da tela atrás precisa permanecer visível. Existe ainda o ConfirmPopup, irmão leve deste componente, ancorado ao próprio gatilho para confirmação de baixo risco e reversível: ação destrutiva permanente usa sempre este diálogo modal, nunca o popup. Cada story abre pelo botão, como no produto.',
+          'Diálogo de confirmação para decisão explícita antes de prosseguir: `role="alertdialog"`, sem botão de fechar e com três defesas contra o clique acidental que se somam: o foco inicial vai para a ação segura ("Cancelar"), o rótulo destrutivo nomeia a ação ("Excluir processo", nunca "Confirmar"), e as duas ações ocupam pontas opostas do rodapé, com a consequência descrita antes de qualquer botão. Spec: `03-components/modals-dialogs-drawers.md` v2.0.0. Equivalente PrimeNG: `p-confirmdialog`. **Quando usar este e não os irmãos:** use o ConfirmDialog quando a pessoa só precisa dizer sim ou não a uma consequência já descrita; use o [Dialog](?path=/docs/organismos-overlay-dialog--docs) quando houver uma tarefa a executar dentro do overlay, com foco total; use o [Drawer](?path=/docs/organismos-overlay-drawer--docs) quando o contexto da tela atrás precisa permanecer visível. Existe ainda o ConfirmPopup, irmão leve deste componente, ancorado ao próprio gatilho para confirmação de baixo risco e reversível: ação destrutiva permanente usa sempre este diálogo modal, nunca o popup. Cada story abre pelo botão, como no produto.',
           '',
           '**Quando não usar:** ação reversível e de baixo risco, como remover um filtro ou desfazer uma',
           'marcação, em que o modal cobra dois cliques por algo que a pessoa poderia simplesmente refazer',
@@ -81,7 +81,7 @@ export const Confirmacao: Story = {
     docs: {
       description: {
         story:
-          'O título nomeia o objeto afetado e o corpo descreve a consequência. O foco inicial vai para "Cancelar", padrão defensivo contra clique acidental.',
+          'O título nomeia o objeto afetado e o corpo descreve a consequência, lida antes de os botões serem alcançados. O foco inicial vai para "Cancelar", o rótulo destrutivo nomeia a ação, e as duas ficam em pontas opostas do rodapé: escorregar o ponteiro não alcança a exclusão.',
       },
     },
   },

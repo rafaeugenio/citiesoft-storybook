@@ -103,6 +103,13 @@
       "tituloAntigo": "Dados/Marcadores"
     },
     {
+      "nome": "Kbd",
+      "nivel": "atomo",
+      "familia": "Marcadores",
+      "arquivo": "Kbd/Kbd",
+      "tituloAntigo": null
+    },
+    {
       "nome": "Avatar",
       "nivel": "atomo",
       "familia": "Identidade",
@@ -306,6 +313,13 @@
       "tituloAntigo": "Formulário/Inplace"
     },
     {
+      "nome": "InputGroup",
+      "nivel": "molecula",
+      "familia": "Campos",
+      "arquivo": "InputGroup/InputGroup",
+      "tituloAntigo": null
+    },
+    {
       "nome": "AvatarGroup",
       "nivel": "molecula",
       "familia": "Identidade",
@@ -339,6 +353,13 @@
       "familia": "Ações",
       "arquivo": "SpeedDial/SpeedDial",
       "tituloAntigo": "Ação/SpeedDial"
+    },
+    {
+      "nome": "ButtonGroup",
+      "nivel": "molecula",
+      "familia": "Ações",
+      "arquivo": "ButtonGroup/ButtonGroup",
+      "tituloAntigo": null
     },
     {
       "nome": "EmptyState",
@@ -381,6 +402,13 @@
       "familia": "Overlay",
       "arquivo": "ConfirmPopup/ConfirmPopup",
       "tituloAntigo": "Overlay/ConfirmPopup"
+    },
+    {
+      "nome": "HoverCard",
+      "nivel": "molecula",
+      "familia": "Overlay",
+      "arquivo": "HoverCard/HoverCard",
+      "tituloAntigo": null
     },
     {
       "nome": "Breadcrumb",

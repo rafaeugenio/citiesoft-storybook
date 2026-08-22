@@ -152,6 +152,27 @@ export const FaixaComOitoIndicadores: Story = {
 
     const numero = canvas.getByText('312');
     await expect(getComputedStyle(numero).whiteSpace).toBe('nowrap');
+
+    /*
+     * A faixa não pode transbordar, e esta é a asserção que faltava.
+     *
+     * O piso de encolhimento das células era `min-content`, o que parecia
+     * proteger o número e na prática somava o conteúdo mínimo de todas: com
+     * oito indicadores em 1200px, a lista pedia 1311px dentro de 1110
+     * disponíveis, o oitavo terminava além da janela e a página inteira ganhava
+     * rolagem horizontal.
+     *
+     * A varredura de acessibilidade acusava contraste de 1,08:1 no oitavo
+     * indicador, porque o conteúdo que transbordava ficava fora da área pintada
+     * e o axe não achava fundo opaco por trás dele. O contraste era sintoma; a
+     * causa era o transbordo, e é ele que esta asserção guarda.
+     */
+    const lista = canvasElement.querySelector('.citie-kpi-faixa__lista') as HTMLElement;
+    await expect(lista.scrollWidth).toBeLessThanOrEqual(lista.clientWidth);
+
+    // E a página não ganha rolagem horizontal por causa da faixa.
+    const raiz = canvasElement.ownerDocument.documentElement;
+    await expect(raiz.scrollWidth).toBeLessThanOrEqual(raiz.clientWidth);
   },
 };
 

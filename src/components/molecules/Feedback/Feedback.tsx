@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode, type TransitionEvent } from 'react';
 import { Button } from '../../atoms/Button/Button';
+import { MOTION_RAPIDO_NOMINAL_MS, tempoCssEmMs } from './tempoCss';
 import './Feedback.css';
 
 export type SeveridadeFeedback =
@@ -155,13 +156,132 @@ export interface ToastStackProps {
   max?: number;
 }
 
+/** Sob movimento reduzido a pilha reorganiza sem transição, direto no estado final. */
+function movimentoReduzido() {
+  return (
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
+}
+
+/**
+ * A pilha é dona da coreografia de saída. Dispensar um toast (temporizador,
+ * botão de fechar ou excedente do `max`) primeiro o marca como "saindo": o
+ * cartão esmaece e o item colapsa de altura, então os toasts abaixo sobem em
+ * movimento contínuo em vez de saltar para a nova posição. O `onDismiss` do
+ * chamador só é acionado quando a transição de altura termina, para o nó sair
+ * do DOM sem salto residual. Sob movimento reduzido não existe fase de saída:
+ * a dispensa é imediata.
+ */
 export function ToastStack({ toasts, onDismiss, max = 3 }: ToastStackProps) {
-  const visiveis = toasts.slice(-max);
+  const [saindo, setSaindo] = useState<readonly string[]>([]);
+
+  const iniciarSaida = useCallback(
+    (id: string) => {
+      if (movimentoReduzido()) {
+        onDismiss?.(id);
+        return;
+      }
+      // A marca de saída entra depois de um quadro pintado com o item na
+      // altura cheia; sem isso, um item recém-entrado em cena receberia `0fr`
+      // já no primeiro estilo computado e a transição nunca aconteceria.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setSaindo((atual) => (atual.includes(id) ? atual : [...atual, id]));
+        });
+      });
+    },
+    [onDismiss],
+  );
+
+  const concluirSaida = useCallback(
+    (id: string) => {
+      setSaindo((atual) => atual.filter((outro) => outro !== id));
+      onDismiss?.(id);
+    },
+    [onDismiss],
+  );
+
+  // O chamador pode remover um toast por conta própria no meio da saída; a
+  // marca de "saindo" de um id que já não existe é ignorada aqui, derivada em
+  // render, e o resíduo no estado se limpa quando a saída conclui.
+  const emSaida = saindo.filter((id) => toasts.some((toast) => toast.id === id));
+  const chaveEmSaida = emSaida.join('\n');
+
+  // O excedente além do `max` sai pela mesma coreografia da dispensa,
+  // em vez de desaparecer de golpe como antes.
+  useEffect(() => {
+    const marcados = chaveEmSaida.split('\n');
+    const abertos = toasts.filter((toast) => !marcados.includes(toast.id));
+    const excedente = abertos.length - max;
+    for (const toast of abertos.slice(0, Math.max(0, excedente))) iniciarSaida(toast.id);
+  }, [toasts, chaveEmSaida, max, iniciarSaida]);
+
+  /**
+   * Rede de segurança: se a transição de altura não chegar a rodar (pilha
+   * dentro de uma região oculta, por exemplo), o `transitionend` nunca dispara
+   * e o toast ficaria preso no DOM, ainda anunciável ao leitor de tela. O
+   * temporizador conclui a saída no dobro da duração da transição, lida do
+   * próprio token para o tempo não existir em dois lugares. A leitura trata o
+   * sufixo explicitamente, porque o valor chega como `140ms` no servidor de
+   * desenvolvimento e como `.14s` no build minificado, e ainda respeita um piso
+   * igual ao valor nominal do token: nenhuma reserialização futura do CSS pode
+   * fazer o plano B virar o caminho principal.
+   */
+  useEffect(() => {
+    if (!chaveEmSaida) return;
+    const bruto = getComputedStyle(document.documentElement).getPropertyValue(
+      '--citie-motion-rapido',
+    );
+    const duracao = tempoCssEmMs(bruto) ?? MOTION_RAPIDO_NOMINAL_MS;
+    const espera = Math.max(duracao * 2, MOTION_RAPIDO_NOMINAL_MS);
+    const pendentes = chaveEmSaida.split('\n');
+    const temporizador = setTimeout(() => {
+      for (const id of pendentes) concluirSaida(id);
+    }, espera);
+    return () => clearTimeout(temporizador);
+  }, [chaveEmSaida, concluirSaida]);
+
+  const ativos = toasts.filter((toast) => !emSaida.includes(toast.id));
+  // O excedente permanece em cena até a marca de saída chegar, senão ele
+  // sumiria de golpe antes de a coreografia começar.
+  const excedentes = new Set(
+    ativos.slice(0, Math.max(0, ativos.length - max)).map((toast) => toast.id),
+  );
+  const emCena = new Set(ativos.slice(-max).map((toast) => toast.id));
+
   return (
     <div className="citie-toast-stack">
-      {visiveis.map((toast) => (
-        <Toast key={toast.id} {...toast} onDismiss={onDismiss} />
-      ))}
+      {toasts
+        .filter(
+          (toast) =>
+            emCena.has(toast.id) || excedentes.has(toast.id) || emSaida.includes(toast.id),
+        )
+        .map((toast) => {
+          const estaSaindo = emSaida.includes(toast.id);
+          const aoTerminarTransicao = (evento: TransitionEvent<HTMLDivElement>) => {
+            // Só o colapso de altura do próprio item conclui a saída; as
+            // transições internas do toast (opacidade, deslocamento) não.
+            if (
+              estaSaindo &&
+              evento.target === evento.currentTarget &&
+              evento.propertyName === 'grid-template-rows'
+            ) {
+              concluirSaida(toast.id);
+            }
+          };
+          return (
+            <div
+              key={toast.id}
+              className={`citie-toast-stack__item${estaSaindo ? ' citie-toast-stack__item--saindo' : ''}`}
+              onTransitionEnd={aoTerminarTransicao}
+            >
+              <div className="citie-toast-stack__janela">
+                <Toast {...toast} onDismiss={iniciarSaida} />
+              </div>
+            </div>
+          );
+        })}
     </div>
   );
 }
@@ -230,7 +350,9 @@ export function Message({
             {visiveis.map((erro) => (
               <li key={erro}>{erro}</li>
             ))}
-            {excedente > 0 ? <li>e mais {excedente} erros</li> : null}
+            {/* Concordância de número: com 6 erros o excedente é 1, e a linha
+                precisa sair no singular. */}
+            {excedente > 0 ? <li>e mais {excedente} {excedente === 1 ? 'erro' : 'erros'}</li> : null}
           </ul>
         ) : null}
 

@@ -1,13 +1,27 @@
 .citie-treetable-wrapper {
   border: 1px solid var(--citie-border-default);
-  border-radius: var(--citie-radius-lg);
+  /* Mesmo degrau da `Table`: superfície de contorno de primeiro nível é `xl`. */
+  border-radius: var(--citie-radius-xl);
   overflow: auto;
   background-color: var(--citie-background-surface);
 }
 
 .citie-treetable {
   width: 100%;
-  border-collapse: collapse;
+  /**
+   * `separate` com espaçamento zero, pelas mesmas três razões documentadas em
+   * `Table.css`, e uma delas foi medida aqui: sob `collapse`, a borda inferior
+   * de um `th` fixo não acompanha o elemento na rolagem, porque quem pinta o
+   * fio é a tabela. Sondado com captura de tela e leitura de
+   * pixel: no mesmo ponto da faixa de borda, `collapse` rolado devolve a cor da
+   * célula de dado (a borda sumiu) e `separate` rolado devolve a cor da borda.
+   * Era o motivo do `box-shadow: 0 1px 0` que existia aqui como remendo.
+   */
+  border-collapse: separate;
+  border-spacing: 0;
+  /* Densidade padrão, para a tabela nunca ficar sem anatomia de linha. */
+  --citie-altura-da-linha: var(--citie-altura-de-linha-confortavel);
+  --citie-respiro-da-celula: var(--citie-spacing-4);
   font-family: var(--citie-font-ui);
   font-size: var(--citie-font-size-body-md);
   color: var(--citie-text-base);
@@ -19,14 +33,27 @@
   background-color: var(--citie-background-subtle);
   border-block-end: 1px solid var(--citie-border-default);
   font-size: var(--citie-font-size-body-md);
-  font-weight: 600;
+  font-weight: var(--citie-font-weight-title);
   color: var(--citie-text-primary);
 }
 
+/**
+ * Cabeçalho de coluna com a mesma anatomia da `Table`: rótulo micro em
+ * maiúscula e cor secundária.
+ *
+ * Ficara para trás na rodada anterior, e a consequência era ver duas tabelas de
+ * sistemas diferentes na mesma tela: a plana com cabeçalho de metadado e a de
+ * árvore com cabeçalho competindo com o dado em peso e em cor.
+ *
+ * Contraste conferido: `text-secondary` sobre `background-subtle` mede 4,64:1,
+ * acima dos 4,5:1 que a WCAG 1.4.3 exige para texto.
+ */
 .citie-treetable th {
-  font-size: var(--citie-font-size-body-sm);
-  font-weight: 600;
-  color: var(--citie-text-primary);
+  font-size: var(--citie-font-size-body-xs);
+  font-weight: var(--citie-font-weight-title);
+  color: var(--citie-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   text-align: start;
   background-color: var(--citie-background-subtle);
   border-block-end: 1px solid var(--citie-border-strong);
@@ -39,22 +66,34 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 360px;
+  /*
+   * Mesmo teto da `Table`. Eram 360px aqui contra 320px lá, sem motivo
+   * declarado em nenhum dos dois arquivos: divergência de número duplicado, que
+   * é o defeito que o token fecha.
+   */
+  max-width: var(--citie-largura-maxima-da-celula);
 }
 
 .citie-treetable tbody tr:last-child td {
-  border-block-end: none;
+  /* Sombra da mesma regra da `Table`: a borda fica transparente em vez de
+     sumir, para a última linha medir o mesmo que as outras. */
+  border-block-end-color: transparent;
 }
 
 /**
  * O conteúdo da célula vive num container flex em vez de solto na linha de base:
  * o botão de expandir arrastaria o strut da linha e inflaria a altura.
+ *
+ * A entrelinha é comprimento fixo, pelo motivo documentado em
+ * `--citie-linha-da-celula`: proporção sobre corpo de 14px dá caixa de 19,6px e
+ * célula de duas linhas em altura fracionária.
  */
 .citie-treetable__conteudo {
   display: flex;
   align-items: center;
   min-width: 0;
-  line-height: 1.4;
+  min-block-size: var(--citie-linha-da-celula);
+  line-height: var(--citie-linha-da-celula);
 }
 
 .citie-treetable__conteudo > * {
@@ -78,10 +117,36 @@
  * Um nível de profundidade recua `spacing.4` (16px), conforme a spec do DS.
  * O recuo é padding do container, não margem do toggle, para o alvo de clique do
  * botão continuar inteiro em qualquer nível.
+ *
+ * O recuo sozinho é pista fraca de profundidade, e piora exatamente onde não
+ * pode piorar: a escada de peso abaixo para no nível 2, então do terceiro nível
+ * em diante todas as linhas ficam com o mesmo peso, a mesma cor e a mesma
+ * anatomia, e a única diferença entre a conta 3.1.90 e a 3.1.90.11 fica sendo
+ * medir 16px de recuo a olho. A 200% de zoom, que o e-MAG exige suportar, a
+ * coluna de identificação encolhe e o recuo compete com o rótulo pelo mesmo
+ * espaço.
+ *
+ * O trilho abaixo desenha um fio vertical por ancestral dentro da faixa de
+ * recuo, então a profundidade vira contável em vez de estimada: três fios é
+ * nível 4. É a convenção de árvore de arquivo, que o gerenciador de arquivos já
+ * ensinou a quem usa. Custa zero de largura, porque ocupa a faixa que o recuo já
+ * reservou.
+ *
+ * O fio é uma pista entre várias: a profundidade continua no
+ * `aria-level` para o leitor de tela, no recuo para o olho e no código da conta
+ * para a leitura. Por isso `border-strong` (1,43:1 sobre a superfície clara,
+ * 1,83:1 sobre a escura) basta aqui e não há piso de 3:1 a cumprir.
  */
 .citie-treetable__conteudo--hierarquia {
   gap: var(--citie-spacing-2);
   padding-inline-start: calc(var(--citie-treetable-nivel, 0) * var(--citie-spacing-4));
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--citie-border-strong) 0 1px,
+    transparent 1px var(--citie-spacing-4)
+  );
+  background-repeat: no-repeat;
+  background-size: calc(var(--citie-treetable-nivel, 0) * var(--citie-spacing-4)) 100%;
 }
 
 .citie-treetable__toggle {
@@ -90,15 +155,17 @@
   justify-content: center;
   flex: none;
   /* Alvo de 24x24 mesmo com o chevron desenhado em 16px. */
-  inline-size: 24px;
-  block-size: 24px;
+  inline-size: var(--citie-touch-target-min);
+  block-size: var(--citie-touch-target-min);
   padding: 0;
   color: var(--citie-text-secondary);
   background: none;
   border: none;
   border-radius: var(--citie-radius-sm);
   cursor: pointer;
-  transition: transform var(--citie-motion-rapido) var(--citie-easing-padrao), background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
+  transition:
+    transform var(--citie-motion-rapido) var(--citie-easing-padrao),
+    background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-treetable__toggle:hover {
@@ -120,18 +187,18 @@
 .citie-treetable__toggle-vazio {
   display: inline-block;
   flex: none;
-  inline-size: 24px;
-  block-size: 24px;
+  inline-size: var(--citie-touch-target-min);
+  block-size: var(--citie-touch-target-min);
 }
 
 /* Cada nível perde peso: a hierarquia se lê sem depender só do recuo. */
 .citie-treetable__linha--nivel-1 .citie-treetable__conteudo--hierarquia {
-  font-weight: 600;
+  font-weight: var(--citie-font-weight-title);
   color: var(--citie-text-primary);
 }
 
 .citie-treetable__linha--nivel-2 .citie-treetable__conteudo--hierarquia {
-  font-weight: 500;
+  font-weight: var(--citie-font-weight-action);
 }
 
 /* Código da conta antes do nome: dígito alinhado para a leitura vertical. */
@@ -146,37 +213,68 @@
  * Em célula de tabela o `height` é altura de conteúdo e o padding vertical soma
  * por cima (48 + 12 + 12 + borda = 73). Por isso a altura fica no `height` e o
  * respiro vertical vira espaço mínimo do container interno.
+ *
+ * Os valores saem dos mesmos tokens da `Table`: eram os mesmos quatro literais
+ * repetidos nos dois arquivos, e duplicata de número é divergência esperando
+ * acontecer.
  */
-.citie-treetable--confortavel th,
-.citie-treetable--confortavel td {
-  height: 48px;
-  padding: 0 var(--citie-spacing-4);
+.citie-treetable--confortavel {
+  --citie-altura-da-linha: var(--citie-altura-de-linha-confortavel);
+  --citie-respiro-da-celula: var(--citie-spacing-4);
 }
 
-.citie-treetable--confortavel .citie-treetable__conteudo {
-  min-height: 24px;
+.citie-treetable--compacta {
+  --citie-altura-da-linha: var(--citie-altura-de-linha-compacta);
+  --citie-respiro-da-celula: var(--citie-spacing-3);
 }
 
-.citie-treetable--compacta th,
-.citie-treetable--compacta td {
-  height: 36px;
-  padding: 0 var(--citie-spacing-3);
+.citie-treetable th,
+.citie-treetable td {
+  height: var(--citie-altura-da-linha);
+  padding: 0 var(--citie-respiro-da-celula);
 }
 
+/**
+ * Densidade compacta é contrato de 36px, e um controle de 40px dentro dela
+ * empurra a linha para 41px. A correção re-aponta o token de altura que os
+ * próprios controles consomem, em vez de a tabela redesenhar controle alheio.
+ */
 .citie-treetable--compacta .citie-treetable__conteudo {
-  min-height: 20px;
+  --citie-control-height-normal: var(--citie-control-height-small);
+  --citie-control-height-large: var(--citie-control-height-small);
 }
 
-.citie-treetable--compacta .citie-treetable__toggle,
-.citie-treetable--compacta .citie-treetable__toggle-vazio {
-  /* Mantém os 24px de alvo sem esticar a linha de 36px. */
-  block-size: 24px;
+/* ---------- Fundo da linha: estado por baixo, ponteiro por cima ---------- */
+
+/**
+ * Mesma composição de duas camadas da `Table`, e pela mesma razão: a cor de
+ * estado do dado embaixo, o véu de ponteiro translúcido em cima. Antes as duas
+ * disputavam `background-color` e a linha selecionada, declarada depois,
+ * parava de responder ao ponteiro.
+ */
+.citie-treetable tbody td {
+  background-color: var(--citie-fundo-da-linha, transparent);
+  background-image: linear-gradient(var(--citie-veu-de-realce), var(--citie-veu-de-realce));
 }
 
-/* ---------- Zebra ---------- */
+/**
+ * Mesma ordem declarada da `Table`, e pelo mesmo motivo: zebra e seleção
+ * pintam a mesma propriedade, e por especificidade a linha PAR selecionada
+ * ficava com a faixa da zebra. Os nomes de camada são os mesmos nos dois
+ * componentes, então a ordem vale uma vez para as duas tabelas.
+ */
+@layer citie-linha-zebra, citie-linha-selecao;
 
-.citie-treetable--zebra tbody tr:nth-child(even) {
-  background-color: var(--citie-background-subtle);
+@layer citie-linha-zebra {
+  .citie-treetable--zebra tbody tr:nth-child(even) {
+    --citie-fundo-da-linha: var(--citie-background-subtle);
+  }
+}
+
+@layer citie-linha-selecao {
+  .citie-treetable__linha--selecionada {
+    --citie-fundo-da-linha: var(--citie-state-selected);
+  }
 }
 
 /* ---------- Linhas de grade ---------- */
@@ -191,34 +289,80 @@
 .citie-treetable--header-fixo thead th {
   position: sticky;
   inset-block-start: 0;
-  z-index: 1020;
-  box-shadow: 0 1px 0 var(--citie-border-strong);
+  z-index: var(--citie-camada-cabecalho-fixo);
+  /* Borda própria (que `separate` faz acompanhar a rolagem) mais âncora de
+     contato: é o que impede o dado de passar por baixo do cabeçalho sem
+     separação. */
+  box-shadow: var(--citie-shadow-controle);
 }
 
 /* ---------- Estados de linha ---------- */
 
-.citie-treetable tbody tr:hover {
-  background-color: var(--citie-state-hover-overlay);
-  transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
+.citie-treetable tbody tr {
+  transition:
+    --citie-veu-de-realce var(--citie-motion-rapido) var(--citie-easing-padrao),
+    background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
+.citie-treetable tbody td {
+  transition: border-color var(--citie-motion-rapido) var(--citie-easing-padrao);
+}
+
+/**
+ * A linha sob o ponteiro se lê como uma peça: o fio de baixo dela e o fio de
+ * baixo da anterior ficam transparentes, e a célula de início e a de fim
+ * arredondam. `transparent` no lugar de remover a borda mantém a geometria
+ * intacta, então apontar não desloca nada.
+ */
+@media (hover: hover) {
+  .citie-treetable tbody tr:hover {
+    --citie-veu-de-realce: var(--citie-state-hover-overlay);
+  }
+
+  .citie-treetable tbody tr:hover td,
+  .citie-treetable tbody tr:has(+ tr:hover) td {
+    border-block-end-color: transparent;
+  }
+
+  .citie-treetable tbody tr:hover td:first-child {
+    border-start-start-radius: var(--citie-radius-lg);
+    border-end-start-radius: var(--citie-radius-lg);
+  }
+
+  .citie-treetable tbody tr:hover td:last-child {
+    border-start-end-radius: var(--citie-radius-lg);
+    border-end-end-radius: var(--citie-radius-lg);
+  }
+}
+
+/**
+ * Foco de linha: anel sólido por dentro, com o halo atrás.
+ *
+ * O halo padrão do DS é rgba de marca a 40%, e ele foi desenhado para viver
+ * COLADO numa borda sólida de controle. Sozinho, sobre a superfície branca, ele
+ * compõe #96c0f4 e mede **1,89:1**, abaixo dos 3:1 que a WCAG 1.4.11 e 2.4.11
+ * exigem de indicador de foco. Numa linha de tabela não existe borda sólida por
+ * baixo para o halo se apoiar.
+ *
+ * O anel sólido de marca resolve com número: 5,45:1 sobre a superfície clara,
+ * 4,99:1 sobre a linha zebrada, 5,30:1 sobre a superfície escura. O halo
+ * continua atrás, agora no papel de reforço.
+ *
+ * Os dois são `inset` de propósito: anel externo em linha de tabela é desenhado
+ * por cima das vizinhas e some no recorte do envoltório na primeira e na
+ * última linha.
+ */
 .citie-treetable__linha:focus-visible {
   outline: none;
-  box-shadow: var(--citie-state-focus-ring);
-}
-
-.citie-treetable__linha--selecionada {
-  background-color: var(--citie-state-selected);
-}
-
-.citie-treetable__linha--selecionada td:first-child {
-  box-shadow: inset 3px 0 0 var(--citie-brand-primary);
+  box-shadow:
+    inset 0 0 0 var(--citie-espessura-indicador) var(--citie-brand-primary),
+    inset var(--citie-state-focus-ring);
 }
 
 /* ---------- Colunas especiais ---------- */
 
 .citie-treetable__celula--selecao {
-  width: 48px;
+  width: var(--citie-largura-da-coluna-de-selecao);
   text-align: center;
 }
 
@@ -236,14 +380,42 @@
   text-align: center;
 }
 
+/* ---------- Trilho de seleção ---------- */
+
+/*
+ * Sombra interna: borda mais grossa encolheria a caixa de conteúdo
+ * e deslocaria a linha inteira ao ser selecionada. A espessura vem do mesmo
+ * token do trilho da `Table` e do `Card`, para o traço de "este é o item
+ * escolhido" ter um peso só no catálogo.
+ *
+ * Sombra nula VÁLIDA no fallback (`0 0 0 0 transparent`), nunca `none`: lista de
+ * sombras com `none` dentro é inválida inteira.
+ */
+.citie-treetable tbody td:first-child {
+  box-shadow: var(--citie-trilho-de-selecao, 0 0 0 0 transparent);
+}
+
+.citie-treetable__linha--selecionada {
+  --citie-trilho-de-selecao: inset var(--citie-espessura-do-trilho) 0 0 0
+    var(--citie-brand-primary);
+}
+
 /* ---------- Ordenação ---------- */
 
 .citie-treetable__ordenar {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--citie-spacing-1);
   padding: 0;
   font: inherit;
+  /*
+   * O `font` abreviado não cobre estas duas, e elemento de formulário não as
+   * herda do `th`. Sem elas, a coluna ordenável ficaria em caixa normal ao lado
+   * das não ordenáveis em maiúscula, e o cabeçalho pareceria ter dois estilos.
+   * O defeito era o mesmo que a `Table` já tinha corrigido.
+   */
+  text-transform: inherit;
+  letter-spacing: inherit;
   color: var(--citie-text-secondary);
   background: none;
   border: none;
@@ -265,13 +437,14 @@
 .citie-treetable tfoot td {
   background-color: var(--citie-background-subtle);
   border-block-start: 1px solid var(--citie-border-strong);
-  border-block-end: none;
-  font-weight: 600;
+  border-block-end-color: transparent;
+  font-weight: var(--citie-font-weight-title);
   color: var(--citie-text-primary);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .citie-treetable tbody tr:hover,
+  .citie-treetable tbody tr,
+  .citie-treetable tbody td,
   .citie-treetable__toggle {
     transition: none;
   }

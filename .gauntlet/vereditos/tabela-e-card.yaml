@@ -1,0 +1,284 @@
+revisor: Revisor independente de tabela, árvore e contêiner
+componente: Card, Table, TreeTable e os tokens de anatomia de linha em tokens.css
+veredito: APROVADO
+veredito_anti_slop: PASSOU
+
+gate_tecnico:
+  typecheck: 'tsc -b --force, exit 0, nenhum erro'
+  lint: >-
+    oxlint, zero erro. 10 avisos, todos preexistentes e fora do recorte
+    (DatePicker, HoverCard, Chart, Feedback, Menubar, Table.tsx:302). Nenhum
+    aviso novo introduzido pela rodada.
+  testes: >-
+    Tema claro, suíte inteira: 774 de 774 passaram, 119 arquivos, exit 0.
+    Tema escuro, suíte inteira: 699 de 774, 75 falhas.
+    Recorte no escuro (Table, TreeTable, Card): 100% verde, nenhuma falha.
+    Consumidores no escuro (.storybook/pages e .storybook/templates):
+    19 falhas em 3 arquivos, TODAS por contraste do axe e todas apontando
+    seletor fora do recorte. Levantei os seletores de violação do relatório
+    completo e o conjunto é fechado: .citie-filtro-chip__valor (11),
+    .citie-chart__legenda-valor (8) e um .citie-button--text no Dashboard.
+    Zero violação citando table, tr, td, treetable ou card. É dívida antiga
+    do Filters e do Chart, exposta pelo gate de tema escuro criado nesta
+    sessão, e não é imputável ao produtor.
+  stories_antes_depois: >-
+    Table 9 para 9, TreeTable 11 para 11, Card 8 para 9 (entrou
+    ClicavelComAcoes). Nenhuma story perdida.
+
+verificacoes_de_ceticismo:
+  sabotagem_do_conferirRegua: >-
+    REPROVA como deve. Troquei `border-collapse: separate` por `collapse` em
+    Table.css e rodei só o arquivo: 2 de 9 falharam, exatamente
+    'Densidade · confortável (48px)' e 'Densidade · compacta (36px)', ambas em
+    Table.stories.tsx:151, que é a asserção `Number.isInteger(altura)`. Ou
+    seja, o verificador pega o defeito pela via da altura fracionária, e não
+    só pela uniformidade. Arquivo restaurado depois do teste.
+  alegacao_2_composicao_medida: >-
+    CONFIRMADA no ponto que o produtor alega. Selecionei uma linha e apontei o
+    ponteiro nela: a linha responde. Medido na story de destaque, tema claro,
+    linha selecionada sob o ponteiro: background-color rgb(239,245,255)
+    (state-selected) e background-image
+    linear-gradient(rgba(18,97,228,0.08)) simultaneamente, as duas camadas
+    presentes no mesmo td. Composição resultante aproximadamente #dee9fd
+    contra texto #3c3c3c, 9,06:1, acima dos 4,5:1 da WCAG 1.4.3. O produtor
+    declarou 9,01:1, diferença de arredondamento na composição, não é erro.
+    A transição também está correta: `@property --citie-veu-de-realce`
+    sobrevive à minificação intacta no build
+    (`syntax:"<color>";inherits:true;initial-value:#0000`), então o véu de
+    fato interpola. `--citie-motion-rapido` é reserializado como `.14s`, que
+    é 140ms válido, e não quebra nada.
+  alegacao_3_vazamento_e_alvo: >-
+    NÃO VAZA, e o alvo continua conforme. Medi `--citie-control-height-normal`
+    em quatro escopos na story compacta: body 40px, .citie-table-wrapper 40px,
+    .citie-table 40px, .citie-table__conteudo 32px. O reaponte fica preso ao
+    container de conteúdo da célula e não alcança nem o envoltório da própria
+    tabela. Alvo medido dos botões dentro da célula compacta: 59,05 x 32,00px,
+    acima do mínimo de 24x24 da WCAG 2.5.8. Confirmei ainda que a composição
+    com o Button é sã: `.citie-button--touch-comfortable::after` amplia o alvo
+    para 44px por pseudo-elemento absoluto, sem tocar no layout, então a
+    linha continua em 37px mesmo com o alvo ampliado.
+  cabecalho_fixo_rolado: >-
+    CONFIRMADO com rolagem real e com contraprova visual. Limitei o envoltório
+    da TreeTable a 200px, rolei scrollTop para 300 e capturei. Sob `separate`
+    o `th` fica em top+1 do envoltório, com borderBottom 1px rgb(214,216,220)
+    pintada, e o dado passa por baixo com fronteira. Alternei o mesmo DOM para
+    `collapse` no navegador e recapturei: a linha sob o cabeçalho desaparece e
+    o dado encosta nele sem separação. As duas capturas lado a lado confirmam
+    a razão 2 do produtor, que não era gosto.
+  tres_condicoes_na_mesma_linha: >-
+    Os TRILHOS funcionam. Linha zebrada, selecionada e destacada por estado, com
+    ponteiro em cima: box-shadow do primeiro td mede
+    'rgb(18,97,228) 3px inset, rgb(185,28,28) 6px inset', ou seja, os dois
+    trilhos encaixados com o de estado recuado; véu ativo em
+    rgba(18,97,228,0.08); borda de baixo transparente e raio de 8px na célula
+    de início, tudo ao mesmo tempo, sem deslocamento. O FUNDO é onde a
+    coincidência ainda falha, ver o achado MENOR abaixo.
+  treetable_a_200_por_cento: >-
+    SOBREVIVE. Recuo por nível continua proporcional sob zoom de 200%
+    (padding-inline-start 16px por nível, background-size acompanhando), e a
+    largura do container cai de 942px para 636,7px sem que a coluna de
+    identificação perca o recuo. A profundidade segue redundante em
+    aria-level, no peso tipográfico dos dois primeiros níveis e no código da
+    conta, então o e-MAG não depende do fio.
+  card_aninhamento: >-
+    DOM VÁLIDO. Na story nova, o card é `<section>`, o link vive no `<h3>` com
+    nome acessível exatamente 'Dados do servidor', o botão do rodapé está fora
+    do link (`link.contains(botao)` falso) e a varredura `a a, a button,
+    button a` no documento inteiro não encontra nada. A regra está documentada
+    no JSDoc de `CardProps.href`, no comentário de `.citie-card__link` e na
+    página de docs.
+
+achados:
+  - severidade: MENOR
+    id_anti_slop: nenhum
+    descricao: >-
+      Numa tabela zebrada, a linha PAR selecionada não recebe a cor de seleção:
+      a zebra vence a cascata. Selecionando a página inteira, as linhas ímpares
+      ficam em state-selected e as pares continuam em background-subtle, então
+      metade das linhas selecionadas fica com o preenchimento de linha comum.
+      A causa é especificidade: `.citie-table--zebra tbody tr:nth-child(even)`
+      pesa (0,2,2) e `.citie-table__linha--selecionada` pesa (0,1,0), e as duas
+      declaram a MESMA propriedade nova, `--citie-fundo-da-linha`. Vale igual
+      na TreeTable, que copia o par de regras. Não é regressão: conferi o
+      arquivo em HEAD e antes da rodada as duas disputavam `background-color`
+      com a mesma diferença de peso, com o mesmo resultado. O que pesa é que a
+      rodada refatorou exatamente estas duas linhas, o comentário novo diz que
+      a camada de baixo é "a cor de estado do dado: zebra ou seleção", e a
+      colisão que sobrou é da mesma família da que foi fechada. A suíte não
+      pega porque as duas stories que selecionam escolhem linha ímpar
+      (2025/0481 na ComSelecao, 2025/0483 na DestaqueDeLinha).
+    evidencia: >-
+      Medido no build servido, story organismos-tabelas-table--destaque-de-linha,
+      após 'Selecionar a página atual'. Claro: posição 1 e 3 com
+      --citie-fundo-da-linha #eff5ff, posições 2 e 4 com #f4f5f7, todas com a
+      classe selecionada. Escuro: 1 e 3 em rgba(77,139,252,0.14), 2 e 4 em
+      #232327. Regras em src/components/organisms/Table/Table.css:199-205 e
+      src/components/organisms/TreeTable/TreeTable.css:259-265.
+    correcao_exigida: >-
+      A seleção precisa vencer a zebra nas duas paridades, com peso de seletor
+      suficiente ou com camada declarada, e uma story precisa selecionar linha
+      par para o caso ficar coberto.
+
+  - severidade: MENOR
+    id_anti_slop: nenhum
+    descricao: >-
+      A regra "sem `titulo`, o rodapé com ação é proibido" existe em três
+      lugares de documentação e em nenhum lugar do runtime. Com `href` sem
+      `titulo` o componente devolve `<a class="citie-card">` envolvendo tudo,
+      e um `rodape` com botão volta a produzir botão dentro de link, que é o
+      aninhamento inválido que a rodada foi corrigir. O consumidor descobre
+      pelo axe, e não pelo componente.
+    evidencia: >-
+      src/components/molecules/Card/Card.tsx:16-33 documenta a proibição;
+      Card.tsx:92-98 renderiza o `<a>` envolvente sem nenhuma guarda quando
+      `href && !titulo`. Nenhuma story cobre a combinação proibida.
+    correcao_exigida: >-
+      Um aviso de desenvolvimento quando `href` e `rodape` chegam sem `titulo`,
+      ou a supressão do rodapé nessa forma, para a regra valer sem depender de
+      quem leu a doc.
+
+  - severidade: MENOR
+    id_anti_slop: nenhum
+    descricao: >-
+      O `DataView` continua suprimindo as ações do item quando há `href`. Esse
+      contorno era consequência da limitação que a rodada fechou no Card, e a
+      documentação nova do Card o cita como prova de que a limitação existia,
+      no presente ("o DataView até hoje suprime"). O ganho fica pago no
+      componente e não colhido no consumidor que o motivou.
+    evidencia: >-
+      src/components/organisms/DataView/DataView.tsx:24, 98, 115 e 121, com
+      `item.acoes && !item.href` em três pontos. Texto que o cita em
+      Card.stories.tsx e no comentário de `.citie-card__link` em Card.css.
+    correcao_exigida: >-
+      Ou o DataView passa a usar a anatomia de link esticado e volta a
+      renderizar ações, ou a documentação do Card para de descrever o contorno
+      como estado presente.
+
+  - severidade: MENOR
+    id_anti_slop: TXT-002
+    descricao: >-
+      A negação paralela aparece 28 vezes no recorte, em comentário de CSS e
+      também em texto que o Storybook publica na página de docs, incluindo
+      "deixa de ser um trecho de faixa pintada e passa a ser uma peça", que é
+      literalmente um dos sinais listados no catálogo, e a família
+      "X, e não Y" nas descrições de story. Registro sem imputar à rodada: é
+      convenção da casa inteira, com 152 ocorrências em 24 arquivos de CSS do
+      repositório, e a maioria dos casos cai na exceção prevista pelo próprio
+      TXT-002, porque a alternativa negada é a implementação anterior, que
+      existe e está identificada. Por isso não conto como violação desta
+      entrega e não deixo o veredito anti-slop cair.
+    evidencia: >-
+      Table.css:251 e 270; Table.stories.tsx nas descrições de DestaqueDeLinha;
+      Card.css:269 e Card.stories.tsx na descrição de Selecionado. Contagem por
+      grep dos sinais de detecção do catálogo. Travessão: zero ocorrências em
+      todo o recorte, TXT-001 limpo.
+    correcao_exigida: >-
+      Decisão de escopo do dono do catálogo, e não desta rodada: ou o texto
+      publicado em docs passa a afirmar direto, ou o TXT-002 declara que
+      comentário técnico com alternativa rejeitada identificada está coberto
+      pela exceção.
+
+  - severidade: POLIMENTO
+    id_anti_slop: nenhum
+    descricao: >-
+      O fio de hierarquia da TreeTable é interrompido entre linhas. O
+      comentário o apresenta como "a convenção de árvore de arquivo", e nessa
+      convenção o fio é contínuo. Aqui ele mede 24px dentro de uma linha de
+      49px, porque é pintado como background do container de conteúdo, cuja
+      altura é a caixa de texto, e não a da célula. O resultado na captura é
+      uma coluna de traços soltos. A profundidade continua contável, então o
+      valor funcional se mantém, mas o acabamento fica abaixo da referência
+      que o próprio comentário invoca.
+    evidencia: >-
+      Medido na story organismos-tabelas-treetable--lotacao, nível 2:
+      altura do elemento pintado 24,00px, altura da linha 49,00px,
+      background-size 32px 100%. Regra em
+      src/components/organisms/TreeTable/TreeTable.css:139-149. Visível na
+      captura em 1440 e em 768, nos dois temas.
+    correcao_exigida: >-
+      Ou o fio passa a ocupar a altura da célula, ou o comentário para de
+      prometer a árvore de arquivo e descreve o que a peça de fato entrega.
+
+  - severidade: POLIMENTO
+    id_anti_slop: nenhum
+    descricao: >-
+      A régua vertical é o contrato central da rodada, os tokens de altura são
+      compartilhados, e o `conferirRegua` vive só em Table.stories.tsx. As
+      stories da TreeTable não asseguram altura nenhuma, apesar de a TreeTable
+      consumir os mesmos tokens e ter recebido a mesma troca de
+      `border-collapse`. Medi na mão e ela está correta hoje (49px e 37px
+      inteiros nas linhas visíveis), mas nada impede a regressão.
+    evidencia: >-
+      Medição direta no build: treetable confortável 49, 49, 49, 49; compacta
+      37, 37, 37, 37, todas inteiras. Nenhuma ocorrência de asserção de altura
+      em src/components/organisms/TreeTable/TreeTable.stories.tsx.
+    correcao_exigida: >-
+      A mesma função de régua aplicada a pelo menos uma story de cada densidade
+      da TreeTable.
+
+o_que_me_surpreendeu:
+  - >-
+    O reaponte de `--citie-control-height-normal` e `-large` dentro do
+    container de conteúdo da célula compacta. É inversão de controle escrita em
+    CSS: a tabela publica um contrato de densidade e os controles obedecem sem
+    que nenhum dos dois conheça o outro, em vez de a tabela redesenhar botão
+    alheio por seletor descendente. Fui atrás do vazamento, que é o risco óbvio
+    dessa técnica, e não existe: 40px no body, 40px no envoltório da tabela,
+    40px na própria `.citie-table`, 32px só dentro de
+    `.citie-table__conteudo`. E compõe corretamente com uma decisão que mora em
+    outro componente: o alvo de toque do Button cresce por pseudo-elemento
+    absoluto, então ele chega a 44px sem inflar a linha, e a compacta continua
+    em 37,00px com alvo medido de 59,05 x 32,00px. Ninguém pediu que a
+    densidade governasse controle de terceiro, e é o que impedia a linha de
+    39px no meio de linhas de 37px.
+  - >-
+    O `tbody tr:has(+ tr:hover) td` para apagar o fio de cima da linha
+    apontada, que na verdade é o fio de baixo da anterior, combinado com
+    `border-color: transparent` no lugar de remover a borda. O primeiro é a
+    única forma de alcançar o irmão anterior em CSS e é o que faz a linha
+    virar uma peça inteira em vez de uma tira de fundo colorido entre dois
+    fios; o segundo é o que garante que a peça não custe deslocamento nenhum.
+    Verifiquei que as duas coisas valem ao mesmo tempo: com o ponteiro na
+    linha, borderBottomColor rgba(0,0,0,0) e raio de 8px na célula de início, e
+    a régua continua em 49,00px inteiros. O detalhe que mostra que houve
+    projeto e não checklist é a exceção declarada: quando a linha apontada é a
+    primeira, o fio do cabeçalho permanece de propósito, porque o cabeçalho é
+    outro plano.
+
+o_que_faltou_para_surpreender:
+  - >-
+    Fechar a colisão de fundo que sobrou entre zebra e seleção. A rodada
+    diagnosticou com precisão que duas camadas de estado disputando uma
+    propriedade só é o defeito, construiu a solução de duas camadas para
+    estado contra ponteiro, e deixou intacta a disputa estado contra estado na
+    propriedade que ela mesma criou. Uma story selecionando linha par teria
+    exposto isso em minutos, e a rodada escreveu duas stories de seleção que
+    escolhem linha ímpar.
+  - >-
+    Levar a régua e o fio da hierarquia até o mesmo grau de acabamento da
+    Table. A TreeTable recebeu o mesmo tratamento estrutural sem receber o
+    mesmo verificador, e o único elemento visual inventado nesta rodada, o fio
+    de profundidade, é o que ficou mais longe da referência que o próprio
+    comentário cita.
+
+motivo_do_veredito: >-
+  Gate técnico limpo: typecheck e lint sem erro, 774 de 774 no tema claro,
+  recorte 100% verde também no escuro, nenhuma story perdida. As 75 falhas do
+  tema escuro não tocam este recorte, e provei por seletor de violação, e não
+  por confiança: todo item do relatório aponta chip de filtro, legenda de
+  gráfico ou botão do Dashboard. As três alegações que eu deveria atacar
+  resistiram sob medição própria: o `conferirRegua` reprova quando sabotado, o
+  véu de ponteiro soma à cor de seleção com 9,06:1 depois da composição, o
+  reaponte de altura não vaza e mantém o alvo acima da WCAG 2.5.8, e o
+  cabeçalho fixo sob `separate` guarda a fronteira que sob `collapse` some, o
+  que confirmei alternando o modo no navegador e comparando as duas capturas.
+  Anti-slop passa: zero travessão, o trilho lateral cumpre a exceção do LAY-004
+  com mapa de severidade medido e canal redundante em texto oculto, o raio fica
+  na escala e é concêntrico no aninhamento, e as sombras saem de token.
+  Duas decisões de projeto legítimas estão nomeadas acima, com evidência, e
+  qualquer uma delas justificaria a nota alta. O que segura o veredito em
+  APROVADO é a régua do gauntlet, que exige escopo limpo para SURPREENDEU: um
+  achado MENOR permanece dentro do recorte, na mesma propriedade que a rodada
+  criou, e ele desmente uma frase da própria documentação nova. Não é
+  regressão, e conferi isso em HEAD antes de escrever. É a oportunidade que a
+  rodada teve na mão e não recolheu.

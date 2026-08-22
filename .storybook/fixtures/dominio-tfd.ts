@@ -1148,7 +1148,7 @@ export const COMPETENCIAS = Array.from(
  * mesma grandeza não podem divergir: o KPI de recebidos é a soma das fatias da
  * rosca, o de viagens autorizadas é a soma das barras por município e a soma
  * das faixas por especialidade, e o de ajuda de custo é a soma das faixas de
- * empenho. A conferência deixa de ser manual e passa a ser estrutural.
+ * empenho. A conferência passa a ser estrutural, sem depender de conferência manual.
  */
 export interface MovimentoDoDia {
   data: string;

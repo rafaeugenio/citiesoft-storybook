@@ -165,12 +165,18 @@
 .citie-confirm__descricao {
   margin: var(--citie-spacing-2) 0 0;
   font-size: var(--citie-font-size-body-md);
+  line-height: var(--citie-entrelinha-corpo);
   color: var(--citie-text-base);
 }
 
-/* A ação de confirmação vem primeiro e "Cancelar" fica à sua direita. */
+/**
+ * "Cancelar" numa ponta, a ação destrutiva na outra. A distância física entre
+ * as duas é proteção contra o clique que escorrega: com os botões adjacentes,
+ * um erro motor de poucos pixels executava a exclusão. A consequência descrita
+ * fica acima, lida antes de qualquer botão ser alcançado.
+ */
 .citie-dialog__rodape--confirm {
-  justify-content: flex-start;
+  justify-content: space-between;
 }
 
 /* ---------- Drawer ---------- */

@@ -56,6 +56,13 @@ export interface DatePickerProps {
   error?: string;
   required?: boolean;
   disabled?: boolean;
+  /**
+   * Data consolidada: o campo continua focável, selecionável e copiável, e o
+   * calendário não abre. Diferente de `disabled`, que tira o campo da ordem de
+   * Tab e desbota a tinta. Data homologada: o valor está decidido e segue
+   * disponível para ler e copiar.
+   */
+  readOnly?: boolean;
   /** Data de referência do calendário, para a story ser determinística. */
   hoje?: Date;
   valorInicial?: Date;
@@ -69,6 +76,7 @@ export function DatePicker({
   error,
   required,
   disabled,
+  readOnly = false,
   hoje = new Date(),
   valorInicial,
   onChange,
@@ -108,10 +116,21 @@ export function DatePicker({
     <FieldWrapper label={label} required={required} helper={helper} error={error}>
       {({ id, describedBy, invalid }) => (
         <div className="citie-datepicker">
-          <div className="citie-field-wrapper citie-field-wrapper--has-affix">
+          <div
+            className={`citie-field-wrapper${readOnly ? '' : ' citie-field-wrapper--has-affix'}`}
+          >
             <input
               id={id}
-              className={`citie-field-control citie-field-control--${size}`}
+              className={[
+                'citie-field-control',
+                `citie-field-control--${size}`,
+                // O `readonly` do atributo logo abaixo é detalhe de
+                // implementação do campo-gatilho; a classe é o estado
+                // consolidado de verdade, com a aparência de somente leitura.
+                readOnly ? 'citie-field-control--readonly' : null,
+              ]
+                .filter(Boolean)
+                .join(' ')}
               placeholder="Ex.: 15/03/2026"
               value={selecionada ? formatarData(selecionada) : ''}
               readOnly
@@ -119,8 +138,9 @@ export function DatePicker({
               aria-required={required || undefined}
               aria-invalid={invalid || undefined}
               aria-describedby={describedBy}
-              onClick={() => !disabled && setAberto(!aberto)}
+              onClick={() => !disabled && !readOnly && setAberto(!aberto)}
               onKeyDown={(evento) => {
+                if (readOnly) return;
                 if (evento.key === 'Enter' || evento.key === ' ') {
                   evento.preventDefault();
                   setAberto(true);
@@ -128,24 +148,30 @@ export function DatePicker({
               }}
             />
             {/*
-              O estado de abertura vive num botão de verdade, não no campo:
+              O estado de abertura vive num botão de verdade, porque
               `aria-expanded` só é válido em papéis que o suportam, e num input
               de texto simples o axe reprova.
+
+              No consolidado o gatilho sai da árvore: um botão de calendário
+              que não abre calendário seria uma promessa falsa, para o ponteiro
+              e para o leitor de tela.
             */}
-            <button
-              type="button"
-              className="citie-field-wrapper__affix citie-datepicker__gatilho"
-              aria-label={`Escolher ${label.toLowerCase()}`}
-              aria-haspopup="dialog"
-              aria-expanded={aberto}
-              disabled={disabled}
-              onClick={() => setAberto(!aberto)}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                <rect x="3" y="5" width="18" height="16" rx="2" />
-                <path d="M3 10h18M8 3v4M16 3v4" strokeLinecap="round" />
-              </svg>
-            </button>
+            {readOnly ? null : (
+              <button
+                type="button"
+                className="citie-field-wrapper__affix citie-datepicker__gatilho"
+                aria-label={`Escolher ${label.toLowerCase()}`}
+                aria-haspopup="dialog"
+                aria-expanded={aberto}
+                disabled={disabled}
+                onClick={() => setAberto(!aberto)}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <rect x="3" y="5" width="18" height="16" rx="2" />
+                  <path d="M3 10h18M8 3v4M16 3v4" strokeLinecap="round" />
+                </svg>
+              </button>
+            )}
           </div>
 
           {aberto ? (
@@ -215,8 +241,8 @@ export function DatePicker({
                           const ehSelecionado = selecionada ? mesmoDia(dia, selecionada) : false;
 
                           return (
-                            // `aria-selected` pertence à célula da grade, não ao
-                            // botão: em `button` o atributo não é permitido.
+                            // `aria-selected` pertence à célula da grade,
+                            // porque em `button` o atributo é proibido.
                             <td key={dia.toISOString()} role="gridcell" aria-selected={ehSelecionado}>
                               <button
                                 type="button"

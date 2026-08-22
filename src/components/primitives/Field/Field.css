@@ -34,6 +34,17 @@
   color: var(--citie-danger-foreground);
 }
 
+/*
+ * Erro e ajuda convivem, empilhados nesta ordem. Antes o erro substituía o
+ * helper, e a instrução de como preencher desaparecia justamente quando o
+ * usuário tinha acabado de errar, que é a hora em que ela mais serve.
+ */
+.citie-field__mensagens {
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-1);
+}
+
 .citie-field__footer {
   display: flex;
   justify-content: space-between;
@@ -52,23 +63,80 @@
 
 /* ---------- Controle (input, textarea, select) ---------- */
 
+/*
+ * ARMADILHA DA SOMBRA NULA. Leia antes de zerar a elevação de um campo.
+ *
+ * Quem precisar apagar o poço (composição, somente leitura, desabilitado)
+ * escreve `0 0 0 0 transparent`, e nunca `none`. São dois motivos separados, e
+ * cada um já cobrou o seu preço nesta rodada, um no Button e outro aqui:
+ *
+ * 1. Motivo de CSS. O foco compõe a lista
+ *    `var(--citie-state-focus-ring), var(--citie-elevacao-do-campo)`, e uma
+ *    lista de sombras com `none` no meio é inválida INTEIRA. O anel de foco
+ *    sumiria junto com o poço, e sumiria calado, porque valor inválido em
+ *    custom property só falha na hora de usar.
+ * 2. Motivo de teste. O valor computado de uma sombra nula válida é sempre o
+ *    literal `rgba(0, 0, 0, 0) 0px 0px 0px 0px`. Asserção que compare com
+ *    `none` reprova sem existir defeito. A prova honesta de que a peça não
+ *    pinta nada é a comparação com esse valor exato, que aceita só a si mesmo.
+ *
+ * O par de valores é `--citie-shadow-poco` para cavar e `0 0 0 0 transparent`
+ * para aplainar. Nenhum terceiro valor entra aqui.
+ */
+
 .citie-field-control {
+  /*
+   * A superfície do campo é o inverso da do botão: botão é objeto apoiado na
+   * página (sombra para fora), campo é depressão cavada para receber conteúdo
+   * (sombra para dentro, na aresta superior). O poço vive numa custom property
+   * pelo mesmo motivo do `--citie-elevacao-do-botao` no Button: o anel de foco
+   * precisa SOMAR com ele em vez de substituí-lo, e composição (`InputGroup`)
+   * ou estado (somente leitura, desabilitado) precisam poder zerá-lo com uma
+   * sombra nula VÁLIDA, nunca `none`, porque lista de sombras com `none`
+   * dentro é inválida inteira e apagaria o anel.
+   */
+  --citie-elevacao-do-campo: var(--citie-shadow-poco);
+
   box-sizing: border-box;
   width: 100%;
   font-family: var(--citie-font-ui);
   font-size: var(--citie-font-size-body-md);
   color: var(--citie-text-primary);
+  /* O cursor de texto na cor de marca costura o campo ativo à identidade. */
+  caret-color: var(--citie-brand-primary);
   background-color: var(--citie-background-surface);
   /*
    * A sobrescrita local que existia aqui foi removida: o valor corrigido subiu
-   * para o token global, onde vale para os 14 componentes que o consomem, e não
-   * só para os dois que herdam deste primitivo.
+   * para o token global, onde vale para os 14 componentes que o consomem, além
+   * dos dois que herdam deste primitivo.
    */
   border: 1px solid var(--citie-form-field-border);
   border-radius: var(--citie-radius-md);
+  box-shadow: var(--citie-elevacao-do-campo);
   transition:
     border-color var(--citie-motion-rapido) var(--citie-easing-padrao),
-    background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
+    background-color var(--citie-motion-rapido) var(--citie-easing-padrao),
+    box-shadow var(--citie-motion-rapido) var(--citie-easing-padrao);
+}
+
+/*
+ * Preenchido contra vazio, legível de relance: campo com valor endurece a
+ * borda para o mesmo degrau do hover, então numa tela com trinta campos o que
+ * falta preencher se distingue sem ler um por um.
+ *
+ * O seletor de elemento soma (0,1,1): acima da regra base (0,1,0) sem depender
+ * da ordem dos arquivos no bundle, que o Vite decide pelo grafo de imports, e
+ * abaixo de foco, hover e inválido, que vencem sempre. O `:where()` mantém as
+ * condições com especificidade zero. Guardas, cada um com motivo: controle sem
+ * `[placeholder]` nunca casa com `:placeholder-shown` e pareceria preenchido
+ * estando vazio; no select o placeholder é a opção de valor vazio marcada;
+ * `--filled` fica de fora porque o contorno dela é da tela inteira, e metade
+ * dos campos com borda quebraria o padrão que a variante existe para dar.
+ */
+input.citie-field-control:where([placeholder]:not(:placeholder-shown):not(:disabled):not(.citie-field-control--readonly):not(.citie-field-control--filled)),
+textarea.citie-field-control:where([placeholder]:not(:placeholder-shown):not(:disabled):not(.citie-field-control--readonly):not(.citie-field-control--filled)),
+select.citie-field-control:where(:not(:has(option[value='']:checked)):not(:disabled):not(.citie-field-control--readonly):not(.citie-field-control--filled)) {
+  border-color: var(--citie-form-field-border-hover);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -104,24 +172,72 @@
   border-color: transparent;
 }
 
-.citie-field-control:hover:not(:disabled):not(:focus) {
-  border-color: var(--citie-border-strong);
+/*
+ * Resposta ao ponteiro: a borda desce um degrau na MESMA direção da escala.
+ * A regra anterior apontava para `--citie-border-strong`, que mede 1,43:1
+ * sobre o branco: mais claro que o repouso de 3,23:1, ou seja, o campo
+ * respondia ao ponteiro apagando a própria fronteira. Agora ela endurece
+ * (4,94:1 claro, 5,37:1 escuro), comunicando "editável" antes do clique.
+ * Na variante filled, cuja borda de repouso é transparente, o mesmo hover
+ * revela a fronteira, que é a resposta que um campo sem borda tem para dar.
+ */
+.citie-field-control:hover:not(:disabled):not(:focus):not(.citie-field-control--readonly) {
+  border-color: var(--citie-form-field-border-hover);
 }
 
 .citie-field-control:focus {
   outline: none;
   border-color: var(--citie-brand-primary);
-  box-shadow: var(--citie-state-focus-ring);
+  /* O anel soma com o poço em vez de substituí-lo: receber foco não pode
+     aplainar a superfície justo quando o usuário está olhando para ela. */
+  box-shadow: var(--citie-state-focus-ring), var(--citie-elevacao-do-campo);
 }
 
 .citie-field-control:disabled {
+  /* Superfície plana: o que não recebe conteúdo não tem por que parecer cavado. */
+  --citie-elevacao-do-campo: 0 0 0 0 transparent;
+
   background-color: var(--citie-state-disabled-background);
   color: var(--citie-state-disabled-text);
   cursor: not-allowed;
 }
 
+/*
+ * Somente leitura é um estado com comportamento próprio, ao lado de
+ * desabilitado. Desabilitado diz "esta ação está indisponível": sai da ordem
+ * de Tab e a tinta desbota. Somente leitura diz "este dado está consolidado":
+ * recebe foco, permite selecionar e copiar, e o texto continua na tinta plena
+ * de leitura (14,94:1 no claro, 14,37:1 no escuro), porque dado consolidado é
+ * dado para ser LIDO. Num processo administrativo essa distinção é constante:
+ * o número do processo homologado está decidido e segue disponível para ler e
+ * copiar.
+ *
+ * A classe existe em vez do pseudo `:read-only` de propósito: DatePicker usa
+ * `readonly` no atributo como detalhe de implementação do campo-gatilho, e o
+ * pseudo pintaria de consolidado um campo que é porta de entrada de edição.
+ */
+.citie-field-control--readonly {
+  /* Superfície plana: dado consolidado se lê, e a leitura dispensa o convite
+     de profundidade que o campo editável faz. */
+  --citie-elevacao-do-campo: 0 0 0 0 transparent;
+
+  background-color: var(--citie-background-subtle);
+  caret-color: transparent;
+  cursor: default;
+}
+
 .citie-field-control[aria-invalid='true'] {
   border-color: var(--citie-border-danger);
+}
+
+/*
+ * Foco num campo inválido mantém a identidade de perigo. Sem esta regra a
+ * borda vermelha virava azul de marca no foco, e a pista visual do erro
+ * sumia exatamente no momento em que o usuário chegava para corrigi-lo.
+ */
+.citie-field-control[aria-invalid='true']:focus {
+  border-color: var(--citie-border-danger);
+  box-shadow: var(--citie-state-focus-ring-danger), var(--citie-elevacao-do-campo);
 }
 
 /* ---------- Grupo com addon (InputGroup) ---------- */
@@ -140,6 +256,14 @@
   color: var(--citie-text-secondary);
   font-size: var(--citie-font-size-body-md);
   white-space: nowrap;
+  /* No mesmo compasso da borda do campo, para a emenda escurecer junto. */
+  transition: border-color var(--citie-motion-rapido) var(--citie-easing-padrao);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-input-group__addon {
+    transition: none;
+  }
 }
 
 .citie-input-group__addon--start {
@@ -160,6 +284,22 @@
 .citie-input-group--end .citie-field-control {
   border-start-end-radius: 0;
   border-end-end-radius: 0;
+}
+
+/*
+ * Emenda sincronizada: campo e addon dividem o mesmo contorno visual, então a
+ * resposta ao ponteiro e o estado de preenchido escurecem os dois juntos. Sem
+ * isto, o hover pintava só a metade do campo e a junção lia como defeito.
+ * O ponteiro em qualquer parte do grupo conta como ponteiro no campo, porque
+ * para o usuário o grupo É o campo.
+ */
+.citie-input-group:hover:has(.citie-field-control:not(:disabled):not(.citie-field-control--readonly)) .citie-input-group__addon,
+.citie-input-group:has(.citie-field-control[placeholder]:not(:placeholder-shown):not(:disabled):not(.citie-field-control--readonly)) .citie-input-group__addon {
+  border-color: var(--citie-form-field-border-hover);
+}
+
+.citie-input-group:hover .citie-field-control:not(:disabled):not(:focus):not(.citie-field-control--readonly) {
+  border-color: var(--citie-form-field-border-hover);
 }
 
 /* ---------- Afixo interno (spinner de validação assíncrona, ícone) ---------- */

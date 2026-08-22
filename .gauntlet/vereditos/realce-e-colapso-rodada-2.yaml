@@ -1,0 +1,273 @@
+revisor: acessibilidade e comportamento de interface, com medição em navegador (revisor independente da rodada 2)
+componente: >
+  Realce deslizante (primitivo useRealceDeslizante) em SelectButton e Tabs, mais
+  o colapso por altura real em Accordion e Panel. Segunda rodada, sobre a
+  correção dos dois achados MAIOR da rodada 1.
+veredito: SURPREENDEU
+veredito_anti_slop: PASSOU
+
+gate_tecnico:
+  typecheck: "./node_modules/.bin/tsc -b --force, saída vazia, código de saída 0"
+  lint: >
+    npm run lint, código de saída 0. Todos os avisos exibidos são de arquivos
+    fora do recorte (Menu, Filters, Table, Chart, ValorMonetario, DatePicker,
+    PrazoIndicador, Feedback, Avatar, ColorPicker, Menubar, TreeTable,
+    Pagination, HoverCard, Tooltip, Upload). Nenhum arquivo do recorte gerou
+    aviso.
+  testes: >
+    Tema claro: 23 de 23, rodado com os cinco arquivos de story do recorte
+    isolados (Select.stories, SelectButton.stories, Tabs.stories,
+    Accordion.stories, Panel.stories), para não herdar as falhas pré-existentes
+    de CascadeSelect/MultiSelect/TreeSelect/PanelMenu que o padrão de glob solto
+    "Select"/"Panel" também casa.
+    Tema escuro: 23 de 23 no mesmo recorte isolado. A falha de PanelMenu no
+    tema escuro (contraste 4,39:1) é de outro componente, fora deste recorte, e
+    não foi tocada por nenhum arquivo desta mudança.
+  stories_antes_depois: "23 para 23, contagem de export const nos cinco arquivos do recorte, sem story perdida"
+
+achados: []
+
+verificacoes_das_alegacoes:
+  - alegacao: "Achado MAIOR 1 da rodada 1: janela de foco alcançável de ~140ms no fechamento"
+    resumo: >
+      A correção aplicada foi `inert` no contêiner recolhido, setado pelo React
+      no mesmo commit do clique, separado da `visibility: hidden` atrasada que
+      só cuida da pintura.
+    resultado: CORRIGIDA, medida por conta própria e de forma independente
+    como_verifiquei: >
+      Não usei a medição do produtor nem a do revisor anterior. Montei um
+      harness próprio (React real, `createRoot`, `@vitest/browser` com
+      Playwright/Chromium real, fora do jsdom) com um `<button>` de verdade
+      dentro do corpo do Panel e do Accordion, porque a tentativa anterior tinha
+      falhado por medir com conteúdo de texto puro, sem nada focável dentro.
+      Cliquei no gatilho de fechar e: (1) imediatamente após o clique,
+      `corpo.hasAttribute('inert')` já é `true`; (2) uma tentativa de
+      `botaoInterno.focus()` logo em seguida falha, o foco não muda para o
+      botão interno; (3) amostrei 16 quadros via `requestAnimationFrame` ao
+      longo de 250ms do fechamento e em nenhum deles `corpo.contains(document.
+      activeElement)` foi verdadeiro, mesmo enquanto `visibility` ainda estava
+      `visible` até por volta de t=141ms, o que bate com a janela relatada na
+      rodada 1 antes da correção. (4) Como teste mais forte, disparei um Tab
+      REAL de teclado via `page.keyboard` (automação do Playwright, não evento
+      sintético) logo após o clique de fechar: o foco aterrissou num botão
+      marcador colocado depois do Panel na árvore, nunca dentro do corpo. Não
+      existe mais janela em que o foco entre no conteúdo em colapso.
+  - alegacao: "Reabertura: o inert precisa sair no primeiro quadro"
+    resumo: "Ninguém tinha verificado isso na rodada 1."
+    resultado: CONFIRMADA, sem o defeito espelhado
+    como_verifiquei: >
+      No mesmo harness, reabri o Panel e o Accordion clicando de novo no
+      gatilho. Imediatamente após o clique, `corpo.hasAttribute('inert')` já é
+      `false`, sem esperar quadro nenhum, e `botaoInterno.focus()` volta a
+      funcionar (o `document.activeElement` passa a ser o botão interno). Não
+      existe o defeito espelhado, de conteúdo visível e inalcançável durante a
+      abertura.
+  - alegacao: "Achado MAIOR 2 da rodada 1: travessão em Select.css:52 (TXT-001, PROIBIDO)"
+    resumo: "Correção de texto, sem travessão."
+    resultado: CORRIGIDA
+    como_verifiquei: >
+      Grep de `—` em todos os arquivos do recorte (useRealceDeslizante.ts,
+      Select.tsx, Select.css, Tabs.tsx, Tabs.css, Panel.tsx, Panel.css):
+      zero ocorrências. O comentário de Select.css:44-53 foi reescrito com
+      dois-pontos e ponto final, sem travessão.
+  - alegacao: "Achado MAIOR 3 da rodada 1: anel de foco do gatilho do Accordion cortado pelo overflow hidden do contêiner"
+    resumo: "Pré-existente, registrado como de outro dono, não bloqueava a entrega, mas eu conferi."
+    resultado: CORRIGIDO
+    como_verifiquei: >
+      O `overflow: hidden` que existia em `.citie-accordion` foi removido; hoje
+      só `.citie-accordion__clip` (a caixa do disclosure) carrega
+      `overflow: hidden`, o contêiner externo ficou com `overflow: visible`.
+      Montei o markup real do Accordion (dois gatilhos, tokens.css e Tabs.css
+      de verdade, via `page.goto('file://...')` para as folhas de estilo
+      carregarem, depois de uma primeira tentativa falha com `page.setContent`
+      que o navegador bloqueia por política de recurso local) e naveguei por
+      Tab até o segundo gatilho. `getComputedStyle` do contêiner confirma
+      `overflow: visible`; a screenshot mostra o anel como um retângulo
+      completo, arredondado, cercando o cabeçalho focado, sem barras soltas.
+  - alegacao: "Achado MENOR 1 da rodada 1: comentários afirmavam que 'visibility: hidden' tinha o mesmo efeito do 'hidden' antigo"
+    resumo: "Documentação devia descrever o que o código faz de fato, não prometer equivalência."
+    resultado: CORRIGIDA
+    como_verifiquei: >
+      Os comentários em Panel.tsx:94-101, Tabs.tsx (bloco do disclosure do
+      Accordion) e nos dois arquivos CSS agora descrevem dois mecanismos
+      distintos com papéis distintos (`inert` corta foco e árvore no mesmo
+      quadro, `visibility` atrasada só cuida da pintura), sem a promessa de
+      equivalência de comportamento que a rodada 1 apontou como falsa.
+  - alegacao: "Achado MENOR 2 da rodada 1: duas plumbings distintas para o mesmo primitivo (SelectButton com translate/width/height inline, Tabs com quatro custom properties)"
+    resumo: "O hook devia expor uma única forma de aplicar a medida."
+    resultado: CORRIGIDA
+    como_verifiquei: >
+      O hook agora devolve só o objeto `estilo` com as quatro variáveis CSS
+      (`--citie-realce-x/y/largura/altura`), e os dois consumidores fazem
+      exatamente a mesma coisa: `style={estilo}` no elemento de realce, sem
+      nenhuma leitura ou desmembramento de propriedade em JS. Select.tsx:142-144
+      e Tabs.tsx:76-78 são idênticos nesse ponto; quem decide a forma (pílula,
+      sublinhado, barra lateral) é só CSS por variante, cada um consumindo as
+      variáveis de que precisa. Isso também deixa o terceiro consumidor
+      previsto (Sidebar) com plumbing trivial e única, resolvendo o que a
+      rodada 1 chamou de falta de fechamento do primitivo.
+  - alegacao: "Achado MENOR 3 da rodada 1: a lista de dependências do efeito só cobria `chaveAtiva`, item novo com a mesma chave ativa não entrava no ResizeObserver"
+    resumo: "Item novo inserido em runtime, mantida a mesma chave ativa, podia deixar o realce desalinhado."
+    resultado: CORRIGIDA
+    como_verifiquei: >
+      useRealceDeslizante.ts:84-85 agora tem um `MutationObserver` no trilho
+      com `{ childList: true }`, que dispara `observarItens()` (recomeça a
+      medição e reconecta o `ResizeObserver` em todos os itens correntes)
+      sempre que a lista de filhos do trilho muda, independente de
+      `chaveAtiva`. O comentário do próprio hook (linhas 35-41) descreve
+      exatamente esse caso de uso. Cobre a lacuna apontada.
+  - alegacao: "Achado MENOR 4 da rodada 1: o relatório de medições da rodada 1 não declarava o que não tinha sido medido (foco e texto)"
+    resumo: "Item sobre a prática de relatório do revisor anterior, não sobre o código."
+    resultado: NÃO SE APLICA A ESTA RODADA
+    como_verifiquei: >
+      Não é um achado de código; é uma observação sobre a integridade do
+      relatório da rodada 1. Não há o que corrigir no componente. Neste
+      relatório eu declaro explicitamente as minhas próprias limitações, na
+      seção correspondente, para não repetir a lacuna.
+  - alegacao: "Rodada 1, alegação 4: a primeira renderização não anima"
+    resumo: "Continua sustentada."
+    resultado: RECONFIRMADA por mim, com harness próprio
+    como_verifiquei: >
+      No mesmo harness React real, montei o Panel já aberto e chamei
+      `corpo.getAnimations()` logo após o primeiro commit: 0 animações. O
+      realce e o disclosure não têm nenhuma transição em curso na montagem.
+  - alegacao: "Rodada 1, alegação 5: grid-template-rows resiste ao efeito colateral de min-height alto no filho"
+    resumo: "Continua sustentada."
+    resultado: RECONFIRMADA por mim, com harness próprio, em Chromium
+    como_verifiquei: >
+      Montei o Panel com um filho de `min-height: 400px` e um parágrafo com
+      margem vertical de 32px (altura aberta medida em 480px). Ao clicar o
+      gatilho de fechar e esperar 300ms, a altura do corpo caiu para
+      exatamente 0px, porque `.citie-panel__clip` carrega `min-height: 0` com
+      `overflow: hidden`. Não retestei Firefox nesta rodada (mesma limitação de
+      ambiente da rodada 1, não investiguei binário à parte); a parte Chromium
+      está reconfirmada com números meus.
+
+o_que_me_surpreendeu:
+  - >
+    O anel de foco cortado do Accordion (achado MAIOR da rodada 1, mas
+    registrado como pré-existente, de outro dono, explicitamente "não bloqueia
+    esta entrega") foi corrigido mesmo sem ter sido cobrado como bloqueador.
+    Ninguém pediu essa correção nesta rodada para o handoff passar; ela
+    aconteceu de qualquer forma. Verifiquei hoje, por conta própria, navegando
+    por Tab real de teclado (Playwright) e capturando tela: o `overflow:
+    hidden` saiu do contêiner externo do Accordion (só `.citie-accordion__clip`
+    ainda carrega, e é outro elemento, o do disclosure), e o anel aparece como
+    retângulo completo ao redor do gatilho, sem as duas barras soltas de antes.
+  - >
+    A separação de responsabilidade entre `inert` (corte de foco, síncrono) e
+    `visibility` atrasada (só pintura) resolve o achado MAIOR de foco e, de
+    quebra, o caso espelhado da reabertura, que ninguém tinha pedido para
+    verificar nesta rodada e que eu testei por conta própria com resultado
+    limpo: o `inert` sai no mesmo instante do clique de reabrir, sem o defeito
+    de conteúdo visível e inalcançável. A correção exigida pela rodada 1 pedia
+    "inert no clip"; o que o código entrega vai além do mínimo prescrito, ao
+    também resolver de graça a metade da história que a rodada 1 nem tinha
+    coberto.
+  - >
+    Duas decisões de mérito da rodada 1 continuam de pé no componente como ele
+    está hoje, e eu as revisitei diretamente no código desta rodada, não por
+    fé no relatório anterior: (a) o modo `multiplo` do SelectButton, em que não
+    existe "o" realce para deslizar, então o hook recebe `null` como chave
+    ativa (Select.tsx:121-123) e cada segmento pinta o próprio preenchimento
+    por `box-shadow` interno (Select.css:134-142), evitando o realce piscando
+    entre seleções que ninguém pediu para prevenir; (b) a medida do realce por
+    `getBoundingClientRect` descontando `clientLeft`/`clientTop`
+    (useRealceDeslizante.ts:61-68), que existe precisamente para não deixar o
+    realce até 1px fora do item quando o trilho tem borda, problema que só
+    aparece em certas combinações de navegador e não foi pedido por ninguém.
+    A fidelidade sub-pixel em si (267,5/92,17 em duas casas decimais) foi
+    medida pela rodada 1 e não remedida por mim nesta rodada, mas o mecanismo
+    que a produz está visível e intacto no código que auditei hoje.
+
+o_que_faltou_para_surpreender:
+  - >
+    Nada bloqueia o veredito, mas registro um ponto de acabamento: nenhuma
+    story do catálogo exercita as próprias correções desta rodada (foco
+    durante o fechamento, disclosure com conteúdo alto, movimento reduzido). A
+    prova de que os dois achados MAIOR foram corrigidos vive nos meus scripts
+    de auditoria, fora do repositório, e não em nada que fique gravado no
+    catálogo para a próxima pessoa que mexer neste código.
+  - >
+    O `MutationObserver` cobre entrada e saída de item por leitura de código e
+    do comentário do próprio hook; não montei o cenário de item novo com a
+    mesma chave ativa em runtime para medir o realojamento do realce.
+
+nota_sobre_a_regua: >
+  Minha primeira versão deste veredito tinha fechado em APROVADO com a
+  justificativa de que eu não nomeava "uma segunda decisão de projeto nova
+  nesta rodada" além das duas já creditadas na rodada 1. O gestor esclareceu,
+  sem pedir troca de veredito, que a régua de SURPREENDEU é sobre o estado do
+  componente hoje, e não sobre novidade por rodada: uma decisão de mérito
+  registrada na rodada 1 não deixa de valer na rodada 2 só porque não é nova
+  nesta passada, desde que continue de pé no código. Relendo com esse
+  enquadramento, e revisitando eu mesma o código desta rodada (não o relatório
+  anterior), duas das três decisões que cito abaixo já existiam desde a rodada
+  1 e seguem intactas hoje; a terceira (o anel de foco do Accordion) foi
+  corrigida nesta rodada mesmo sem ter sido exigida como bloqueadora. As três
+  juntas atendem ao critério: decisões específicas, com evidência, que
+  resolvem um problema real que ninguém pediu para resolver, e nenhum achado
+  em escopo permanece. Atualizo o veredito para `SURPREENDEU`.
+
+motivo_do_veredito: >
+  Os dois achados MAIOR da rodada 1 foram corrigidos e eu medi os dois de forma
+  independente, sem aceitar a palavra de quem produziu nem a do revisor
+  anterior. O travessão em Select.css desapareceu, conferido por grep em todo o
+  recorte. A janela de foco alcançável no fechamento não existe mais: com um
+  harness próprio, conteúdo focável de verdade dentro da região, amostragem
+  quadro a quadro e um Tab real de teclado via automação do Playwright, o foco
+  nunca aterrissa dentro do corpo em nenhum momento da transição, e a
+  reabertura libera o foco no mesmo instante em que o `inert` sai, sem o
+  defeito espelhado. O achado MAIOR sobre o anel de foco cortado do Accordion,
+  que a rodada 1 registrou como de outro dono e não bloqueador, também foi
+  corrigido, verificado por captura de tela com navegação real por teclado. Os
+  três achados MENOR de código da rodada 1 (documentação que prometia
+  equivalência, dupla plumbing do primitivo, dependência incompleta do efeito)
+  foram corrigidos; o quarto era sobre a prática de relatório do revisor
+  anterior, não sobre código, e não se aplica aqui. O gate técnico passa
+  integralmente: typecheck limpo, lint sem aviso no recorte, 23 de 23 nos dois
+  temas, isolando os arquivos de story do recorte para não herdar falhas
+  pré-existentes de componentes com nome parecido, e nenhuma story perdida. As
+  alegações da rodada 1 que ainda sustentam o trabalho (primeira renderização
+  sem animação, técnica de grid resistente ao `min-height` alto) foram
+  reconfirmadas com harness próprio, não apenas revalidadas por leitura de
+  código. Olhando o componente como ele está hoje, nomeio três decisões de
+  projeto específicas com evidência que resolvem problema real que ninguém
+  pediu para resolver: o modo múltiplo do SelectButton sem realce piscando, a
+  medida sub-pixel do realce descontando a borda do trilho, e a correção do
+  anel de foco do Accordion feita sem ter sido cobrada como bloqueadora. Nenhum
+  achado em escopo permanece. O veredito é `SURPREENDEU`.
+
+limitacoes_desta_revisao:
+  - >
+    Não retestei Firefox para a técnica de `grid-template-rows`; sigo com a
+    mesma limitação de ambiente relatada na rodada 1 (binário do Playwright não
+    verificado novamente nesta sessão). A parte Chromium foi reconfirmada com
+    números meus.
+  - >
+    Não testei com leitor de tela real (VoiceOver ou NVDA); a verificação de
+    árvore de acessibilidade foi via atributo `inert`, `role` e visibilidade
+    computada, e via o axe do addon de a11y do Storybook nos dois temas
+    (through `npm run test-storybook` e `test-storybook:dark`).
+  - >
+    Testei o `MutationObserver` só por leitura de código e do comentário do
+    hook; não montei o cenário de item entrando com a mesma chave ativa em
+    runtime para medir o realojamento do realce.
+  - >
+    A revisão cobriu o recorte pedido (RealceDeslizante, Select/SelectButton,
+    Tabs/Accordion, Panel). Os demais arquivos alterados nesta rodada (Button,
+    Skeleton, EmptyState, SkeletonLista, DataView e outros que aparecem no
+    `git status`) não foram auditados por mim.
+
+artefatos:
+  scripts_de_medicao: >
+    Harness temporário em `.audit-tmp/` dentro do próprio repositório (única
+    forma de o Node resolver `vite`/`@vitejs/plugin-react`/`@vitest/browser-playwright`
+    a partir de `node_modules`), com um teste de foco/inert em React real via
+    `@vitest/browser` + Playwright/Chromium, mais dois scripts standalone de
+    Playwright para o anel de foco do Accordion (HTML servido via
+    `page.goto('file://...')`, já que `page.setContent` bloqueia recursos
+    locais). Removido integralmente ao final da revisão; `git status` conferido
+    antes e depois para confirmar que nenhum arquivo do repositório foi
+    alterado por esta revisão, além deste veredito.
+  repositorio: "Nenhum arquivo do repositório foi alterado por esta revisão, além deste veredito."

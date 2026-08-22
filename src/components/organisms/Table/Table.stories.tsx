@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { SemRegistro, Table, mascararCPF, type Coluna } from './Table';
 import { StatusIndicator, type EstadoDeFluxo } from '../../atoms/Badge/Badge';
 import { Button } from '../../atoms/Button/Button';
@@ -95,13 +95,14 @@ const meta = {
           '',
           '- **As linhas se agrupam em pai e filho e o pai soma os filhos** (plano de contas,',
           '  estrutura de despesa, secretaria com suas unidades). Na tabela plana a hierarquia vira',
-          '  texto indentado à mão e o total do pai deixa de ser conferível: use a `TreeTable`.',
+          '  texto indentado à mão e o total do pai fica impossível de conferir: use a `TreeTable`.',
           '- **A relação entre os itens é a informação principal e cada item tem um rótulo só**',
           '  (estrutura organizacional, categorias). Uma tabela de uma coluna gasta a largura toda',
           '  para mostrar hierarquia que a `Tree` mostra melhor, com expandir e colapsar por',
           '  teclado. Para escolher um nó dentro de um formulário, use o `TreeSelect`.',
-          '- **Cada registro é lido inteiro, um por vez, e não comparado com os outros** (galeria de',
-          '  documentos anexados, catálogo com imagem, cartão com resumo em texto corrido). A',
+          '- **Cada registro é lido inteiro, um por vez, longe da comparação atributo a atributo**',
+          '  (galeria de documentos anexados, catálogo com imagem, cartão com resumo em texto',
+          '  corrido). A',
           '  tabela obriga a espremer descrição longa em célula que trunca: use o `DataView`, que',
           '  alterna lista e grade e já traz ordenação e paginação.',
           '- **São dois ou três atributos de um único registro.** Uma tabela de uma linha é um',
@@ -133,6 +134,27 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+/**
+ * Régua vertical: toda linha da tabela mede o mesmo, e a medida é inteira.
+ *
+ * As duas coisas importam. Altura que oscila com o conteúdo cansa a varredura
+ * vertical, e altura fracionária desloca a base do texto de todas as linhas
+ * abaixo por frações de pixel.
+ */
+async function conferirRegua(canvasElement: HTMLElement, alturaEsperada: number) {
+  const linhas = Array.from(canvasElement.querySelectorAll('tbody tr'));
+  const cabecalho = canvasElement.querySelector('thead tr') as HTMLElement;
+  const alturas = [cabecalho, ...linhas].map((linha) => linha.getBoundingClientRect().height);
+
+  for (const altura of alturas) {
+    // Inteira: cada célula pinta o próprio fio de 1px inteiro, e a linha
+    // assenta em coordenada redonda.
+    await expect(Number.isInteger(altura)).toBe(true);
+    // Uniforme, cabeçalho e última linha inclusive.
+    await expect(altura).toBe(alturaEsperada + 1);
+  }
+}
+
 export const Confortavel: Story = {
   name: 'Densidade · confortável (48px)',
   play: async ({ canvasElement }) => {
@@ -140,11 +162,10 @@ export const Confortavel: Story = {
     const grid = canvas.getByRole('grid', { name: 'Solicitações de TFD, 4 registros' });
     await expect(grid).toBeVisible();
 
-    // A spec define 48px como altura MÍNIMA: uma linha com botão de 32px mais
-    // o padding de 12px cresce para 56px, e isso é o comportamento esperado.
-    const primeiraLinha = canvas.getAllByRole('row')[1];
-    await expect(primeiraLinha.getBoundingClientRect().height).toBeGreaterThanOrEqual(48);
-    await expect(primeiraLinha.getBoundingClientRect().height).toBeLessThanOrEqual(56);
+    // 48px de célula mais o fio de 1px, igual em toda linha e no cabeçalho.
+    // Antes desta rodada, as mesmas linhas mediam 48,50 no cabeçalho, 49,00 no
+    // corpo e 48,50 na última.
+    await conferirRegua(canvasElement, 48);
 
     // CPF sai mascarado na listagem; o valor completo só no detalhe.
     await expect(canvas.getByText('***.***.**9-00')).toBeVisible();
@@ -154,11 +175,26 @@ export const Confortavel: Story = {
 export const Compacta: Story = {
   name: 'Densidade · compacta (36px)',
   args: { densidade: 'compacta' },
+  parameters: {
+    docs: {
+      description: {
+        story: [
+          'A densidade compacta é um contrato de 36px, e a tabela o faz valer sobre os',
+          'controles que entram nas células: dentro de uma célula compacta, altura de controle',
+          'normal e grande passam a valer a pequena. Sem isso, um botão de 40px empurrava a',
+          'linha para 41px contra 37px das vizinhas, e um degrau de 4px a cada poucas linhas é',
+          'o que cansa a varredura.',
+          '',
+          'O que a tabela **não** encurta é conteúdo de duas linhas: um `ValorMonetario` com',
+          'reembolso mede 45px em densidade compacta, contra 37px das vizinhas. Duas linhas não',
+          'cabem em 36px, e a decisão é do consumidor: ou o valor vai sem a segunda linha, ou a',
+          'tabela vai em densidade confortável, onde ele cabe e a régua se mantém em 49px.',
+        ].join('\n'),
+      },
+    },
+  },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const primeiraLinha = canvas.getAllByRole('row')[1];
-    await expect(primeiraLinha.getBoundingClientRect().height).toBeGreaterThanOrEqual(36);
-    await expect(primeiraLinha.getBoundingClientRect().height).toBeLessThanOrEqual(40);
+    await conferirRegua(canvasElement, 36);
   },
 };
 
@@ -188,6 +224,51 @@ export const ComSelecao: Story = {
 
     await userEvent.click(canvas.getByRole('checkbox', { name: 'Selecionar a página atual' }));
     await expect(canvas.getByText('4 selecionados')).toBeVisible();
+  },
+};
+
+export const SelecaoNaLinhaPar: Story = {
+  name: 'Estado · seleção na linha par da zebra',
+  args: { selecionavel: true },
+  parameters: {
+    docs: {
+      description: {
+        story: [
+          'A zebra pinta a linha par e a seleção pinta a linha escolhida, e as duas usam a mesma',
+          'propriedade de fundo. Por especificidade, a zebra vencia: ao marcar a página inteira,',
+          'as linhas ímpares ficavam com a cor de seleção e as pares seguiam com a faixa da',
+          'zebra, ou seja, metade da seleção era invisível. A ordem entre as duas agora é',
+          'declarada por camada em `Table.css`, e vale nas duas paridades.',
+          '',
+          'Esta story cobre justamente a paridade que as outras duas de seleção deixavam de fora:',
+          'ambas escolhiam linha ímpar, e por isso o defeito atravessava a suíte verde.',
+        ].join('\n'),
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const linhas = () => Array.from(canvasElement.querySelectorAll('tbody tr'));
+    const fundo = (linha: Element) =>
+      getComputedStyle(linha.querySelector('td') as HTMLElement).backgroundColor;
+
+    const [impar, par] = linhas();
+
+    // Em repouso a zebra separa as duas paridades: é o que torna a medição
+    // seguinte capaz de reprovar.
+    const parEmRepouso = fundo(par);
+    await expect(parEmRepouso).not.toBe(fundo(impar));
+
+    await userEvent.click(canvas.getByRole('checkbox', { name: 'Selecionar a página atual' }));
+    await expect(par).toHaveClass('citie-table__linha--selecionada');
+
+    // Depois da transição de 140ms do fundo, as duas paridades selecionadas
+    // pintam a MESMA cor, que é a de seleção, e nenhuma delas fica na cor que a
+    // zebra pintava.
+    await waitFor(async () => {
+      await expect(fundo(par)).toBe(fundo(impar));
+      await expect(fundo(par)).not.toBe(parEmRepouso);
+    });
   },
 };
 
@@ -319,7 +400,7 @@ export const AcoesPorLinha: Story = {
     docs: {
       description: {
         story: [
-          'A coluna de ações é gerada pela própria tabela, e não montada pelo consumidor como',
+          'A coluna de ações é gerada pela própria tabela, sem o consumidor montá-la como',
           'coluna comum. Antes, cada tela improvisava a sua: largura diferente, alinhamento',
           'diferente, e o cabeçalho às vezes com verbo. A anatomia vem do protótipo TFD.',
           '',
@@ -336,7 +417,7 @@ export const AcoesPorLinha: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // O nome acessível carrega o registro, e não só o verbo.
+    // O nome acessível carrega o verbo e o registro.
     const abrir = canvas.getByRole('button', { name: `Abrir o processo ${SOLICITACOES[0].processo}` });
     await expect(abrir).toBeInTheDocument();
 
@@ -359,6 +440,8 @@ export const DestaqueDeLinha: Story = {
       colunas={COLUNAS}
       linhas={SOLICITACOES}
       chaveDaLinha={(linha) => linha.processo}
+      rotuloDaLinha={(linha) => `o processo ${linha.processo}`}
+      selecionavel
       zebra
       destaqueDaLinha={(linha) =>
       linha.estado === 'Devolvido'
@@ -376,7 +459,7 @@ export const DestaqueDeLinha: Story = {
           'Destaca a linha que exige atenção sem tirá-la do fluxo da lista. A anatomia vem do',
           'protótipo TFD, que usa barra vertical em três das suas filas de trabalho.',
           '',
-          '**A barra é `box-shadow: inset`, e não cor de fundo.** Fundo colorido briga com o',
+          '**A barra é `box-shadow: inset`.** Fundo colorido briga com o',
           'zebrado e com o realce de hover, e a linha destacada deixa de responder ao ponteiro.',
           'A barra convive com os dois.',
           '',
@@ -385,8 +468,15 @@ export const DestaqueDeLinha: Story = {
           'e não numa coluna própria: coluna extra apenas nas linhas destacadas quebraria a',
           'contagem de colunas da grade.',
           '',
-          'Quando a linha está selecionada, a seleção vence o destaque: seleção é ação do usuário',
-          'agora, destaque é condição do dado, e duas barras não cabem no mesmo lugar.',
+          '**Selecionar uma linha destacada não apaga o destaque.** Os dois trilhos se encaixam:',
+          'a seleção ocupa a faixa colada na borda, que é a posição mais forte, e a condição do',
+          'dado ocupa a faixa imediatamente ao lado. Antes a seleção sobrescrevia o destaque, e o',
+          'motivo pelo qual a linha exigia atenção sumia da tela justo quando o servidor a',
+          'escolhia para agir.',
+          '',
+          '**A tinta do trilho vem da família `*-strong`**, que é a de cor lida sobre superfície.',
+          'Medido: `warning-emphasis` #d97706 sobre a linha zebrada do tema claro dá 2,92:1 e',
+          'reprova o mínimo de 3:1 da WCAG 1.4.11; `warning-strong` #b45309 dá 4,60:1.',
         ].join('\n'),
       },
     },
@@ -403,5 +493,19 @@ export const DestaqueDeLinha: Story = {
     const celulasDaPrimeira = linhas[1].querySelectorAll('td').length;
     const celulasDaSegunda = linhas[2].querySelectorAll('td').length;
     await expect(celulasDaPrimeira).toBe(celulasDaSegunda);
+
+    // Selecionar a linha destacada não apaga o destaque: os dois trilhos ficam,
+    // encaixados, e o de estado recua para caber ao lado do de seleção.
+    const primeiraCelula = linhas[1].querySelector('td') as HTMLElement;
+    const antes = getComputedStyle(primeiraCelula).boxShadow;
+    await expect(antes).toContain('inset');
+
+    await userEvent.click(canvas.getByRole('checkbox', { name: 'Selecionar o processo 2025/0481' }));
+    const depois = getComputedStyle(primeiraCelula).boxShadow;
+
+    // Duas sombras internas: a lista tem duas entradas `inset`.
+    await expect(depois.match(/inset/g)?.length).toBe(2);
+    // A largura do trilho de estado dobra para ele encostar ao lado da seleção.
+    await expect(depois).toContain('6px');
   },
 };

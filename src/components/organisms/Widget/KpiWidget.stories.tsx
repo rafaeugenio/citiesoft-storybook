@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { KpiWidget, type KpiProps } from './Widget';
 import { Sparkline } from '../../atoms/Sparkline/Sparkline';
 
@@ -275,4 +275,148 @@ export const Painel: Story = {
       <KpiWidget rotulo="Devolvidas" valor="41" periodo="Março de 2025" compacto />
     </div>
   ),
+};
+
+/** Alterna entre dois períodos para exercitar a transição do valor. */
+function IndicadorQueTrocaDePeriodo(args: KpiProps) {
+  const [mes, setMes] = useState(true);
+  return (
+    <div style={{ display: 'grid', gap: 'var(--citie-spacing-4)', maxInlineSize: '320px' }}>
+      <button
+        type="button"
+        className="citie-button citie-button--secondary citie-button--small"
+        onClick={() => setMes((atual) => !atual)}
+      >
+        {mes ? 'Ver acumulado do exercício' : 'Ver julho'}
+      </button>
+      <KpiWidget
+        {...args}
+        valor={mes ? '1.486' : '9.482'}
+        periodo={mes ? 'Julho de 2026' : 'Acumulado do exercício'}
+      />
+    </div>
+  );
+}
+
+export const ValorEmTransicao: Story = {
+  name: 'Acabamento · valor transita ao trocar o período',
+  parameters: {
+    docs: {
+      description: {
+        story: [
+          'O valor percorre a distância entre o número anterior e o novo, em vez de trocar de',
+          'golpe.',
+          '',
+          '**O problema que isso resolve é concreto.** No Painel de TFD, trocar o período do',
+          'filtro muda oito indicadores ao mesmo tempo. Trocando de golpe, o operador não tem',
+          'como saber qual deles mudou nem quanto. Com a transição, o movimento aponta para o',
+          'que mudou e a distância percorrida diz o tamanho da mudança.',
+          '',
+          '**O valor chega formatado**, como `1.486` ou `R$ 962.150`. O componente separa o',
+          'miolo numérico dos afixos e transita apenas o miolo, devolvendo a pontuação original',
+          'a cada quadro. Reformatar por conta própria produziria separador de milhar errado no',
+          'meio do percurso.',
+          '',
+          '**O leitor de tela não ouve os quadros intermediários.** Um número que passa por',
+          'trinta valores até chegar ao destino viraria trinta anúncios. Durante a transição o',
+          'texto que anima sai da árvore de acessibilidade e o valor real vive num texto',
+          'visualmente oculto. Em repouso existe um nó de texto só.',
+          '',
+          'Com `prefers-reduced-motion: reduce`, o valor troca direto. Quando o formato muda de',
+          'molde, por exemplo de `512` para `R$ 1.486,00`, a troca também é direta: interpolar',
+          'entre moldes diferentes produziria valores que nunca existiram.',
+        ].join('\n'),
+      },
+    },
+  },
+  render: (args) => <IndicadorQueTrocaDePeriodo {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // Em repouso existe um único nó com o valor: a duplicata acessível só
+    // aparece enquanto a transição corre.
+    await expect(canvas.getByText('1.486')).toBeVisible();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Ver acumulado do exercício' }));
+
+    /*
+     * A prova de que o laço de interpolação roda é a existência de um quadro
+     * intermediário: um valor que não é o de partida nem o de chegada.
+     *
+     * A primeira versão desta asserção procurava duas ocorrências do valor
+     * final, supondo que o texto visível e o oculto coincidiriam durante a
+     * transição. Não coincidem: durante a contagem o visível mostra 2.310,
+     * 4.887 e assim por diante, e o valor final só aparece no visível quando a
+     * transição termina. A asserção passava a impressão de medir a animação e
+     * media outra coisa.
+     */
+    await waitFor(() => {
+      const visivel = canvasElement.querySelector('[aria-hidden="true"]')?.textContent ?? '';
+      expect(visivel).not.toBe('');
+      expect(visivel).not.toBe('1.486');
+      expect(visivel).not.toBe('9.482');
+    });
+
+    // E o destino é alcançado, voltando ao nó único de repouso.
+    await waitFor(() => expect(canvas.getAllByText('9.482').length).toBe(1));
+    await expect(canvas.queryByText('1.486')).toBeNull();
+  },
+};
+
+/** Alterna entre dois valores de molde diferente, para provar a troca direta. */
+function IndicadorQueMudaDeMolde(args: KpiProps) {
+  const [curto, setCurto] = useState(true);
+  return (
+    <div style={{ display: 'grid', gap: 'var(--citie-spacing-4)', maxInlineSize: '320px' }}>
+      <button
+        type="button"
+        className="citie-button citie-button--secondary citie-button--small"
+        onClick={() => setCurto((atual) => !atual)}
+      >
+        {curto ? 'Ver acumulado' : 'Ver mês'}
+      </button>
+      <KpiWidget
+        {...args}
+        rotulo="Ajuda de custo empenhada"
+        valor={curto ? '512' : 'R$ 1.486.320'}
+        periodo={curto ? 'Julho de 2026' : 'Acumulado do exercício'}
+      />
+    </div>
+  );
+}
+
+export const TrocaDiretaPorMoldeDiferente: Story = {
+  name: 'Borda · molde diferente troca direto',
+  parameters: {
+    docs: {
+      description: {
+        story: [
+          'A contagem suave só acontece entre valores de **mesmo molde**. Quando o formato muda,',
+          'por exemplo de `512` para `R$ 1.486.320`, a troca é direta.',
+          '',
+          'O motivo é que interpolar entre moldes diferentes mostraria valores que nunca',
+          'existiram: o separador de milhar apareceria no meio de um número que ainda não tem',
+          'milhar, e o prefixo de moeda entraria de golpe sobre um número sem moeda. Trocar',
+          'direto é a resposta honesta.',
+          '',
+          'Esta story existe porque a story irmã prova o caminho animado, e os dois caminhos são',
+          'comportamentos distintos. Um revisor independente apontou que a versão anterior da',
+          'demonstração usava justamente um par de moldes diferentes, então ela nomeava a',
+          'transição e exercitava a troca direta, deixando o laço de contagem sem prova nenhuma.',
+        ].join('\n'),
+      },
+    },
+  },
+  render: (args) => <IndicadorQueMudaDeMolde {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.getByText('512')).toBeVisible();
+    await userEvent.click(canvas.getByRole('button', { name: 'Ver acumulado' }));
+
+    // Troca direta: o valor novo aparece já como nó único, sem passar pelo par
+    // que só existe durante a contagem.
+    await waitFor(() => expect(canvas.getByText('R$ 1.486.320')).toBeVisible());
+    await expect(canvas.getAllByText('R$ 1.486.320').length).toBe(1);
+  },
 };

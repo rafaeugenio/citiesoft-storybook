@@ -97,10 +97,20 @@
 /**
  * Linha tipográfica única a partir de 768px.
  *
- * `flex: 1 1 0` reparte a largura em partes iguais e `min-width: min-content`
- * define o piso do encolhimento: com 8 indicadores em 1366px a célula fica
- * estreita, e o piso garante que quem cede espaço é o rótulo, que trunca com
- * reticências, e nunca o número, que continua em uma linha só.
+ * `flex: 1 1 0` reparte a largura em partes iguais, e o piso do encolhimento é
+ * **zero**, não `min-content`.
+ *
+ * O piso em `min-content` parecia proteger o número, e na prática somava o
+ * conteúdo mínimo de cada célula: com 8 indicadores em 1200px, a lista pedia
+ * 1311px dentro de 1110px disponíveis, o oitavo terminava em 1356 contra uma
+ * janela de 1200, e a página inteira ganhava rolagem horizontal. O conteúdo que
+ * transbordava ficava fora da área pintada da faixa, e a varredura de
+ * acessibilidade acusava contraste de 1,08:1 por não achar fundo opaco por trás
+ * dele. O defeito de contraste era sintoma; a causa era o transbordo.
+ *
+ * Quem protege o número é o `white-space: nowrap` dele, e quem cede espaço é o
+ * rótulo, que trunca com reticências. O piso zero deixa o flex fazer o trabalho
+ * que ele já sabia fazer.
  */
 @container (min-width: 768px) {
   .citie-kpi-faixa__lista {
@@ -109,7 +119,7 @@
 
   .citie-kpi-faixa__celula {
     flex: 1 1 0;
-    min-width: min-content;
+    min-width: 0;
     border-block-start: none;
     border-inline-start: 1px solid var(--citie-border-default);
   }

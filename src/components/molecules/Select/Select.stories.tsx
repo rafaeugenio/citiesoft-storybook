@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { Select } from './Select';
+import { corDoToken } from '../../primitives/Field/medicao';
 
 const MUNICIPIOS = [
   { value: 'sao-luis', label: 'São Luís' },
@@ -62,14 +63,71 @@ export const Selecionado: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const campo = canvas.getByLabelText('Município de destino');
+
+    // Escolher endurece a borda para o degrau de preenchido: numa coluna de
+    // campos, o que falta escolher se distingue de relance, e a asserção mede
+    // a borda computada antes e depois da seleção.
+    // A espera tem função exata: a borda muda por transição de 140ms, e o valor
+    // computado no quadro seguinte à escolha ainda é o de partida. Sem ela, a
+    // asserção fotografa o começo do percurso e reprova a regra que funciona.
+    const bordaVazio = getComputedStyle(campo).borderTopColor;
     await userEvent.selectOptions(campo, 'imperatriz');
     await expect(campo).toHaveDisplayValue('Imperatriz');
+
+    // O foco sai antes da medição por uma razão de comportamento: escolher
+    // deixa o campo focado, e o foco pinta a borda de marca. A pista de
+    // preenchido existe para quem varre a coluna de campos com o olho, com o
+    // foco em outro lugar, e é nessa condição que ela precisa ser medida.
+    await userEvent.tab();
+    await waitFor(() =>
+      expect(getComputedStyle(campo).borderTopColor).toBe(
+        corDoToken(campo, '--citie-form-field-border-hover'),
+      ),
+    );
+    await expect(getComputedStyle(campo).borderTopColor).not.toBe(bordaVazio);
   },
 };
 
 export const Desabilitado: Story = {
   name: 'Estado · desabilitado',
   args: { disabled: true },
+};
+
+export const SomenteLeitura: Story = {
+  name: 'Estado · somente leitura',
+  args: {
+    label: 'Órgão de lotação',
+    // Duas opções de propósito: a asserção só prova o bloqueio se existir
+    // um valor vizinho para o qual a seta tentaria mover.
+    options: [
+      { value: 'ses', label: 'Secretaria de Estado da Saúde' },
+      { value: 'seduc', label: 'Secretaria de Estado da Educação' },
+    ],
+    defaultValue: 'ses',
+    readOnly: true,
+    helper: 'Definido pela unidade de RH. Para alterar, abra processo de remoção.',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'O `<select>` nativo não conhece `readonly`, então o componente comunica por `aria-readonly`, bloqueia a abertura do painel e as teclas que trocam o valor, e esconde a seta, cuja promessa de abrir seria falsa. O campo segue na ordem de Tab e o valor segue legível na tinta plena, o contrário do desabilitado, que sai do fluxo e desbota.',
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const campo = canvas.getByLabelText('Órgão de lotação');
+
+    await expect(campo).not.toBeDisabled();
+    await expect(campo).toHaveAttribute('aria-readonly', 'true');
+    await userEvent.tab();
+    await expect(campo).toHaveFocus();
+
+    // As teclas de troca de valor são bloqueadas: o dado está consolidado.
+    await userEvent.keyboard('{ArrowDown}');
+    await expect(campo).toHaveDisplayValue('Secretaria de Estado da Saúde');
+  },
 };
 
 export const Invalido: Story = {

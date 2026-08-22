@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Button } from '../../atoms/Button/Button';
 import { Skeleton } from '../../atoms/Skeleton/Skeleton';
+import { ValorEmTransicao } from './ValorEmTransicao';
 import './Widget.css';
 
 export type EstadoDoWidget = 'default' | 'carregando' | 'vazio' | 'erro';
@@ -90,7 +91,12 @@ export function KpiWidget({
       ) : (
         <>
           <p className={`citie-widget__valor${compacto ? ' citie-widget__valor--compacto' : ''}`}>
-            {valor}
+            {/*
+              O valor transita entre estados em vez de trocar de golpe. No
+              Painel de TFD, trocar o período muda oito indicadores ao mesmo
+              tempo, e sem o movimento o operador não sabe qual deles mudou.
+            */}
+            <ValorEmTransicao valor={valor ?? ''} />
           </p>
           <p className="citie-widget__periodo">{periodo}</p>
 

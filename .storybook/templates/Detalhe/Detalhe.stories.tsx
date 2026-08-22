@@ -243,7 +243,7 @@ export const Tablet768: Story = {
     viewport: { options: VIEWPORTS },
     docs: {
       description: {
-        story: 'Abaixo de 1024px o painel de metadados deixa de ser coluna e desce para baixo do corpo.',
+        story: 'Abaixo de 1024px o painel de metadados abandona a coluna e desce para baixo do corpo.',
       },
     },
   },

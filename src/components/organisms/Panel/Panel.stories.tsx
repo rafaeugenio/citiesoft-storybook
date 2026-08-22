@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { Panel } from './Panel';
 import { Button } from '../../atoms/Button/Button';
 
@@ -69,7 +69,13 @@ export const ColapsavelAberto: Story = {
 
     await userEvent.click(gatilho);
     await expect(gatilho).toHaveAttribute('aria-expanded', 'false');
-    await expect(canvas.queryByRole('region')).toBeNull();
+    // Síncrono, no mesmo quadro do clique: o corpo vira `inert`, então um Tab
+    // disparado durante o fechamento nunca aterrissa dentro do conteúdo que
+    // está sumindo (WCAG 2.4.3 e 2.4.11).
+    await expect(corpo).toHaveAttribute('inert');
+    // A pintura, essa sim, espera a transição: a asserção continua a mesma de
+    // antes, recolhido o corpo não existe para o leitor de tela.
+    await waitFor(() => expect(canvas.queryByRole('region')).toBeNull());
   },
 };
 
@@ -87,9 +93,9 @@ export const ColapsavelRecolhido: Story = {
     const gatilho = canvas.getByRole('button', { name: 'Expandir painel Histórico de tramitação' });
 
     await expect(gatilho).toHaveAttribute('aria-expanded', 'false');
-    // O corpo continua no DOM com `hidden`, que o tira da árvore de
-    // acessibilidade e preserva o estado interno. A asserção é de visibilidade,
-    // não de presença.
+    // O corpo continua no DOM com `visibility: hidden`, que o tira da árvore
+    // de acessibilidade e preserva o estado interno. A asserção é de
+    // visibilidade, não de presença.
     await expect(canvas.getByText(/Encaminhado à Regulação/)).not.toBeVisible();
 
     await userEvent.click(gatilho);

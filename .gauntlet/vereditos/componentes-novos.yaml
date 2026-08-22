@@ -1,0 +1,127 @@
+revisor: Design QA (Gojo), revisão independente com sonda Playwright sobre o build estático
+componente: HoverCard, InputGroup, ButtonGroup, Kbd
+veredito: REPROVADO
+veredito_anti_slop: VOLTA PARA REFINO
+gate_tecnico:
+  typecheck: "tsc -b --force sai com código 0, sem erro"
+  lint: "oxlint sai com código 0; avisos novos em HoverCard.tsx (219 refs-durante-render, 168 setState-em-effect) pertencem a famílias já presentes no repositório"
+  testes: "17 passados de 17 no tema claro e 17 de 17 no escuro (axe em modo error incluso nas duas passadas); build-storybook e verificar-catalogo com todas as invariantes verdes"
+  stories_antes_depois: "749 para 766 (17 stories novas nos quatro componentes; baseline inferida por subtração, sem git neste diretório; o verificador de catálogo confirma 120 títulos e nenhum destino legado perdido)"
+achados:
+  - severidade: MAIOR
+    id_anti_slop: nenhum
+    descricao: >
+      HoverCard dentro de Dialog modal fica invisível e inerte. O painel
+      portaliza para o [data-theme] e fica na árvore comum com z-index 1100,
+      enquanto o dialog do catálogo (Overlay.tsx linha 7, dialog nativo em modo
+      modal) vive na top layer, que pinta acima de qualquer z-index. Resultado
+      medido: painel atrás do backdrop, escurecido, e inerte, então o ponteiro
+      nunca o alcança. A justificativa gravada no código (HoverCard.tsx linhas
+      35 a 40) está invertida nas duas pontas. O cenário que ela teme, painel
+      acima de um modal alheio, não pode ocorrer, porque com modal aberto o
+      documento de fora fica inerte e o gatilho nem dispara. E o argumento dos
+      tokens não sustenta o portal, porque popover nativo não sai do lugar no
+      DOM e herdaria o [data-theme] do mesmo jeito. O Tooltip da mesma família
+      é inline e funciona dentro de dialog, então isto é regressão de
+      expectativa dentro da família de overlay.
+    evidencia: >
+      Sonda em /Users/rafaeleugenio/.claude/jobs/87efdce7/tmp/probe-hovercard.mjs,
+      seção 3: painelDentroDoDialog false e elementFromPoint no centro do
+      painel devolve DIALOG. Captura em
+      /Users/rafaeleugenio/.claude/jobs/87efdce7/tmp/shots/hovercard-dentro-de-dialog.png,
+      painel visivelmente atrás do backdrop.
+    correcao_exigida: >
+      Painel legível e apontável quando o gatilho estiver dentro de Dialog ou
+      Drawer do catálogo. Caminho curto: alvo do portal passa a ser
+      ancora.closest('dialog[open]') com fallback no [data-theme], o que
+      preserva os tokens por herança. Alternativa aceitável: declarar a
+      restrição na documentação da story e no docstring, removendo a
+      justificativa incorreta sobre a top layer.
+  - severidade: MAIOR
+    id_anti_slop: TXT-002
+    descricao: >
+      Construção proibida de negação paralela na forma listada no catálogo
+      ("deixa de ser X para virar Y"), em comentário de código Citiesoft.
+    evidencia: >
+      HoverCard.css linha 19: "acima de 320px o painel deixa de ser consulta
+      rápida e vira leitura". O detector do TXT-002 manda buscar exatamente
+      "deixa de ser". Categoria PROIBIDO, contexto todos.
+    correcao_exigida: >
+      Reescrever afirmando direto, por exemplo: "acima de 320px o conteúdo já
+      pede leitura, e leitura pertence ao detalhe do processo".
+  - severidade: POLIMENTO
+    id_anti_slop: nenhum
+    descricao: >
+      Apostos do tipo "decidido, não improvisado" (HoverCard.tsx linha 27,
+      InputGroup.tsx linha 28) e "é amostra, não leitura" (HoverCard.css linha
+      132) pertencem à família retórica do TXT-002, ainda que nenhum caia nos
+      padrões de detecção do catálogo. A tese aprovada da rodada usa a mesma
+      forma ("artesania, e não brilho"), então registro para a casa arbitrar em
+      vez de contar como violação.
+    evidencia: "Greps sobre os quatro componentes; formas detectáveis do catálogo ausentes fora do achado TXT-002 acima."
+    correcao_exigida: "Decisão da casa sobre o aposto curto; nenhuma mudança exigida por este gate."
+  - severidade: POLIMENTO
+    id_anti_slop: nenhum
+    descricao: >
+      Kbd anuncia teclas em idioma misto: "Command" e "Shift" em inglês, setas
+      em português ("Seta para cima"). O nome impresso na tecla física é o
+      inglês, então é defensável, mas vale padronizar o critério na tabela
+      NOME_DA_TECLA.
+    evidencia: "Kbd.tsx linhas 17 a 34."
+    correcao_exigida: "Uma linha de comentário declarando o critério, ou tradução das modificadoras."
+o_que_me_surpreendeu:
+  - >
+    InputGroup.css linhas 112 a 122: o botão emendado zera a âncora de sombra
+    com uma sombra real de efeito nulo (0 0 0 0 transparent) em vez de none,
+    porque o anel de foco do Button compõe uma lista de sombras e um none
+    dentro da lista invalidaria a lista inteira, apagando o anel. Verifiquei
+    com teclado real: foco no campo acende o trilho todo, foco no botão apaga o
+    trilho e acende só o botão, e Shift+Tab devolve o anel ao trilho
+    (probe-resto.mjs; capturas inputgroup-foco-campo.png e
+    inputgroup-foco-botao.png).
+  - >
+    HoverCard.tsx linhas 177 a 180: a folga entre gatilho e painel é lida em
+    runtime do token CSS (--citie-spacing-2) via getComputedStyle, então o
+    posicionamento em JS não carrega número próprio e não pode divergir da
+    fundação. Medido: lacuna de 8px em repouso, e a travessia com ponteiro real
+    atravessa a lacuna sem o painel desabar, com seleção e cópia do CPF dentro
+    do painel funcionando (probe-hovercard.mjs, captura
+    hovercard-light-travessia.png com o CPF selecionado).
+  - >
+    HoverCard.css linhas 47 a 57: a entrada anima só o deslocamento, sem
+    opacity, com o motivo documentado de que opacity 0 no primeiro quadro faria
+    o painel recém aberto se declarar invisível para verificação de teste e de
+    leitor de tela. Reduced motion medido: animation-name none com a
+    preferência ativa.
+  - >
+    Kbd.css linhas 30 a 35: a alegação de contraste confere no decimal. Refiz a
+    conta WCAG: text-secondary sobre subtle dá 4,52:1 e text-base dá 10,11:1 no
+    claro, exatamente os números do comentário. A troca foi decidida por medida,
+    e o corpo de 11px justifica a folga.
+o_que_faltou_para_surpreender:
+  - >
+    Resolver ou ao menos documentar honestamente a relação com a top layer. O
+    argumento do portal contra o popover nativo está errado nos dois pontos
+    verificáveis, e é o único lugar dos quatro componentes em que a decisão
+    declarada não sobrevive ao teste.
+  - >
+    Texto conforme o catálogo TXT-002 no arquivo CSS.
+motivo_do_veredito: >
+  O andar técnico passa inteiro: typecheck, lint, 17 de 17 nos dois temas com
+  axe em modo error, build e catálogo verdes, nenhuma story perdida. O
+  comportamento alegado foi atacado e sobreviveu quase todo: abertura no foco
+  sem atraso, Escape fechando sem roubar o foco, travessia da lacuna com
+  ponteiro real e cópia de valor dentro do painel, fuga do overflow, virada na
+  borda da janela, painel contido em viewport de 360px, tema escuro válido
+  dentro do portal, anel do InputGroup por evento com teclado real,
+  concentricidade medida em 6px, 5px e 5px, junções do ButtonGroup com uma
+  linha e anel de foco no plano 2, Kbd com 20px dentro de linha de 32px e nome
+  por extenso correto. O mérito existe e está listado. Reprovo por dois
+  achados: o HoverCard fica invisível e inerte dentro do Dialog modal do
+  próprio catálogo, com justificativa técnica invertida gravada no código, que
+  era exatamente o ponto que a revisão devia atacar; e uma violação PROIBIDO do
+  TXT-002 em HoverCard.css linha 19. Corrigidos os dois, os quatro componentes
+  têm decisões suficientes, com evidência, para disputar SURPREENDEU na
+  recaptura. Nota: a evidência de acessibilidade aqui é o gate axe do
+  repositório nos dois temas; o laudo e-MAG 3.1 e WCAG 2.2 AA segue sendo
+  entrega separada do responsável por acessibilidade.

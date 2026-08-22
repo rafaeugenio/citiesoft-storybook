@@ -13,6 +13,12 @@ export interface TextareaProps
   rows?: number;
   /** Limite de caracteres da regra de negócio. Liga a contagem no rodapé. */
   limit?: number;
+  /**
+   * Dado consolidado: focável, selecionável e copiável, sem edição. Diferente
+   * de `disabled`, que tira o campo da ordem de Tab e desbota a tinta. Parecer
+   * homologado: o texto está decidido e segue disponível para ler e copiar.
+   */
+  readOnly?: boolean;
 }
 
 export function Textarea({
@@ -22,6 +28,7 @@ export function Textarea({
   error,
   rows = 3,
   limit,
+  readOnly = false,
   required,
   className,
   defaultValue,
@@ -37,6 +44,7 @@ export function Textarea({
     'citie-field-control',
     'citie-textarea',
     filled ? 'citie-field-control--filled' : null,
+    readOnly ? 'citie-field-control--readonly' : null,
     className,
   ]
     .filter(Boolean)
@@ -56,6 +64,7 @@ export function Textarea({
           className={classes}
           rows={Math.max(3, rows)}
           value={conteudo}
+          readOnly={readOnly}
           aria-required={required || undefined}
           aria-invalid={invalid || undefined}
           aria-describedby={describedBy}

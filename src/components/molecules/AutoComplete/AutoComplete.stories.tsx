@@ -235,7 +235,7 @@ export const SemResultado: Story = {
     docs: {
       description: {
         story:
-          'Sem itens, o container deixa de ser `listbox`: texto solto dentro de uma lista de opções quebra a estrutura ARIA.',
+          'Sem itens, o container abandona o papel `listbox`: texto solto dentro de uma lista de opções quebra a estrutura ARIA.',
       },
     },
   },

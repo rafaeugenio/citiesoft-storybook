@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 import { SkeletonRegion } from '../../atoms/Skeleton/Skeleton';
 import { SkeletonFormulario } from './SkeletonFormulario';
 
@@ -45,4 +46,16 @@ export const Formulario: Story = {
       </div>
     </SkeletonRegion>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const regiao = canvas.getByRole('status', { name: 'Carregando cadastro do colaborador' });
+    await expect(regiao).toHaveAttribute('aria-busy', 'true');
+
+    const campos = canvasElement.querySelectorAll<HTMLElement>('.citie-skeleton-formulario__campo');
+    await expect(campos).toHaveLength(3);
+    // A caixa do campo replica a altura real do controle (40px em densidade
+    // normal), senão o formulário salta quando o dado chega.
+    const caixa = campos[0].querySelector<HTMLElement>('.citie-skeleton--campo');
+    await expect(caixa?.getBoundingClientRect().height).toBe(40);
+  },
 };

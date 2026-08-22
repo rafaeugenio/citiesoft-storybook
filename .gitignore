@@ -30,3 +30,8 @@ storybook-static
 node_modules.nosync
 storybook-static
 .vercel
+
+# iCloud: copias " 2" que a sincronizacao cria e ninguem importa
+*\ 2.css
+*\ 2.ts
+*\ 2.tsx

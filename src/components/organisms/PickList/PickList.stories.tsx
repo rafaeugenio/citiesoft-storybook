@@ -116,7 +116,7 @@ export const TransferirTodos: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Esvaziada a origem, o container deixa de ser `listbox` (papel inválido sem opções) e passa a exibir a mensagem de vazio.',
+        story: 'Esvaziada a origem, o container abandona o papel `listbox`, que é inválido sem opções, e exibe a mensagem de vazio.',
       },
     },
   },

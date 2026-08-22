@@ -15,6 +15,13 @@ export interface InputProps
   addonEnd?: ReactNode;
   /** Validação assíncrona em curso: spinner à direita, dentro do campo. */
   loading?: boolean;
+  /**
+   * Dado consolidado: focável, selecionável e copiável, sem edição. Diferente
+   * de `disabled`, que tira o campo da ordem de Tab e desbota a tinta. Número
+   * de processo homologado: o valor está decidido e segue disponível para ler
+   * e copiar.
+   */
+  readOnly?: boolean;
 }
 
 export function Input({
@@ -26,6 +33,7 @@ export function Input({
   addonStart,
   addonEnd,
   loading = false,
+  readOnly = false,
   required,
   className,
   ...rest
@@ -34,6 +42,7 @@ export function Input({
     'citie-field-control',
     `citie-field-control--${size}`,
     filled ? 'citie-field-control--filled' : null,
+    readOnly ? 'citie-field-control--readonly' : null,
     className,
   ]
     .filter(Boolean)
@@ -49,6 +58,7 @@ export function Input({
             <input
               id={id}
               className={classes}
+              readOnly={readOnly}
               aria-required={required || undefined}
               aria-invalid={invalid || undefined}
               aria-describedby={describedBy}

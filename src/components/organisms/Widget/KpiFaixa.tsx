@@ -15,6 +15,20 @@ export interface KpiFaixaProps {
   tituloVisivel?: boolean;
   /** De 3 a 8 `KpiWidget`. Cada um vira um item da lista. */
   children: ReactNode;
+  /**
+   * Recorte que os indicadores estão exibindo, como `Maio a julho de 2026`.
+   *
+   * Quando ele muda, a faixa anuncia **uma vez** que os números foram
+   * atualizados. Existe porque a justificativa do valor em transição é que
+   * trocar o período muda vários indicadores ao mesmo tempo e o operador
+   * precisa perceber isso: quem enxerga percebe pelo movimento, e quem usa
+   * leitor de tela não perceberia nada, porque texto que muda fora de uma
+   * região viva não é anunciado. Atende a WCAG 2.2 4.1.3 Status Messages.
+   *
+   * O anúncio é do lote, e não de cada widget: oito regiões vivas disparando
+   * juntas produziriam oito falas sobrepostas, que é pior do que o silêncio.
+   */
+  recorte?: string;
 }
 
 /**
@@ -26,11 +40,36 @@ export interface KpiFaixaProps {
  * árvore de acessibilidade. Abaixo de 768px a faixa empilha e o divisor vira
  * horizontal.
  */
-export function KpiFaixa({ titulo, tituloVisivel = false, children }: KpiFaixaProps) {
+export function KpiFaixa({
+  titulo,
+  tituloVisivel = false,
+  recorte,
+  children,
+}: KpiFaixaProps) {
   const idDoTitulo = useId();
 
   return (
     <section className="citie-kpi-faixa">
+      {/*
+        Região viva única da faixa. `polite` para esperar o leitor de tela
+        terminar o que está falando, porque atualização de indicador não
+        interrompe leitura em curso. `atomic` para a frase ser lida inteira, e
+        não apenas o pedaço que mudou.
+      */}
+      {recorte ? (
+        <p className="citie-visualmente-oculto" role="status" aria-live="polite" aria-atomic="true">
+          {/*
+            A frase não flexiona com o título. A versão anterior montava
+            `${titulo} atualizados para ...`, com o particípio fixo no plural
+            masculino, enquanto o título é livre e no catálogo costuma ser
+            singular, o que produzia "Resumo da fila atualizados para". Aqui o
+            título entra como aposto e o verbo concorda com "indicadores", que é
+            invariável nesta frase.
+          */}
+          {`Indicadores atualizados para ${recorte}. Faixa: ${titulo}.`}
+        </p>
+      ) : null}
+
       {tituloVisivel ? (
         <p className="citie-kpi-faixa__titulo" id={idDoTitulo}>
           {titulo}

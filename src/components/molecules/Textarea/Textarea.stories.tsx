@@ -46,6 +46,46 @@ export const Desabilitado: Story = {
   args: { disabled: true, defaultValue: 'Justificativa registrada e homologada.' },
 };
 
+export const SomenteLeitura: Story = {
+  name: 'Estado · somente leitura',
+  args: {
+    label: 'Parecer técnico',
+    defaultValue:
+      'Parecer favorável ao afastamento, condicionado à apresentação do certificado de conclusão da capacitação.',
+    readOnly: true,
+    helper: 'Parecer homologado. Para retificar, abra novo processo.',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Estado distinto de desabilitado: recebe foco, permite selecionar e copiar o texto inteiro, e a tinta segue plena de leitura. Parecer homologado: o texto está decidido e segue disponível para ler e copiar.',
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const campo = canvas.getByLabelText('Parecer técnico');
+
+    await expect(campo).not.toBeDisabled();
+    await expect(campo).toHaveAttribute('readonly');
+    await userEvent.tab();
+    await expect(campo).toHaveFocus();
+
+    // Legível e intocável: digitar não altera o parecer.
+    const antes = (campo as HTMLTextAreaElement).value;
+    await userEvent.keyboard('X');
+    await expect(campo).toHaveValue(antes);
+
+    // Copiar é o que este estado existe para permitir, então a promessa da
+    // documentação está medida aqui: a seleção do usuário pega o parecer
+    // inteiro, pronto para colar no despacho.
+    await userEvent.tripleClick(campo);
+    await expect((campo as HTMLTextAreaElement).selectionStart).toBe(0);
+    await expect((campo as HTMLTextAreaElement).selectionEnd).toBe(antes.length);
+  },
+};
+
 export const Invalido: Story = {
   name: 'Estado · inválido',
   args: {

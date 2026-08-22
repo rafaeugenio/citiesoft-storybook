@@ -8,6 +8,7 @@ import {
   DonutChart,
   EmptyState,
   FilterBar,
+  KpiFaixa,
   KpiWidget,
   LineChart,
   ListaResumoWidget,
@@ -111,6 +112,15 @@ function PainelDeTFD({ estado = 'default', periodoInicial = 'mes' }: PainelProps
     />
   );
 
+  /*
+   * Os indicadores vão dentro da `KpiFaixa`, e não soltos no template.
+   *
+   * A faixa é quem carrega a região viva que anuncia a troca de recorte a quem
+   * usa leitor de tela (WCAG 2.2 4.1.3). Antes a página montava os `KpiWidget`
+   * direto, e por isso a correção existia no componente sem nunca chegar à tela
+   * que a motivou: quem enxerga percebia a mudança pelo movimento do valor, e
+   * quem não enxerga não recebia nada.
+   */
   const indicadores = dados.indicadores.map((indicador) => (
     <KpiWidget
       key={indicador.id}
@@ -280,7 +290,11 @@ function PainelDeTFD({ estado = 'default', periodoInicial = 'mes' }: PainelProps
         </>
       }
       filtroDePeriodo={filtro}
-      indicadores={indicadores}
+      indicadores={
+        <KpiFaixa titulo="Indicadores de TFD" recorte={dados.intervalo}>
+          {indicadores}
+        </KpiFaixa>
+      }
       secoes={secoes}
     />
   );
@@ -348,6 +362,23 @@ export const TrocaDePeriodo: Story = {
     // no centro da rosca, então a asserção aceita mais de uma ocorrência.
     await expect(canvas.getAllByText(RECEBIDOS_NO_TRIMESTRE).length).toBeGreaterThan(0);
     await expect(canvas.getAllByText(INTERVALO_DO_TRIMESTRE).length).toBeGreaterThan(0);
+
+    /*
+     * A troca de recorte precisa chegar a quem usa leitor de tela.
+     *
+     * Quem enxerga percebe a mudança pelo movimento do valor; sem uma região
+     * viva, quem não enxerga não recebe nada, e o painel muda em silêncio.
+     * Isto é WCAG 2.2 4.1.3 Status Messages, exigência legal neste produto.
+     *
+     * A asserção existe porque a correção chegou a ficar órfã: a prop que
+     * carrega o anúncio existia no componente e nenhuma tela a passava.
+     */
+    const viva = canvasElement.querySelector('[role="status"][aria-live="polite"]');
+    await expect(viva).toBeTruthy();
+    await expect(viva?.textContent).toContain(INTERVALO_DO_TRIMESTRE);
+    // Uma região só para a faixa inteira: oito anúncios simultâneos seriam
+    // oito falas sobrepostas, que é pior do que o silêncio.
+    await expect(canvasElement.querySelectorAll('[role="status"][aria-live="polite"]').length).toBe(1);
 
     // O recorte anterior não sobrevive em lugar nenhum da tela.
     await expect(canvas.queryByText(INTERVALO_DO_MES)).not.toBeInTheDocument();

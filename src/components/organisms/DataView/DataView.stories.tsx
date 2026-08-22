@@ -222,6 +222,10 @@ export const VazioEstrutural: Story = {
     await expect(canvas.getByText('Nenhuma unidade cadastrada')).toBeVisible();
     await expect(canvas.getByRole('button', { name: 'Cadastrar unidade' })).toBeVisible();
     await expect(canvas.getByText('Sem unidades para exibir')).toBeVisible();
+
+    // O desenho acompanha a visão ativa. Em lista, o fantasma é de tabela.
+    await expect(canvasElement.querySelector('[data-fantasma="tabela"]')).toBeTruthy();
+    await expect(canvasElement.querySelector('[data-fantasma="cards"]')).toBeNull();
   },
 };
 
@@ -240,6 +244,56 @@ export const VazioPorFiltro: Story = {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Nenhuma unidade para esse filtro')).toBeVisible();
     await expect(canvas.getByRole('button', { name: 'Limpar filtros' })).toBeVisible();
+
+    // Vazio por filtro não mostra fantasma nenhum: o desenho certo aqui é o
+    // símbolo de busca, porque a estrutura existe e o recorte é que não achou.
+    await expect(canvasElement.querySelector('[data-fantasma]')).toBeNull();
+    await expect(canvasElement.querySelector('[data-simbolo="busca"]')).toBeTruthy();
+  },
+};
+
+export const VazioEstruturalEmGrade: Story = {
+  name: 'Estado · vazio estrutural em grade',
+  args: { itens: [], visaoInicial: 'grade' },
+  parameters: {
+    docs: {
+      description: {
+        story: [
+          'O desenho do vazio acompanha a **visão ativa**. Em grade, o',
+          'fantasma é de cards, porque é essa a estrutura que vai aparecer ali quando houver',
+          'dado. Em lista, é o de tabela.',
+          '',
+          'Esta story existe como guarda de regressão. O pareamento entre visão e desenho vale',
+          'três linhas em `DataView.tsx`, e sem verificação uma reversão silenciosa passaria',
+          'verde: o vazio continuaria funcionando, apenas ensinando a estrutura errada.',
+        ].join('\n'),
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Nenhuma unidade cadastrada')).toBeVisible();
+
+    // Em grade, o fantasma é de cards.
+    await expect(canvasElement.querySelector('[data-fantasma="cards"]')).toBeTruthy();
+    await expect(canvasElement.querySelector('[data-fantasma="tabela"]')).toBeNull();
+  },
+};
+
+export const VazioPorFiltroEmGrade: Story = {
+  name: 'Estado · vazio por filtro em grade',
+  args: { itens: [], filtroAtivo: true, visaoInicial: 'grade' },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Mesmo em grade, o vazio por filtro mostra o símbolo de busca. A causa do vazio manda no desenho, e a visão ativa só decide entre um fantasma e outro quando a causa é ausência de dado.',
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await expect(canvasElement.querySelector('[data-fantasma]')).toBeNull();
+    await expect(canvasElement.querySelector('[data-simbolo="busca"]')).toBeTruthy();
   },
 };
 
@@ -255,16 +309,36 @@ export const ItensNavegaveis: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          'Com `href` o título vira link e as ações do item somem: nada de botão dentro de área navegável.',
+        story: [
+          'Com `href`, o título vira link e o item guarda as ações. O link nomeia o destino pelo',
+          'título, então a ação de item segue ao lado dele, fora da área navegável.',
+          '',
+          'Esta visão suprimia as ações quando havia `href`, porque um card navegável envolvia',
+          'tudo num `<a>` e o botão caía dentro do link. O `Card` passou a esticar a área do link',
+          'a partir do título e a levantar o rodapé acima dela, então a supressão saiu daqui.',
+        ].join('\n'),
       },
     },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(
-      canvas.getByRole('link', { name: 'Hospital Geral Tarquínio Lopes Filho' }),
-    ).toHaveAttribute('href', '/unidades/2510');
-    await expect(canvas.queryByRole('button', { name: 'Ver unidade' })).toBeNull();
+    const link = canvas.getByRole('link', { name: 'Hospital Geral Tarquínio Lopes Filho' });
+    await expect(link).toHaveAttribute('href', '/unidades/2510');
+
+    // A ação do item volta a existir no item navegável.
+    const acao = canvas.getAllByRole('button', { name: 'Ver unidade' })[0];
+    await expect(acao).toBeVisible();
+
+    // E vive fora do link: nenhum interativo aninhado no DOM.
+    await expect(link.contains(acao)).toBe(false);
+    await expect(canvasElement.querySelector('a a, a button, button a')).toBeNull();
+
+    // A grade monta cada item num `Card` navegável, que é onde o aninhamento
+    // acontecia. Lá a ação continua existindo, fora do link, e o DOM segue válido.
+    await userEvent.click(canvas.getByRole('button', { name: 'Grade' }));
+    const linkEmGrade = canvas.getByRole('link', { name: 'Hospital Geral Tarquínio Lopes Filho' });
+    const acaoEmGrade = canvas.getAllByRole('button', { name: 'Ver unidade' })[0];
+    await expect(linkEmGrade.contains(acaoEmGrade)).toBe(false);
+    await expect(canvasElement.querySelector('a a, a button, button a')).toBeNull();
   },
 };

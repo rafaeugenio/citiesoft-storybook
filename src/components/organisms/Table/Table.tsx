@@ -49,9 +49,9 @@ export interface TableProps<T> {
   /**
    * Destaque de linha por estado, como barra vertical na borda de início.
    *
-   * A barra é `box-shadow: inset`, e não cor de fundo, de propósito: fundo
-   * colorido briga com o zebrado e com o realce de hover, e a linha destacada
-   * deixa de responder ao ponteiro. A barra convive com os dois.
+   * A barra é `box-shadow: inset`, de propósito: fundo colorido briga com o
+   * zebrado e com o realce de hover, e a linha destacada para de responder ao
+   * ponteiro. A barra convive com os dois.
    *
    * Devolva `undefined` para a linha sem destaque. A severidade escolhe o token
    * de cor, e o `motivo` vira texto para o leitor de tela, porque barra colorida

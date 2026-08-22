@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { TreeTable, somarSubarvore, type ColunaDaArvore, type NoDaTreeTable } from './TreeTable';
 import { EmptyState } from '../../molecules/EmptyState/EmptyState';
 
@@ -244,9 +244,23 @@ const meta = {
           'ela nunca produz um ranking geral atravessando os níveis; o rodapé de totais vem de',
           '`coluna.rodape`, calculado por quem monta a tela (o helper `somarSubarvore` está',
           'exportado para isso); e todos os nós recebidos são renderizados, sem carregamento sob',
-          'demanda. Peso B2G: cada nível recua 16px, e a partir do quarto a primeira coluna fica',
-          'estreita demais para o código da conta em monitor de 1366px. Estruturas mais fundas',
-          'pedem uma tela por camada, com `Breadcrumb` marcando o caminho.',
+          'demanda.',
+          '',
+          '**Profundidade: o limite, medido.** O recuo custa `spacing.4` por nível, e o preço só',
+          'aparece quando a coluna não tem folga. Medida a largura restante do rótulo numa coluna',
+          'de 320px, que é o que a primeira coluna vira a 200% de zoom (exigência do e-MAG) num',
+          'monitor de 1366px: **288px no nível 1, 272 no 2, 256 no 3, 240 no 4, 224 no 5, 208 no 6,',
+          '192 no 7 e 176 no 8** — 16px a menos por nível, ou 5,6% da coluna. Numa coluna de 640px',
+          'o rótulo bate no teto de `--citie-largura-maxima-da-celula` e a profundidade não custa',
+          'nada. **O limite prático é 5 níveis**: abaixo disso o rótulo cai de 224px e o código da',
+          'conta passa a truncar. Estruturas mais fundas pedem uma tela por camada, com',
+          '`Breadcrumb` marcando o caminho.',
+          '',
+          '**A profundidade não depende de medir o recuo a olho.** A escada de peso para no nível 2,',
+          'então do terceiro em diante todas as linhas ficam com o mesmo peso e a mesma cor. Um',
+          'fio vertical por ancestral é desenhado dentro da faixa que o recuo já reservou, e ele',
+          'torna a profundidade contável: três fios é nível 4. Custa zero de largura e sobrevive ao',
+          'zoom. Para quem usa leitor de tela, a profundidade continua vindo do `aria-level`.',
         ].join('\n'),
       },
     },
@@ -282,19 +296,30 @@ export const Confortavel: Story = {
 
     const filha = canvas.getByRole('row', { name: /3\.1 Pessoal e encargos sociais/ });
     await expect(filha).toHaveAttribute('aria-level', '2');
-    await expect(raiz.getBoundingClientRect().height).toBeGreaterThanOrEqual(48);
-    await expect(raiz.getBoundingClientRect().height).toBeLessThanOrEqual(56);
+    await conferirRegua(canvasElement, 48);
   },
 };
+
+/**
+ * Régua vertical, a mesma da `Table`: toda linha mede o mesmo, e a medida é
+ * inteira. Altura fracionária desloca a base do texto de todas as linhas abaixo
+ * por frações de pixel, e é o que o fio dividido entre vizinhas produzia.
+ */
+async function conferirRegua(canvasElement: HTMLElement, alturaEsperada: number) {
+  const linhas = Array.from(canvasElement.querySelectorAll('tbody tr'));
+  const cabecalho = canvasElement.querySelector('thead tr') as HTMLElement;
+  for (const linha of [cabecalho, ...linhas]) {
+    const altura = linha.getBoundingClientRect().height;
+    await expect(Number.isInteger(altura)).toBe(true);
+    await expect(altura).toBe(alturaEsperada + 1);
+  }
+}
 
 export const Compacta: Story = {
   name: 'Densidade · compacta (36px)',
   args: { densidade: 'compacta' },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const raiz = canvas.getByRole('row', { name: /3 Despesas correntes/ });
-    await expect(raiz.getBoundingClientRect().height).toBeGreaterThanOrEqual(36);
-    await expect(raiz.getBoundingClientRect().height).toBeLessThanOrEqual(44);
+    await conferirRegua(canvasElement, 36);
   },
 };
 
@@ -380,6 +405,53 @@ export const Selecao: Story = {
     const grupo = canvas.getByRole('checkbox', { name: 'Selecionar a conta 3' });
     await expect(grupo).not.toBeChecked();
     await expect(grupo).toBePartiallyChecked();
+  },
+};
+
+export const SelecaoNaLinhaPar: Story = {
+  name: 'Estado · seleção na linha par da zebra',
+  args: { selecionavel: true, zebra: true, expandidosIniciais: ['3', '3.1'] },
+  parameters: {
+    docs: {
+      description: {
+        story: [
+          'A `TreeTable` pinta o fundo da linha com a mesma propriedade da `Table`, e por isso',
+          'herdava o mesmo defeito: a zebra vencia a seleção por especificidade e a linha par',
+          'selecionada ficava com a faixa da zebra. A ordem entre as duas é declarada por camada,',
+          'com os mesmos nomes usados na `Table`.',
+          '',
+          'A seleção em cascata desta story marca linhas nas duas paridades de uma vez, então a',
+          'medição abaixo cobre as duas sem depender de qual índice caiu em qual lugar.',
+        ].join('\n'),
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const fundo = (linha: Element) =>
+      getComputedStyle(linha.querySelector('td') as HTMLElement).backgroundColor;
+
+    const linhas = Array.from(canvasElement.querySelectorAll('tbody tr'));
+    // A zebra separa as paridades em repouso: é o que dá à medição poder de reprovar.
+    const zebrada = fundo(linhas[1]);
+    await expect(zebrada).not.toBe(fundo(linhas[0]));
+
+    await userEvent.click(canvas.getByRole('checkbox', { name: 'Selecionar a conta 3.1' }));
+
+    await waitFor(async () => {
+      const selecionadas = linhas.filter((linha) =>
+        linha.classList.contains('citie-treetable__linha--selecionada'),
+      );
+      // A cascata marca linha par e linha ímpar de uma vez.
+      await expect(selecionadas.length).toBeGreaterThan(1);
+      const pares = selecionadas.filter((linha) => linhas.indexOf(linha) % 2 === 1);
+      await expect(pares.length).toBeGreaterThan(0);
+
+      // Toda linha selecionada pinta a mesma cor, e nenhuma delas fica na cor da zebra.
+      const cores = new Set(selecionadas.map(fundo));
+      await expect(cores.size).toBe(1);
+      await expect(cores.has(zebrada)).toBe(false);
+    });
   },
 };
 

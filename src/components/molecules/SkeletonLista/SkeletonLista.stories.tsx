@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 import { SkeletonRegion } from '../../atoms/Skeleton/Skeleton';
 import { SkeletonLista } from './SkeletonLista';
 
@@ -43,4 +44,15 @@ export const Lista: Story = {
       <SkeletonLista {...args} />
     </SkeletonRegion>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const regiao = canvas.getByRole('status', { name: 'Carregando lista de processos' });
+    await expect(regiao).toHaveAttribute('aria-busy', 'true');
+
+    const itens = canvasElement.querySelectorAll<HTMLElement>('.citie-skeleton-lista__item');
+    await expect(itens).toHaveLength(4);
+    // O esqueleto replica a anatomia de linha real: altura mínima de 40px em
+    // densidade normal, senão a lista salta quando o dado chega.
+    await expect(itens[0].getBoundingClientRect().height).toBeGreaterThanOrEqual(40);
+  },
 };

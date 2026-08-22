@@ -1,5 +1,6 @@
-import { useId, useRef, useState, type ReactNode } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { Badge } from '../../atoms/Badge/Badge';
+import { useRealceDeslizante } from '../../primitives/RealceDeslizante/useRealceDeslizante';
 import './Tabs.css';
 
 export interface AbaProps {
@@ -25,11 +26,16 @@ export interface TabsProps {
 /**
  * Abas (tabs-accordion.md). Máximo recomendado de 7 abas visíveis.
  * Teclado: setas em anel, Home e End nas pontas, Enter ou Espaço ativa.
+ *
+ * O indicador da aba ativa é um realce único que desliza da aba anterior para
+ * a nova: sublinhado na variante `line`, barra lateral na `vertical` e pílula
+ * de superfície na `pill`. Ele é decoração (`aria-hidden`); o estado continua
+ * em `aria-selected` e na cor do rótulo.
  */
 export function Tabs({ label, abas, variante = 'line', size = 'md', abaInicial }: TabsProps) {
   const [ativa, setAtiva] = useState(abaInicial ?? abas[0]?.id);
   const uid = useId();
-  const listaRef = useRef<HTMLDivElement>(null);
+  const { trilhoRef: listaRef, estilo } = useRealceDeslizante<HTMLDivElement>(ativa ?? null);
 
   const habilitadas = abas.filter((aba) => !aba.disabled);
 
@@ -67,12 +73,16 @@ export function Tabs({ label, abas, variante = 'line', size = 'md', abaInicial }
           }
         }}
       >
+        {estilo ? (
+          <span className="citie-tabs__realce" aria-hidden="true" style={estilo} />
+        ) : null}
         {abas.map((aba) => {
           const selecionada = aba.id === ativa;
           return (
             <button
               key={aba.id}
               id={`aba-${uid}-${aba.id}`}
+              data-realce-id={aba.id}
               type="button"
               role="tab"
               className={`citie-tabs__aba${selecionada ? ' citie-tabs__aba--ativa' : ''}`}
@@ -159,14 +169,27 @@ export function Accordion({ itens, multiplo = false, abertoInicial = [] }: Accor
                 {item.titulo}
               </button>
             </h3>
+            {/**
+              * Disclosure: a altura transita da altura real do conteúdo via
+              * `grid-template-rows` (0fr para 1fr), sem valor chutado. Dois
+              * mecanismos com papéis distintos: `inert` sai do React e corta
+              * foco e árvore de acessibilidade NO MESMO QUADRO do clique de
+              * fechar, para um Tab durante o fechamento nunca aterrissar em
+              * conteúdo que está sumindo; `visibility: hidden`, atrasada no
+              * CSS, só encerra a pintura quando a altura termina de fechar.
+              */}
             <div
               id={`accordion-painel-${uid}-${item.id}`}
               role="region"
               aria-labelledby={`accordion-${uid}-${item.id}`}
-              className="citie-accordion__painel"
-              hidden={!aberto}
+              className={`citie-accordion__painel${
+                aberto ? ' citie-accordion__painel--aberto' : ''
+              }`}
+              inert={!aberto}
             >
-              {item.conteudo}
+              <div className="citie-accordion__clip">
+                <div className="citie-accordion__conteudo">{item.conteudo}</div>
+              </div>
             </div>
           </div>
         );

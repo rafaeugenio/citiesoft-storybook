@@ -21,7 +21,12 @@ export interface ItemDataView {
   destaque?: ReactNode;
   /** Foto do servidor ou brasão da unidade. Equivale ao slot "image". */
   midia?: ReactNode;
-  /** Torna o item navegável. Com `href`, `acoes` não é renderizada. */
+  /**
+   * Torna o item navegável. Convive com `acoes`: na lista o link vive no
+   * título e as ações ficam ao lado dele; na grade o `Card` estica a área do
+   * link a partir do título e levanta o rodapé acima dela, então a ação do
+   * item continua clicável e fora do `<a>`.
+   */
   href?: string;
   acoes?: ReactNode;
 }
@@ -95,9 +100,7 @@ function ItemEmLista({ item }: { item: ItemDataView }) {
         {item.destaque ? <span className="citie-dataview__destaque">{item.destaque}</span> : null}
       </div>
 
-      {item.acoes && !item.href ? (
-        <div className="citie-dataview__acoes">{item.acoes}</div>
-      ) : null}
+      {item.acoes ? <div className="citie-dataview__acoes">{item.acoes}</div> : null}
     </li>
   );
 }
@@ -112,13 +115,13 @@ function ItemEmGrade({ item }: { item: ItemDataView }) {
         href={item.href}
         midia={item.midia}
         rodape={
-          item.etiqueta || item.destaque || (item.acoes && !item.href) ? (
+          item.etiqueta || item.destaque || item.acoes ? (
             <div className="citie-dataview__rodape">
               {item.etiqueta}
               {item.destaque ? (
                 <span className="citie-dataview__destaque">{item.destaque}</span>
               ) : null}
-              {item.acoes && !item.href ? item.acoes : null}
+              {item.acoes}
             </div>
           ) : null
         }
@@ -264,6 +267,12 @@ export function DataView({
           titulo={conteudoVazio.titulo}
           descricao={conteudoVazio.descricao}
           situacao={filtroAtivo && vazioPorFiltro ? 'busca-sem-resultado' : 'primeiro-uso'}
+          // No primeiro uso o fantasma acompanha a visão ativa: grade vazia
+          // mostra cards, lista mostra tabela. Vazio por filtro segue com o
+          // símbolo de busca do próprio EmptyState.
+          ilustracao={
+            filtroAtivo && vazioPorFiltro ? undefined : visao === 'grade' ? 'cards' : 'tabela'
+          }
           // `md` não rouba o foco da página: o DataView vive dentro de uma tela maior.
           size="md"
           acaoPrimaria={conteudoVazio.acao}

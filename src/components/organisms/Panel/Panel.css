@@ -37,9 +37,17 @@
   border-radius: var(--citie-radius-xl);
 }
 
-/* Recolhido não tem corpo abaixo, então a borda do cabeçalho vira sobra visual. */
+/**
+ * Recolhido não tem corpo abaixo, então a borda do cabeçalho vira sobra
+ * visual. Ela sai por cor, não por remoção, para desaparecer junto com a
+ * altura em vez de sumir de golpe no primeiro quadro do colapso.
+ */
+.citie-panel__cabecalho {
+  transition: border-block-end-color var(--citie-motion-rapido) var(--citie-easing-saida);
+}
+
 .citie-panel--recolhido .citie-panel__cabecalho {
-  border-block-end: none;
+  border-block-end-color: transparent;
 }
 
 .citie-panel__titulo {
@@ -85,6 +93,41 @@
   box-shadow: var(--citie-state-focus-ring);
 }
 
+/**
+ * Disclosure do colapso: `grid-template-rows` de 0fr para 1fr, com o filho em
+ * `overflow: hidden; min-height: 0`, transita da altura REAL de corpo e
+ * rodapé, qualquer que seja o conteúdo, sem valor chutado e sem salto no fim.
+ * Mesma técnica e mesma justificativa do Accordion: funciona em Firefox e
+ * Safari, enquanto `interpolate-size: allow-keywords` é só Chromium.
+ *
+ * Foco e árvore de acessibilidade NÃO dependem desta regra: o `inert`,
+ * aplicado pelo React no mesmo quadro do clique, já cortou os dois. A
+ * `visibility: hidden` atrasada cuida só da pintura: espera a altura terminar
+ * de fechar para o conteúdo não sumir antes da transição.
+ * Entrada mais lenta que saída: abrir em `motion-padrao` com curva de entrada,
+ * fechar em `motion-rapido` com curva de saída. A transição de cada estado é a
+ * do estado de destino, então o bloco base rege o fechamento.
+ */
+.citie-panel__conteudo {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition:
+    grid-template-rows var(--citie-motion-rapido) var(--citie-easing-saida),
+    visibility 0s linear var(--citie-motion-rapido);
+}
+
+.citie-panel__conteudo--aberto {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows var(--citie-motion-padrao) var(--citie-easing-entrada);
+}
+
+.citie-panel__clip {
+  overflow: hidden;
+  min-height: 0;
+}
+
 /* Painel é contêiner de destaque: respiro interno de `spacing-6`. */
 .citie-panel__corpo {
   padding: var(--citie-spacing-6);
@@ -101,7 +144,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .citie-panel__gatilho {
+  .citie-panel__gatilho,
+  .citie-panel__cabecalho,
+  .citie-panel__conteudo,
+  .citie-panel__conteudo--aberto {
     transition: none;
   }
 }

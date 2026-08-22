@@ -1,0 +1,393 @@
+revisor: acessibilidade e comportamento de interface, com medição em navegador
+componente: >
+  Realce deslizante (primitivo useRealceDeslizante) em SelectButton e Tabs, mais
+  o colapso por altura real em Accordion e Panel
+veredito: REPROVADO
+veredito_anti_slop: VOLTA PARA REFINO
+
+gate_tecnico:
+  typecheck: "./node_modules/.bin/tsc -b --force, saída vazia, código de saída 0"
+  lint: >
+    npm run lint, código de saída 0, zero erros. Os avisos exibidos são todos de
+    arquivos fora do recorte (ColorPicker, Menubar, HoverCard, Table, Chart) e já
+    existiam antes desta rodada. Nenhum arquivo do recorte gerou aviso.
+  testes: >
+    Tema claro: 31 de 31, em 6 arquivos.
+    Tema escuro: 30 de 31. A única falha é PanelMenu > "Estado · item corrente",
+    contraste 4,39:1, confirmada como pré-existente e sem relação com esta rodada.
+    npm run verificar-catalogo passou, 763 stories no índice, todas as invariantes
+    do catálogo verdes.
+  stories_antes_depois: >
+    23 para 23 nos cinco arquivos do recorte (Select 5, SelectButton 2, Tabs 7,
+    Accordion 2, Panel 7), conferido contra git show HEAD arquivo por arquivo.
+    Nenhuma story perdida.
+
+achados:
+  - severidade: MAIOR
+    id_anti_slop: TXT-001
+    descricao: >
+      Travessão em texto Citiesoft. O catálogo classifica TXT-001 como PROIBIDO,
+      com contexto "todos", sem exceção. É o único travessão introduzido em todo
+      o diff da rodada: git diff -U0 | grep "^+.*—" devolve exatamente uma linha.
+    evidencia: >
+      src/components/molecules/Select/Select.css:52, em "âncora `shadow-controle`
+      em vez de elevação — a pílula está apoiada no trilho".
+    correcao_exigida: >
+      Reescrever com dois-pontos ou parênteses. Existe um segundo travessão em
+      Panel.tsx:5, esse pré-existente (confirmado com git show HEAD), que vale
+      limpar na mesma passada.
+
+  - severidade: MAIOR
+    id_anti_slop: nenhum
+    descricao: >
+      A alegação nº 6 tem um efeito colateral que o produtor não mediu. Com
+      "visibility: hidden" atrasada pela duração do fechamento, o conteúdo
+      recolhido continua alcançável pelo teclado durante cerca de 140ms, já com
+      altura zero dentro de um clip com overflow hidden. Medi: com o foco no
+      gatilho, um Tab disparado 40ms após o clique de recolher aterrissa DENTRO
+      do conteúdo em colapso. Cerca de 100ms depois a visibilidade cai e o foco é
+      descartado para o body. O servidor fica com o foco num controle que ele não
+      enxerga e em seguida perde a posição na página. Isso contraria WCAG 2.2 AA
+      2.4.11 (foco não obscurecido) e 2.4.3 (ordem de foco), exigência legal
+      neste produto. Antes da mudança o atributo "hidden" removia o conteúdo no
+      mesmo quadro, então é regressão introduzida, não dívida herdada. Vale igual
+      para Accordion e Panel, que compartilham a receita.
+    evidencia: >
+      src/components/organisms/Panel/Panel.css:113-116 e
+      src/components/molecules/Tabs/Tabs.css:296-299, na declaração
+      "visibility 0s linear var(--citie-motion-rapido)". Amostragem quadro a
+      quadro do fechamento do Panel: t=138ms visibility "visible" com clip de
+      altura 0; t=204ms visibility "hidden" e foco já no container. Teste de Tab
+      a 40ms do clique: {"ativo": "alvo-interno", "dentroDoConteudo": true}.
+    correcao_exigida: >
+      Recolhido, o conteúdo sai da ordem de foco no mesmo quadro do clique, sem
+      esperar a altura. Aplicar "inert" no clip enquanto fechado resolve sem
+      custar a transição, já que "inert" não é transicionável e cai de imediato.
+      Depois disso, um Tab durante o fechamento precisa pular o conteúdo.
+
+  - severidade: MENOR
+    id_anti_slop: nenhum
+    descricao: >
+      Documentação que afirma o que o código não faz. Três comentários dizem que
+      "visibility: hidden" tira o conteúdo "da árvore de acessibilidade e do
+      foco, o mesmo efeito que o hidden antigo tinha". A medição acima mostra que
+      o efeito só é o mesmo depois de 140ms, e a diferença nesse intervalo é
+      exatamente o defeito registrado acima.
+    evidencia: "Panel.tsx:94-100, Tabs.tsx:183-190 e Panel.css:103-105"
+    correcao_exigida: >
+      Corrigido o comportamento, o comentário passa a descrever o que acontece de
+      fato, sem prometer equivalência com o estado anterior.
+
+  - severidade: MENOR
+    id_anti_slop: nenhum
+    descricao: >
+      O primitivo devolve números crus e cada consumidor reinventa a ligação com
+      o CSS. SelectButton escreve translate, width e height inline; Tabs escreve
+      quatro propriedades customizadas e deixa cada variante montar a forma. São
+      duas plumbings para um primitivo só, e o terceiro consumidor previsto na
+      triagem (Sidebar) vai ter que escolher uma delas sem critério.
+    evidencia: >
+      src/components/molecules/Select/Select.tsx:146-150 contra
+      src/components/molecules/Tabs/Tabs.tsx:80-87
+    correcao_exigida: >
+      O hook expõe uma única forma de aplicar a medida, e os dois consumidores
+      passam a usá-la.
+
+  - severidade: MENOR
+    id_anti_slop: nenhum
+    descricao: >
+      A medida é refeita apenas quando "chaveAtiva" muda, ou quando o
+      ResizeObserver dispara nos itens que existiam no momento do efeito. Se a
+      lista de itens mudar mantendo a mesma chave ativa (aba adicionada ou
+      removida em runtime), o item novo não entra no observador e o realce pode
+      ficar desalinhado até a próxima troca.
+    evidencia: >
+      src/components/primitives/RealceDeslizante/useRealceDeslizante.ts:68, lista
+      de dependências [chaveAtiva]
+    correcao_exigida: >
+      A quantidade de itens do trilho entra na dependência do efeito, ou um
+      MutationObserver cobre a entrada e a saída de itens.
+
+  - severidade: MAIOR
+    id_anti_slop: nenhum
+    descricao: >
+      Pré-existente e fora do escopo da mudança, porém dentro do recorte que
+      revisei, então registro para não passar em branco. O anel de foco do
+      gatilho do Accordion é um box-shadow de 3px para fora, o gatilho ocupa a
+      largura inteira e o contêiner tem "overflow: hidden". As laterais do anel
+      são cortadas e ele aparece como duas barras azuis soltas, sem cercar o
+      cabeçalho focado.
+    evidencia: >
+      Captura em 420px, tema claro, com foco no segundo gatilho: barras em y=82 e
+      y=126, exatamente as bordas do rect do gatilho focado
+      ({"x":37,"y":82,"width":346,"height":44}), boxShadow computado
+      "rgba(18, 97, 228, 0.4) 0px 0px 0px 3px". Ingredientes em Tabs.css:216
+      (overflow hidden), :228-244 (gatilho de largura total) e :250-253 (anel).
+      Nenhum dos três aparece no diff desta rodada.
+    correcao_exigida: >
+      Anel por outline com outline-offset negativo, ou recuo lateral no gatilho,
+      para o anel caber dentro do contêiner. Item de outro dono, não bloqueia
+      esta entrega.
+
+  - severidade: MENOR
+    id_anti_slop: nenhum
+    descricao: >
+      A alegação nº 9 (12 medições no navegador, todas passando) não se sustenta
+      integralmente. A janela de teclado do segundo achado e o travessão do
+      primeiro passariam por qualquer varredura que os tivesse coberto, o que
+      indica que as medições cobriram posição e altura, sem tocar em foco nem em
+      texto.
+    evidencia: "Os achados 1 e 2 deste veredito"
+    correcao_exigida: >
+      O relatório de medições declara o que foi medido e, principalmente, o que
+      não foi.
+
+verificacoes_das_alegacoes:
+  - alegacao: 1
+    resumo: "O realce ativo desliza da posição anterior para a nova."
+    resultado: CONFIRMADA
+    como_verifiquei: >
+      Amostragem quadro a quadro do rect do realce após o clique, nas três
+      variantes. Tabs line: x percorre 36, 84.3, 154.6, 204.4, 236.7, 254.7,
+      263.6, 267.2, 267.5 e assenta em 267.5, com largura indo de 74.7 a 92.2.
+      Tabs pill e Tabs vertical percorrem 10 posições distintas cada uma, na
+      vertical o eixo y vai de 36 a 116. Nada de sumir num lugar e aparecer
+      noutro.
+  - alegacao: 2
+    resumo: >
+      Medida por getBoundingClientRect do item menos o do trilho menos
+      clientLeft/clientTop, com largura fracionária em vez de offsetWidth.
+    resultado: CONFIRMADA, e é a melhor parte do trabalho
+    como_verifiquei: >
+      Comparei o rect do realce com o rect do item ativo. Coincidem até a segunda
+      casa decimal em todas as superfícies: Tabs line 267.5 / 92.17 contra
+      267.5 / 92.17; Tabs pill 40 / 74.72 idênticos; SelectButton 148.23 / 103.97
+      idênticos. O mesmo em WebKit: 280 / 92.17 contra 280 / 92.17. Não testei o
+      contrafactual com offsetLeft em navegador com borda no trilho, então a
+      parte da justificativa sobre divergência entre navegadores continua sendo
+      argumento e não medição minha.
+  - alegacao: 3
+    resumo: "ResizeObserver no trilho e em cada item refaz a medida."
+    resultado: CONFIRMADA
+    como_verifiquei: >
+      Fiz o rótulo da aba ativa crescer em runtime, sem mexer no trilho. O realce
+      acompanhou de 74.72 para 265.91, exatamente a nova largura da aba (265.91).
+      Uma primeira tentativa no SelectButton via font-size no trilho foi
+      inconclusiva porque os segmentos declaram o próprio font-size, ou seja,
+      falha do meu teste e não do componente. Ressalva registrada no achado sobre
+      a lista de dependências: o observador só cobre os itens que existiam quando
+      o efeito rodou.
+  - alegacao: 4
+    resumo: "A primeira renderização não anima."
+    resultado: CONFIRMADA, verificada por mim e não pela palavra dele
+    como_verifiquei: >
+      Não aceitei o método das duas amostras a 120ms, que não distingue montagem
+      estática de animação já terminada. Instrumentei com addInitScript, antes de
+      qualquer script da página, um laço de requestAnimationFrame gravando
+      document.getAnimations() e o rect do realce desde o primeiro quadro. No
+      SelectButton, o realce entra no DOM no quadro t=538ms com ZERO animações
+      registradas nesse quadro; as transições de translate e width só aparecem a
+      partir de t=553ms, disparadas pelo clique da própria play function da story,
+      que troca "Pendentes" por "Aprovadas". Em Tabs line, que não clica, o
+      realce entra no quadro t=353ms e o log inteiro contém uma única posição
+      distinta, sem nenhuma transição sobre ele em 38 quadros. A alegação está
+      correta: a montagem não anima.
+  - alegacao: 5
+    resumo: >
+      grid-template-rows de 0fr para 1fr em vez de interpolate-size, por suporte
+      em Firefox e Safari.
+    resultado: CONFIRMADA em parte, com uma metade que não consegui verificar
+    como_verifiquei: >
+      Testei o efeito colateral conhecido, que era o pedido. Injetei no Panel
+      aberto um filho com min-height de 400px e um parágrafo com margem vertical
+      de 32px: a altura recolhida foi 0 mesmo assim (557px aberto para 0
+      fechado, clip em 0), porque o clip carrega "min-height: 0" com
+      "overflow: hidden". Mesmo resultado no Accordion com min-height de 350px:
+      387px aberto para 0 fechado, visibility hidden ao fim. Em WebKit, motor do
+      Safari, o colapso interpolou de verdade, quadro a quadro: 70, 68, 63, 56,
+      48, 38, 27, 15, 2, 0 em dez quadros distintos, e o realce deslizante também
+      funcionou com coincidência exata de rect. NÃO consegui verificar a metade
+      Firefox: o binário do Playwright não subiu nesta máquina, com timeout de
+      180s em duas tentativas, inclusive após npx playwright install firefox.
+      Registro como não verificado em vez de supor.
+  - alegacao: 6
+    resumo: >
+      visibility: hidden com transition-delay igual à duração, para o conteúdo
+      sair da árvore de acessibilidade só quando a altura termina.
+    resultado: CONFIRMADA no mecanismo, REPROVADA no efeito
+    como_verifiquei: >
+      O mecanismo funciona como descrito: no fechamento a visibilidade só cai
+      após a altura terminar (t=138ms visible, t=204ms hidden), e na abertura ela
+      cai de imediato porque a regra do estado aberto não lista visibility na
+      transição. O problema é o que o produtor não mediu. Sobre a pergunta
+      específica de armadilha de teclado: NÃO existe armadilha, no sentido
+      estrito de foco preso sem saída, porque o usuário consegue sair com Tab e
+      nada retém o foco. Existe algo diferente e igualmente reprovável: uma
+      janela de cerca de 140ms em que o conteúdo em colapso continua ALCANÇÁVEL.
+      Com o foco no gatilho, um Tab a 40ms do clique de recolher aterrissa dentro
+      do conteúdo (dentroDoConteudo true), que nesse instante já tem altura zero
+      sob overflow hidden, ou seja, foco totalmente obscurecido. Em seguida a
+      visibilidade cai e o foco é descartado para o body, custando ao usuário a
+      posição na página. Antes da mudança, com o atributo "hidden", a remoção era
+      no mesmo quadro e essa janela não existia. Vira o segundo achado MAIOR.
+  - alegacao: 7
+    resumo: >
+      Abrir em motion-padrao com easing-entrada, fechar em motion-rapido com
+      easing-saida.
+    resultado: CONFIRMADA
+    como_verifiquei: >
+      Leitura das regras (Panel.css:113-122 e Tabs.css:292-305) mais os tokens
+      em tokens.css:317-336, com motion-padrao em 220ms e motion-rapido em 140ms,
+      easing-entrada cubic-bezier(0,0,0.2,1) e easing-saida cubic-bezier(0.4,0,1,1).
+      A entrada é mais lenta que a saída, conforme a fundação de motion. O
+      raciocínio de que a transição declarada em cada estado rege a ida para
+      aquele estado está correto, e o fechamento medido durou os 140ms previstos.
+      Verifiquei também prefers-reduced-motion: com reducedMotion reduce, o
+      colapso é instantâneo, com 0 animações ativas e altura 0 no quadro seguinte
+      ao clique.
+  - alegacao: 8
+    resumo: "Criou o token --citie-espessura-indicador: 2px."
+    resultado: CONFIRMADA
+    como_verifiquei: >
+      Definido em src/tokens/tokens.css:354 e consumido em quatro pontos de
+      Tabs.css (:39, :59, :190, :199), substituindo os literais 2px que existiam
+      no sublinhado e na barra lateral. O diff de tokens.css é +65 e -0, ou seja,
+      só acrescenta nomes novos e não altera nenhum valor existente.
+  - alegacao: 9
+    resumo: "12 medições no navegador, todas passando, e nenhuma story perdida."
+    resultado: "PARCIAL: a parte das stories confere, a parte das medições não"
+    como_verifiquei: >
+      Stories: contagem preservada, 23 para 23 nos cinco arquivos do recorte,
+      conferida contra git show HEAD, e o verificador de catálogo passa com 763
+      stories. Medições: a afirmação de que todas passam não se sustenta, porque
+      a janela de teclado e o travessão passariam por qualquer varredura que os
+      tivesse coberto. As medições provavelmente cobriram posição e altura, sem
+      tocar em foco nem em texto.
+  - alegacao: "extra, sobre a asserção alterada no Panel"
+    resumo: >
+      queryByRole('region') envolvido em waitFor: adequação legítima ou
+      enfraquecimento disfarçado?
+    resultado: ADEQUAÇÃO LEGÍTIMA
+    como_verifiquei: >
+      Comparei o antes e o depois no diff. A asserção é literalmente a mesma,
+      expect(canvas.queryByRole('region')).toBeNull(), com o mesmo alvo e o mesmo
+      resultado exigido. O que mudou foi o instante em que ela passa a valer, que
+      antes era síncrono (atributo hidden) e agora chega ao fim da transição.
+      waitFor não afrouxa o que é verificado, apenas espera. Nenhum matcher foi
+      trocado por um mais permissivo, nenhum alvo foi ampliado, nenhum
+      toBeVisible virou toBeInTheDocument, e a asserção do story
+      ColapsavelRecolhido continua exigindo not.toBeVisible. Registro, porém, que
+      esta asserção é justamente a que NÃO pega o defeito real da mudança: ela
+      mede a árvore de acessibilidade ao fim da transição, e o problema está no
+      meio dela.
+  - alegacao: "extra, sobre a falha do PanelMenu no tema escuro"
+    resumo: "Falha pré-existente, de outro dono, sem relação com o trabalho."
+    resultado: CONFIRMADA
+    como_verifiquei: >
+      Nenhum arquivo do PanelMenu aparece em git status. O diff de tokens.css é
+      +65 e -0, ou seja, acrescenta nomes novos (shadow-controle,
+      pressao-deslocamento, aresta-preenchimento, motion-ciclo-varredura,
+      espessura-indicador) e não altera nenhum valor de cor existente. A cor de
+      primeiro plano da falha (#4d8bfc) e a de fundo (#212a3c) vêm de tokens
+      intocados. Nada nesta rodada pode ter causado a falha.
+  - alegacao: "extra, sobre aria-selected e aria-pressed"
+    resumo: >
+      O estado ativo continua vindo de ARIA, com o realce fora da árvore de
+      acessibilidade.
+    resultado: CONFIRMADA
+    como_verifiquei: >
+      Em todas as superfícies o realce tem aria-hidden true e textContent de
+      comprimento 0. Tabs preserva role tab com aria-selected true/false e
+      tabindex móvel correto (0 na ativa, -1 nas demais). SelectButton preserva
+      aria-pressed true/false por segmento, dentro de role group com aria-label.
+      O realce é decoração pura, como declarado.
+
+o_que_me_surpreendeu:
+  - >
+    A fidelidade da medida é exata, e não aproximada. Em Chromium e em WebKit o
+    rect do realce coincide com o rect do item ativo até a segunda casa decimal
+    nas quatro superfícies: Tabs line (267.5 / 92.17 contra 267.5 / 92.17), Tabs
+    pill (40 / 74.72 idênticos), Tabs vertical e SelectButton (148.23 / 103.97
+    idênticos). É consequência direta de usar a largura fracionária do rect em
+    vez de offsetWidth, e a diferença aparece justamente onde ninguém pediu para
+    olhar. Confirmei também que o deslize percorre dez quadros distintos entre a
+    aba anterior e a nova e assenta exatamente no alvo, sem ultrapassar e sem
+    sobra.
+  - >
+    O ramo "múltiplo" do SelectButton mostra que alguém pensou no caso que quebra
+    a metáfora. Com mais de um segmento ativo não existe "o" realce para deslizar,
+    então esse modo passa a chave ativa como null, o realce nem entra no DOM e
+    cada segmento pinta a própria superfície com a mesma receita de aresta e
+    âncora, por box-shadow interno para não deslocar o rótulo em 1px. Ninguém
+    pediu esse recorte, e sem ele o componente teria um realce piscando entre
+    seleções múltiplas. Evidência em Select.tsx:121-123 e Select.css:130-138.
+  - >
+    A escolha da técnica de grid resiste ao efeito colateral conhecido dela.
+    Filho com min-height de 400px e parágrafo com margem vertical de 32px, e o
+    colapso ainda assim chega a 0, porque o clip carrega "min-height: 0" com
+    "overflow: hidden". Mesmo resultado no Accordion com min-height de 350px. Em
+    WebKit o colapso interpolou de verdade, em dez quadros distintos.
+
+o_que_faltou_para_surpreender:
+  - >
+    Medir o foco, e não só a geometria. O trabalho é preciso ao pixel e cego ao
+    teclado: a mesma pessoa que descontou clientLeft para não errar 1px deixou
+    140ms de conteúdo invisível alcançável por Tab.
+  - >
+    Fechar o primitivo. Ele resolve a medida e para ali. Um primitivo que
+    resolvesse também a aplicação evitaria as duas plumbings distintas e tornaria
+    o próximo consumidor trivial.
+  - >
+    Uma story que demonstre o comportamento novo. As 23 stories do recorte são as
+    mesmas de antes: nenhuma exercita o deslize entre três estados, o colapso com
+    conteúdo alto ou o movimento reduzido. O ganho desta rodada não está provado
+    em lugar nenhum da suíte, e a única asserção tocada foi a que precisou ser
+    adiada no tempo.
+
+motivo_do_veredito: >
+  O gate técnico passa: typecheck limpo, lint sem erro, 31 de 31 no claro, 30 de
+  31 no escuro com a única falha comprovadamente pré-existente, e nenhuma story
+  perdida. O mérito também aparece, e em mais de um lugar: a medida é exata em
+  dois motores, o modo múltiplo foi pensado, e a técnica de colapso sobrevive ao
+  teste que costuma derrubá-la. Mesmo assim reprova por duas razões que as
+  próprias regras do briefing tornam decisivas. A primeira é uma violação
+  PROIBIDO do catálogo, o travessão em Select.css:52, único do diff inteiro e de
+  correção trivial. A segunda é um achado MAIOR de acessibilidade que a mudança
+  introduziu: durante cerca de 140ms após recolher, o conteúdo continua
+  alcançável pelo teclado com altura zero, e em seguida o foco é descartado. Num
+  produto em que WCAG 2.2 AA é exigência legal, e sendo esse mecanismo
+  apresentado como benefício na alegação nº 6, precisa voltar. Das quatro
+  conferências pedidas com ceticismo, três confirmam o produtor (a montagem não
+  anima, a técnica de grid resiste ao min-height, e a asserção do Panel é
+  adequação legítima e não enfraquecimento) e uma o contradiz no efeito, embora
+  não no mecanismo. Corrigidos os dois achados decisivos, esta peça volta forte,
+  e a discussão passa a ser sobre SURPREENDEU.
+
+limitacoes_desta_revisao:
+  - >
+    Firefox não pôde ser testado: o binário do Playwright não subiu nesta máquina,
+    com timeout de 180s em duas tentativas, inclusive após instalação explícita.
+    A metade Firefox da alegação nº 5 fica sem verificação minha. A metade Safari
+    foi verificada em WebKit e passou.
+  - >
+    Não testei com leitor de tela real (VoiceOver ou NVDA). O que verifiquei foi a
+    árvore de acessibilidade computada pelo navegador, via role e visibilidade, e
+    o axe do addon de a11y do Storybook nos dois temas.
+  - >
+    Não testei o contrafactual de offsetLeft em navegador com borda no trilho, então
+    a justificativa de divergência entre navegadores na alegação nº 2 segue como
+    argumento do produtor, não como medição minha.
+  - >
+    A revisão cobriu o recorte pedido. Os demais arquivos alterados na rodada
+    (Button, Skeleton, EmptyState, SkeletonLista, KpiWidget, Widget, os quatro
+    componentes novos) não foram auditados.
+
+artefatos:
+  capturas: "/Users/rafaeleugenio/.claude/jobs/87efdce7/tmp/shots/ (dois temas, 1366px e 420px, mais quadros de meio de transição)"
+  scripts_de_medicao:
+    - "/Users/rafaeleugenio/.claude/jobs/87efdce7/tmp/audit.mjs (montagem, instrumentada antes do primeiro quadro)"
+    - "/Users/rafaeleugenio/.claude/jobs/87efdce7/tmp/audit2.mjs (foco no fechamento, colapso com conteúdo alto, movimento reduzido, estado ARIA)"
+    - "/Users/rafaeleugenio/.claude/jobs/87efdce7/tmp/audit3.mjs (deslize quadro a quadro e ResizeObserver)"
+    - "/Users/rafaeleugenio/.claude/jobs/87efdce7/tmp/audit4.mjs (WebKit e tentativa de Firefox)"
+    - "/Users/rafaeleugenio/.claude/jobs/87efdce7/tmp/acc.mjs (anel de foco do Accordion)"
+  repositorio: "Nenhum arquivo do repositório foi alterado por esta revisão, além deste veredito."

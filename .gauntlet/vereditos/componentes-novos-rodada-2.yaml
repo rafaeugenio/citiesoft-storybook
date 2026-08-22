@@ -1,0 +1,172 @@
+revisor: Engenharia de front-end e comportamento de overlay, revisão independente com sonda Playwright própria sobre o build estático
+componente: HoverCard, InputGroup, ButtonGroup, Kbd (recaptura da rodada 2)
+veredito: REPROVADO
+veredito_anti_slop: PASSOU
+gate_tecnico:
+  typecheck: "./node_modules/.bin/tsc -b --force sai com código 0, sem erro"
+  lint: "oxlint sai com código 0. Os dois avisos em HoverCard.tsx (275 refs-durante-render, 173 setState-em-effect) pertencem a famílias já presentes em Tooltip, Menu e Menubar"
+  testes: "18 passados de 18 no tema claro e 18 de 18 no escuro (VITE_CITIE_TEMA_PADRAO=dark), axe em modo error nas duas passadas. As duas passadas emitem o mesmo erro de console do achado 1"
+  stories_antes_depois: "17 para 18 nos quatro componentes, nenhuma perdida. Baseline apurada por git: os quatro diretórios estão inteiros como não rastreados, e o índice do build lista 18 stories mais 4 páginas de docs nos títulos Átomos/Marcadores/Kbd, Moléculas/Ações/ButtonGroup, Moléculas/Campos/InputGroup e Moléculas/Overlay/HoverCard. A story nova é HoverCard · dentro de Dialog modal"
+achados:
+  - severidade: MAIOR
+    id_anti_slop: nenhum
+    descricao: >
+      A saída do portal deixou o painel inline, e com ele um `dl` dentro da
+      árvore do gatilho. A story nova põe o gatilho dentro de um `p`, então a
+      suíte passa a emitir o erro do React "<p> cannot contain a nested <dl>"
+      em toda execução, nos dois temas. É marcação inválida por especificação,
+      e é uma restrição nova que a mudança de arquitetura criou: com o portal o
+      painel nunca nascia dentro do parágrafo. A restrição não está no
+      docstring do componente, não está no bloco "Quando não usar" da story, e
+      não está coberta por teste; a própria vitrine da correção é quem a viola.
+      Medi a consequência com o parser: a mesma marcação vinda de servidor
+      (Next.js do TFD, por exemplo) é reaberta em dois parágrafos, o `dl` sai
+      para fora do `p` como irmão e ainda nasce um `p` vazio. Na prática o
+      painel só existe depois da montagem, então a reabertura não chega a
+      acontecer hoje, mas a marcação continua inválida no DOM vivo e a
+      restrição continua não escrita. O componente é anunciado justamente para
+      célula de tabela e texto corrido ("Solicitante: <nome>"), que é onde o
+      `p` aparece.
+    evidencia: >
+      HoverCard.stories.tsx linha 293 (`<p style={{ margin: 0 }}>` envolvendo o
+      HoverCard) com HoverCard.tsx linha 309 (`<dl className="citie-hover-card__itens">`).
+      Saída das duas suítes: `[console.error] <p> cannot contain a nested <dl>`,
+      claro e escuro. Reparse medido em
+      /Users/rafaeleugenio/.claude/jobs/87efdce7/tmp/probe-rev2c.mjs seção 4:
+      paragrafos 2, cadeiaDoDl ["DIV"], body reaberto como
+      `<p>Solicitante: <span><button>x</button></span></p><div role="tooltip">…</div><p></p>`.
+    correcao_exigida: >
+      Suíte dos quatro sem erro de console, e a restrição de aninhamento
+      declarada onde quem for usar o componente a encontre (docstring e bloco
+      "Quando não usar"), já que ela é o preço cobrado pela troca do portal
+      pelo popover.
+  - severidade: MENOR
+    id_anti_slop: nenhum
+    descricao: >
+      O `catch` em volta de `showPopover()` engole qualquer falha e o comentário
+      ao lado só cobre uma das causas ("Já estava na top layer"). Quando a
+      chamada não acontece, o painel fica com o `display: none` que a folha do
+      navegador dá a `[popover]` fora da top layer, ou seja, existe no DOM com
+      0 por 0 e o usuário não vê nada. Isso contradiz a linha 189 e 190 do
+      próprio arquivo, que afirma "nunca sem painel nenhum". Registro como
+      MENOR, e não mais que isso, porque a afirmação se sustenta no caso real
+      que ela mira: testei o navegador anterior a 2024 de verdade (API ausente
+      e atributo inerte) e o painel aparece como camada comum, 320 por 279,
+      fundo branco, z-index 1100, folga de 7px, legível e ainda escapando do
+      `overflow` da moldura, exatamente a degradação prometida. O que não se
+      sustenta é a generalização para qualquer falha da API.
+    evidencia: >
+      HoverCard.tsx linhas 188 a 196. Estado sem API medido em
+      probe-rev2b.mjs seção D: painelExiste true, display "none", largura 0,
+      altura 0, e a própria play da story falhando com "Unable to find
+      role=tooltip". Degradação legítima medida em probe-rev2c.mjs seção 2 e na
+      captura /Users/rafaeleugenio/.claude/jobs/87efdce7/tmp/shots2/legado-real.png.
+    correcao_exigida: >
+      Ou o comentário passa a dizer o que a guarda de fato cobre (ausência de
+      suporte, que vem junto com atributo inerte), ou o `catch` remove o
+      atributo `popover` do painel para garantir a camada comum quando a
+      chamada falhar por qualquer motivo.
+  - severidade: POLIMENTO
+    id_anti_slop: nenhum
+    descricao: >
+      Cinco das sete stories do HoverCard usam `<button>` cru como gatilho. No
+      tema escuro dentro do Dialog isso pinta um botão claro do navegador sobre
+      a superfície escura do modal, que é o elemento mais destoante da captura.
+      O `PorTeclado` já mostra o caminho certo usando o `Link` do catálogo.
+    evidencia: >
+      HoverCard.stories.tsx linhas 107, 195, 243, 297 e 383. Captura
+      /Users/rafaeleugenio/.claude/jobs/87efdce7/tmp/shots2/modal-dark.png.
+    correcao_exigida: "Gatilho do catálogo nas stories, ou nenhuma mudança se a casa aceitar o botão cru como andaime."
+  - severidade: POLIMENTO
+    id_anti_slop: nenhum
+    descricao: >
+      Fora de escopo deste lote, mas o gate global está vermelho e quem ler este
+      laudo precisa saber por quê. `node scripts/verificar-catalogo.mjs` acusa
+      1 falha de invariante, e ela é de outro recorte: componente publicado
+      ausente de classificacao.json, título Organismos/Tabelas/Medicao. O
+      arquivo é `src/components/organisms/Table/Medicao.stories.tsx`, não
+      rastreado, de outra dupla. Nenhum dos quatro componentes desta revisão
+      aparece na falha.
+    evidencia: "Saída do verificador após build-storybook (exit 0 do build); `git status --porcelain` marca Medicao.stories.tsx como não rastreado."
+    correcao_exigida: "Nenhuma por parte deste lote."
+o_que_me_surpreendeu:
+  - >
+    A origem do `position: fixed` passou a ser medida em vez de suposta
+    (HoverCard.tsx linhas 218 a 229): o painel vai a 0,0, a caixa dele vira a
+    origem, e o valor gravado já sai em coordenada da origem. Isso dispensa
+    adivinhar a lista de propriedades que criam bloco de contenção, que é
+    exatamente o que o `translate` animado do Dialog explora. Refiz a medida por
+    conta própria: oito aberturas seguidas dentro do modal deram folga de 8,00px
+    e desvio do centro do gatilho de 0,01px, com `styleTop` idêntico em
+    "470.5px" nas oito. Repeti sob cinco redimensionamentos (1280x900, 1000x760,
+    1280x900, 820x640, 1280x900) e a folga continuou 8,00px em todos, sempre
+    dentro da janela e sempre acertando `elementFromPoint` no centro
+    (probe-rev2b.mjs seção B, probe-rev2c.mjs seção 3). O token
+    `--citie-spacing-2` mede 8px, então o número não é do JS.
+  - >
+    A devolução do `style.top` e `style.left` escritos pelo React logo depois da
+    medição (HoverCard.tsx linhas 226 a 229). O raciocínio é sutil e está certo:
+    o React compara as props dele, não o DOM, então uma remedição que chegue ao
+    mesmo valor não reescreve o atributo e o 0,0 da medição ficaria de pé.
+    Ataquei com doze remedições sucessivas de resultado idêntico, disparando
+    `scroll` capturante com o painel aberto dentro do modal: as doze devolveram
+    top 471, left 402 e `styleTop` "470.5px", nenhuma presa em 0,0
+    (probe-rev2.mjs seção 2). A solução resolve a causa, e não o sintoma:
+    o valor imperativo é restaurado antes de qualquer render, então o registro
+    do React e o DOM nunca divergem.
+  - >
+    InputGroup.css linhas 137 a 142: o botão emendado zera a âncora de sombra
+    com `0 0 0 0 transparent` em vez de `none`, porque o anel de foco do Button
+    compõe uma lista de sombras e um `none` dentro da lista invalidaria a lista
+    inteira. Confirmei com foco de teclado real: no campo o trilho acende
+    (`rgba(18,97,228,0.4) 0 0 0 3px` mais o poço), com Tab o trilho apaga e o
+    anel aparece só no botão, com a sombra nula preservada no fim da lista
+    (probe-rev2b.mjs seção F1).
+  - >
+    A troca de asserção na story do `overflow` é legítima e ficou mais forte, e
+    confiro isso de forma independente. A antiga afirmava
+    `moldura.contains(painel) === false`, que é uma afirmação sobre a árvore do
+    DOM e nunca provou pintura; além disso ela deixou de ser verdadeira com o
+    painel inline, e manter asserção falsa não é cobertura. A nova usa a prova
+    de acerto do navegador. Medido por mim: o painel ultrapassa a moldura
+    recortada em 265px, `elementFromPoint` no meio do trecho que passou devolve
+    o painel, e uma grade de 5 por 5 sobre o painel dentro do modal acerta nos
+    25 pontos, sem recorte em nenhuma borda (probe-rev2c.mjs seção 1,
+    probe-rev2b.mjs seção C). A cobertura perdida com a troca é nula, e a
+    ganha é real.
+o_que_faltou_para_surpreender:
+  - >
+    Auditar a consequência da própria mudança de arquitetura sobre o
+    aninhamento. Sair do portal significa que o painel passa a nascer onde o
+    gatilho está, e a primeira story escrita para provar a correção já colocou
+    um `dl` dentro de um `p`. A suíte grita isso em toda execução e o lote foi
+    entregue verde assim mesmo.
+motivo_do_veredito: >
+  Os dois achados da rodada 1 estão resolvidos, e resolvidos de verdade, não
+  contornados. Refiz a medição do caso do modal com sonda própria nos dois
+  temas: o painel casa `:popover-open`, está na top layer, `elementFromPoint`
+  no centro devolve o painel, o trecho que passa 190px abaixo do rodapé do
+  diálogo continua apontável, a grade de 25 pontos acerta inteira, os tokens
+  chegam por herança (rgb(255,255,255) no claro e rgb(26,26,29) no escuro), o
+  primeiro Escape fecha só o painel com o diálogo aberto e o segundo fecha o
+  diálogo. O TXT-002 sumiu: grep pelas formas que o catálogo manda detectar
+  ("não é ..., é", "mais do que", "deixa de ser") e pelo travessão não devolve
+  nada nos quatro componentes. O que a rodada 1 já havia validado continua de
+  pé sob medição minha: folga de 8px lida do token, travessia da lacuna com
+  ponteiro real e seleção do CPF dentro do painel, virada na borda, painel
+  contido em 360px, anel do InputGroup acendendo pelo campo e apagando no
+  botão, raio de trilho 6px com peça de ponta em 5px e uma única linha de 1px
+  por junção, ButtonGroup com role e rótulo, recuo de 1px e foco no plano 2,
+  Kbd de 20px dentro de linha de 32px com nome acessível "Command K". Os dois
+  defeitos que o produtor encontrou sozinho são achados legítimos e as
+  correções atacam a causa, o que sustenta duas das entradas acima. Reprovo por
+  um achado só, e ele é estreito: a saída do portal criou uma restrição de
+  aninhamento que ninguém escreveu e que a story nova viola, fazendo a suíte
+  emitir erro do React nos dois temas. É barato de corrigir (o `p` da story
+  vira `div`, mais uma linha de documentação), e corrigido isso o lote tem
+  decisões com evidência suficientes para disputar SURPREENDEU na próxima
+  recaptura. Nota de escopo: a evidência de acessibilidade aqui é o gate axe do
+  repositório nos dois temas; o laudo e-MAG 3.1 e WCAG 2.2 AA segue sendo
+  entrega separada. Nota de ambiente: o verificador de catálogo está vermelho
+  por um componente de outro recorte (Organismos/Tabelas/Medicao), registrado
+  acima para não ser confundido com falha deste lote.

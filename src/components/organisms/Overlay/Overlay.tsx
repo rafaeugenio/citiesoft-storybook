@@ -136,8 +136,10 @@ export function ConfirmDialog({
   const descricaoId = useId();
 
   useEffect(() => {
-    // `showModal` move o foco para o primeiro focável, que aqui é a ação
-    // destrutiva. A spec exige o oposto, então o foco é reposicionado à mão.
+    // O foco inicial pertence à ação segura, nunca à destrutiva. "Cancelar" já
+    // é o primeiro focável na ordem do DOM, mas o `showModal` não dá essa
+    // garantia por contrato, então o foco é posicionado explicitamente: uma
+    // reordenação futura do rodapé não pode mover o foco para "Excluir".
     if (aberto) cancelarRef.current?.focus();
   }, [aberto]);
 
@@ -162,12 +164,18 @@ export function ConfirmDialog({
       </div>
 
       <footer className="citie-dialog__rodape citie-dialog__rodape--confirm">
-        <Button variant={variantePorBotao[variante]} loading={confirmando} onClick={onConfirm}>
-          {rotuloConfirmar}
-        </Button>
-        {/* Foco inicial na ação segura, nunca na destrutiva. */}
+        {/*
+         * A ação segura vem primeiro na leitura e no Tab, e o rodapé separa os
+         * dois botões nas pontas opostas: a distância física entre "Cancelar"
+         * e a ação destrutiva é a última defesa contra o clique que escorrega.
+         * Botões adjacentes transformam 8 pixels de erro motor num processo
+         * excluído.
+         */}
         <Button ref={cancelarRef} variant="secondary" disabled={confirmando} onClick={onClose}>
           Cancelar
+        </Button>
+        <Button variant={variantePorBotao[variante]} loading={confirmando} onClick={onConfirm}>
+          {rotuloConfirmar}
         </Button>
       </footer>
     </dialog>

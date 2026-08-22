@@ -1,14 +1,51 @@
 .citie-card {
+  /**
+   * Elevação e trilho vivem em custom property para os estados se SOMAREM em
+   * vez de se substituírem.
+   *
+   * É a mesma correção que o `Button` recebeu: lá, receber foco apagava a
+   * definição de superfície porque o anel de foco sobrescrevia o `box-shadow`
+   * inteiro, e o controle voltava a parecer chapado justo quando o usuário de
+   * teclado estava olhando para ele. Aqui, sem isto, um card selecionado que
+   * recebe foco perderia ao mesmo tempo a elevação e o trilho de seleção.
+   *
+   * As sombras nulas do fallback são VÁLIDAS (`0 0 0 0 transparent`), e nunca
+   * `none`: `box-shadow` aceita `none` apenas como valor único, então uma lista
+   * com `none` dentro é inválida inteira e o navegador descarta a declaração.
+   */
+  --citie-elevacao-do-card: var(--citie-shadow-raised);
+
   display: block;
+  position: relative;
   background-color: var(--citie-background-surface);
-  border: 1px solid var(--citie-border-default);
+  /**
+   * O contorno do card usa o degrau FORTE da escala de borda, enquanto as
+   * divisórias internas (cabeçalho e rodapé) ficam no degrau padrão.
+   *
+   * O motivo é o mesmo da aresta do `Button`: borda que não faz nada é borda
+   * que não deveria estar ali. Medido, `border-default` #e8eaed sobre a página
+   * #fafafa dá **1,16:1**, ou seja, o card era lido só pela sombra e o contorno
+   * era código morto fingindo trabalhar. `border-strong` #d6d8dc dá 1,37:1
+   * sobre a página e 1,43:1 sobre o próprio preenchimento; no tema escuro,
+   * #45454c dá 1,94:1 sobre a página e 1,83:1 sobre a superfície. É a mesma
+   * faixa perceptual que a aresta do botão persegue (1,61 a 1,66), e borda de
+   * 1px vale como decoração, então o piso aqui é perceptual, com a WCAG fora de
+   * alcance.
+   *
+   * O degrau entre o contorno e as divisórias é o que faz a peça se ler como um
+   * contêiner, longe de uma pilha de fios soltos: o que fecha a caixa é mais
+   * forte do que o que a divide por dentro.
+   */
+  border: 1px solid var(--citie-border-strong);
   /**
    * Card é contêiner externo, e o raio dele governa a leitura de profundidade
    * da tela inteira: 16 por fora, 12 no que estiver aninhado, 8 ou menos no
    * controle. Com todos no mesmo raio a pilha lê como adesivo colado.
    */
   border-radius: var(--citie-radius-2xl);
-  box-shadow: var(--citie-shadow-raised);
+  box-shadow:
+    var(--citie-trilho-do-card, 0 0 0 0 transparent),
+    var(--citie-elevacao-do-card);
   font-family: var(--citie-font-ui);
   color: var(--citie-text-base);
   text-decoration: none;
@@ -16,11 +53,13 @@
 }
 
 /**
- * Card dentro de card desce um degrau de raio. É o degrau que faz o aninhamento
- * se ler como interior, e não como duas caixas irmãs empilhadas por acidente.
+ * Card dentro de card desce um degrau de raio E um degrau de borda. É o degrau
+ * que faz o aninhamento se ler como interior, longe de duas caixas irmãs
+ * empilhadas por acidente.
  */
 .citie-card .citie-card {
   border-radius: var(--citie-radius-xl);
+  border-color: var(--citie-border-default);
 }
 
 .citie-card__cabecalho {
@@ -57,6 +96,12 @@
   justify-content: flex-end;
   gap: var(--citie-spacing-3);
   border-block-start: 1px solid var(--citie-border-default);
+  /*
+   * O rodapé se levanta acima da área esticada do link. Sem isto, um botão de
+   * rodapé em card navegável ficaria coberto pelo pseudo-elemento e o clique
+   * dele iria para o link. Ver `.citie-card__link`.
+   */
+  position: relative;
 }
 
 /* Mídia sem padding, com radius só nos cantos superiores. */
@@ -69,8 +114,8 @@
 /* ---------- Densidades ---------- */
 
 /**
- * O respiro de cada densidade agora sai da escala, e não de um número escolhido
- * a cada card: destaque em `spacing-6`, compacta em `spacing-4`. O horizontal
+ * O respiro de cada densidade agora sai da escala, no lugar de um número
+ * escolhido a cada card: destaque em `spacing-6`, compacta em `spacing-4`. O horizontal
  * de 24px já era o valor praticado no confortável, só que como literal, porque
  * a escala parava em 20px.
  *
@@ -117,40 +162,127 @@
   padding-block: 0;
 }
 
-/* ---------- Estados ---------- */
+/* ---------- Card navegável ---------- */
+
+/**
+ * Link esticado: o `href` fica no TÍTULO e a área de clique dele cobre o card.
+ *
+ * O problema que isto resolve é conhecido e estava documentado como limitação:
+ * envolvendo o card inteiro num `<a>`, qualquer botão de rodapé passava a
+ * viver dentro do link. Isso é aninhamento inválido de conteúdo interativo, o
+ * alvo de teclado fica ambíguo e o nome anunciado ao leitor de tela vira o card
+ * lido por inteiro, subtítulo e corpo junto. O consumidor vinha contornando por
+ * conta própria: o `DataView` suprimia as ações do item quando havia `href`, e
+ * voltou a renderizá-las assim que o link passou para o título.
+ *
+ * Com o link no título, três coisas passam a valer ao mesmo tempo: o DOM é
+ * válido, o nome do destino é o título, e o rodapé continua podendo ter ação,
+ * porque ele se levanta acima da área esticada.
+ *
+ * A regra, para quem consome: **conteúdo interativo de um card navegável vai no
+ * rodapé.** No corpo ele ficaria coberto pela área do link.
+ */
+.citie-card__link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.citie-card__link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+/*
+ * O indicador de foco é do CARD: o alvo do teclado é
+ * o card inteiro, porque a área do link foi esticada até as bordas dele. Sem
+ * isto apareciam dois indicadores ao mesmo tempo, o anel do navegador em volta
+ * das palavras do título e o anel do DS em volta do card, e o usuário de
+ * teclado tinha que decidir qual dos dois é o alvo.
+ */
+.citie-card__link:focus-visible {
+  outline: none;
+}
 
 .citie-card--clicavel {
   cursor: pointer;
   transition:
     box-shadow var(--citie-motion-rapido) var(--citie-easing-padrao),
-    background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
+    border-color var(--citie-motion-rapido) var(--citie-easing-padrao),
+    background-color var(--citie-motion-rapido) var(--citie-easing-padrao),
+    translate var(--citie-motion-instantaneo) var(--citie-easing-padrao);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .citie-card--clicavel {
     transition: none;
   }
+
+  /* Movimento reduzido zera o deslocamento: a pressão continua legível pela
+     mudança de cor e de elevação, que são as pistas que não dependem de
+     movimento. */
+  .citie-card--clicavel:active {
+    translate: none;
+  }
 }
 
-/* Um degrau de elevação no hover, de `raised` para `overlay`, e nunca dois. */
+/*
+ * Um degrau de elevação no hover, de `raised` para `overlay`, sempre um só. A
+ * borda acompanha e vai ao degrau de campo, que é o passo mais escuro da mesma
+ * família neutra: #6b7177 mede 4,94:1 sobre branco no claro e #8f8f8f mede
+ * 5,37:1 sobre a superfície escura. É a mesma regra do `Button`, onde a borda
+ * aponta para o degrau de hover em vez de repetir a cor do fundo.
+ */
 .citie-card--clicavel:hover {
-  box-shadow: var(--citie-shadow-overlay);
+  --citie-elevacao-do-card: var(--citie-shadow-overlay);
+  border-color: var(--citie-form-field-border-hover);
   background-color: var(--citie-state-hover-overlay);
 }
 
-.citie-card--clicavel:focus-visible {
+/*
+ * O foco soma com a elevação e com o trilho, em vez de substituí-los. Os dois
+ * seletores cobrem as duas anatomias: o card com título recebe o foco no link
+ * de dentro, e o card sem título é ele próprio o link.
+ */
+.citie-card--clicavel:focus-visible,
+.citie-card--clicavel:has(.citie-card__link:focus-visible) {
   outline: none;
-  box-shadow: var(--citie-state-focus-ring);
+  box-shadow:
+    var(--citie-state-focus-ring),
+    var(--citie-trilho-do-card, 0 0 0 0 transparent),
+    var(--citie-elevacao-do-card);
 }
 
-/* Pressionado volta ao repouso: o card afunda de novo contra a superfície. */
+/*
+ * Pressão. O card desce 1px enquanto está pressionado e a elevação volta ao
+ * repouso: ele afunda de novo contra a superfície em vez de continuar flutuando.
+ * É a mesma devolução de sensação física do `Button`, e ela não aparece em
+ * captura de tela parada: só existe no uso.
+ */
 .citie-card--clicavel:active {
   background-color: var(--citie-brand-subtle);
-  box-shadow: var(--citie-shadow-raised);
+  --citie-elevacao-do-card: var(--citie-shadow-raised);
+  translate: 0 var(--citie-pressao-deslocamento);
 }
 
+/* ---------- Estados ---------- */
+
+/**
+ * Trilho de seleção como sombra interna.
+ *
+ * Com `border-inline-start: 3px` a caixa de conteúdo encolhia 2px e TODO o
+ * conteúdo do card escorregava para a direita ao ser selecionado. Medido: o
+ * título saía de 45,00px para 47,00px de distância da borda esquerda da tela.
+ * Numa lista onde a seleção passa de um card para outro, isso é um tranco de
+ * 2px em cada troca. A sombra interna ocupa o mesmo lugar visual sem tirar
+ * espaço de ninguém: deslocamento medido depois, zero.
+ *
+ * A espessura vem do mesmo token do trilho de linha de tabela, para o traço de
+ * "este é o item escolhido" ter um peso só no catálogo inteiro.
+ */
 .citie-card--selecionado {
-  border-inline-start: 3px solid var(--citie-brand-primary);
+  --citie-trilho-do-card: inset var(--citie-espessura-do-trilho) 0 0 0
+    var(--citie-brand-primary);
 }
 
 .citie-card--erro {

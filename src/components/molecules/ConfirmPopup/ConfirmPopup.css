@@ -58,9 +58,15 @@
 
 .citie-confirm-popup__icone {
   display: inline-flex;
+  align-items: center;
   flex: none;
-  /* Alinha o ícone à primeira linha da mensagem, não ao topo do bloco. */
-  margin-block-start: 1px;
+  /**
+   * Anatomia de linha: o líder ocupa exatamente a caixa da primeira linha da
+   * mensagem (font-size × entrelinha) e centra o ícone nela, em vez de um
+   * empurrão de 1px estimado. Mensagem de duas linhas mantém o ícone na
+   * primeira.
+   */
+  block-size: calc(var(--citie-font-size-body-md) * var(--citie-entrelinha-corpo));
 }
 
 .citie-confirm-popup__icone--aviso {
@@ -79,6 +85,8 @@
   margin: 0;
   font-size: var(--citie-font-size-body-md);
   font-weight: var(--citie-font-weight-action);
+  /* Entrelinha em token: é dela que o líder deriva a caixa da primeira linha. */
+  line-height: var(--citie-entrelinha-corpo);
   color: var(--citie-text-primary);
 }
 
@@ -86,6 +94,7 @@
 .citie-confirm-popup__detalhe {
   margin: var(--citie-spacing-1) 0 0;
   font-size: var(--citie-font-size-body-sm);
+  line-height: var(--citie-entrelinha-corpo);
   color: var(--citie-text-secondary);
 }
 

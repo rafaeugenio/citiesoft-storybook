@@ -1,0 +1,90 @@
+revisor: Design QA (drift Figma/DS/implementação, revisor independente, rodada 2)
+componente: EmptyState (molécula) + Skeleton (átomo) + SkeletonLista/Formulario/Paragrafo + integração DataView
+veredito: SURPREENDEU
+veredito_anti_slop: PASSOU
+gate_tecnico:
+  typecheck: "coberto pelo build (tsc -b no script build) e sem erro; rodada 1 tinha exit 0 e nenhum arquivo de tipo mudou de natureza"
+  lint: "oxlint: 0 erros (warnings pré-existentes fora do recorte, inalterados)"
+  testes: "26 de 26 no claro e 26 de 26 no escuro (6 arquivos: EmptyState, Skeleton, 3 composições, DataView)"
+  stories_antes_depois: "EmptyState segue com 12 (as 6 originais intactas); Skeleton 4; DataView com as 2 stories de vazio preservadas"
+achados:
+  - severidade: POLIMENTO
+    id_anti_slop: nenhum
+    descricao: >
+      Único item restante, fora dos dois componentes nomeados no escopo: a
+      correção do DataView (fantasma acompanha a visão) ficou sem guarda de
+      regressão nas plays de VazioEstrutural/VazioPorFiltro, ao contrário do
+      autofoco, que ganhou a sua. Uma reversão silenciosa da linha 270-272
+      voltaria a passar verde.
+    evidencia: src/components/organisms/DataView/DataView.stories.tsx:220-226 e 239-244 (nenhuma asserção sobre .citie-empty__fantasma--cards ou data-simbolo)
+    correcao_exigida: >
+      Asserir na play de VazioEstrutural que alternar para grade troca o
+      fantasma para cards, e na de VazioPorFiltro que o símbolo de busca
+      persiste nas duas visões. Não bloqueia; comportamento atual verificado
+      correto por render nas quatro combinações.
+verificacao_das_correcoes:
+  - correcao: "1. Autofoco condicionado a lg + (primeiro-uso ou erro)"
+    resultado: >
+      CONFERE E A GUARDA REPROVA DE VERDADE. Sabotei o componente reintroduzindo
+      busca-sem-resultado na condição (EmptyState.tsx:218) e a play de
+      "Situação · busca sem resultado" caiu em 27ms com
+      "expect(element).not.toHaveFocus()". Restaurei, 12/12 verdes. No build
+      estático, vazio por filtro do DataView termina sem foco em botão nenhum
+      (focoEmBotao=false, medido via activeElement).
+  - correcao: "2. waitFor na asserção de foco do primeiro uso"
+    resultado: >
+      CONFERE. EmptyState.stories.tsx:87. Recarreguei a story no build estático
+      servido em :6100 com coletor de erros de console: zero erros (na rodada 1
+      o mesmo load acusava o toHaveFocus vermelho), e o foco assenta no botão.
+  - correcao: "3. DataView: fantasma acompanha a visão sem atropelar a lupa"
+    resultado: >
+      CONFERE, E O PRODUTOR ESTAVA CERTO EM DIVERGIR DA MINHA SUGESTÃO. A minha
+      linha (ilustracao sempre cards/tabela) teria forçado fantasma também no
+      vazio por filtro, atropelando o símbolo de busca, porque ilustracao
+      explícita vence a derivação por situação (EmptyState.tsx:210). A
+      implementação dele usa o mesmo predicado filtroAtivo && vazioPorFiltro
+      nas duas props, mantendo situação e desenho pareados por construção.
+      Rendi as quatro combinações no build estático e medi o DOM: lista sem
+      filtro = fantasma tabela; grade sem filtro = fantasma cards; filtro em
+      lista = lupa sem fantasma; filtro em grade = lupa sem fantasma.
+  - correcao: "4. box-sizing e piso de alfa no fantasma de formulário"
+    resultado: >
+      CONFERE. Medido via getBoundingClientRect no build: campo 340px dentro de
+      contêiner 340px, estouro 0.00 (antes 342 em 340). Máscara computada
+      linear-gradient(rgb(0,0,0) 50%, rgba(0,0,0,0.25) 100%): a segunda caixa
+      agora lê como caixa inteira dissolvendo, e o desenho perdeu o peso de
+      "uma caixa e meia". Captura es-form-r2.png nos dois temas.
+o_que_me_surpreendeu:
+  - >
+    O verificador tipográfico de órfã mede caixas de linha reais via
+    Range.getBoundingClientRect e reprova quando quebrado: sabotei a medida de
+    40ch para 30ch na rodada 1 e ele caiu com "expected 2 to be greater than
+    or equal to 3". Teste executável de tipografia que ninguém pediu, o oposto
+    exato do verificador decorativo que este projeto já teve.
+  - >
+    A disciplina de testar ausência de comportamento: busca-sem-resultado
+    assere que o botão "Registrar" NÃO existe, que fantasma NÃO aparece e,
+    desde esta rodada, que o foco NÃO foi roubado, guarda que provei eficaz por
+    sabotagem (reintroduzi o autofoco e ela reprovou). Proteger o que não pode
+    estar lá é decisão de projeto, não execução de checklist.
+  - >
+    Registro adicional, não contei como uma das duas: o produtor recusou a
+    minha correção do DataView com argumento técnico correto e entregou solução
+    melhor que a pedida, com os dois predicados pareados por construção.
+    Divergir do revisor com razão e evidência é o comportamento que este gate
+    existe para encontrar.
+o_que_faltou_para_surpreender: []
+motivo_do_veredito: >
+  Os quatro achados da rodada 1 foram tratados e cada correção foi verificada
+  por sabotagem ou medição, não por leitura: a guarda de autofoco reprova
+  quando o comportamento regride, o falso vermelho do build estático sumiu, o
+  estouro do formulário mede zero e as quatro combinações visão x filtro do
+  DataView renderizam o desenho semanticamente certo. Suíte 26/26 nos dois
+  temas, 12 stories preservadas, catálogo anti-slop sem violação. Os dois
+  componentes nomeados no escopo ficaram sem achado aberto; resta uma
+  recomendação de cobertura de teste no organismo DataView, registrada acima
+  como POLIMENTO não bloqueante. As duas decisões exigidas estão nomeadas com
+  evidência executável, e a terceira, a divergência fundamentada que se provou
+  correta, confirma que houve projeto, não atendimento de pedido. Ressalva de
+  processo mantida da rodada 1: esta revisão não substitui laudo formal
+  e-MAG 3.1 + WCAG 2.2 AA da tela composta antes de handoff real.

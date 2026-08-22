@@ -2,7 +2,7 @@ import { useId, useState, type ReactNode } from 'react';
 import './Panel.css';
 
 /**
- * Panel — página `6738:49736` do Figma CitieOne (component set `panel`).
+ * Panel: página `6738:49736` do Figma CitieOne (component set `panel`).
  *
  * Eixos do arquivo respeitados:
  * - `Toggleable` (False/True) → prop `colapsavel`
@@ -91,15 +91,26 @@ export function Panel({
         ) : null}
       </div>
 
+      {/**
+        * Disclosure: o colapso transita da altura real do conteúdo via
+        * `grid-template-rows` (0fr para 1fr). Dois mecanismos com papéis
+        * distintos: `inert` sai do React e corta foco e árvore de
+        * acessibilidade NO MESMO QUADRO do clique de recolher, para um Tab
+        * durante o fechamento nunca aterrissar em conteúdo que está sumindo;
+        * `visibility: hidden`, atrasada no CSS, só encerra a pintura quando a
+        * altura termina de fechar, para a transição continuar visível.
+        */}
       <div
         id={corpoId}
         role="region"
         aria-labelledby={tituloId}
-        className="citie-panel__conteudo"
-        hidden={!estaAberto}
+        className={`citie-panel__conteudo${estaAberto ? ' citie-panel__conteudo--aberto' : ''}`}
+        inert={!estaAberto}
       >
-        <div className="citie-panel__corpo">{children}</div>
-        {rodape ? <footer className="citie-panel__rodape">{rodape}</footer> : null}
+        <div className="citie-panel__clip">
+          <div className="citie-panel__corpo">{children}</div>
+          {rodape ? <footer className="citie-panel__rodape">{rodape}</footer> : null}
+        </div>
       </div>
     </section>
   );

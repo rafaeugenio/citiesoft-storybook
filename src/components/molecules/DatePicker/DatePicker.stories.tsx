@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { DatePicker, dataPorExtenso, formatarData, gradeDoMes } from './DatePicker';
 
 // Data fixa para a story ser determinística no snapshot e no teste.
@@ -44,6 +44,19 @@ export const Default: Story = {
     const campo = canvas.getByLabelText('Data de saída');
     // O placeholder mostra o formato com "Ex.:".
     await expect(campo).toHaveAttribute('placeholder', 'Ex.: 15/03/2026');
+
+    // Armadilha do `readonly` neste componente, e a razão de a família de campo
+    // pintar o consolidado por CLASSE e nunca pelo pseudo `:read-only`: o
+    // campo-gatilho carrega o atributo sempre, porque o valor entra pelo
+    // calendário e não pela digitação. Ele é porta de entrada de edição, e o
+    // pseudo o pintaria de dado decidido. A prova é a superfície: aqui o campo
+    // continua cavado com o poço da família, com a mesma tinta do token.
+    await expect(campo).toHaveAttribute('readonly');
+    await expect(campo).not.toHaveClass('citie-field-control--readonly');
+    const poco = getComputedStyle(campo).getPropertyValue('--citie-shadow-poco').trim();
+    const sombra = getComputedStyle(campo).boxShadow;
+    await expect(sombra).toContain(poco.slice(poco.indexOf('rgba')));
+    await expect(sombra).toContain('inset');
   },
 };
 
@@ -54,7 +67,18 @@ export const Aberto: Story = {
     await userEvent.click(canvas.getByLabelText('Data de saída'));
 
     const painel = canvas.getByRole('dialog', { name: 'Calendário de data de saída' });
-    await expect(painel).toBeVisible();
+
+    // O `waitFor` abaixo tem causa nomeada. O painel entra pela animação
+    // `citie-calendario-entrada`, que parte de opacidade zero, e "visível" para
+    // o matcher inclui opacidade maior que zero. No quadro seguinte ao clique o
+    // elemento está no DOM, montado e ainda transparente, então uma asserção
+    // síncrona fotografaria o primeiro quadro da entrada e acusaria painel
+    // invisível onde havia painel entrando. Sob movimento reduzido a animação
+    // nem existe, e a espera resolve na primeira tentativa.
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      await expect(getComputedStyle(painel).animationName).toBe('citie-calendario-entrada');
+    }
+    await waitFor(() => expect(painel).toBeVisible());
     await expect(canvas.getByText('março de 2026')).toBeVisible();
 
     // O dia de hoje é anunciado com a data completa por extenso.
@@ -149,6 +173,58 @@ export const Invalido: Story = {
 export const Desabilitado: Story = {
   name: 'Estado · desabilitado',
   args: { disabled: true, valorInicial: HOJE },
+};
+
+export const SomenteLeitura: Story = {
+  name: 'Estado · somente leitura',
+  args: {
+    label: 'Data de homologação',
+    valorInicial: HOJE,
+    readOnly: true,
+    helper: 'Registrada no ato da homologação. Não pode ser alterada.',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Data consolidada: o campo continua focável, selecionável e copiável, o calendário não abre e o botão de abrir sai da árvore, porque um gatilho que não dispara é uma promessa falsa. Diferente de desabilitado, que tira o campo da ordem de Tab e desbota a tinta.',
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const campo = canvas.getByLabelText('Data de homologação');
+
+    await expect(campo).not.toBeDisabled();
+    await expect(campo).toHaveValue('15/03/2026');
+
+    // O gatilho de calendário não existe no consolidado.
+    await expect(
+      canvas.queryByRole('button', { name: /Escolher data de homologação/ }),
+    ).toBeNull();
+
+    // Clicar no campo não abre o painel.
+    await userEvent.click(campo);
+    await expect(canvas.queryByRole('dialog')).toBeNull();
+
+    // E o campo continua na ordem de foco.
+    await expect(campo).toHaveFocus();
+
+    // A superfície acompanha o sentido: aqui o campo tem a classe de
+    // consolidado, então o poço é aplainado com a sombra nula VÁLIDA. Superfície
+    // que não recebe conteúdo não tem por que parecer cavada. O contraste com a
+    // story "Estado · default", onde o mesmo componente carrega o atributo
+    // `readonly` e continua cavado, é o que prova que a pintura depende da
+    // classe e nunca do pseudo `:read-only`.
+    await expect(campo).toHaveClass('citie-field-control--readonly');
+    await expect(getComputedStyle(campo).boxShadow).toContain('rgba(0, 0, 0, 0) 0px 0px 0px 0px');
+
+    // Consolidado é dado para ser lido e copiado: a seleção do usuário pega a
+    // data inteira, e o valor segue disponível para colar no ofício.
+    await userEvent.tripleClick(campo);
+    await expect((campo as HTMLInputElement).selectionStart).toBe(0);
+    await expect((campo as HTMLInputElement).selectionEnd).toBe('15/03/2026'.length);
+  },
 };
 
 export const Intervalo: Story = {
