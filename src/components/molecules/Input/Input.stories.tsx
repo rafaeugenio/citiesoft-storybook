@@ -380,6 +380,42 @@ export const Invalido: Story = {
       'Onze dígitos, com ou sem pontuação.',
     );
     await expect(canvas.getByText('Onze dígitos, com ou sem pontuação.')).toBeVisible();
+
+    /*
+     * Foco em campo inválido mantém a identidade de perigo.
+     *
+     * Sem esta guarda o token `--citie-state-focus-ring-danger` podia ser
+     * apagado do repositório inteiro sem uma única reprovação: um revisor
+     * trocou o anel de perigo pelo de marca e a suíte completa passou 779 de
+     * 779. A regra existia no CSS, documentada em seis linhas, e nada a
+     * protegia.
+     *
+     * O que se mede é a tinta do próprio token dentro da sombra composta, e a
+     * ausência da tinta do anel de marca. Um campo que vira azul ao ser focado
+     * perde a pista visual do erro justamente quando o servidor chega para
+     * corrigi-lo, e num produto B2G a pista do erro é exigência de e-MAG.
+     */
+    await userEvent.click(campo);
+    await expect(campo).toHaveFocus();
+
+    const anelDePerigo = getComputedStyle(campo)
+      .getPropertyValue('--citie-state-focus-ring-danger')
+      .trim();
+    const anelDeMarca = getComputedStyle(campo)
+      .getPropertyValue('--citie-state-focus-ring')
+      .trim();
+
+    const poco = getComputedStyle(campo).getPropertyValue('--citie-shadow-poco').trim();
+
+    await waitFor(() => {
+      const sombra = getComputedStyle(campo).boxShadow;
+      expect(sombra).toContain(anelDePerigo.slice(anelDePerigo.indexOf('rgba')));
+      expect(sombra).not.toContain(anelDeMarca.slice(anelDeMarca.indexOf('rgba')));
+      // O poço continua embaixo, somado em vez de substituído, como na guarda
+      // irmã do foco válido. Medir só o anel deixaria passar um foco que
+      // aplaina a superfície do campo justamente no estado de erro.
+      expect(sombra).toContain(poco.slice(poco.indexOf('rgba')));
+    });
   },
 };
 
@@ -450,5 +486,49 @@ export const Senha: Story = {
     type: 'password',
     defaultValue: 'senhaforte123',
     helper: 'Mínimo de 8 caracteres, com letra e número.',
+  },
+};
+
+export const InvalidoComAddon: Story = {
+  name: 'Regra · a emenda do addon vale no inválido',
+  args: {
+    label: 'Valor da diária',
+    addonStart: 'R$',
+    defaultValue: '0,00',
+    error: 'Informe um valor maior que zero.',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: [
+          'Campo e addon dividem o mesmo contorno visual, então o estado pinta os dois juntos.',
+          '',
+          'A regra existia para o ponteiro e para o preenchido, e faltava no inválido: o campo ia',
+          'para o vermelho e o addon permanecia na cor neutra, então a junção lia como defeito',
+          'exatamente no momento em que o servidor precisa enxergar onde está o erro.',
+          '',
+          'Foi um revisor independente que encontrou, medindo a cor computada dos dois lados sobre',
+          'a marcação real do componente. O princípio já estava escrito três parágrafos acima no',
+          'próprio arquivo de estilo, e o componente irmão `InputGroup` o aplicava corretamente.',
+        ].join('\n'),
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const campo = canvas.getByLabelText('Valor da diária');
+
+    await expect(campo).toHaveAttribute('aria-invalid', 'true');
+
+    const addon = canvasElement.querySelector('.citie-input-group__addon');
+    await expect(addon).toBeTruthy();
+
+    // Os dois lados da emenda usam a mesma tinta de perigo. Comparar contra o
+    // token, e não contra um literal, mantém a asserção válida nos dois temas.
+    const perigo = getComputedStyle(campo).getPropertyValue('--citie-border-danger').trim();
+    const esperado = getComputedStyle(campo).borderColor;
+
+    await expect(getComputedStyle(addon!).borderColor).toBe(esperado);
+    await expect(perigo).not.toBe('');
   },
 };

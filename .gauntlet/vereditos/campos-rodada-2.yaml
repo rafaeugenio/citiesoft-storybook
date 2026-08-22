@@ -1,0 +1,253 @@
+revisor: Campos de formulário (superfície, estado, teclado, contraste, anti-slop)
+componente: >
+  Família de campo: primitives/Field, molecules/Input, molecules/Textarea,
+  molecules/DatePicker, campo do molecules/Select, mais os tokens
+  --citie-shadow-poco, --citie-form-field-border-hover e
+  --citie-state-focus-ring-danger. SelectButton fora de escopo.
+veredito: APROVADO
+veredito_anti_slop: PASSOU
+
+gate_tecnico:
+  typecheck: 'PASSOU. ./node_modules/.bin/tsc -b --force, exit 0, saída vazia.'
+  lint: >
+    PASSOU. npm run lint (oxlint) exit 0. Os warnings são pré-existentes; os três
+    de only-export-components no DatePicker.tsx já existiam no HEAD. Um warning
+    novo aparece em `.probe-rev3/p2.mjs`, que é sonda de outro revisor desta
+    sessão e não pertence a este recorte.
+  testes: >
+    Tema claro: 779 de 779 passaram, 119 arquivos, suíte COMPLETA.
+    Tema escuro: falhas em 14 arquivos, NENHUMA no recorte (conferi por filtro
+    explícito em Input/, Textarea/, DatePicker/, Select/ e Field/: zero linhas).
+    Recorte isolado: 93 de 93 em 10 arquivos.
+  stories_antes_depois: '38 para 40 (Input 16→18, Textarea 7, DatePicker 9, Select 6)'
+
+causa_da_reprovacao_da_rodada_1: >
+  CORRIGIDA. Varri o recorte por `não é X, é Y`, `não está X, está Y`,
+  `deixa de ser` e `mais do que`: zero ocorrências. Os sete trechos afirmam
+  direto, incluindo as duas descrições de story que o servidor público lê na aba
+  Docs. Exemplos conferidos: Field.css:212-213 agora diz "o número do processo
+  homologado está decidido e segue disponível para ler e copiar";
+  Input.stories.tsx:245 e Textarea.tsx:19 na mesma forma afirmativa.
+  A comparação factual que a rodada 1 autorizou expressamente continua no lugar
+  ("Diferente de `disabled`, que tira o campo da ordem de Tab e desbota a
+  tinta"), e está correta. Travessão: nenhum nos arquivos do recorte. TXT-001 e
+  TXT-002 passam limpos.
+
+o_que_a_rodada_1_pediu_e_o_produtor_entregou_sem_ser_obrigado: >
+  Os dois achados MENORES da rodada 1 eram de COBERTURA, e MENOR não reprova.
+  O produtor fechou os dois assim mesmo, com asserção executável, e eu confirmei
+  por sabotagem que as guardas novas mordem de verdade (ver sabotagens 1 e 2).
+  A rodada 1 também ofereceu duas saídas para o POLIMENTO da borda de perigo no
+  escuro: dar um degrau escuro ao token, ou registrar em comentário por que ela
+  atravessa os dois temas sem mudar. A segunda foi tomada, em tokens.css:630-634,
+  com a conta ao lado ("#dc2626, 3,60:1 sobre #1a1a1d, acima do mínimo de 3:1 da
+  WCAG 1.4.11"). Esse polimento está fechado.
+
+verificacao_independente_das_alegacoes:
+  hover_no_codigo: >
+    CONFERE. Field.css:184-186 aponta o hover para --citie-form-field-border-hover
+    e o comentário 175-183 registra o defeito anterior. Os três números batem com
+    os tokens: claro #6b7177 sobre #ffffff = 4,94:1; escuro #8f8f8f sobre #1a1a1d
+    = 5,37:1; repouso #8f8f8f sobre #ffffff = 3,23:1; o antigo --citie-border-strong
+    #d6d8dc sobre #ffffff = 1,43:1. A inversão descrita existia mesmo, e a
+    sabotagem 1 provou que a correção agora tem guarda.
+  poco_medido_por_pixel: >
+    O poço PINTA nos dois temas, e não é código morto. Medi eu mesmo, em build
+    próprio servido, capturando a faixa superior do campo a 4x e lendo a coluna
+    central de pixels.
+    CLARO, superfície rgb(255,255,255), borda rgb(143,143,143) a 3,234:1. Descendo
+    da aresta: rgb(244,244,245) 1,0992:1, depois 1,0895, 1,0800, 1,0706, 1,0528,
+    1,0438, 1,0348, 1,0259, 1,0172, 1,0085, e volta à superfície.
+    ESCURO, superfície rgb(26,26,29), borda rgb(107,107,107) a 3,258:1. Descendo:
+    rgb(19,19,21) 1,0687:1, depois 1,0687, 1,0596, 1,0503, 1,0495, 1,0400, 1,0303,
+    1,0211, 1,0203, 1,0110, 1,0102 por mais três, e volta à superfície.
+    box-shadow computado, claro "rgba(16, 24, 40, 0.06) 0px 1px 2px 0px inset";
+    escuro "rgba(0, 0, 0, 0.35) 0px 1px 2px 0px inset". Os números batem com os da
+    rodada 1 no dígito, medidos por caminho independente.
+  anel_somando_com_poco: >
+    CONFERE, e está sob asserção, não só descrito. Input.stories.tsx:218-224 lê
+    --citie-state-focus-ring e --citie-shadow-poco do próprio elemento e exige que
+    a sombra composta contenha OS DOIS. Como a asserção compara com o token lido do
+    elemento, a mesma story vale nos dois temas, e ela passa nos dois. A sabotagem 3
+    da rodada 1 (tirar a elevação da lista do foco) foi reconferida por ela.
+  somente_leitura_contra_desabilitado: >
+    CONFERE por teclado real e por imagem. Input.stories.tsx:293-333 dá aos dois
+    campos o MESMO valor "2025/0481" para a diferença ser só de estado, e mede:
+    sombra nula válida idêntica nos dois; Tab pousa no consolidado; segundo Tab
+    não pousa no desabilitado; tinta computada dos dois diverge; e a tinta do
+    consolidado bate com a do rótulo, que é a régua de "tinta plena" da tela.
+    Na captura, claro e escuro, o consolidado sai com tinta cheia e texto
+    selecionável e o desabilitado sai desbotado. A sabotagem 3 abaixo prova que a
+    asserção morde.
+  erro_e_ajuda_convivendo: >
+    CONFERE. Field.tsx:64-67 monta o aria-describedby com o erro PRIMEIRO e a regra
+    depois; Field.css:42-46 empilha os dois. Input.stories.tsx:374-382 afirma os
+    dois ids, na ordem, com o texto de cada um, e que a ajuda continua visível. Na
+    captura a 360px no escuro os dois convivem, o erro com ícone (a cor não é o
+    único indicador) e a regra de preenchimento logo abaixo.
+  datepicker_sem_regressao: >
+    CONFERE. O campo-gatilho carrega `readonly` e NÃO carrega a classe de
+    consolidado, então segue cavado. DatePicker.stories.tsx:48-59 afirma o atributo
+    presente, a classe ausente e o poço INTACTO comparando com o token.
+
+atribuicao_do_tema_escuro: >
+  NÃO É DESTE PRODUTOR, e a prova é mais forte que o git stash, que aqui seria
+  no-op: a árvore está limpa no commit 46a35e2 e o trabalho já está commitado.
+  Fui ao histórico. O diff de src/tokens/tokens.css em 46a35e2 é 233 inserções e
+  ZERO remoções, puramente aditivo, então nenhum token que os arquivos que falham
+  consomem mudou de valor. Confirmei também que o bloco de tema escuro já existia
+  antes (981496a), ou seja, o recorte não inaugurou o tema. Os três tokens deste
+  recorte entraram nas DUAS variantes, claro e escuro, o que é o cuidado certo.
+  As falhas escuras estão todas em outros recortes: TreeSelect, MultiSelect,
+  Listbox, Search, Tree, Filters, Menubar, MegaMenu, PanelMenu, TieredMenu,
+  Terminal, PainelDeTFD, Dashboard e Listagem. Dívida antiga exposta pelo gate de
+  tema escuro criado nesta sessão.
+
+sabotagens_executadas:
+  - alvo: 'Field.css:185 devolver o hover para var(--citie-border-strong)'
+    resultado: >
+      REPROVOU. Caiu "Input > Regra · degrau de resposta ao ponteiro" com
+      "expected 'rgb(214, 216, 220)' to be 'rgb(107, 113, 119)'". A guarda pegou o
+      #d6d8dc de 1,43:1 pelo valor exato. Esta é a lacuna MENOR nº 1 da rodada 1,
+      e está fechada.
+  - alvo: 'Field.css:136-137 remover o guarda [placeholder] das regras de preenchido'
+    resultado: >
+      REPROVOU. Caiu "Input > Comparação · campo vazio com e sem placeholder" com
+      "expected 'rgb(107, 113, 119)' to be 'rgb(143, 143, 143)'": o campo VAZIO sem
+      placeholder ganhou a borda de preenchido, que é exatamente o falso positivo
+      que o guarda existe para impedir. Lacuna MENOR nº 2 da rodada 1, fechada.
+  - alvo: 'Field.css:219-227 fazer o somente leitura desbotar a tinta como o desabilitado'
+    resultado: >
+      REPROVOU EM DUAS FRENTES, e a segunda eu não esperava. Caiu "Comparação ·
+      somente leitura contra desabilitado" com "expected 'rgb(168, 172, 179)' not
+      to be 'rgb(168, 172, 179)'", e caiu TAMBÉM "Estado · somente leitura" por
+      toHaveNoViolations, ou seja, o axe acusou o contraste antes mesmo da
+      asserção de projeto. A alegação principal do recorte tem guarda dupla.
+  - alvo: 'Field.css:240 trocar --citie-state-focus-ring-danger pelo anel de marca'
+    resultado: >
+      PASSOU VERDE. Ver achado 1. Confirmei contra a SUÍTE INTEIRA, e não só
+      contra o recorte: com zero ocorrências de focus-ring-danger em Field.css,
+      os 779 testes dos 119 arquivos passaram.
+  observacao: >
+    Field.css e Input.tsx foram restaurados por cópia e conferidos por md5
+    (459537f77ff902475caacc9a7e61a27b e f28cfb0a6c21b0b023482fad108e2c57,
+    idênticos ao original). As sondas que escrevi na raiz foram apagadas. As
+    modificações que restam em Card.stories.tsx, TreeTable.stories.tsx e nos
+    .mjs da raiz são de outros agentes trabalhando na mesma árvore agora, e
+    ficam fora deste recorte.
+
+achados:
+  - severidade: MENOR
+    id_anti_slop: nenhum
+    descricao: >
+      A identidade de perigo no foco não tem guarda nenhuma, e ela é um dos três
+      tokens que este recorte entrega. Campo inválido em foco deve manter o anel
+      vermelho em vez de virar azul de marca, que é a decisão que Field.css:233-241
+      documenta em seis linhas de comentário. Troquei
+      --citie-state-focus-ring-danger pelo anel de marca comum e a suíte COMPLETA
+      passou 779 de 779. O token novo pode ser deletado do arquivo inteiro sem que
+      um único teste reclame. Num produto onde a pista visual do erro é exigência
+      de e-MAG, esse é o mesmo risco de regressão silenciosa que a rodada 1 filou
+      duas vezes e que o produtor fechou nos outros dois lugares: a técnica já está
+      na casa, com o poço e o anel de marca medidos em Input.stories.tsx:218-224
+      por composição de box-shadow, e só não foi aplicada à variante de perigo.
+    evidencia: >
+      src/components/primitives/Field/Field.css:238-241 declara a regra.
+      src/tokens/tokens.css:140 e 635 definem o token nos dois temas.
+      Nenhuma story do recorte referencia focus-ring-danger (grep em
+      Input/, Textarea/, DatePicker/ e Select/: zero). Sabotagem 4 acima.
+    correcao_exigida: >
+      Uma story que foque um campo inválido e afirme que a sombra composta contém
+      a tinta de --citie-state-focus-ring-danger e o poço, no mesmo molde da
+      "Estado · foco por teclado", lendo o token do próprio elemento para valer nos
+      dois temas. Fechada essa, o recorte não tem mais achado em escopo.
+
+  - severidade: POLIMENTO
+    id_anti_slop: nenhum
+    descricao: >
+      O comentário do poço escuro ainda promete mais do que a medição entrega, e é
+      o único ponto do recorte em que texto e pixel discordam. tokens.css:669-670
+      diz "mais opacidade para ainda ser percebida sobre um fundo que já é escuro",
+      e a opacidade de fato saltou de 0,06 para 0,35, mas o pico renderizado ficou
+      MAIS fraco: 1,0687:1 no escuro contra 1,0992:1 no claro. Registro em favor do
+      produtor um dado que a rodada 1 não tinha: a mancha escura é mais LARGA,
+      cobre 14 pixels de dispositivo a 4x contra 10 do claro, então a presença
+      perceptual dos dois é mais próxima do que o pico sozinho sugere. O teto é
+      geométrico: sobre rgb(26,26,29) não sobra alcance para escurecer. Nos dois
+      temas o campo é delimitado pela borda a 3,2:1, então isto é acabamento de
+      texto e não conformidade.
+    evidencia: >
+      Medição de pixel a 4x descrita em verificacao_independente_das_alegacoes.
+      src/tokens/tokens.css:669-671.
+    correcao_exigida: >
+      Trocar o comentário por uma descrição do que acontece de fato: no escuro a
+      sombra ganha opacidade e espalha mais, e o pico contra a superfície fica
+      abaixo do claro porque o fundo escuro limita o quanto ainda dá para escurecer.
+
+o_que_me_surpreendeu:
+  - >
+    A guarda de hover partida em duas metades, e a honestidade de explicar por que
+    ela precisou ser partida. A rodada 1 pediu "uma story que passe o ponteiro no
+    campo". O produtor descobriu que essa story não existe de forma confiável aqui
+    e escreveu o porquê em primitives/Field/medicao.ts:48-70, com número: o pseudo
+    :hover responde à posição física do cursor, userEvent.hover despacha evento
+    sintético e não move cursor nenhum, então a medição leria a cor de repouso e
+    passaria verde sem provar nada; das duas saídas que mexem no estado de
+    verdade, o cursor do Playwright para de voltar com os 119 arquivos, e o
+    CSS.forcePseudoState do CDP gastou 5,5s só no DOM.enable contra 15s de tempo
+    total do teste. Em vez de escrever a asserção frouxa que passaria, partiu a
+    guarda em VALOR (o campo preenchido e o addon pintam pelo mesmo token do
+    hover, e a cor computada é medida renderizada) e ALVO (as três regras de hover
+    são lidas na folha de estilo viva e comparadas com esse valor). E a função que
+    lê o alvo tem guarda sobre a própria guarda: falha alto quando a regra some ou
+    muda de nome, e falha alto de novo se a regra declarar cor solta em vez de
+    token, com a mensagem "que é cor solta. Cor de fronteira no DS vem de token".
+    Sabotei o hover e ela pegou o valor exato do defeito. É a diferença entre
+    fechar um achado e resolver o problema que o achado apontava.
+  - >
+    O gate de acessibilidade ser consciente do tema, e isso ter aparecido sozinho
+    numa sabotagem que eu não desenhei para provocá-lo. Quando fiz o somente
+    leitura desbotar a tinta, eu esperava derrubar a asserção de comparação, e
+    derrubei. O que não esperava foi ver "Estado · somente leitura" cair por
+    toHaveNoViolations no mesmo instante: o axe varre a story no tema com que ela
+    de fato renderiza, por decisão registrada em .storybook/preview.tsx:49-70, com
+    a nota de que sem isso o tema escuro nunca seria varrido e qualquer regressão
+    nos tokens de [data-theme='dark'] passaria calada. O efeito prático é que a
+    distinção entre consolidado e indisponível está protegida por dois mecanismos
+    independentes, um de projeto e um de conformidade, e quem quebrar a decisão
+    apanha das duas fontes ao mesmo tempo.
+
+o_que_faltou_para_surpreender:
+  - >
+    Um único ponto, e é o mesmo padrão que este produtor já demonstrou dominar
+    duas vezes nesta rodada: a variante de perigo do anel de foco continua sendo a
+    única decisão do recorte defendida só em comentário. Ele fechou o hover e o
+    guarda de placeholder com asserção quando ninguém era obrigado, porque MENOR
+    não reprova, e deixou de fora justamente o terceiro token que ele mesmo criou.
+    A regra do gauntlet é que SURPREENDEU exige escopo sem achado remanescente, e
+    esse achado é real: eu apaguei o token do arquivo e as 779 passaram. Fechada
+    essa story, e ela é uma, o recorte vai para SURPREENDEU com as duas decisões
+    acima já nomeadas e com evidência.
+
+motivo_do_veredito: >
+  APROVADO, e é um APROVADO alto. A causa formal da reprovação da rodada 1 está
+  resolvida sem sobra: zero negação paralela e zero travessão no recorte, com o
+  conteúdo preservado e afirmado direto, inclusive nas duas descrições que o
+  servidor público lê na aba Docs. O gate técnico passa inteiro: typecheck e lint
+  limpos, 779 de 779 no claro, e no escuro nenhuma falha no recorte, com as falhas
+  escuras provadas alheias por um diff de token puramente aditivo, 233 inserções e
+  zero remoções. A contagem de stories subiu de 38 para 40.
+  Ataquei os pontos centrais em vez de aceitá-los pelo laudo anterior, e todos se
+  defenderam: o poço pinta de fato nos dois temas, medido por pixel a 4x em build
+  próprio e batendo no dígito com a rodada 1; o anel soma com o poço em vez de
+  substituí-lo, e isso está sob asserção que vale nos dois temas porque lê o token
+  do elemento; a distinção entre consolidado e indisponível resiste a sabotagem
+  por duas frentes independentes; erro e ajuda convivem na ordem certa de leitura;
+  o DatePicker não regrediu. As duas lacunas MENORES da rodada 1 foram fechadas
+  com guardas que eu sabotei e que morderam pelo valor exato do defeito.
+  O que impede SURPREENDEU é um achado só, MENOR e específico: a identidade de
+  perigo no foco não tem guarda nenhuma. Não é suspeita, é medição: apaguei
+  --citie-state-focus-ring-danger de Field.css e a suíte COMPLETA passou 779 de
+  779. A regra do gauntlet exige escopo sem achado remanescente, e este permanece.
+  Registro que o padrão de rigor do próprio recorte é o que torna essa lacuna
+  visível, e que ela custa uma story para fechar.

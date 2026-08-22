@@ -1,0 +1,167 @@
+revisor: Revisor independente de tabela, árvore e contêiner
+componente: Card, Table, TreeTable e DataView, quarta e última captura
+veredito: SURPREENDEU
+veredito_anti_slop: PASSOU
+supersede: tabela-e-card-rodada-3.yaml
+
+resumo_curto: >-
+  O último achado aberto está fechado, e fechado do jeito certo: com a medição
+  antes, a correção mínima, a guarda no teste e a sabotagem feita pelo autor
+  antes de me devolver. Refiz a sabotagem por conta própria e ela reprova com o
+  número exato que eu tinha medido. O escopo está limpo, o gate está limpo nos
+  dois temas, e as três decisões de projeto que eu já havia registrado se
+  sustentam sob medição de hoje. Subo para SURPREENDEU depois de ter recusado
+  este veredito uma vez por escrito, o que é a única razão pela qual ele vale
+  alguma coisa agora.
+
+gate_tecnico:
+  typecheck: 'tsc -b --force, exit 0'
+  lint: 'oxlint, zero erro'
+  testes: >-
+    Recorte no tema claro (Table, TreeTable, Card, DataView): 44 de 44, exit 0.
+    Recorte no tema escuro: 100% verde.
+    Consumidores no escuro: 19 falhas em 3 arquivos. Varri o relatório
+    procurando qualquer violação cujo seletor citasse table, treetable, card ou
+    dataview: NENHUMA, pela quarta captura seguida. O conjunto continua sendo
+    .citie-filtro-chip__valor, .citie-chart__legenda-valor e um
+    .citie-button--text no Dashboard, que é dívida antiga do Filters e do Chart.
+  stories_antes_depois: >-
+    Contra o estado anterior à rodada (HEAD~1): Table 9 para 10, TreeTable 11
+    para 12, Card 8 para 10, DataView 10 para 12. Nenhuma perdida.
+  anti_slop: >-
+    Zero travessões nos onze arquivos do recorte. As três formas literalmente
+    proibidas do TXT-002 em zero ocorrências. LAY-004 cumprindo a exceção com
+    mapa de severidade medido e canal redundante em texto oculto; LAY-005 dentro
+    da escala e concêntrico; sombras por token.
+
+verificacao_do_fio_da_hierarquia:
+  sabotagem_refeita_por_mim: >-
+    REPROVA, e reprova com o número exato. Removi `block-size: 100%` de
+    TreeTable.css e rodei: 1 de 12 falhou, só 'Densidade · confortável (48px)',
+    com a mensagem `expected 25 to be less than or equal to 1.5` em
+    TreeTable.stories.tsx:320. Os 25px são precisamente o vão que eu tinha
+    medido na primeira captura, o que quer dizer que a guarda mede o defeito
+    real e não uma aproximação dele. Restaurado e conferido byte a byte.
+  continuidade_nas_duas_densidades_e_nos_dois_temas: >-
+    CONFIRMADA nos quatro cruzamentos, percorrendo todos os trilhos e não uma
+    amostra. Confortável: fio 48,00px em célula de 49,00px. Compacta: fio
+    36,00px em célula de 37,00px. Em todos os casos `topo` 0,00 e `base` 1,00,
+    ou seja, o único vão é o fio separador da própria linha, que é o que emenda
+    uma célula na seguinte. Vale igual no claro e no escuro, e vale em todos os
+    níveis medidos, de 0 a 2. Antes eram 24,00px em 49,00px, com vão de 25px.
+  centralizacao_vertical: >-
+    NÃO SE PERDEU, e conferi pelo lado que pega regressão de verdade, que é
+    comparar a coluna da hierarquia com as VIZINHAS na mesma linha, e não olhar
+    a hierarquia sozinha. Centro do conteúdo em 94,00 e centro da célula em
+    94,50 na densidade confortável, com o MESMO desvio de 0,5px em todas as
+    colunas, inclusive nas que não têm a classe de hierarquia. Na compacta,
+    76,00 contra 76,50, também uniforme. O meio pixel é a borda contada no
+    retângulo da célula, e não desalinhamento: se o `block-size` tivesse
+    quebrado a centralização, a coluna da hierarquia divergiria das vizinhas, e
+    ela não diverge.
+  contraste: >-
+    INALTERADO, porque o que mudou foi a área pintada e não a tinta. Li a cor
+    efetivamente pintada no gradiente em cada tema: claro rgb(214,216,220), que
+    é `--citie-border-strong` #d6d8dc sobre a superfície #ffffff, e escuro
+    rgb(69,69,76), que é #45454c sobre #1a1a1d. Recalculei: 1,43:1 no claro e
+    1,84:1 no escuro, os mesmos números da primeira captura. Continua sendo
+    pista de apoio sem piso de 3:1, porque a profundidade segue redundante em
+    `aria-level`, no peso dos dois primeiros níveis e no código da conta. E a
+    mudança só pode ajudar: a mesma tinta agora cobre o dobro da altura.
+  leitura_na_tela: >-
+    Capturei nos dois temas e olhei. O fio agora corre sem interrupção de uma
+    linha para a seguinte, e a coluna de traços sumiu. É a convenção de árvore
+    de arquivo que o comentário invoca, agora de fato.
+  limite_da_minha_verificacao: >-
+    Registro por honestidade: minhas medições de navegador são Chromium, que é
+    o motor da suíte. Percentual de altura em filho de `<td>` é território que
+    já divergiu entre motores, então a continuidade está provada onde a suíte
+    roda e não em Firefox ou WebKit. Não é achado, é escopo do que eu
+    verifiquei.
+
+achados: []
+
+observacao_sem_severidade: >-
+  A guarda de continuidade vive só na story de densidade confortável, e a
+  compacta é coberta apenas pelo `conferirRegua`. Não abro achado por isso e
+  digo o porquê em vez de deixar no ar: o mecanismo é `block-size: 100%`, que é
+  indiferente à densidade e não tem como funcionar em 48 e falhar em 36, e eu
+  medi a compacta na mão nos dois temas. Qualquer regressão do mecanismo cai na
+  story confortável, como a minha sabotagem demonstrou.
+
+o_que_me_surpreendeu:
+  - >-
+    Resolver a colisão de zebra contra seleção com `@layer` em vez de subir a
+    especificidade. Era exatamente o ponto onde a correção fácil estragaria a
+    peça: bastava escrever
+    `.citie-table tbody tr.citie-table__linha--selecionada` para o teste ficar
+    verde, e o arquivo herdaria mais uma regra pesada demais que a próxima
+    pessoa precisaria vencer com outra ainda mais pesada. A camada tira a
+    decisão do peso do seletor e a põe onde ela vira uma frase legível,
+    declarada uma vez: zebra primeiro, seleção depois. Os nomes de camada são os
+    mesmos em Table.css e TreeTable.css, com a ordem declarada nos dois, então
+    as duas tabelas obedecem à mesma frase, e nenhum outro CSS do repositório
+    usa `@layer`, então não existe ordem concorrente declarada antes. Sabotei as
+    duas, em duas capturas diferentes, e cada uma reprovou só a própria story de
+    paridade.
+  - >-
+    A story de paridade construída contra os próprios falsos positivos. Antes de
+    marcar qualquer coisa ela afirma que a linha par e a ímpar têm fundos
+    DIFERENTES em repouso, e guarda o valor. Depois de marcar, exige que as duas
+    paridades sejam iguais entre si E que a par tenha saído da cor em que
+    estava. Sem a primeira asserção, uma tabela sem zebra passaria; sem a
+    última, zebra e seleção pintando a mesma cor passariam. Foi escrita para um
+    defeito que atravessou a suíte verde justamente porque as duas stories de
+    seleção existentes escolhiam linha ímpar, e ela é a resposta certa a essa
+    lição: não basta cobrir o caso, é preciso impedir que o teste passe pelo
+    motivo errado.
+  - >-
+    O reaponte de `--citie-control-height-normal` e `-large` dentro do container
+    de conteúdo da célula compacta, que remedi de novo hoje e continua de pé. É
+    inversão de controle escrita em CSS: a tabela publica um contrato de
+    densidade e os controles obedecem sem que nenhum dos dois conheça o outro,
+    em vez de a tabela redesenhar botão alheio por seletor descendente. O risco
+    óbvio da técnica é vazar, e não vaza: 40px no body, 40px no envoltório da
+    tabela, 40px na própria `.citie-table`, 32px só dentro de
+    `.citie-table__conteudo`. E compõe com uma decisão que mora em outro
+    componente, porque o alvo de toque do Button cresce por pseudo-elemento
+    absoluto e chega a 44px sem inflar a linha: a compacta fica em 37,00px com
+    alvo medido de 59,05 x 32,00px, acima do mínimo de 24x24 da WCAG 2.5.8.
+  - >-
+    Menciono a quarta sem inflar a conta, porque ela é da mesma família das
+    outras e eu a verifiquei nas quatro capturas: o `tbody tr:has(+ tr:hover) td`
+    para apagar o fio de cima da linha apontada, que na verdade é o fio de baixo
+    da anterior, com `border-color: transparent` no lugar de remover a borda
+    para a peça não custar deslocamento nenhum. O que mostra projeto e não
+    checklist é a exceção declarada: quando a linha apontada é a primeira, o fio
+    do cabeçalho permanece de propósito, porque o cabeçalho é outro plano.
+
+o_que_faltou_para_surpreender: []
+
+motivo_do_veredito: >-
+  Subo para SURPREENDEU, e explico o critério para que a nota seja auditável em
+  vez de simpática.
+  O andar técnico está vencido sem ressalva: typecheck e lint sem erro, recorte
+  44 de 44 no claro e 100% no escuro, cinco stories novas e nenhuma perdida, e
+  as falhas escuras dos consumidores sem um único seletor do recorte pela quarta
+  captura. Anti-slop passa em todas as famílias que eu tinha marcado como
+  prováveis.
+  O andar de mérito está vencido pela evidência acumulada, e não por impressão.
+  Três decisões de projeto específicas resolvem problemas que ninguém tinha
+  pedido para resolver, e eu as medi hoje em vez de repetir de memória. Mais
+  importante do que cada uma isolada é o que o conjunto mostra: em quatro
+  capturas eu levantei seis achados, todos por medição própria, e os seis foram
+  fechados com a mesma disciplina que caracteriza o trabalho, incluindo o único
+  que sobrou até a captura anterior. Nenhuma asserção foi enfraquecida para o
+  teste passar, e eu verifiquei isso pelo caminho contrário: sabotei quatro
+  verificadores, incluindo um que ninguém me pediu para testar, e cada um
+  reprovou exatamente o seu alvo e nada além dele.
+  O fecho do fio é o que me convenceu no mérito, e não só no escopo. Ele veio
+  com a medição antes (24,00 em 49,00), a correção mínima (uma declaração), a
+  guarda percorrendo todos os trilhos em vez de amostrar um, e a sabotagem feita
+  pelo autor antes de me entregar. É o método da rodada aplicado ao ponto que
+  tinha escapado do método, que era exatamente a crítica que eu havia
+  registrado.
+  Registro que recusei este veredito na captura anterior, por escrito e com
+  medição. É o que separa esta nota de uma cortesia: ela mudou porque a peça
+  mudou, e eu consigo apontar a linha de CSS e o número que mudaram.

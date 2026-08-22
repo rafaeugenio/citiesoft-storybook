@@ -1,0 +1,256 @@
+revisor: Campos de formulário (superfície, estado, teclado, contraste, anti-slop)
+componente: >
+  Família de campo: primitives/Field, molecules/Input, molecules/Textarea,
+  molecules/DatePicker, campo do molecules/Select, mais os tokens
+  --citie-shadow-poco, --citie-form-field-border-hover e
+  --citie-state-focus-ring-danger. SelectButton fora de escopo.
+veredito: APROVADO
+veredito_anti_slop: PASSOU
+
+gate_tecnico:
+  typecheck: 'PASSOU. ./node_modules/.bin/tsc -b --force, exit 0, saída vazia.'
+  lint: 'PASSOU. npm run lint (oxlint) exit 0, 28 warnings, todos pré-existentes e nenhum novo no recorte.'
+  testes: >
+    Tema claro: 779 de 779, 119 arquivos, suíte COMPLETA.
+    Tema escuro: 704 de 779, 75 falhas em 18 arquivos, ZERO no recorte (filtro
+    explícito por Input/, Textarea/, DatePicker/, Select/ e Field/ devolveu 0).
+    Os 18 arquivos são de outros recortes: TreeSelect, MultiSelect, Listbox,
+    CascadeSelect, AutoComplete, Search, Tree, Button, Filters, Menubar,
+    MegaMenu, PanelMenu, TieredMenu, Terminal, Cores, PainelDeTFD, Dashboard e
+    Listagem. Eram 84 na abertura da rodada e caíram para 75, ou seja, outros
+    produtores estão abatendo essa dívida em paralelo.
+  stories_antes_depois: >
+    40 para 40. A guarda nova entrou numa story que já existia
+    ("Estado · inválido"), então a contagem não muda e o número de asserções sobe.
+
+o_achado_da_rodada_2_esta_fechado: >
+  SIM, e conferi sem aceitar a palavra de ninguém. A guarda está em
+  Input.stories.tsx:384-412. Ela lê --citie-state-focus-ring-danger E
+  --citie-state-focus-ring do PRÓPRIO elemento, então vale nos dois temas sem
+  duplicar valor, e afirma as duas coisas que importam: a tinta do anel de perigo
+  presente na sombra composta, e a tinta do anel de marca AUSENTE. A segunda
+  metade é a que fecha o buraco, porque era exatamente por ali que o defeito
+  passava.
+  Medi também o resultado renderizado, em build próprio servido, com o campo
+  inválido em foco:
+    CLARO  "rgba(220, 38, 38, 0.4) 0px 0px 0px 3px, rgba(16, 24, 40, 0.06) 0px 1px 2px 0px inset"
+    ESCURO "rgba(252, 165, 165, 0.5) 0px 0px 0px 3px, rgba(0, 0, 0, 0.35) 0px 1px 2px 0px inset"
+  O anel de perigo pinta, o de marca não aparece, e o poço continua somado por
+  baixo nos dois temas.
+
+sabotagens_executadas:
+  - alvo: 'Field.css:240 trocar --citie-state-focus-ring-danger pelo anel de marca'
+    resultado: >
+      REPROVOU. Caiu "Input > Estado · inválido" com
+      "expected 'rgba(18, 97, 228, 0.4) 0px 0px 0px 3p…' to contain 'rgba(220, 38, 38, 0.4)'".
+      É o mesmo sintoma que eu tinha descrito na rodada 2, reproduzido por conta
+      própria. Com zero ocorrências de focus-ring-danger no arquivo, a suíte
+      agora acusa, onde antes passava 779 de 779.
+  - alvo: 'Field.css:238-241 apagar a regra inteira do inválido em foco, deixando só a borda'
+    resultado: >
+      REPROVOU. Mesma story, mesma asserção. A guarda não depende do token estar
+      escrito em algum lugar do arquivo: ela cobra o EFEITO na sombra computada,
+      então some se a regra for renomeada, movida ou perdida por especificidade.
+  - alvo: 'Field.css:240 remover SÓ o poço da linha, mantendo o anel de perigo'
+    resultado: >
+      PASSOU VERDE, 29 de 29 em Input. Ver achado 2. É a metade da regra que
+      ficou sem asserção.
+  observacao: >
+    Field.css restaurado por cópia e conferido por md5
+    (459537f77ff902475caacc9a7e61a27b, idêntico ao original). As sondas que
+    escrevi na raiz foram apagadas.
+
+cobertura_nos_outros_tres_componentes: >
+  UMA GUARDA BASTA, e a razão é estrutural, não confiança. A regra vive no
+  seletor compartilhado `.citie-field-control[aria-invalid='true']:focus`
+  (Field.css:238), e os quatro componentes põem `aria-invalid` NO MESMO elemento
+  que carrega `citie-field-control`: Input.tsx:60-63, Textarea.tsx:64-69,
+  Select.tsx:68-70 e DatePicker.tsx:125-139. Logo a story do Input não protege o
+  Input, protege a regra que os quatro consomem, e as sabotagens acima confirmam
+  que mexer na regra derruba o teste.
+  Verifiquei renderizado, por garantia: no build servido, Input, Textarea e
+  Select em campo inválido com foco entregam a mesma sombra composta com o anel
+  de perigo, nos dois temas. O DatePicker não tem story de inválido, e por isso
+  não dá para medi-lo dessa forma, mas ele passa pelo mesmo FieldWrapper e
+  escreve o mesmo atributo na mesma classe, então herda a regra pelo mesmo
+  caminho. Uma story de inválido no DatePicker seria bem-vinda por completude de
+  catálogo, e não por risco de regressão, que a guarda compartilhada já cobre.
+
+achados:
+  - severidade: MENOR
+    id_anti_slop: nenhum
+    descricao: >
+      A emenda do campo com addon se parte no estado inválido, e ela é o único
+      lugar onde o recorte contraria um princípio que ele mesmo escreveu. O
+      comentário em Field.css:289-295 diz que campo e addon dividem o mesmo
+      contorno visual, que os dois escurecem juntos e que "para o usuário o grupo
+      É o campo", e a regra abaixo dele sincroniza os dois no hover e no
+      preenchido justamente para a junção não ler como defeito. O estado inválido
+      ficou de fora: o campo vai para o vermelho e o addon permanece na cor
+      neutra. O resultado é um "R$" cinza colado num campo vermelho, com a
+      fronteira trocando de cor no meio da peça.
+      O componente irmão molecules/InputGroup resolve exatamente este caso em
+      InputGroup.css:65-70, com comentário próprio, o que mostra que o padrão é
+      conhecido na casa e que aqui ele só não foi aplicado.
+      Não é falha de conformidade: o campo mantém a própria borda de perigo, e o
+      erro ainda é anunciado por ícone e por texto, então a cor não é indicador
+      único. É coerência da peça, e o estado é alcançável pela API pública com
+      `<Input addonStart="R$" error="..." />`, sem story que o exercite.
+    evidencia: >
+      src/components/primitives/Field/Field.css:296-299 sincroniza addon e campo
+      apenas para hover e preenchido; nenhuma regra cobre aria-invalid.
+      Medido no build servido, sobre a marcação REAL do componente (story
+      "Regra · degrau de resposta ao ponteiro", que já renderiza Input com
+      addonStart="R$"), alternando só o atributo que o próprio Input escreve:
+        claro  campo rgb(220, 38, 38)  addon rgb(107, 113, 119)
+        escuro campo rgb(220, 38, 38)  addon rgb(143, 143, 143)
+      Captura em caps3/real-addon-invalido-{light,dark}.png.
+    correcao_exigida: >
+      Estender a emenda ao inválido, no mesmo molde da regra de hover que já está
+      ali, de forma que o addon acompanhe --citie-border-danger quando o controle
+      do grupo estiver com aria-invalid, mais uma story que afirme que as duas
+      bordas computadas são iguais nesse estado.
+
+  - severidade: POLIMENTO
+    id_anti_slop: nenhum
+    descricao: >
+      A guarda nova mede metade da regra que protege. A linha que ela defende
+      declara DUAS coisas, o anel de perigo e o poço somado por baixo
+      (Field.css:240), e a asserção cobra só o anel. Removi apenas
+      `var(--citie-elevacao-do-campo)` dessa linha, mantendo o anel de perigo, e
+      a suíte do Input passou 29 de 29. O campo inválido pode aplainar ao receber
+      foco sem que nada reclame, que é precisamente o que o comentário em
+      Field.css:191-192 diz que não pode acontecer.
+      Registro a assimetria porque a guarda irmã, 180 linhas acima na mesma
+      story-file, faz certo: "Estado · foco por teclado"
+      (Input.stories.tsx:218-224) afirma o anel E o poço. A variante de perigo
+      copiou a técnica e deixou a segunda asserção para trás.
+    evidencia: >
+      src/components/molecules/Input/Input.stories.tsx:408-412 contra 220-224.
+      Sabotagem 3 acima.
+    correcao_exigida: >
+      Acrescentar à guarda de perigo a mesma linha que a guarda de marca já tem,
+      lendo --citie-shadow-poco do elemento e exigindo a tinta dele na sombra
+      composta.
+
+  - severidade: POLIMENTO
+    id_anti_slop: nenhum
+    descricao: >
+      O idioma `.slice(x.indexOf('rgba'))`, usado pelas três asserções de sombra
+      do recorte, depende de o valor do token chegar em notação `rgba()`, e essa
+      premissa vale no ambiente de teste mas não no build. Descobri por engano
+      meu: montei uma sonda com o mesmo idioma para medir o build servido e ela
+      devolveu resultado sem sentido, porque o minificador reserializa
+      `rgba(220, 38, 38, 0.4)` como `#dc262666`. Com isso `indexOf` devolve -1 e
+      `slice(-1)` entrega o último caractere, e a comparação passa a ser feita
+      contra uma letra solta.
+      Deixo claro o que isto NÃO é: as asserções do recorte rodam no ambiente do
+      vitest, onde os tokens chegam em `rgba()`, e eu confirmei os valores crus
+      de todos os três tokens nos dois temas. Além disso, se o ambiente mudasse,
+      a asserção de ausência do anel de marca reprovaria em vez de passar calada,
+      então não há risco de verde falso. É fragilidade de idioma, e vale
+      registrar porque a casa já resolveu esse mesmo problema direito: a função
+      `corDoToken` em primitives/Field/medicao.ts:17-21 converte o hex do token
+      para `rgb()` justamente para não depender da notação. As asserções de
+      sombra não têm equivalente.
+    evidencia: >
+      Valores lidos no build minificado servido, campo inválido em foco:
+      --citie-state-focus-ring-danger = "0 0 0 3px #dc262666" no claro e
+      "0 0 0 3px #fca5a580" no escuro; --citie-shadow-poco =
+      "inset 0 1px 2px #1018280f" e "inset 0 1px 2px #00000059".
+      No vitest os mesmos tokens chegam em `rgba()`, e por isso as guardas passam.
+    correcao_exigida: >
+      Um helper irmão de `corDoToken` que normalize a tinta de uma sombra
+      independentemente da notação, usado pelas três asserções, ou um comentário
+      registrando que o idioma pressupõe o CSS não minificado do ambiente de teste.
+
+o_que_me_surpreendeu:
+  - >
+    A guarda de hover partida em duas metades, e a honestidade de explicar por que
+    ela precisou ser partida. A rodada 1 pediu "uma story que passe o ponteiro no
+    campo". O produtor descobriu que essa story não existe de forma confiável
+    naquele ambiente e escreveu o porquê em primitives/Field/medicao.ts:48-70, com
+    número: o pseudo `:hover` responde à posição física do cursor,
+    `userEvent.hover` despacha evento sintético e não move cursor nenhum, então a
+    medição leria a cor de repouso e passaria verde sem provar nada; das duas
+    saídas que mexem no estado de verdade, o cursor do Playwright para de voltar
+    com os 119 arquivos, e o `CSS.forcePseudoState` do CDP gastou 5,5s só no
+    `DOM.enable` contra 15s de tempo total do teste. Em vez de entregar a asserção
+    frouxa que passaria, partiu a guarda em VALOR (o campo preenchido e o addon
+    pintam pelo mesmo token do hover, e a cor computada é medida renderizada) e
+    ALVO (as três regras de hover são lidas na folha de estilo viva e comparadas
+    com esse valor). E a função que lê o alvo tem guarda sobre a própria guarda:
+    falha alto quando a regra some ou muda de nome, e falha alto de novo se a
+    regra declarar cor solta em vez de token, com a mensagem "que é cor solta.
+    Cor de fronteira no DS vem de token". Sabotei o hover na rodada 2 e ela pegou
+    o valor exato do defeito.
+  - >
+    O gate de acessibilidade ser consciente do tema, e isso ter aparecido sozinho
+    numa sabotagem que eu não desenhei para provocá-lo. Quando fiz o somente
+    leitura desbotar a tinta, eu esperava derrubar a asserção de comparação, e
+    derrubei. O que não esperava foi ver "Estado · somente leitura" cair por
+    `toHaveNoViolations` no mesmo instante: o axe varre a story no tema com que
+    ela de fato renderiza, por decisão registrada em .storybook/preview.tsx:49-70,
+    com a nota de que sem isso o tema escuro nunca seria varrido e qualquer
+    regressão nos tokens de `[data-theme='dark']` passaria calada. O efeito
+    prático é que a distinção entre consolidado e indisponível está protegida por
+    dois mecanismos independentes, um de projeto e um de conformidade, e quem
+    quebrar a decisão apanha das duas fontes ao mesmo tempo.
+  - >
+    A recusa do pseudo `:read-only`, que eu reconferi nesta rodada e continua
+    sendo a decisão mais fina do recorte. Pintar o consolidado com `:read-only`
+    seria o caminho óbvio e estaria errado por um motivo que só aparece um
+    componente adiante: o campo-gatilho do DatePicker carrega `readonly` como
+    detalhe de implementação, porque a data entra pelo calendário, então o pseudo
+    pintaria de "dado decidido" uma porta de entrada de edição. O par de stories
+    trava os dois lados: "DatePicker · default" afirma atributo presente, classe
+    ausente e poço INTACTO (DatePicker.stories.tsx:48-59); a de somente leitura
+    afirma classe presente e poço aplainado.
+
+o_que_faltou_para_surpreender:
+  - >
+    Um achado MENOR permanece em escopo, e é o que segura o veredito: a emenda do
+    addon se parte no inválido, contrariando o princípio que o próprio Field.css
+    escreve três parágrafos acima e que o componente irmão InputGroup aplica
+    corretamente. Não é dívida herdada nem questão de gosto: é a mesma peça, o
+    mesmo arquivo, o mesmo padrão, aplicado a dois estados e esquecido no
+    terceiro, num estado alcançável pela API pública e sem story que o exercite.
+    Junto com ele vai a assimetria da guarda nova, que mede o anel e esquece o
+    poço da mesma linha, quando a guarda irmã na mesma story-file mede os dois.
+    Os dois consertos são pequenos e do tipo que este produtor já demonstrou
+    saber fazer melhor do que a média. Fechados, e com uma story de inválido no
+    DatePicker por completude, o recorte vai para SURPREENDEU com as três
+    decisões acima já nomeadas e com evidência medida.
+
+motivo_do_veredito: >
+  APROVADO, pelo segundo veredito seguido, e por um motivo diferente do anterior.
+  O achado que eu levantei na rodada 2 está fechado de verdade, e não no papel: a
+  guarda nova cobra o EFEITO na sombra computada em vez do texto do CSS, lê os
+  dois tokens do próprio elemento para valer nos dois temas, e afirma tanto a
+  presença do anel de perigo quanto a ausência do anel de marca, que era por onde
+  o defeito passava. Sabotei de três formas diferentes e ela mordeu em duas,
+  inclusive quando apaguei a regra inteira em vez de só trocar o token. O gate
+  técnico passa inteiro: typecheck e lint limpos, 779 de 779 no claro, e no
+  escuro nenhuma falha no recorte, com as 75 restantes distribuídas por 18
+  arquivos de outros recortes.
+  Também respondi a pergunta de cobertura sem me apoiar em confiança: a regra
+  mora no seletor compartilhado e os quatro componentes escrevem `aria-invalid`
+  na mesma classe, então uma guarda protege a regra que todos consomem, e eu
+  confirmei renderizado que Input, Textarea e Select entregam o anel de perigo
+  nos dois temas.
+  O que impede SURPREENDEU é um MENOR que eu encontrei nesta captura e que não é
+  o achado antigo reciclado: a emenda do campo com addon se parte no estado
+  inválido. O campo vai para o vermelho e o addon fica cinza, e isso contraria
+  literalmente o princípio que Field.css:289-295 declara e aplica ao hover e ao
+  preenchido, enquanto o componente irmão InputGroup cobre o caso. Reproduzi com
+  a marcação real do componente, nos dois temas, e o estado é alcançável pela API
+  pública. Some-se o POLIMENTO da guarda nova medir só metade da própria regra,
+  provado por sabotagem que passou verde.
+  Registro uma correção minha, porque ela deu origem a um dos polimentos: minha
+  primeira sonda sobre o build mediu errado e sugeriu que o anel de marca e o
+  poço não estavam onde deviam. O erro era meu, o build minifica `rgba()` para
+  hex, e conferi os valores crus antes de afirmar qualquer coisa. O componente
+  estava certo nos dois temas.
+  Este é um APROVADO alto e honesto. O recorte tem três decisões de projeto de
+  verdade, todas medidas e todas resistentes a ataque, e o que falta é
+  acabamento de coerência num estado que ninguém exercitou.

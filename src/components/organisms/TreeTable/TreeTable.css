@@ -138,6 +138,20 @@
  * 1,83:1 sobre a escura) basta aqui e não há piso de 3:1 a cumprir.
  */
 .citie-treetable__conteudo--hierarquia {
+  /*
+   * O fio ocupa a altura inteira da célula, e não a do contêiner de conteúdo.
+   *
+   * Medido antes: o elemento pintado media 24,00px dentro de uma linha de
+   * 49,00px, então a tela mostrava uma coluna de traços com vão de 25px. A
+   * convenção de árvore de arquivo que este trilho invoca é contínua, e traço
+   * interrompido a cada linha obriga o olho a reconstruir a ligação que o fio
+   * existe para dar pronta.
+   *
+   * `block-size: 100%` faz o contêiner acompanhar a célula, e o fundo do fio
+   * acompanha junto. A centralização vertical do conteúdo continua no
+   * `align-items: center` herdado.
+   */
+  block-size: 100%;
   gap: var(--citie-spacing-2);
   padding-inline-start: calc(var(--citie-treetable-nivel, 0) * var(--citie-spacing-4));
   background-image: repeating-linear-gradient(

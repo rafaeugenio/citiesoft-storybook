@@ -1,0 +1,216 @@
+revisor: acessibilidade, motion e comportamento de overlay/feedback (B2G, e-MAG + WCAG 2.2 AA) — terceira rodada
+componente: >
+  Feedback (Toast, ToastStack, Message), ConfirmPopup, ConfirmDialog
+  (Organismos/Overlay) e os tokens do recorte: --citie-aresta-tonal,
+  --citie-entrelinha-corpo, --citie-largura-toast.
+veredito: SURPREENDEU
+veredito_anti_slop: PASSOU
+gate_tecnico:
+  typecheck: "./node_modules/.bin/tsc -b --force: saída vazia, exit 0"
+  lint: >
+    npm run lint: nenhum erro. No recorte, um único warning, o
+    `only-export-components` em Feedback.tsx:15, que já existia antes desta
+    rodada e agora é até menos verdadeiro do que era: `tempoCssEmMs` saiu do
+    Feedback.tsx para o módulo próprio `tempoCss.ts`.
+  testes: >
+    Recorte (Feedback, ConfirmPopup, Overlay): 22 de 22 no claro e 22 de 22 no
+    escuro, 6 arquivos em cada.
+  stories_antes_depois: >
+    Toast 4 para 4 · Message 5 para 5 · ConfirmPopup 6 para 6 ·
+    ConfirmDialog 2 para 2. Contado contra `git show HEAD:<arquivo>`.
+    Nenhuma story perdida em três rodadas.
+
+o_achado_maior_da_rodada_2: >
+  CORRIGIDO, e verificado por mim com o mesmo método que o encontrou.
+  Reconstruí o Storybook (`npm run build-storybook`), confirmei que o token
+  continua reserializado como `citie-motion-rapido:.14s` no artefato e que as
+  duas regras novas chegaram minificadas ao bundle
+  (`storybook-static/assets/Feedback-CM4974S1.css` contém
+  `citie-toast-stack__item--saindo:not(:last-child){margin-block-end:0}` e
+  `:has(+.citie-toast-stack__item--saindo:last-child){margin-block-end:0}`),
+  servi em :6187 e amostrei quadro a quadro pela URL do manager.
+
+  Caminho principal (excedente do `max`, sai o primeiro item, que não é
+  `:last-child`), tema claro:
+    t=0    margens 12px,12px,1.08,0px   topoUltimo 261,55  baseDaPilha 217,70
+    t=67   margens  8.40,12px,6.99,0px  topoUltimo 249,41  baseDaPilha 205,56
+    t=133  margens  0.90,12px,12px,0px  topoUltimo 216,83  baseDaPilha 172,98
+    t=150  margens  0px,12px,12px,0px   topoUltimo 212,31  baseDaPilha 168,47
+    t=167  (nó removido)                topoUltimo 212,31  baseDaPilha 168,47
+
+  Tema escuro, mesmo desfecho: 261,66 até 212,31 e 212,31 depois da remoção.
+  O número que a rodada 2 pediu: **o degrau no quadro da remoção é 0,00px**,
+  contra os 12,00px de antes. O deslocamento de 49,24px agora é 100% animado,
+  contra os 76% anteriores. O maior degrau entre dois quadros quaisquer é
+  10,72px, no meio do percurso, que é aceleração de easing e não salto.
+
+  Sabotagem, feita por mim e não aceita de palavra: devolvendo a regra de saída
+  para `.citie-toast-stack__item--saindo` sem o `:not(:last-child)`, ou seja
+  reintroduzindo exatamente a especificidade errada da rodada 2,
+  `npm run test-storybook -- Toast` reprova com
+  "AssertionError: expected 12 to be less than or equal to 1.5". O número que
+  aparece é o próprio salto de 12px. A asserção morde a causa, e não um sintoma
+  vizinho.
+
+o_achado_menor_da_rodada_2: >
+  CORRIGIDO, e também sabotado por mim. A conversão saiu para
+  `src/components/molecules/Feedback/tempoCss.ts` e a suíte afirma as duas
+  grafias que o mesmo token assume, mais os casos nulos. Quebrando o tratamento
+  de sufixo (`return numero` direto, que é a leitura ingênua da rodada 1), a
+  suíte reprova com "expected 0.14 to be close to 140". É literalmente o
+  bloqueador da rodada 1 sendo pego por teste, num ambiente que nunca minifica
+  CSS e portanto nunca veria a grafia `.14s` só observando o comportamento em
+  cena. Foi a correção que pedi, feita do jeito que pedi.
+
+a_regra_com_has: >
+  Confere. Testei os cinco arranjos, nos dois temas, no artefato:
+
+  - **Sai o primeiro (não é `:last-child`)**: cai na regra
+    `--saindo:not(:last-child)`, que empata em 0,2,0 com a base e vence por vir
+    depois. Margem 12px até 0px durante a transição. Degrau de 0,00px.
+  - **Sai o último (`:last-child`)**: o respiro pendurado é o do vizinho de
+    cima, e é o `:has()` que o coleta. A margem do vizinho vai de 12px a 0px
+    junto com o colapso; a base da pilha vai de 168,47 a 108,31 e permanece
+    108,31 depois da remoção. Nenhum degrau.
+  - **Sai o único da pilha**: não há margem em lugar nenhum (é `:last-child` e
+    não tem vizinho). A pilha vai de 48,16px de altura a 0, e de 1 item a 0.
+  - **Saem os dois últimos ao mesmo tempo**: aqui o `:has()` não casa, porque o
+    vizinho seguinte do sobrevivente está saindo mas não é `:last-child`. Foi o
+    furo que procurei. Não é furo: rastreando a caixa do item sobrevivente por
+    referência de nó, quadro a quadro, a variação máxima de topo e de base é
+    **0,00px** do primeiro ao último quadro. Os 12px residuais ficam ABAIXO da
+    última caixa e não empurram nada visível; a margem se resolve depois, sem
+    mover pixel de conteúdo.
+  - **Saem todos ao mesmo tempo**: a pilha colapsa de 168,47 a 0 de forma
+    contínua em 153ms e os três nós saem juntos. Zero itens presos.
+
+  Também confirmei o mérito da especificidade que o comentário alega: o `:has()`
+  carrega o peso do argumento mais específico, `.classe:last-child` = 0,2,0, o
+  que dá 0,3,0 no seletor inteiro e vence a base de 0,2,0. O comentário está
+  correto e é verificável.
+
+achados:
+  - severidade: POLIMENTO
+    id_anti_slop: nenhum
+    descricao: >
+      A regra com `:has()` é a única peça nova desta rodada que nenhum teste
+      cobre. Neutralizando o seletor (trocando `--saindo` por uma classe que
+      não existe, o que apaga a regra sem apagar a linha), o recorte inteiro
+      continua verde: 22 de 22 em 6 arquivos. A story exercita só o caminho do
+      excedente do `max`, em que quem sai é o primeiro item, e esse caminho não
+      passa pelo `:has()`.
+    evidencia: >
+      Sabotagem 2, em `src/components/molecules/Feedback/Feedback.css:70`:
+      `.citie-toast-stack__item:has(+ .citie-toast-stack__item--jamais:last-child)`.
+      `npm run test-storybook -- Toast ConfirmPopup Overlay Feedback` devolveu
+      "Test Files 6 passed (6) / Tests 22 passed (22)". Arquivo restaurado do
+      backup; as duas regras seguem nas linhas 57 e 70.
+
+      Medi também quanto custa a ausência dela, para não superdimensionar o
+      achado: fechando o último toast com e sem a regra, a altura final da pilha
+      é a mesma (108,31px nas duas) e a caixa do vizinho não se desloca em
+      nenhuma das duas (0,00px de variação máxima entre quadros). O que a regra
+      compra é a curva de altura chegando ao valor final numa transição só, em
+      vez de deixar 12px para uma segunda transição depois da remoção do nó.
+      É refinamento real, e menor do que o do caminho principal.
+    correcao_exigida: >
+      Nada bloqueante. Se a story for revisitada, uma segunda medição fechando o
+      ÚLTIMO toast (em vez do excedente) faria o `:has()` deixar de ser a única
+      regra da coreografia sem rede. O helper `medirSaidaDaPilha` já devolve
+      `margemFinal`, então daria para reaproveitá-lo quase inteiro medindo a
+      margem do vizinho de cima em vez da do item que sai.
+
+  - severidade: POLIMENTO
+    id_anti_slop: nenhum
+    descricao: >
+      Herdado do laudo anterior e ainda aberto, fora do escopo deste diff: a
+      linha de excedente da lista de erros do Message não concorda em número.
+      Com 6 erros, `excedente` vale 1 e sai "e mais 1 erros".
+    evidencia: >
+      `src/components/molecules/Feedback/Feedback.tsx`, na linha do
+      `{excedente > 0 ? ...}`. Pré-existente: `git show HEAD` traz a mesma
+      linha. Não conta contra este veredito.
+    correcao_exigida: >
+      "e mais 1 erro" no singular, quando alguém revisitar o Message.
+
+o_que_continua_verdadeiro_apos_reconferir:
+  - >
+    Rede de segurança em região oculta: com a pilha em `display: none`, onde
+    `transitionend` nunca dispara, fechar os três toasts deixa 0 toasts e 0
+    itens no DOM depois de 2 segundos. Nenhum nó preso e anunciável ao leitor
+    de tela.
+  - >
+    Movimento reduzido: sem fase de saída, a pilha vai de 3 para 2 sem nenhum
+    item marcado como saindo.
+  - >
+    Estresse: 10 disparos com 35ms entre eles fecham a pilha em 3 itens, 0
+    marcados presos, títulos "Notificação 12, 13, 14", nenhum duplicado. O
+    contador monotônico resolveu a colisão de id que a rodada 1 apontou.
+  - >
+    Aresta tonal: os oito valores documentados continuam reproduzíveis no
+    artefato (claro 1,50 · 1,54 · 1,52 · 1,67; escuro 1,80 · 1,66 · 1,94 ·
+    1,75), com o token trocando de 30% para 25% entre os temas.
+  - >
+    ConfirmDialog: foco inicial em "Cancelar", ação segura primeiro no DOM e no
+    Tab, e separação física que se mantém até 320px de viewport (133,4px de
+    folga a 420px, 73,4px a 360px, 33,4px a 320px) sem scroll horizontal.
+
+o_que_me_surpreendeu:
+  - >
+    O conserto do salto não foi um `!important` nem um valor calibrado até
+    parar de aparecer: foi um diagnóstico de especificidade escrito por extenso
+    no lugar onde ele importa. O comentário em Feedback.css:47-56 explica que
+    `:not(:last-child)` pesa como uma classe, que a base vale 0,2,0, que uma
+    regra de saída com a classe sozinha perderia "em silêncio, qualquer que
+    fosse a ordem no arquivo", e por que repetir a condição empata as
+    especificidades "sem `!important`". Conferi cada afirmação e todas se
+    sustentam, inclusive a do `:has()` carregando 0,2,0 do argumento e somando
+    0,3,0. É a diferença entre consertar o sintoma e deixar registrado por que
+    a próxima pessoa não pode simplificar aquele seletor. Quem herdar este
+    arquivo não vai reintroduzir o defeito por engano, e essa é uma propriedade
+    que quase nenhum CSS tem.
+  - >
+    A asserção nova mede o CAMINHO, e não só a duração, que é a distinção que
+    as duas rodadas anteriores erraram por não fazer. `medirSaidaDaPilha`
+    devolve quatro grandezas (intervalo, salto, deslocamento, margemFinal) e a
+    story afirma as quatro em conjunto: a saída tem que durar mais que o piso,
+    o degrau no quadro da remoção tem que ser menor que 1,5px, o deslocamento
+    total tem que ser MAIOR que 1,5px (senão "não saltou" passaria trivialmente
+    num percurso de zero pixels), e a margem final do item que sai tem que
+    estar zerada. Essa terceira asserção é a que me impressiona: é a guarda
+    contra o próprio teste virar tautologia, e ninguém pediu por ela. Fechando
+    o par, `SALTO_TOLERADO_PX = 1.5` está documentado como "zero seria exigir
+    igualdade de ponto flutuante entre dois quadros", que é a justificativa
+    honesta de uma tolerância, em vez do número que faz o teste passar.
+  - >
+    O vazamento de estado do excedente do `max`, que confirmei na primeira
+    passagem e sigo confirmando, continua sendo a decisão silenciosa mais bem
+    resolvida do componente: o toast descartado por exceder o limite sai pela
+    mesma coreografia da dispensa manual e o `onDismiss` do chamador é chamado
+    para ele, em vez de o item sumir do DOM deixando o estado do chamador com
+    um toast que já não existe. É o tipo de coisa que ninguém pede em spec e
+    que quebra silenciosamente um serviço de toast real.
+
+o_que_faltou_para_surpreender: []
+
+motivo_do_veredito: >
+  Julgo o estado do componente hoje, e o estado é raro. As três coisas que
+  reprovaram nas rodadas anteriores foram consertadas na causa, e eu verifiquei
+  as três sabotando o código eu mesmo: a especificidade errada volta a reprovar
+  com "expected 12 to be less than or equal to 1.5", a leitura ingênua de
+  unidade volta a reprovar com "expected 0.14 to be close to 140", e a colisão
+  de id não reaparece nem com 10 disparos em 350ms. A coreografia que só
+  existia no servidor de desenvolvimento agora roda no artefato minificado com
+  degrau de 0,00px no quadro da remoção, nos dois temas, contra os 12,00px que
+  medi na rodada passada. A regra com `:has()` cobre os cinco arranjos de saída
+  que consegui construir, incluindo o que eu esperava que fosse o furo dela.
+  Sobrou um polimento de cobertura, não de comportamento: essa regra é a única
+  peça sem teste, e medi que a ausência dela não move pixel visível.
+  O que eleva de correto para notável não é o conserto, é o que ficou escrito
+  junto dele. O comentário de especificidade em Feedback.css transforma uma
+  armadilha de CSS num aviso permanente para quem vier depois, e a asserção da
+  story mede o caminho do vizinho em vez do relógio, com uma guarda explícita
+  contra virar tautologia. Duas decisões específicas, verificáveis, que
+  resolvem problemas que ninguém tinha pedido para resolver: a de impedir que o
+  defeito volte por simplificação inocente, e a de impedir que o teste passe
+  por vacuidade. Isso é SURPREENDEU sem inflar nada.

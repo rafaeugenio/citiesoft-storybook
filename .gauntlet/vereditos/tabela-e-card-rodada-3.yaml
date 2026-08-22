@@ -1,0 +1,167 @@
+revisor: Revisor independente de tabela, árvore e contêiner
+componente: Card, Table, TreeTable e DataView, captura final
+veredito: APROVADO
+veredito_anti_slop: PASSOU
+
+resumo_curto: >-
+  As duas correções estão feitas e conferidas. O gate técnico está limpo nos
+  dois temas e as três sabotagens reprovaram exatamente o que deviam. As duas
+  decisões de projeto que eu já havia registrado seguem intactas e verificadas
+  hoje, e uma terceira apareceu na releitura. Fico em APROVADO por um motivo só,
+  e ele não é técnico: um achado POLIMENTO da primeira captura atravessou as
+  três rodadas sem ser tocado, e é justamente o único elemento visual que esta
+  leva inventou. Está descrito abaixo com o que o fecha, que é uma linha de CSS
+  ou uma oração de comentário.
+
+gate_tecnico:
+  typecheck: 'tsc -b --force, exit 0'
+  lint: 'oxlint, zero erro. Só avisos preexistentes, nenhum novo.'
+  testes: >-
+    Recorte no tema claro (Table, TreeTable, Card, DataView): 44 de 44, exit 0.
+    Recorte no tema escuro: 100% verde.
+    Consumidores no escuro: 19 falhas em 3 arquivos, e o conjunto de seletores
+    de violação é idêntico pela TERCEIRA captura seguida:
+    .citie-filtro-chip__valor (11), .citie-chart__legenda-valor (8) e um
+    .citie-button--text no Dashboard. Varri o relatório procurando qualquer
+    violação cujo seletor citasse table, treetable, card ou dataview: nenhuma.
+    Dívida antiga do Filters e do Chart, inalterada.
+  stories_antes_depois: >-
+    Contra o estado anterior à rodada (HEAD~1): Table 9 para 10, TreeTable 11
+    para 12, Card 8 para 10, DataView 10 para 12. Nenhuma perdida, cinco
+    entraram, todas cobrindo buracos apontados em revisão.
+
+confirmacao_das_duas_correcoes:
+  travessao: >-
+    FECHADO, e conferido nos onze arquivos do recorte, e não só no que eu tinha
+    apontado: Table, TreeTable, Card e DataView, css, tsx e stories, todos
+    devolvem zero ocorrências do caractere. O trecho ficou melhor do que estava
+    antes do defeito: "192 no 7 e 176 no 8**, ou seja, 16px a menos por nível e
+    5,6% da coluna". O travessão escondia a relação entre as duas medidas e o
+    "ou seja" a nomeia, então a correção pagou juros.
+  limitacao_no_presente: >-
+    FECHADO. Card.stories.tsx:28 agora lê "o `DataView` suprimia as ações do
+    item quando havia `href`, contorno que saiu junto com esta correção". Os
+    três lugares que citavam o contorno (Card.css:175, Card.stories.tsx:28 e a
+    story do DataView) estão no passado e concordam entre si.
+  escopo_das_correcoes: >-
+    Confirmei que as duas mudanças são cirúrgicas: `git diff` devolve uma linha
+    trocada em cada arquivo, duas ao todo, e nenhum outro arquivo do recorte foi
+    tocado. Nada entrou de carona.
+
+verificacoes_de_ceticismo:
+  sabotagem_da_camada_de_paridade: >-
+    REPROVA, pela terceira vez e do mesmo jeito. Removi as camadas de
+    Table.css, devolvendo as duas regras ao escopo sem camada onde a
+    especificidade volta a decidir: 1 de 10 falhou, só
+    'Estado · seleção na linha par da zebra', em Table.stories.tsx:269. As
+    outras nove passaram, então a camada é o que segura o comportamento e a
+    story é o que o cobre. Restaurado e conferido byte a byte.
+  sabotagem_da_regua_nova_da_treetable: >-
+    Esta eu fiz por conta própria, e é a que mais importava. A TreeTable ganhou
+    um `conferirRegua` próprio nesta leva, que era um POLIMENTO meu da primeira
+    captura, e verificador novo merece a mesma desconfiança que os outros.
+    Troquei `border-collapse` para `collapse` em TreeTable.css: 2 de 12
+    falharam, as duas densidades, em TreeTable.stories.tsx:313, que é a
+    asserção de altura inteira, alcançada pelas chamadas em 299 e 322. A régua
+    da árvore pega o defeito pela mesma via que a da tabela plana. Restaurado
+    byte a byte.
+  arvore_limpa: >-
+    Depois das sabotagens, `git status` no recorte devolve apenas os dois
+    arquivos das correções do time lead. `border-collapse: separate` continua
+    presente uma vez em cada tabela e as camadas continuam declaradas nas duas.
+    Nada meu ficou para trás.
+
+achados:
+  - severidade: POLIMENTO
+    id_anti_slop: nenhum
+    descricao: >-
+      O fio de hierarquia da TreeTable continua interrompido entre linhas.
+      Remedi hoje, nível por nível: o elemento pintado mede 24,00px dentro de
+      uma linha de 49,00px, em todos os níveis. O resultado na tela é uma
+      coluna de traços com vão de 25px, e não um fio. O comentário que o
+      introduz invoca a convenção de árvore de arquivo, cuja leitura canônica é
+      contínua. Sou justo com o alcance: a alegação FUNCIONAL do comentário se
+      sustenta e eu a verifiquei, porque três fios lado a lado continuam
+      significando nível 4, e a profundidade segue redundante em `aria-level`,
+      no peso dos dois primeiros níveis e no código da conta. O que falta é
+      acabamento, e é por isso que segue como POLIMENTO e não sobe de faixa.
+      O que pesa é outra coisa: este é o único elemento visual que a rodada
+      INVENTOU, e é o único item que atravessou as três capturas sem ser
+      tocado, enquanto cinco achados ao redor dele foram fechados com
+      sabotagem resistindo.
+    evidencia: >-
+      Medido no build servido, story organismos-tabelas-treetable--lotacao,
+      cinco linhas de níveis 0 a 2: alturaDoFio 24,00 e alturaDaLinha 49,00 em
+      todas, com background-size 0px, 16px e 32px conforme o nível. Regra em
+      src/components/organisms/TreeTable/TreeTable.css:139-149; o trecho do
+      comentário que invoca a convenção está em TreeTable.css:129-132.
+    correcao_exigida: >-
+      Uma das duas, e qualquer uma fecha: o fio passa a ocupar a altura da
+      célula em vez da caixa de texto, ou o comentário troca a referência à
+      árvore de arquivo por uma descrição do que a peça de fato desenha.
+
+o_que_me_surpreendeu:
+  - >-
+    Resolver a colisão de zebra contra seleção com `@layer` em vez de subir a
+    especificidade. Era exatamente o ponto onde a correção fácil estragaria a
+    peça: bastava escrever `.citie-table tbody tr.citie-table__linha--selecionada`
+    para o teste ficar verde, e o arquivo herdaria mais uma regra pesada demais
+    que a próxima pessoa precisaria vencer com outra ainda mais pesada. A camada
+    tira a decisão do peso do seletor e a põe onde ela vira uma frase legível,
+    declarada uma vez: zebra primeiro, seleção depois. Os nomes de camada são os
+    mesmos em Table.css e TreeTable.css, com a ordem declarada nos dois, então
+    as duas tabelas obedecem à mesma frase. Verifiquei que nenhum outro CSS do
+    repositório usa `@layer`, então não existe ordem concorrente declarada
+    antes. Sabotei as duas e cada uma reprovou só a própria story de paridade.
+  - >-
+    A story de paridade se defende de passar à toa. Antes de marcar qualquer
+    coisa ela afirma que a linha par e a ímpar têm fundos DIFERENTES em repouso,
+    e guarda o valor. Depois de marcar, exige que as duas paridades sejam iguais
+    entre si E que a par tenha saído da cor em que estava. Sem a primeira
+    asserção, uma tabela sem zebra passaria; sem a última, zebra e seleção
+    pintando a mesma cor passariam. É um teste construído contra os próprios
+    falsos positivos, escrito para um defeito que atravessou a suíte verde
+    justamente porque as duas stories de seleção existentes escolhiam linha
+    ímpar.
+  - >-
+    O reaponte de `--citie-control-height-normal` e `-large` dentro do container
+    de conteúdo da célula compacta, que continua de pé e que eu medi de novo.
+    É inversão de controle escrita em CSS: a tabela publica um contrato de
+    densidade e os controles obedecem sem que nenhum dos dois conheça o outro,
+    em vez de a tabela redesenhar botão alheio por seletor descendente. O risco
+    óbvio da técnica é vazar, e não vaza: 40px no body, 40px no envoltório da
+    tabela, 40px na própria `.citie-table`, 32px só dentro de
+    `.citie-table__conteudo`. E compõe com uma decisão que mora em outro
+    componente, porque o alvo de toque do Button cresce por pseudo-elemento
+    absoluto e chega a 44px sem inflar a linha: a compacta fica em 37,00px com
+    alvo medido de 59,05 x 32,00px, acima do mínimo de 24x24 da WCAG 2.5.8.
+
+o_que_faltou_para_surpreender:
+  - >-
+    Fechar o fio da hierarquia, ou a frase que ele não cumpre. É o item da lista
+    acima e é o único que resta. Vale dizer o que ele significa, porque não é
+    burocracia: tudo que esta rodada MEDIU está impecável, e a única coisa que
+    ela DESENHOU é o ponto fraco. A disciplina de medir antes de afirmar, que é
+    a melhor qualidade do trabalho, não alcançou o elemento que nasceu de uma
+    escolha visual em vez de um número.
+
+motivo_do_veredito: >-
+  Os dois achados da captura anterior estão fechados e conferidos, com escopo
+  cirúrgico de uma linha cada. O gate técnico está limpo: typecheck e lint sem
+  erro, recorte 44 de 44 no claro e 100% no escuro, cinco stories novas e
+  nenhuma perdida, e as falhas escuras dos consumidores com o mesmo conjunto
+  fechado de seletores pela terceira captura, todos fora do recorte. As três
+  sabotagens, incluindo a que eu inventei para testar a régua nova da TreeTable,
+  reprovaram exatamente o alvo e nada além dele, que é a prova de que os
+  verificadores desta rodada não são decorativos. As três decisões de projeto
+  acima se sustentam sob medição de hoje, e a régua que você esclareceu (estado
+  do componente, e não novidade da captura) as torna elegíveis.
+  Ainda assim fico em APROVADO, porque a régua do gauntlet pede escopo limpo e o
+  escopo não está: um achado meu, aberto desde a primeira captura, segue
+  aberto, e eu o remedi hoje em vez de repetir de memória. É POLIMENTO e o
+  conserto é minúsculo, então não estou reprovando nem pedindo retrabalho. Estou
+  dizendo que a peça chega em APROVADO com uma pendência de acabamento, e que a
+  distância entre APROVADO e SURPREENDEU aqui é uma linha de CSS ou uma oração
+  de comentário. Se o time lead julgar que um POLIMENTO isolado não deve segurar
+  o veredito, a decisão é dele e eu não teria o que acrescentar em evidência:
+  as duas decisões estão nomeadas, medidas e sustentadas.

@@ -1,0 +1,202 @@
+revisor: Revisor independente de tabela, árvore e contêiner
+componente: Card, Table, TreeTable e DataView, segunda captura
+veredito: REPROVADO
+veredito_anti_slop: VOLTA PARA REFINO
+
+resumo_curto: >-
+  Os quatro achados da primeira captura foram fechados, e conferi os quatro sob
+  sabotagem, sem aceitar a palavra do produtor. A correção da colisão zebra
+  contra seleção é a melhor decisão técnica das duas rodadas. O que reprova é
+  uma coisa só, e cabe numa tecla: entrou um travessão em texto que o Storybook
+  publica, em TreeTable.stories.tsx:253, e TXT-001 é PROIBIDO sem exceção. Não
+  havia nenhum no recorte quando revisei da primeira vez, então é novo e é
+  atribuível. Corrigido esse caractere, o veredito vira APROVADO no estado de
+  hoje.
+
+gate_tecnico:
+  typecheck: 'tsc -b --force, exit 0'
+  lint: 'oxlint, zero erro. Apenas avisos preexistentes, nenhum novo.'
+  testes: >-
+    Recorte no tema claro (Table, TreeTable, Card, DataView): 44 de 44, 4
+    arquivos, exit 0.
+    Recorte no tema escuro: 100% verde.
+    Consumidores no escuro (.storybook/pages e .storybook/templates): 19 falhas
+    em 3 arquivos, e o conjunto de seletores de violação é IDÊNTICO ao da
+    primeira captura: .citie-filtro-chip__valor (11),
+    .citie-chart__legenda-valor (8) e um .citie-button--text no Dashboard.
+    Zero violação citando table, tr, td, treetable, card ou dataview. Dívida
+    antiga do Filters e do Chart, inalterada, não imputável a esta rodada.
+  stories_antes_depois: >-
+    Table 9 para 10, TreeTable 11 para 12, Card 8 para 10, DataView 10 para 12.
+    Nenhuma perdida, quatro entraram, todas cobrindo exatamente os buracos
+    apontados.
+
+verificacoes_de_ceticismo:
+  sabotagem_da_correcao_de_paridade_table: >-
+    REPROVA como deve, e reprova sozinha. Desfiz as camadas em Table.css,
+    devolvendo as duas regras ao escopo sem camada, onde a especificidade volta
+    a decidir. Resultado: 1 de 10 falhou, exatamente
+    'Estado · seleção na linha par da zebra', em Table.stories.tsx:269, que é a
+    asserção de que as duas paridades pintam a mesma cor. As outras nove
+    passaram, ou seja, a story nova é o único ponto que cobre o defeito e ela de
+    fato o cobre. Arquivo restaurado e conferido byte a byte.
+  sabotagem_da_correcao_de_paridade_treetable: >-
+    REPROVA também. Mesma cirurgia em TreeTable.css: 1 de 12 falhou, só a story
+    de paridade. O produtor levou a correção e o verificador para os dois
+    componentes, e não só para aquele que eu tinha medido. Restaurado byte a
+    byte.
+  sabotagem_do_conferirRegua: >-
+    CONTINUA REPROVANDO depois da mudança de composição, que era o risco que
+    você levantou. Voltei `border-collapse` para `collapse`: 2 de 10 falharam,
+    as duas densidades, em Table.stories.tsx:152, que é a asserção de altura
+    inteira, alcançada pelas duas chamadas em 168 e 197. A camada nova não
+    neutralizou o verificador. Restaurado byte a byte.
+  paridade_medida_no_navegador: >-
+    CONFIRMADA. Build servido, story de paridade, página inteira marcada: as
+    quatro linhas medem rgb(239,245,255), que é `state-selected`, nas duas
+    paridades. Ao desmarcar, voltam para transparente nas ímpares e #f4f5f7 nas
+    pares, ou seja, a zebra continua viva quando deve. Na primeira captura as
+    posições 2 e 4 ficavam presas em #f4f5f7 mesmo selecionadas. Mesmo
+    resultado na TreeTable.
+  tres_condicoes_coincidindo: >-
+    CINCO comportamentos convivem na mesma linha, medidos de uma vez com a
+    linha par, selecionada, destacada como crítica e sob o ponteiro:
+    `--citie-fundo-da-linha` #eff5ff (a seleção vence a zebra, então a camada
+    aguenta a coincidência), véu rgba(18,97,228,0.08) presente como
+    `background-image` (a linha responde ao ponteiro), trilhos
+    'rgb(18,97,228) 3px inset, rgb(185,28,28) 6px inset' (seleção e estado
+    encaixados, com o de estado recuado), borda de baixo transparente e raio de
+    8px na célula de início (a leitura de peça), e altura 49,00px inteira
+    (nenhum deslocamento). Contraste da composição contra `text-base` #3c3c3c
+    em torno de 9:1, acima dos 4,5:1 da WCAG 1.4.3.
+  guarda_de_runtime_do_card: >-
+    HONRA A REGRA, e o produtor escreveu a story que prova. Em
+    'Regra · navegável sem título recusa o rodapé' o card inteiro é o link, o
+    botão 'Ver histórico' não existe no DOM, `.citie-card__rodape` não existe, e
+    a varredura `a a, a button, button a` volta nula. No código, Card.tsx
+    calcula `rodapeProibido` e descarta o rodapé, com `console.warn` em DEV
+    dizendo o caminho de saída. A regra saiu da documentação e entrou no
+    componente.
+  dataview_sem_regressao: >-
+    CORRIGIDO e coberto. A guarda `item.acoes && !item.href` sumiu dos três
+    pontos: as ações voltam a ser renderizadas no modo lista e o modo grade
+    passa `href` e `rodape` juntos ao Card, que é a combinação recém-liberada.
+    Medido no navegador na story 'Variante · item navegável': 6 botões
+    renderizados em 4 itens navegáveis, `a a, a button, button a` nulo. A story
+    ainda alterna para grade e refaz a asserção, que é onde o aninhamento
+    acontecia.
+  regua_apos_a_mudanca_de_composicao: >-
+    INTACTA. Confortável 49, 49, 49, 49 e compacta 37, 37, 37, 37, todas
+    inteiras, medidas no build servido.
+
+julgamento_pedido_sobre_negacao_paralela: >-
+  O produtor está certo nos dois casos, e a regra é que está sendo lida pela
+  ferramenta de busca em vez de pelo enunciado. O sinal do TXT-002 é
+  'mais do que X, é Y', ou seja, um comparativo usado como pivô retórico para
+  emendar uma asserção de identidade. A linha 'buscar `mais do que`' é o método
+  de DETECÇÃO, que serve para levantar candidatos, e não o critério. Nos dois
+  casos mantidos não há pivô nem segunda oração afirmando o que a coisa é:
+  'ver a posição no trilho ajuda mais do que digitar' e 'o faz pesar mais do que
+  vale' são comparativos de grau comuns do português, cada um com um único
+  predicado. Proibi-los tiraria da língua a comparação, que não é o que a regra
+  quer. Não aponto correção.
+  Confirmei também o resto do que você apurou: os arquivos duplicados pelo
+  iCloud com sufixo ' 2' sumiram (busca por `* 2.*` em src e .storybook volta
+  vazia), e as três formas literalmente proibidas ('deixa de ser',
+  'não é X, é Y', 'mais do que X, é Y') estão em ZERO ocorrências no recorte.
+  Na primeira captura eu contei 28 e a contagem estava inflada pelos
+  duplicados. A correção é sua e está certa.
+
+achados:
+  - severidade: MAIOR
+    id_anti_slop: TXT-001
+    descricao: >-
+      Um travessão em texto que o Storybook publica na página de docs da
+      TreeTable, dentro da descrição do componente. TXT-001 é PROIBIDO com
+      'sem exceção em texto Citiesoft' escrito duas vezes na regra, e o contexto
+      declarado é 'todos'. Não é dívida antiga: na primeira captura eu contei o
+      caractere nos seis arquivos do recorte e deu zero em todos, inclusive
+      neste. O parágrafo em que ele aparece é o da profundidade medida, que é
+      texto novo desta leva. O conserto é trocar o caractere por vírgula, dois
+      pontos ou parênteses, e nada mais muda.
+    evidencia: >-
+      src/components/organisms/TreeTable/TreeTable.stories.tsx:253, no trecho
+      "192 no 7 e 176 no 8** — 16px a menos por nível". Verificado por
+      `grep -c` nos sete arquivos do recorte: só este devolve 1, todos os
+      outros devolvem 0.
+    correcao_exigida: >-
+      Zero ocorrências do caractere no recorte, como estava na primeira captura.
+
+  - severidade: MENOR
+    id_anti_slop: nenhum
+    descricao: >-
+      A descrição do componente Card ainda afirma no presente uma limitação que
+      esta rodada eliminou: 'o `DataView` até hoje suprime as ações do item
+      quando há `href`'. Deixou de ser verdade no mesmo commit. Chama atenção
+      porque os outros dois lugares que citavam o contorno foram corrigidos:
+      Card.css passou a dizer 'suprimia', e a story do DataView diz 'Esta visão
+      suprimia as ações... a supressão saiu daqui'. Só a descrição do Card
+      ficou para trás, e é justamente a que o leitor encontra primeiro na página
+      de docs.
+    evidencia: >-
+      src/components/molecules/Card/Card.stories.tsx:28 contra
+      src/components/organisms/DataView/DataView.tsx:102 e 113-121, onde a
+      guarda `item.acoes && !item.href` não existe mais, e contra
+      src/components/molecules/Card/Card.css:175, já no passado.
+    correcao_exigida: >-
+      A frase no passado, igual à que Card.css e a story do DataView já usam.
+
+o_que_me_surpreendeu:
+  - >-
+    Resolver a colisão com `@layer` em vez de subir a especificidade do seletor
+    de seleção. Era exatamente onde a correção fácil estragaria a peça: bastava
+    escrever `.citie-table tbody tr.citie-table__linha--selecionada` para o
+    teste ficar verde, e o arquivo herdaria mais uma regra pesada demais que a
+    próxima pessoa precisaria vencer com outra ainda mais pesada. A camada tira
+    a decisão do peso do seletor e a põe onde ela é uma frase legível, declarada
+    uma vez: zebra primeiro, seleção depois. E os nomes de camada são os mesmos
+    em Table.css e TreeTable.css, com a ordem declarada em ambos, então as duas
+    tabelas obedecem à mesma frase. Verifiquei que nenhum outro CSS do
+    repositório usa `@layer`, então não há ordem concorrente declarada antes.
+    Sabotei as duas e cada uma reprovou só a própria story de paridade.
+  - >-
+    A story de paridade se defende de passar à toa. Antes de marcar qualquer
+    coisa, ela afirma que a linha par e a ímpar têm fundos DIFERENTES em
+    repouso, e guarda esse valor. Depois de marcar, exige duas coisas: que as
+    duas paridades sejam iguais entre si e que a par tenha saído da cor em que
+    estava. Sem a primeira asserção, uma tabela sem zebra passaria; sem a
+    terceira, zebra e seleção pintando a mesma cor passariam. É um teste
+    construído contra os próprios falsos positivos, e foi escrito para o defeito
+    que atravessou a suíte verde justamente porque as duas stories de seleção
+    existentes escolhiam linha ímpar.
+
+o_que_faltou_para_surpreender:
+  - >-
+    Passar o mesmo pente no texto que o componente publica. A rodada fechou os
+    quatro achados com sabotagem resistindo em todos, e tropeça num caractere
+    proibido introduzido no mesmo movimento, num parágrafo novo. Um `grep` do
+    caractere nos arquivos tocados custaria segundos e é o mesmo rigor que a
+    rodada aplicou ao CSS.
+  - >-
+    Fechar a frase do Card junto com o código. Os outros dois lugares que
+    descreviam o contorno do DataView foram atualizados no mesmo commit, o que
+    mostra que a passagem foi deliberada e apenas incompleta.
+
+motivo_do_veredito: >-
+  Tecnicamente a rodada está feita, e verificada por mim e não por confiança:
+  typecheck e lint limpos, recorte 44 de 44 no claro e 100% no escuro, quatro
+  stories novas e nenhuma perdida, e as falhas escuras dos consumidores com o
+  mesmo conjunto fechado de seletores da captura anterior, todos fora do
+  recorte. As três sabotagens reprovaram exatamente o que deviam e nada além
+  disso, o que é a prova de que os verificadores novos não são decorativos. As
+  cinco condições coincidindo na mesma linha convivem sem que nenhuma apague a
+  outra, medidas de uma vez só. A guarda do Card e a correção do DataView estão
+  no runtime e cobertas por story.
+  O que reprova é o TXT-001, e reprova pela regra que o próprio catálogo
+  declara sem exceção: um travessão entrou em texto publicado, num arquivo do
+  recorte, depois da minha primeira leitura, que registrou zero. Eu tratei o
+  TXT-002 com indulgência na captura anterior porque era anterior à rodada e
+  valia para o repositório inteiro; aqui a situação é outra, o caractere é novo
+  e é deste trabalho, e passar a mão agora tornaria o meu próprio gate
+  decorativo. É uma tecla de conserto, e não um retrabalho: corrigido o
+  caractere e a frase do Card, o estado de hoje é APROVADO.

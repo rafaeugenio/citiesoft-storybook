@@ -250,7 +250,7 @@ const meta = {
           'aparece quando a coluna não tem folga. Medida a largura restante do rótulo numa coluna',
           'de 320px, que é o que a primeira coluna vira a 200% de zoom (exigência do e-MAG) num',
           'monitor de 1366px: **288px no nível 1, 272 no 2, 256 no 3, 240 no 4, 224 no 5, 208 no 6,',
-          '192 no 7 e 176 no 8** — 16px a menos por nível, ou 5,6% da coluna. Numa coluna de 640px',
+          '192 no 7 e 176 no 8**, ou seja, 16px a menos por nível e 5,6% da coluna. Numa coluna de 640px',
           'o rótulo bate no teto de `--citie-largura-maxima-da-celula` e a profundidade não custa',
           'nada. **O limite prático é 5 níveis**: abaixo disso o rótulo cai de 224px e o código da',
           'conta passa a truncar. Estruturas mais fundas pedem uma tela por camada, com',
@@ -297,6 +297,28 @@ export const Confortavel: Story = {
     const filha = canvas.getByRole('row', { name: /3\.1 Pessoal e encargos sociais/ });
     await expect(filha).toHaveAttribute('aria-level', '2');
     await conferirRegua(canvasElement, 48);
+
+    /*
+     * O fio de hierarquia é contínuo, e não uma coluna de traços.
+     *
+     * Medido antes desta guarda existir: o elemento pintado media 24,00px
+     * dentro de uma linha de 49,00px, então a tela mostrava traços com vão de
+     * 25px. A convenção de árvore de arquivo que este trilho invoca é contínua,
+     * e traço interrompido a cada linha obriga o olho a reconstruir a ligação
+     * que o fio existe para dar pronta.
+     *
+     * A tolerância de 1,5px cobre o fio separador da própria linha, que é
+     * justamente o que emenda uma célula na seguinte.
+     */
+    const trilhos = canvasElement.querySelectorAll('.citie-treetable__conteudo--hierarquia');
+    await expect(trilhos.length).toBeGreaterThan(0);
+
+    for (const trilho of trilhos) {
+      const celula = trilho.closest('td');
+      const alturaDoFio = trilho.getBoundingClientRect().height;
+      const alturaDaCelula = celula!.getBoundingClientRect().height;
+      await expect(alturaDaCelula - alturaDoFio).toBeLessThanOrEqual(1.5);
+    }
   },
 };
 

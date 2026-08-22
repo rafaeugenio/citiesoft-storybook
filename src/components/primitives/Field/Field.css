@@ -293,13 +293,35 @@ select.citie-field-control:where(:not(:has(option[value='']:checked)):not(:disab
  * O ponteiro em qualquer parte do grupo conta como ponteiro no campo, porque
  * para o usuário o grupo É o campo.
  */
-.citie-input-group:hover:has(.citie-field-control:not(:disabled):not(.citie-field-control--readonly)) .citie-input-group__addon,
-.citie-input-group:has(.citie-field-control[placeholder]:not(:placeholder-shown):not(:disabled):not(.citie-field-control--readonly)) .citie-input-group__addon {
+.citie-input-group:hover:has(.citie-field-control:not(:disabled):not(.citie-field-control--readonly):not([aria-invalid='true'])) .citie-input-group__addon,
+.citie-input-group:has(.citie-field-control[placeholder]:not(:placeholder-shown):not(:disabled):not(.citie-field-control--readonly):not([aria-invalid='true'])) .citie-input-group__addon {
   border-color: var(--citie-form-field-border-hover);
 }
 
 .citie-input-group:hover .citie-field-control:not(:disabled):not(:focus):not(.citie-field-control--readonly) {
   border-color: var(--citie-form-field-border-hover);
+}
+
+/*
+ * A emenda vale também no inválido, que era o estado esquecido.
+ *
+ * O princípio escrito três parágrafos acima diz que campo e addon dividem o
+ * mesmo contorno visual, e ele estava aplicado ao ponteiro e ao preenchido.
+ * No inválido o campo ia para o vermelho e o addon ficava na cor neutra, então
+ * a junção voltava a ler como defeito exatamente no momento em que o servidor
+ * precisa enxergar onde está o erro.
+ *
+ * A regra usa `:has()` sobre o atributo que o próprio componente escreve, e
+ * não uma classe paralela, para o estado ter uma fonte só.
+ *
+ * As regras de ponteiro e de preenchido acima excluem o inválido no próprio
+ * seletor, em vez de esta aqui subir de peso para vencê-las. Os três estados
+ * são mutuamente exclusivos por intenção, então declarar isso é mais honesto do
+ * que uma corrida de especificidade que a próxima pessoa precisaria vencer com
+ * um seletor ainda mais pesado.
+ */
+.citie-input-group:has(.citie-field-control[aria-invalid='true']) .citie-input-group__addon {
+  border-color: var(--citie-border-danger);
 }
 
 /* ---------- Afixo interno (spinner de validação assíncrona, ícone) ---------- */
