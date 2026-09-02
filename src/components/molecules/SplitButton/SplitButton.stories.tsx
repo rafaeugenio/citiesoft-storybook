@@ -41,6 +41,20 @@ export const Padrao: Story = {
     await expect(gatilho).toHaveAttribute('aria-haspopup', 'menu');
     await expect(gatilho).toHaveAttribute('aria-expanded', 'false');
     await expect(canvas.queryByRole('menu')).toBeNull();
+
+    // Anatomia do kit: gatilho quadrado (largura igual à altura), o gatilho
+    // recuado 1px sobre a ação, e as pontas externas no raio 10.
+    const caixa = gatilho.getBoundingClientRect();
+    await expect(caixa.width).toBe(caixa.height);
+    await expect(Math.round(caixa.left - acao.getBoundingClientRect().right)).toBe(-1);
+    // Na pele preenchida o divisor é o anel de 1px da pele, que o gatilho
+    // pinta por cima da aresta final da ação: a primeira sombra da lista do
+    // gatilho é o anel, sem desfoque e com 1px de espalhamento.
+    const [anel] = getComputedStyle(gatilho).boxShadow.split('), ');
+    await expect(anel).toContain('0px 0px 0px 1px');
+    await expect(getComputedStyle(acao).borderTopLeftRadius).toBe('10px');
+    await expect(getComputedStyle(acao).borderTopRightRadius).toBe('0px');
+    await expect(getComputedStyle(gatilho).borderTopRightRadius).toBe('10px');
   },
 };
 
@@ -133,10 +147,20 @@ export const Severidade: Story = {
       },
     },
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    // Nas peles sem anel escuro o divisor é a borda forte, por dentro do gatilho.
+    for (const nome of ['exportar relatório', 'imprimir guia']) {
+      const gatilho = canvas.getAllByRole('button', { name: `Mais ações de ${nome}` })[0];
+      const [divisor] = getComputedStyle(gatilho).boxShadow.split('), ');
+      await expect(divisor).toContain('inset');
+    }
+  },
   render: () => (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
       <SplitButton rotulo="Salvar colaborador" itens={ACOES_DE_SALVAR} />
       <SplitButton variante="secondary" rotulo="Exportar relatório" itens={FORMATOS} />
+      <SplitButton variante="outline" rotulo="Imprimir guia" itens={FORMATOS} />
       <SplitButton variante="success" rotulo="Aprovar diária" itens={ACOES_DE_APROVACAO} />
       <SplitButton variante="danger" rotulo="Excluir benefício" itens={ACOES_DE_EXCLUSAO} />
       <SplitButton variante="text" rotulo="Exportar relatório" itens={FORMATOS} />
@@ -145,20 +169,29 @@ export const Severidade: Story = {
 };
 
 export const Tamanhos: Story = {
-  name: 'Tamanhos · 32 / 40 / 48px',
+  name: 'Tamanhos · 24 / 32 / 36 / 40 / 48px',
   render: (args) => (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+      <SplitButton {...args} tamanho="mini" rotulo="Salvar mini" />
       <SplitButton {...args} tamanho="small" rotulo="Salvar small" />
       <SplitButton {...args} tamanho="normal" rotulo="Salvar normal" />
       <SplitButton {...args} tamanho="large" rotulo="Salvar large" />
+      <SplitButton {...args} tamanho="xl" rotulo="Salvar xl" />
     </div>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const alturas = ['Salvar small', 'Salvar normal', 'Salvar large'].map(
+    const nomes = ['Salvar mini', 'Salvar small', 'Salvar normal', 'Salvar large', 'Salvar xl'];
+    const alturas = nomes.map(
       (nome) => canvas.getByRole('button', { name: nome }).getBoundingClientRect().height,
     );
-    await expect(alturas).toEqual([32, 40, 48]);
+    await expect(alturas).toEqual([24, 32, 36, 40, 48]);
+    // O gatilho acompanha o degrau e continua quadrado em todos.
+    for (const nome of nomes) {
+      const gatilho = canvas.getByRole('button', { name: `Mais ações de ${nome.toLowerCase()}` });
+      const caixa = gatilho.getBoundingClientRect();
+      await expect(caixa.width).toBe(caixa.height);
+    }
   },
 };
 

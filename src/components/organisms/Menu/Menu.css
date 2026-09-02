@@ -15,7 +15,8 @@
   color: var(--citie-text-base);
   background: var(--citie-background-surface);
   border: 1px solid var(--citie-border-default);
-  border-radius: var(--citie-radius-2xl);
+  /* Painel flutuante do kit: raio 10, item um degrau abaixo em raio-md. */
+  border-radius: var(--citie-radius-lg);
 }
 
 /**
@@ -27,9 +28,11 @@
   display: flex;
   align-items: center;
   gap: var(--citie-spacing-3);
-  min-height: var(--citie-control-height-normal);
-  padding: 0 var(--citie-spacing-3);
-  border-radius: var(--citie-radius-lg);
+  /* Item de menu do kit: 32 de altura, padding 5.5x8 (`spacing-1-5` de degrau
+     mais próximo), raio 6. */
+  min-height: var(--citie-control-height-small);
+  padding: 0 var(--citie-spacing-2);
+  border-radius: var(--citie-radius-md);
   font-weight: var(--citie-font-weight-action);
   cursor: pointer;
   transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
@@ -106,7 +109,7 @@
  */
 .citie-menu__grupo-rotulo {
   display: block;
-  padding: var(--citie-spacing-3) var(--citie-spacing-3) var(--citie-spacing-1);
+  padding: var(--citie-spacing-3) var(--citie-spacing-2) var(--citie-spacing-1);
   font-size: var(--citie-font-size-caption);
   font-weight: var(--citie-font-weight-title);
   color: var(--citie-text-secondary);
@@ -117,7 +120,7 @@
 /* Só há coluna de texto a respeitar quando o menu reserva líder. */
 .citie-menu--com-lider .citie-menu__grupo-rotulo {
   padding-inline-start: calc(
-    var(--citie-spacing-3) + var(--citie-menu-lider) + var(--citie-spacing-3)
+    var(--citie-spacing-2) + var(--citie-menu-lider) + var(--citie-spacing-3)
   );
 }
 

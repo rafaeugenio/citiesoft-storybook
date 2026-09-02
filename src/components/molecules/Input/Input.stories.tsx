@@ -219,7 +219,7 @@ export const Foco: Story = {
     const poco = getComputedStyle(campo).getPropertyValue('--citie-shadow-poco').trim();
     await waitFor(() => {
       const sombra = getComputedStyle(campo).boxShadow;
-      expect(sombra).toContain(anel.slice(anel.indexOf('rgba')));
+      expect(sombra).toContain(anel.slice(anel.indexOf('rgb')));
       expect(sombra).toContain(poco.slice(poco.indexOf('rgba')));
     });
   },
@@ -315,7 +315,7 @@ export const ConsolidadoContraIndisponivel: Story = {
     // foco, quebrando a WCAG 2.4.7 justamente no estado que existe para ser
     // navegado por teclado.
     const anel = getComputedStyle(consolidado).getPropertyValue('--citie-state-focus-ring').trim();
-    const corDoAnel = anel.slice(anel.indexOf('rgba'));
+    const corDoAnel = anel.slice(anel.indexOf('rgb'));
     await waitFor(() => expect(getComputedStyle(consolidado).boxShadow).toContain(corDoAnel));
 
     await userEvent.tab();
@@ -407,14 +407,41 @@ export const Invalido: Story = {
 
     const poco = getComputedStyle(campo).getPropertyValue('--citie-shadow-poco').trim();
 
+    /*
+     * Extração da cor por regex, e não por `indexOf('rgb') + slice`. O par
+     * anterior degradava calado: se o token virasse `none`, `indexOf`
+     * retornava -1 e `slice(-1)` pegava o último caractere da própria
+     * string ("e"), que `toContain` sempre encontra dentro de "none". A
+     * suíte passava 19 de 19 com o campo sem NENHUMA pista de foco no
+     * estado inválido, não só sem a vermelha. Aqui a ausência de um
+     * `rgb()`/`rgba()` reconhecível lança antes de qualquer asserção, e o
+     * teste falha pelo motivo certo.
+     */
+    const extrairCor = (sombra: string) => {
+      const cor = sombra.match(/rgba?\([^)]+\)/);
+      if (!cor) {
+        throw new Error(`Token de sombra sem cor rgb/rgba reconhecível: "${sombra}"`);
+      }
+      return cor[0];
+    };
+
+    const corDoAnelDePerigo = extrairCor(anelDePerigo);
+    const corDoAnelDeMarca = extrairCor(anelDeMarca);
+    const corDoPoco = extrairCor(poco);
+
     await waitFor(() => {
       const sombra = getComputedStyle(campo).boxShadow;
-      expect(sombra).toContain(anelDePerigo.slice(anelDePerigo.indexOf('rgba')));
-      expect(sombra).not.toContain(anelDeMarca.slice(anelDeMarca.indexOf('rgba')));
+      // `box-shadow: none, <sombra válida>` é uma lista inválida, e o
+      // navegador descarta a declaração inteira: o computado vira a string
+      // literal "none", que apaga o foco inteiro do campo. Esta linha
+      // reprova esse cenário primeiro, antes de qualquer checagem de cor.
+      expect(sombra).not.toBe('none');
+      expect(sombra).toContain(corDoAnelDePerigo);
+      expect(sombra).not.toContain(corDoAnelDeMarca);
       // O poço continua embaixo, somado em vez de substituído, como na guarda
       // irmã do foco válido. Medir só o anel deixaria passar um foco que
       // aplaina a superfície do campo justamente no estado de erro.
-      expect(sombra).toContain(poco.slice(poco.indexOf('rgba')));
+      expect(sombra).toContain(corDoPoco);
     });
   },
 };
@@ -430,7 +457,7 @@ export const Carregando: Story = {
 };
 
 export const Tamanhos: Story = {
-  name: 'Tamanhos · 32 / 40 / 48px',
+  name: 'Tamanhos · 32 / 36 / 40px',
   render: (args) => (
     <div style={{ display: 'grid', gap: 16, maxWidth: 360 }}>
       <Input {...args} size="small" label="Small" />
@@ -443,7 +470,7 @@ export const Tamanhos: Story = {
     const alturas = ['Small', 'Normal', 'Large'].map(
       (nome) => canvas.getByLabelText(nome).getBoundingClientRect().height,
     );
-    await expect(alturas).toEqual([32, 40, 48]);
+    await expect(alturas).toEqual([32, 36, 40]);
   },
 };
 

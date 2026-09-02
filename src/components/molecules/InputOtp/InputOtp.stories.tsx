@@ -10,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component: [
-          'Código de verificação. Origem: Figma CitieOne, página ❖ InputOtp (variante Size: Normal | Small | Large). As alturas seguem a escala de controle do DS (32 / 40 / 48). Equivalente PrimeNG: `p-inputotp`.',
+          'Código de verificação. Origem: Figma CitieOne, página ❖ InputOtp (variante Size: Normal | Small | Large). As alturas seguem a escala de controle do DS (32 / 36 / 40). Equivalente PrimeNG: `p-inputotp`.',
           '',
           '**Quando usar:** código numérico curto, de uso único, que a pessoa acabou de receber e vai transcrever de outra tela: confirmação de login por SMS, validação de e-mail, autorização de uma operação sensível. As casas separadas dão o feedback de progresso e o `autoComplete="one-time-code"` deixa o celular oferecer o código do SMS.',
           '',
@@ -40,7 +40,8 @@ export const Default: Story = {
     // Cada casa carrega a posição no nome acessível.
     const primeira = canvas.getByLabelText('Código enviado por SMS, dígito 1 de 6');
     await expect(primeira).toBeVisible();
-    await expect(primeira.getBoundingClientRect().height).toBe(40);
+    // Altura normal de controle do UI Kit: 36px (era 40 antes do Lote 0).
+    await expect(primeira.getBoundingClientRect().height).toBe(36);
   },
 };
 
@@ -72,7 +73,7 @@ export const SomenteNumeros: Story = {
 };
 
 export const Tamanhos: Story = {
-  name: 'Size · 32 / 40 / 48px',
+  name: 'Size · 32 / 36 / 40px',
   render: (args) => (
     <div style={{ display: 'grid', gap: 24 }}>
       <InputOtp {...args} size="small" label="Small" length={4} />
@@ -85,7 +86,7 @@ export const Tamanhos: Story = {
     const alturas = ['Small', 'Normal', 'Large'].map(
       (nome) => canvas.getByLabelText(`${nome}, dígito 1 de 4`).getBoundingClientRect().height,
     );
-    await expect(alturas).toEqual([32, 40, 48]);
+    await expect(alturas).toEqual([32, 36, 40]);
   },
 };
 

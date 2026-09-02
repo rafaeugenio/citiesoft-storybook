@@ -15,9 +15,15 @@
   color: var(--citie-text-primary);
 }
 
+/*
+ * Trilho de borda compartilhada, como no InputGroup: as casas dividem uma
+ * única linha por junção em vez de seis bordas soltas com gap, e o raio 10 do
+ * kit vive só nas duas pontas do trilho. O raio interno das casas da ponta é
+ * concêntrico ao externo (raio menos a borda de 1px), no mesmo cálculo do
+ * InputGroup.
+ */
 .citie-otp__casas {
   display: flex;
-  gap: var(--citie-spacing-2);
 }
 
 .citie-otp__casa {
@@ -28,10 +34,42 @@
   color: var(--citie-text-primary);
   background-color: var(--citie-background-surface);
   border: 1px solid var(--citie-form-field-border);
-  border-radius: var(--citie-radius-md);
+  border-radius: 0;
+  transition:
+    border-color var(--citie-motion-rapido) var(--citie-easing-padrao),
+    box-shadow var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
-/* Alturas alinhadas à escala de controle do DS: 32 / 40 / 48. */
+@media (prefers-reduced-motion: reduce) {
+  .citie-otp__casa {
+    transition: none;
+  }
+}
+
+.citie-otp__casa:not(:first-child) {
+  border-inline-start: none;
+}
+
+.citie-otp__casa:first-child {
+  border-start-start-radius: calc(var(--citie-radius-lg) - 1px);
+  border-end-start-radius: calc(var(--citie-radius-lg) - 1px);
+}
+
+.citie-otp__casa:last-child {
+  border-start-end-radius: calc(var(--citie-radius-lg) - 1px);
+  border-end-end-radius: calc(var(--citie-radius-lg) - 1px);
+}
+
+/* Foco e inválido precisam da borda inteira visível, então a casa ativa sobe
+   de camada e recupera a borda que a vizinha comeu. */
+.citie-otp__casa:focus,
+.citie-otp__casa[aria-invalid='true'] {
+  position: relative;
+  z-index: 1;
+  border-inline-start: 1px solid var(--citie-form-field-border);
+}
+
+/* Alturas alinhadas à escala de controle do DS: 32 / 36 / 40. */
 .citie-otp--small .citie-otp__casa {
   width: 32px;
   height: var(--citie-control-height-small);

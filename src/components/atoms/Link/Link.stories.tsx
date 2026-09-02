@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { Link } from './Link';
 
 const meta = {
@@ -23,10 +23,17 @@ const meta = {
           'sobre a zebra clara, **5,30:1** sobre o fundo escuro e **4,78:1** sobre a zebra escura.',
           'Os quatro passam AA nos dois temas.',
           '',
-          '**O sublinhado é permanente, por decisão de acessibilidade.** Cor sozinha não pode ser o',
-          'único meio de identificar um link dentro de um bloco de texto (WCAG 1.4.1), e em sistema',
-          'público não dá para supor que o usuário vai passar o mouse para descobrir o que é',
-          'clicável. O hover engrossa o traço em vez de acendê-lo.',
+          '**O sublinhado do papel `padrao` é permanente, por decisão de acessibilidade.** Cor',
+          'sozinha não pode ser o único meio de identificar um link dentro de um bloco de texto',
+          '(WCAG 1.4.1). A técnica G183 dispensa o traço quando o link mede 3:1 contra o texto',
+          'vizinho, e `brand-primary` mede **2,03:1** contra `text-base` e 2,99:1 contra',
+          '`text-primary`, então o traço fica. O hover engrossa o traço.',
+          '',
+          '**`identificador` e `discreto` seguem o kit: sublinhado só no hover e no foco.** São',
+          'links soltos, sem texto vizinho de que precisem se distinguir. O identificador sai em',
+          'Red Hat Mono com dígitos tabulares, como o CPF e a data das listagens do Sismental; o',
+          'discreto sai em `text-secondary` (**4,94:1** sobre o branco, 4,53:1 sobre a zebra clara,',
+          '6,39:1 e 5,76:1 no escuro).',
           '',
           '**Quando não usar:** ação que muda estado do sistema, como salvar, enviar, excluir ou',
           'abrir um diálogo, porque o leitor de tela anuncia link como navegação e o usuário perde',
@@ -62,17 +69,48 @@ export const Padrao: Story = {
     const link = canvas.getByRole('link', { name: 'consulte as regras de concessão de TFD' });
 
     await expect(link).toHaveAttribute('href', '#/ajuda/tfd');
-    // O sublinhado é requisito, não enfeite: WCAG 1.4.1.
+    // O sublinhado permanente é requisito da WCAG 1.4.1: o link vive no texto
+    // e a cor de marca mede 2,03:1 contra o texto vizinho. Traço visível em repouso.
     await expect(link).toHaveStyle({ textDecorationLine: 'underline' });
+    await expect(getComputedStyle(link).textDecorationColor).toBe(getComputedStyle(link).color);
   },
 };
+
+/**
+ * Cor do sublinhado resolvida pelo navegador. Em repouso o traço dos papéis
+ * soltos é transparente; no hover e no foco ele assume a cor do texto.
+ */
+const corDoSublinhado = (elemento: Element) => getComputedStyle(elemento).textDecorationColor;
 
 export const Identificador: Story = {
   name: 'Papel · identificador de registro',
   args: { papel: 'identificador' },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Mono com dígitos tabulares, sublinhado só no hover e no foco. O link é o único conteúdo da célula, então a WCAG 1.4.1 não exige o traço permanente, e ele sujaria a coluna que o olho varre.',
+      },
+    },
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByRole('link', { name: '2025/0481' })).toBeVisible();
+    const link = canvas.getByRole('link', { name: '2025/0481' });
+    await expect(link).toBeVisible();
+
+    const estilo = getComputedStyle(link);
+    await expect(estilo.fontVariantNumeric).toBe('tabular-nums');
+    // Mono de verdade: a família resolvida começa pela Red Hat Mono do token.
+    await expect(estilo.fontFamily.startsWith('"Red Hat Mono"')).toBe(true);
+    // Repouso sem traço visível; foco (e hover, pela mesma regra de CSS) acende
+    // o traço na cor do texto. O foco por teclado é o que a suíte consegue
+    // provar: `userEvent.hover` aqui despacha eventos sem o estado `:hover`.
+    await expect(corDoSublinhado(link)).toBe('rgba(0, 0, 0, 0)');
+    await userEvent.tab();
+    await expect(link).toHaveFocus();
+    await waitFor(async () => {
+      await expect(corDoSublinhado(link)).toBe(getComputedStyle(link).color);
+    });
   },
 };
 
@@ -82,6 +120,25 @@ export const Discreto: Story = {
     papel: 'discreto',
     href: '#/tfd/solicitacoes/2025-0481/historico',
     children: 'ver histórico completo',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Em `text-secondary`, corpo 13, sublinhado só no hover e no foco. Para área densa em que vários links competem, e para o link de rodapé.',
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const link = canvas.getByRole('link', { name: 'ver histórico completo' });
+    await expect(corDoSublinhado(link)).toBe('rgba(0, 0, 0, 0)');
+    // Foco por teclado também acende o traço (WCAG 2.4.7 pede indicação visível).
+    await userEvent.tab();
+    await expect(link).toHaveFocus();
+    await waitFor(async () => {
+      await expect(corDoSublinhado(link)).toBe(getComputedStyle(link).color);
+    });
   },
 };
 

@@ -146,7 +146,7 @@ export const Invalido: Story = {
 };
 
 export const Tamanhos: Story = {
-  name: 'Tamanhos · 32 / 40 / 48px',
+  name: 'Tamanhos · 32 / 36 / 40px',
   render: (args) => (
     <div style={{ display: 'grid', gap: 16, maxWidth: 360 }}>
       <Select {...args} size="small" label="Small" />
@@ -159,6 +159,6 @@ export const Tamanhos: Story = {
     const alturas = ['Small', 'Normal', 'Large'].map(
       (nome) => canvas.getByLabelText(nome).getBoundingClientRect().height,
     );
-    await expect(alturas).toEqual([32, 40, 48]);
+    await expect(alturas).toEqual([32, 36, 40]);
   },
 };

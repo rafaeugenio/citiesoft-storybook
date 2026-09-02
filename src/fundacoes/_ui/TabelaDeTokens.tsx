@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import './TabelaDeTokens.css';
 
 /**
@@ -48,11 +48,17 @@ interface TabelaDeTokensProps {
 
 const AUSENTE = '(não definido)';
 
-function lerValor(nome: string): string {
-  if (typeof window === 'undefined') return '';
-  const bruto = getComputedStyle(document.documentElement)
-    .getPropertyValue(`--citie-${nome}`)
-    .trim();
+/**
+ * Lê o token no próprio elemento da tabela, e não na raiz do documento. O
+ * tema vive no container do decorador (`[data-theme]`), e a raiz nunca o
+ * recebe: lida na raiz, a coluna Valor mostrava `#eff5ff` no tema escuro
+ * enquanto a amostra ao lado pintava `#202838`. Propriedade personalizada é
+ * herdada já computada, então o elemento da tabela carrega o valor do tema
+ * em que ele está.
+ */
+export function lerValor(nome: string, referencia: Element | null): string {
+  if (typeof window === 'undefined' || !referencia) return '';
+  const bruto = getComputedStyle(referencia).getPropertyValue(`--citie-${nome}`).trim();
   return bruto || AUSENTE;
 }
 
@@ -113,13 +119,16 @@ function AmostraDeMotion({ nome }: { nome: string }) {
 
 export function TabelaDeTokens({ tokens, especie, tituloDaAmostra, legenda }: TabelaDeTokensProps) {
   const [valores, setValores] = useState<Record<string, string>>({});
+  const tabela = useRef<HTMLTableElement>(null);
 
   // A leitura acontece depois da montagem porque depende do CSS já aplicado,
   // e roda de novo quando o tema muda, já que o mesmo token tem valor diferente
   // no claro e no escuro.
   useEffect(() => {
     const ler = () =>
-      setValores(Object.fromEntries(tokens.map((token) => [token.nome, lerValor(token.nome)])));
+      setValores(
+        Object.fromEntries(tokens.map((token) => [token.nome, lerValor(token.nome, tabela.current)])),
+      );
     ler();
 
     const observador = new MutationObserver(ler);
@@ -132,7 +141,7 @@ export function TabelaDeTokens({ tokens, especie, tituloDaAmostra, legenda }: Ta
   }, [tokens]);
 
   return (
-    <table className="citie-tabela-tokens" aria-label={legenda}>
+    <table ref={tabela} className="citie-tabela-tokens" aria-label={legenda}>
       <thead>
         <tr>
           <th scope="col">Token</th>

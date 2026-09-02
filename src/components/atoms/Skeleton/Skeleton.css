@@ -1,30 +1,39 @@
+/**
+ * Cor base do Skeleton do kit: o `secondary`, a superfície neutra recuada.
+ * A varredura por cima é a própria superfície a 70%, então o bloco clareia
+ * ao ser varrido e volta ao cinza, sem piscar.
+ */
 .citie-skeleton {
   display: block;
   position: relative;
   overflow: hidden;
-  background-color: var(--citie-background-subtle);
+  background-color: var(--citie-secondary);
 }
 
-/* Radius por tipo de bloco, conforme a spec. */
+/**
+ * Raio por tipo de bloco: 6 nas linhas (item aninhado) e 10 nos blocos que
+ * replicam controle ou card, o `radius` do kit. O bloco imita a forma do que
+ * vai chegar, então o raio dele é o raio da peça substituída.
+ */
 .citie-skeleton--linha {
   height: 12px;
-  border-radius: var(--citie-radius-sm);
+  border-radius: var(--citie-radius-md);
 }
 
 .citie-skeleton--titulo {
   height: 20px;
   width: 55%;
-  border-radius: var(--citie-radius-sm);
+  border-radius: var(--citie-radius-md);
 }
 
 .citie-skeleton--campo {
   height: var(--citie-control-height-normal);
-  border-radius: var(--citie-radius-md);
+  border-radius: var(--citie-radius-lg);
 }
 
 .citie-skeleton--card {
   height: 140px;
-  border-radius: var(--citie-radius-xl);
+  border-radius: var(--citie-radius-lg);
 }
 
 .citie-skeleton--circulo {

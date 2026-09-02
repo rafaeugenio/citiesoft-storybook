@@ -62,7 +62,9 @@ export function Tooltip({
           role="tooltip"
           className={`citie-tooltip citie-tooltip--${size} citie-tooltip--${posicao}`}
         >
-          {conteudo}
+          {/* O corte em 2 linhas fica no filho: no balão, o recorte acontecia na
+              borda do padding e a terceira linha aparecia pela metade. */}
+          <span className="citie-tooltip__texto">{conteudo}</span>
         </span>
       ) : null}
     </span>

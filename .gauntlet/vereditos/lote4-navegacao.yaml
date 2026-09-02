@@ -1,0 +1,23 @@
+lote: 4-navegacao
+revisor: tanjiro
+veredito: EM_ANALISE
+veredito_anti_slop: EM_ANALISE
+gate_tecnico: EM_ANALISE
+opiniao_parcial:
+  - Diff lido antes do handoff. Anatomia declarada bate com o kit no papel: item
+    de menu 32/raio 6, painel flutuante raio 10, Menubar item de barra 36, Tabs
+    segmentado com trilho accent raio 10.
+  - Ponto de atenção root: migração de ativo/selecionado de brand-primary sobre
+    accent-forte para text-primary sobre accent-forte, com comentario citando
+    3,95:1 medido no Lote 0 em tokens.css. Preciso confirmar essa medição e
+    testar a sabotagem inversa.
+  - Pagination trocou pagina ativa de preenchimento solido para outline com
+    shadow-controle: preciso medir contraste do texto brand-primary sobre
+    background-surface nos dois temas.
+  - Sidebar fixa colapsada usa aria-label E title no botao, nao so title como o
+    handoff sugere ao ler o codigo (Sidebar.tsx linha 82-83). Achado positivo,
+    nao e gap real apesar do handoff descrever como fora do escopo.
+  - Falta medir: teclado em cada menu (setas, Home/End, Escape, foco no
+    gatilho), contraste medido em numero nos dois temas, alvo de toque,
+    sabotagens a,b,c, gates isolados no worktree.
+achados: []

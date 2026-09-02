@@ -112,15 +112,73 @@ export const MessageDispensavel: Story = {
   },
 };
 
+export const MessageAnatomia: Story = {
+  name: 'Message · anatomia do Alert do kit',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Alert do UI Kit: padding 12 por 16, gap 16, raio 10, fundo de superfície e borda de 1px na aresta tonal da severidade; ícone de 16 alinhado à primeira linha; texto Medium 14/20. A severidade de erro troca texto e ícone para a tinta de perigo; as demais ficam na tinta principal e sinalizam pelo ícone e pela aresta.',
+      },
+    },
+  },
+  render: () => (
+    <div style={{ display: 'grid', gap: 16 }}>
+      <Message severidade="warn" titulo="Prazo legal em curso">
+        O parecer precisa ser emitido em até 48 horas a partir do recebimento.
+      </Message>
+      <Message severidade="error" titulo="Envio recusado pelo SIGEP">
+        O número do empenho informado não existe na competência de março.
+      </Message>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const [aviso, erro] = Array.from(canvasElement.querySelectorAll<HTMLElement>('.citie-message'));
+    const estilo = getComputedStyle(aviso);
+    await expect(estilo.paddingTop).toBe('12px');
+    await expect(estilo.paddingLeft).toBe('16px');
+    await expect(estilo.columnGap).toBe('16px');
+    await expect(estilo.borderTopLeftRadius).toBe('10px');
+    await expect(estilo.borderTopWidth).toBe('1px');
+
+    // Fundo de superfície, sem tonal: igual ao token da superfície do tema.
+    const raiz = getComputedStyle(aviso.closest('[data-theme]') ?? document.documentElement);
+    const superficie = raiz.getPropertyValue('--citie-background-surface').trim();
+    const sonda = document.createElement('span');
+    sonda.style.color = superficie;
+    aviso.append(sonda);
+    await expect(estilo.backgroundColor).toBe(getComputedStyle(sonda).color);
+    sonda.remove();
+
+    // Ícone de 16 e título Medium 14/20.
+    const icone = aviso.querySelector('svg');
+    await expect(icone?.getAttribute('width')).toBe('16');
+    const titulo = aviso.querySelector<HTMLElement>('.citie-message__titulo');
+    await expect(getComputedStyle(titulo as Element).fontSize).toBe('14px');
+    await expect(getComputedStyle(titulo as Element).fontWeight).toBe('500');
+
+    // No aviso o texto fica na tinta principal; no erro, na tinta de perigo,
+    // a mesma do ícone.
+    const tituloDoErro = erro.querySelector<HTMLElement>('.citie-message__titulo');
+    const iconeDoErro = erro.querySelector<HTMLElement>('.citie-message__icone');
+    await expect(getComputedStyle(tituloDoErro as Element).color).toBe(
+      getComputedStyle(iconeDoErro as Element).color,
+    );
+    await expect(getComputedStyle(titulo as Element).color).not.toBe(
+      getComputedStyle(tituloDoErro as Element).color,
+    );
+  },
+};
+
 export const MessageTipos: Story = {
   name: 'Message · tipos default, outlined e simple',
   render: () => (
     <div style={{ display: 'grid', gap: 16 }}>
       <Message severidade="info" tipo="default">
-        Fundo tonal, padrão para a maioria dos avisos.
+        Superfície com aresta tonal, padrão para a maioria dos avisos.
       </Message>
       <Message severidade="info" tipo="outlined">
-        Contorno, quando o fundo tonal competiria com outro elemento colorido próximo.
+        Contorno na tinta da severidade, quando o aviso precisa se afirmar sobre um fundo branco.
       </Message>
       <Message severidade="info" tipo="simple">
         Texto e ícone sem caixa, para contexto de baixa densidade visual.

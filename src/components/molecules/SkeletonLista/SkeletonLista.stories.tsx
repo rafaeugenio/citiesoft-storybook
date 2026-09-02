@@ -51,8 +51,8 @@ export const Lista: Story = {
 
     const itens = canvasElement.querySelectorAll<HTMLElement>('.citie-skeleton-lista__item');
     await expect(itens).toHaveLength(4);
-    // O esqueleto replica a anatomia de linha real: altura mínima de 40px em
+    // O esqueleto replica a anatomia de linha real: altura mínima de 36px em
     // densidade normal, senão a lista salta quando o dado chega.
-    await expect(itens[0].getBoundingClientRect().height).toBeGreaterThanOrEqual(40);
+    await expect(itens[0].getBoundingClientRect().height).toBeGreaterThanOrEqual(36);
   },
 };

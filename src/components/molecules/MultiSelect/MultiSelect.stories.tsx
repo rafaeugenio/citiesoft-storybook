@@ -150,7 +150,7 @@ export const Filled: Story = {
 };
 
 export const Tamanhos: Story = {
-  name: 'Size · 32 / 40 / 48px',
+  name: 'Size · 32 / 36 / 40px',
   render: (args) => (
     <div style={{ display: 'grid', gap: 16 }}>
       <MultiSelect {...args} size="small" label="Small" />

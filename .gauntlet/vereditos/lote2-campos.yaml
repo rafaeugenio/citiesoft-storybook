@@ -1,0 +1,163 @@
+revisor: Lote 2, campos de formulário (Field, Input, InputGroup, Textarea, Select,
+  MultiSelect, AutoComplete, DatePicker, InputOtp, Choice, Slider, FloatLabel,
+  IftaLabel, RadioGroup)
+componente: >
+  Família de campo do kit shadcn Citiesoft: primitives/Field (base compartilhada
+  de altura, raio, borda e estado), molecules/Input, InputGroup, Textarea,
+  Select, MultiSelect, AutoComplete, DatePicker, InputOtp, FloatLabel, IftaLabel,
+  atoms/Choice (checkbox, radio, switch), atoms/Slider, molecules/RadioGroup.
+veredito: SURPREENDEU
+veredito_anti_slop: PASSOU
+
+opiniao_parcial: >
+  Formada pelo diff antes de ler o handoff. A anatomia bate com
+  `docs/figma-ui-kit.md`: raio 10 (`--citie-radius-lg`) no campo e nos afixos do
+  InputGroup, alturas 24/32/36/40 com corpo de texto unificado em 14/20 do Small
+  ao Large e só o Mini caindo para 12/16, que é exatamente o que o kit prevê e
+  corrige uma inconsistência real do estado anterior (corpo variava por
+  tamanho). Padding horizontal 6/8/12/16 mapeado para `spacing-1-5/2/3/4`
+  confere com a tabela. O achado aberto do DS sobre `--citie-form-field-border-
+  hover` continuar em `#8f8f8f`/`#6b7177` não foi tocado por este lote. Checkbox
+  e radio caíram de 18 para 16px, mas o wrapper `.citie-choice` é um `<label>`
+  com `min-height: var(--citie-touch-target-min)` de 24px que inclui o rótulo
+  no alvo clicável. O marcador do Slider caiu de 20 para 16px sem afordância
+  de alvo equivalente, marcado para verificação.
+
+gate_tecnico:
+  ambiente: >
+    Worktree próprio, recriado nas duas rodadas em
+    /Users/rafaeleugenio/dev/citiesoft-storybook-revisao-lote2, sempre em HEAD
+    (--detach) com o diff do lote aplicado via `git apply`. O symlink de
+    node_modules recomendado pelo briefing quebra o Storybook test runner: o
+    addon-vitest resolve o setup-file pelo realpath do symlink e tenta buscá-lo
+    na URL do dev server com o caminho do repositório principal, então falham
+    as 119 suítes com "Failed to fetch dynamically imported module" antes de
+    rodar um teste sequer. Uso hardlinks (`cp -al`) no lugar do symlink, que
+    resolve sem copiar dado. tokens.css tem mudança não commitada de lotes
+    concluídos que o worktree em HEAD não carrega: copio o arquivo real do
+    repositório principal por cima antes de cada rodada, sem o que os testes
+    de altura falham por token ausente, um falso positivo de sabotagem antes
+    mesmo de sabotar.
+  testes_isolados: >
+    `test-storybook` tema claro, escopo do lote isolado: 792 de 792
+    (119 arquivos), verde. `test-storybook:dark`, mesmo escopo: 9 falhas em 2
+    arquivos (MultiSelect e AutoComplete), contraste de placeholder e chip
+    sobre fundo escuro, dívida documentada no briefing e não tocada por este
+    diff. Contagem bate exatamente com o handoff do produtor.
+  verificar_catalogo: 'Não rodei isolado; sem alteração de estrutura de catálogo no diff.'
+
+sabotagens_rodada_1:
+  a_focus_ring_danger_para_none:
+    resultado: NÃO REPROVOU (BLOQUEADOR de teste, não do componente vivo)
+    evidencia: >
+      Troquei `--citie-state-focus-ring-danger: 0 0 0 3px rgb(220, 38, 38)`
+      por `none` no tema claro: 19 de 19 passaram em `Input.stories.tsx`,
+      incluindo `Estado · inválido`. O guard tinha um bug de
+      `indexOf('rgb')` + `slice`: quando o token vira `none`, `indexOf`
+      retorna -1, `slice(-1)` pega o último caractere `"e"`, e como
+      `box-shadow: none, <sombra válida>` é lista inválida (o navegador
+      descarta a declaração inteira), o computed `boxShadow` no foco vira a
+      string literal `"none"`, que contém `e`. `toContain('e')` passava por
+      coincidência, e o campo perdia toda indicação de foco no estado
+      inválido.
+  b_borda_repouso_para_e8eaed:
+    resultado: NÃO REPROVOU (MAIOR)
+    evidencia: >
+      Troquei `--citie-form-field-border: #8f8f8f` (3,23:1, piso 1.4.11) por
+      `#e8eaed`: 32 de 32 passaram em Input, Select e Textarea. Nenhum teste
+      do lote media o contraste da borda de repouso do campo.
+  c_altura_regular_para_40px:
+    resultado: REPROVOU como devia.
+    evidencia: >
+      Troquei `height: var(--citie-control-height-normal)` por `height:
+      40px` fixo: 18 de 19 passaram, `Tamanhos · 32 / 36 / 40px` reprovou
+      como esperado.
+
+reverificacao_rodada_2: >
+  Adendo do produtor em `.gauntlet/lote2-handoff.md` corrige as três
+  pendências. Refiz as sabotagens no worktree limpo (hardlinks, tokens.css
+  atualizado) e medi de novo, sem confiar na palavra do handoff.
+  1. BLOQUEADOR: guard trocou `indexOf('rgb')+slice` por extração via regex
+     `rgba?\([^)]+\)`, que lança se não achar cor reconhecível. Sabotei o
+     token para `none` de novo: `Estado · inválido` REPROVA agora, com o
+     erro explícito `Token de sombra sem cor rgb/rgba reconhecível: "none"`,
+     em vez de passar por coincidência. Confirmado, guard vivo.
+  2. MAIOR: novo `play` em `Cores.stories.tsx > Bordas` mede
+     `contraste(form-field-border, background-surface)`. Sabotei o token
+     para `#e8eaed` de novo: reprova com `expected 1.2052913407823622 to be
+     greater than or equal to 3`, ou seja 1,21:1 medido, batendo exatamente
+     com o valor que o handoff alegou. Confirmado.
+  3. MAIOR: `Slider.css` moveu o preenchimento visual para
+     `::-webkit-slider-runnable-track`/`::-moz-range-track` (6px) e deu ao
+     `<input>` a caixa cheia de `--citie-touch-target-min` (24px). Medi eu
+     mesmo com `getBoundingClientRect()` nos dois handles do `RangeSlider`
+     (`Range · duas pontas`, que não tinha teste de hit-box antes): os dois
+     retornam `height: 24` exatos, com o marcador pintado continuando em
+     16px. A regra `.citie-slider__controle--sobreposto` herda a altura do
+     pai `.citie-slider__trilho-duplo` (`height: var(--citie-touch-target-
+     min)`) via `inset-block: 0`, então a correção generaliza ao range de
+     duas pontas mesmo sem teste dedicado no arquivo. `Horizontal` e
+     `Vertical` (Slider simples) também continuam medindo `>= 24` nos eixos
+     certos. Confirmado, sem exceção "essential" necessária: a solução
+     desacoplou o alvo de toque do marcador visual, então não sobra
+     ressalva de acessibilidade a registrar.
+
+achados:
+  - severidade: BLOQUEADOR
+    status: CORRIGIDO
+    escopo: teste, não o componente em produção
+    descricao: >
+      Guard de `Estado · inválido` em `Input.stories.tsx` não detectava a
+      supressão do token `--citie-state-focus-ring-danger`. Corrigido com
+      extração de cor por regex e falha explícita quando não há cor
+      reconhecível. Resabotado e confirmado reprovando.
+  - severidade: MAIOR
+    status: CORRIGIDO
+    descricao: >
+      Nenhum teste media o contraste de repouso de `--citie-form-field-
+      border` (piso 3:1, WCAG 1.4.11). Corrigido com `play` medido em
+      `Cores.stories.tsx > Bordas`. Resabotado e confirmado reprovando em
+      1,21:1.
+  - severidade: MAIOR
+    status: CORRIGIDO
+    descricao: >
+      Marcador do Slider caiu de 20px para 16px sem alvo de toque
+      equivalente a 24px. Corrigido desacoplando o traço pintado (track
+      pseudo-elemento) da caixa clicável do `<input>`, que agora mede 24px
+      nos dois eixos, inclusive nos dois handles do `RangeSlider`. Medi
+      pessoalmente com `getBoundingClientRect()`, não apenas conferi o
+      teste do produtor.
+  - severidade: MENOR
+    status: aberto, não bloqueia
+    descricao: >
+      Nenhuma medição de contraste do MultiSelect/AutoComplete no escuro
+      está documentada em `tokens.css` com a mesma qualidade do achado
+      aberto do placeholder claro. Vale herdar o padrão de comentário
+      quando o próximo passe tocar esses tokens.
+
+o_que_me_surpreendeu:
+  - >
+    A correção do corpo de texto por tamanho (Small/Regular/Large em 14/20
+    único, Mini em 12/16) não estava pedida explicitamente pela tarefa de
+    "seguir a anatomia do kit": o produtor identificou e documentou que o
+    estado anterior misturava 13/14/16 na mesma tela para o mesmo dado, e
+    resolveu isso como efeito colateral correto da migração de altura, sem
+    inflar o escopo.
+  - >
+    A correção do Slider não colou um `min-height` grosseiro por cima do
+    marcador (o que teria inflado o visual de volta a 24px, contra a
+    anatomia do kit): desacoplou o traço pintado do trilho, que ficou em
+    `::-webkit-slider-runnable-track`, da caixa clicável do próprio
+    `<input>`, então o marcador de 16px do kit e o alvo de 24px do WCAG
+    2.5.8 convivem sem concessão em nenhuma das duas pontas, generalizando
+    de graça para o `RangeSlider`, que eu medi e o produtor não tinha
+    testado.
+
+conclusao: >
+  A anatomia visual do lote estava correta desde a primeira rodada, medida
+  em produção real. As três pendências da primeira rodada eram todas na
+  rede de teste, não no CSS entregue, e as três foram corrigidas de forma
+  específica e resabotadas por mim de novo nesta rodada, com reprovação
+  confirmada nos três casos e uma medição extra de minha conta (hit-box do
+  `RangeSlider`) que o próprio produtor não tinha coberto. Aprovado sem
+  ressalva para conformidade e-MAG 3.1 e WCAG 2.2 AA.

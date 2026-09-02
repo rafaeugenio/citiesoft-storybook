@@ -1,61 +1,163 @@
 /**
- * Badge, Tag, Chip e Status Indicator (badges-tags.md).
- * Toda cor sai do mapa canônico de 7 severidades. Hex direto fora do mapa é proibido.
+ * Badge, Tag, Chip e Status Indicator (badges-tags.md), na anatomia do Badge
+ * do UI Kit Citiesoft (docs/figma-ui-kit.md): altura 20, padding 2 × 8, gap 4,
+ * raio 10, SemiBold 12/16.
+ *
+ * Toda cor sai do mapa canônico de 7 severidades. Hex direto fora do mapa é
+ * proibido. Cada severidade declara quatro tintas:
+ *   --sev-bg / --sev-fg               : pele TONAL (fundo claro da família, texto forte)
+ *   --sev-preenchimento / --sev-rotulo : pele PREENCHIDA (rampa de preenchimento do
+ *                                        controle cheio, rótulo de contraste)
+ * As peles Contorno e Fantasma usam `--sev-fg` como tinta e `--sev-contorno`
+ * como borda.
+ *
+ * Contraste medido, rótulo sobre fundo, tema claro / escuro. No escuro os
+ * fundos tonais são véus de 12 a 14% sobre a página, então o par foi medido
+ * com o véu composto sobre a superfície #1a1a1d, onde a Tag vive (tabela e
+ * card); sobre o canvas #141414 o valor sobe um pouco:
+ *   tonal      success 4,76 / 9,96   warn 4,84 / 12,04   danger 5,91 / 9,15
+ *              info 4,97 / 6,47 (canvas 6,93)   secondary 10,11 / 10,46
+ *              primary 4,97 / 6,47 (canvas 6,93) com a tinta de `brand-hover`
+ *              no escuro, ver a regra `[data-theme='dark'] .citie-sev--primary`:
+ *              `brand-primary` #4d8bfc sobre o véu media **4,39** na superfície
+ *              e 4,70 no canvas, abaixo de AA. Uma versão deste cabeçalho
+ *              escreveu 7,82 para primary e info, que é #84aefd sobre #1a1a1d
+ *              sem o véu; o revisor mediu e pegou.
+ *   preenchida primary 5,45 / 5,63   danger 4,83 / 4,83  info 5,45 / 8,29
+ *              secondary 14,94 / 14,37   contrast 16,29 / 14,95
+ *              success **3,30** / 5,59   warn **3,19** / 5,78
+ *   contorno e fantasma (sobre a superfície) success 5,02 / 9,96  warn 5,02 / 12,04
+ *              danger 6,47 / 9,15  info 5,45 / 7,82  secondary 11,03 / 11,60
+ *
+ * ACHADO ABERTO DO DS, o mesmo do Button: a pele preenchida de success e de
+ * warn no claro reprova AA com o rótulo branco de `*-contrast`. Ela existe
+ * aqui porque o kit a tem, e as stories que a mostram ficam em modo aviso
+ * até a decisão de token, sem piorar nada que já passava: a pele padrão de
+ * Tag e Status continua tonal.
  */
 
 .citie-sev {
   --sev-bg: var(--citie-background-subtle);
   --sev-fg: var(--citie-text-base);
+  --sev-preenchimento: var(--citie-secondary);
+  --sev-rotulo: var(--citie-secondary-foreground);
+  --sev-contorno: var(--citie-border-strong);
 }
 
 .citie-sev--success {
   --sev-bg: var(--citie-success-background);
   --sev-fg: var(--citie-success-strong);
+  --sev-preenchimento: var(--citie-success-emphasis);
+  --sev-rotulo: var(--citie-success-contrast);
+  --sev-contorno: var(--sev-fg);
 }
 
 .citie-sev--info {
   --sev-bg: var(--citie-info-background);
   --sev-fg: var(--citie-info-text);
+  --sev-preenchimento: var(--citie-info-text);
+  --sev-rotulo: var(--citie-brand-contrast);
+  --sev-contorno: var(--sev-fg);
 }
 
 .citie-sev--warn {
   --sev-bg: var(--citie-warning-background);
   --sev-fg: var(--citie-warning-strong);
+  --sev-preenchimento: var(--citie-warning-emphasis);
+  --sev-rotulo: var(--citie-warning-contrast);
+  --sev-contorno: var(--sev-fg);
 }
 
 .citie-sev--danger {
   --sev-bg: var(--citie-danger-background);
   --sev-fg: var(--citie-danger-foreground);
+  --sev-preenchimento: var(--citie-danger-emphasis);
+  --sev-rotulo: var(--citie-danger-contrast);
+  --sev-contorno: var(--sev-fg);
 }
 
 .citie-sev--secondary {
   --sev-bg: var(--citie-background-subtle);
   --sev-fg: var(--citie-text-base);
+  --sev-preenchimento: var(--citie-secondary);
+  --sev-rotulo: var(--citie-secondary-foreground);
+  --sev-contorno: var(--citie-border-strong);
 }
 
 .citie-sev--primary {
   --sev-bg: var(--citie-brand-subtle);
   --sev-fg: var(--citie-brand-primary);
+  --sev-preenchimento: var(--citie-brand-primary);
+  --sev-rotulo: var(--citie-brand-contrast);
+  --sev-contorno: var(--sev-fg);
+}
+
+/*
+ * Primary tonal no escuro: a tinta sobe um degrau na rampa de marca.
+ * `brand-primary` #4d8bfc sobre `brand-subtle` (14% da mesma tinta sobre a
+ * superfície) mede 4,39:1 em #1a1a1d e 4,70:1 em #141414; `brand-hover`
+ * #84aefd mede **6,47:1** e **6,93:1**, e é a mesma tinta que o info tonal já
+ * usa (`info-text`). A pele preenchida fica fora do seletor: lá o rótulo é
+ * `brand-contrast` sobre o preenchimento sólido (5,63:1), e esta regra, mais
+ * específica que `.citie-sev--pele-preenchida`, venceria a tinta dela. O gate
+ * escuro da story `Anatomia` pegou isso na primeira versão.
+ */
+[data-theme='dark'] .citie-sev--primary:not(.citie-sev--pele-preenchida) {
+  --sev-fg: var(--citie-brand-hover);
 }
 
 .citie-sev--contrast {
   --sev-bg: var(--citie-text-primary);
   --sev-fg: var(--citie-text-inverse);
+  --sev-preenchimento: var(--citie-text-primary);
+  --sev-rotulo: var(--citie-text-inverse);
+  --sev-contorno: var(--citie-text-primary);
+}
+
+/* ---------- Peles do kit ---------- */
+
+/* Preenchida: o Primary e o Destructive do Badge do kit. */
+.citie-sev--pele-preenchida {
+  --sev-bg: var(--sev-preenchimento);
+  --sev-fg: var(--sev-rotulo);
+}
+
+/* Contorno: o Outline do kit, 1px de borda e a superfície por trás. A borda
+   entra na caixa (`border-box`), então a altura do degrau não muda. */
+.citie-sev--pele-contorno {
+  --sev-bg: transparent;
+  border: 1px solid var(--sev-contorno);
+}
+
+/* A borda toma 1px do respiro vertical de cada lado, e o degrau de 20 fica.
+   Dois seletores para vencer o `padding-block` que Tag e Badge declaram abaixo. */
+.citie-tag.citie-sev--pele-contorno,
+.citie-badge.citie-sev--pele-contorno {
+  padding-block: calc(var(--citie-spacing-0-5) - 1px);
+}
+
+/* Fantasma: o Ghost do kit, só o texto na tinta da severidade. */
+.citie-sev--pele-fantasma {
+  --sev-bg: transparent;
 }
 
 /**
  * ---------- Escala de altura da família de marcadores ----------
  *
- * Badge, Tag, Status e Chip apareciam lado a lado na mesma célula de tabela com
- * três alturas diferentes por tamanho nominal (em `md`: 20, 24 e 32px), então a
- * linha de base deles não coincidia e a célula ficava desalinhada. A altura
- * passa a sair de um degrau só, e o `md` de um é o `md` de todos.
+ * Badge, Tag e Status dividem um degrau só, o do Badge do kit: 16 / 20 / 24,
+ * com o `md` de 20 sendo o padrão. Antes eram 24 / 28 / 32, e os três
+ * apareciam lado a lado na mesma célula com alturas diferentes por tamanho
+ * nominal; a linha de base não coincidia e a célula ficava desalinhada.
  *
- * O badge ancorado fica de fora de propósito: ele é sobreposto a ícone, avatar
- * ou botão, e crescer junto o faria vazar do elemento que marca.
+ * O Chip fica fora da escala de propósito: ele é controle (recebe foco,
+ * clique e remoção com alvo de 24px) e continua em 24 / 28 / 32, que é a
+ * altura de um controle mini e o respiro que a remoção precisa.
+ *
+ * O badge ancorado também fica de fora: ele é sobreposto a ícone, avatar ou
+ * botão, e crescer junto o faria vazar do elemento que marca.
  */
-/* Sem `border-box` a altura declarada seria só a do conteúdo, e o chip, que tem
-   borda de 1px, ficaria 2px mais alto que a tag do lado com o mesmo degrau. */
+/* Sem `border-box` a altura declarada seria só a do conteúdo, e a pele com
+   contorno ficaria 2px mais alta que a tonal do lado com o mesmo degrau. */
 .citie-badge,
 .citie-tag,
 .citie-chip {
@@ -63,19 +165,28 @@
 }
 
 .citie-badge--solto.citie-badge--sm,
-.citie-tag--sm,
+.citie-tag--sm {
+  --marcador-altura: 16px;
+}
+
+.citie-badge--solto.citie-badge--md,
+.citie-tag--md {
+  --marcador-altura: 20px;
+}
+
+.citie-badge--solto.citie-badge--lg,
+.citie-tag--lg {
+  --marcador-altura: 24px;
+}
+
 .citie-chip--sm {
   --marcador-altura: 24px;
 }
 
-.citie-badge--solto.citie-badge--md,
-.citie-tag--md,
 .citie-chip--md {
   --marcador-altura: 28px;
 }
 
-.citie-badge--solto.citie-badge--lg,
-.citie-tag--lg,
 .citie-chip--lg {
   --marcador-altura: 32px;
 }
@@ -92,19 +203,21 @@
   align-items: center;
   justify-content: center;
   font-family: var(--citie-font-ui);
+  /* SemiBold 12/16 do kit. */
   font-weight: var(--citie-font-weight-title);
+  line-height: var(--citie-linha-mini);
   color: var(--sev-fg);
   background-color: var(--sev-bg);
-  border-radius: var(--citie-radius-full);
-  box-shadow: 0 0 0 2px var(--citie-background-surface);
+  /* O `radius` do kit (10): numa altura de 20 vira pílula, no `lg` de 24
+     deixa uma reta de 4px que o diferencia do avatar redondo ao lado. */
+  border-radius: var(--citie-radius-lg);
 }
 
-/* Respiro de marcador da spec: `spacing-1` no eixo vertical, `spacing-2` no
-   horizontal. A altura mínima domina o cálculo e mantém a pílula regular. */
+/* Respiro de marcador do kit: 2px no eixo vertical, 8px no horizontal. A
+   altura declarada domina o cálculo e mantém a pílula regular. */
 .citie-badge--solto {
-  min-height: var(--marcador-altura);
-  height: auto;
-  padding-block: var(--citie-spacing-1);
+  height: var(--marcador-altura);
+  padding-block: var(--citie-spacing-0-5);
 }
 
 .citie-badge--sm {
@@ -141,6 +254,7 @@
   height: 10px;
   min-height: 0;
   padding: 0;
+  border-radius: var(--citie-radius-full);
   background-color: var(--sev-fg);
 }
 
@@ -151,10 +265,13 @@
   height: 10px;
 }
 
+/* Ancorado sobre ícone ou avatar: o aro de 2px na cor da superfície recorta o
+   badge do elemento que ele marca. Só aqui, porque solto ele não recorta nada. */
 .citie-badge-anchor__badge {
   position: absolute;
   inset-block-start: -6px;
   inset-inline-end: -8px;
+  box-shadow: 0 0 0 2px var(--citie-background-surface);
 }
 
 /* ---------- Tag e Status Indicator ---------- */
@@ -162,15 +279,19 @@
 .citie-tag {
   display: inline-flex;
   align-items: center;
+  /* Gap 4 do kit, entre ícone e rótulo. */
   gap: var(--citie-spacing-1);
-  /* Altura pela escala compartilhada, respiro de marcador da spec. */
+  /* Altura pela escala compartilhada, respiro 2 × 8 do kit. */
   min-height: var(--marcador-altura);
-  padding-block: var(--citie-spacing-1);
+  padding-block: var(--citie-spacing-0-5);
   padding-inline: var(--citie-spacing-2);
   font-family: var(--citie-font-ui);
+  /* SemiBold do kit em todos os degraus. */
+  font-weight: var(--citie-font-weight-title);
+  line-height: var(--citie-linha-mini);
   color: var(--sev-fg);
   background-color: var(--sev-bg);
-  border-radius: var(--citie-radius-full);
+  border-radius: var(--citie-radius-lg);
   white-space: nowrap;
   max-width: 100%;
 }
@@ -182,17 +303,14 @@
 
 .citie-tag--sm {
   font-size: var(--citie-font-size-caption);
-  font-weight: var(--citie-font-weight-title);
 }
 
 .citie-tag--md {
   font-size: var(--citie-font-size-body-xs);
-  font-weight: var(--citie-font-weight-action);
 }
 
 .citie-tag--lg {
   font-size: var(--citie-font-size-body-sm);
-  font-weight: var(--citie-font-weight-action);
 }
 
 .citie-tag__icon {
@@ -205,7 +323,6 @@
 .citie-status {
   min-width: 120px;
   justify-content: center;
-  font-weight: var(--citie-font-weight-title);
 }
 
 /* ---------- Chip ---------- */
@@ -215,12 +332,12 @@
   align-items: center;
   gap: var(--citie-spacing-1);
   /**
-   * Mesma altura de Tag e Status: os três dividem a linha da célula.
+   * Controle: altura própria (24 / 28 / 32), ver a escala.
    *
-   * O respiro vertical vem do degrau de altura, e não de `padding-block`: o
-   * chip é o único da família que tem borda, e somar padding à borda dentro da
-   * mesma caixa estouraria o degrau e o deixaria 2px mais alto que a tag ao
-   * lado. Na prática o respiro resultante é o mesmo `spacing-1` que a spec pede.
+   * O respiro vertical vem do degrau de altura, sem `padding-block`: o
+   * chip tem borda, e somar padding à borda dentro da mesma caixa estouraria
+   * o degrau. Na prática o respiro resultante é o mesmo `spacing-1` que a
+   * spec pede.
    */
   min-height: var(--marcador-altura);
   padding-block: 0;
@@ -291,7 +408,7 @@
   /* Área de clique mínima de 24x24 mesmo com o ícone de 12px (WCAG 2.5.8). */
   min-width: 24px;
   min-height: 24px;
-  /* A área invade o respiro do chip em vez de somar altura a ele: sem isso o
+  /* A área invade o respiro do chip, sem somar altura a ele: de outro modo o
      chip removível ficaria 8px mais alto que o chip simples do lado. */
   margin-block: calc(var(--citie-spacing-1) * -1);
   margin-inline-end: calc(var(--citie-spacing-1) * -1);

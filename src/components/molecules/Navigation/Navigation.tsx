@@ -15,6 +15,32 @@ export interface BreadcrumbProps {
   compacto?: boolean;
 }
 
+function IconeCasaDaTrilha() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M3 11l9-7 9 7" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M5 10v9a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1v-9" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function SeparadorDaTrilha() {
+  return (
+    <svg
+      className="citie-breadcrumb__separador"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      aria-hidden="true"
+    >
+      <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function Breadcrumb({ niveis, compacto = false }: BreadcrumbProps) {
   // Acima de 4 níveis os do meio colapsam, preservando raiz e atual.
   const colapsar = niveis.length > 4;
@@ -30,13 +56,11 @@ export function Breadcrumb({ niveis, compacto = false }: BreadcrumbProps) {
       <ol className="citie-breadcrumb__lista">
         {visiveis.map((nivel, indice) => {
           const atual = indice === visiveis.length - 1;
+          // Primeiro nível ganha o ícone de casa, como no shell do Sismental.
+          const raiz = indice === 0;
           return (
             <li key={`${nivel.rotulo}-${indice}`} className="citie-breadcrumb__item">
-              {indice > 0 ? (
-                <span className="citie-breadcrumb__separador" aria-hidden="true">
-                  /
-                </span>
-              ) : null}
+              {indice > 0 ? <SeparadorDaTrilha /> : null}
               {atual ? (
                 // O item atual é página corrente, nunca link.
                 <span className="citie-breadcrumb__atual" aria-current="page">
@@ -44,10 +68,22 @@ export function Breadcrumb({ niveis, compacto = false }: BreadcrumbProps) {
                 </span>
               ) : nivel.href ? (
                 <a className="citie-breadcrumb__link" href={nivel.href}>
+                  {raiz ? (
+                    <span className="citie-breadcrumb__icone-casa" aria-hidden="true">
+                      <IconeCasaDaTrilha />
+                    </span>
+                  ) : null}
                   {nivel.rotulo}
                 </a>
               ) : (
-                <span className="citie-breadcrumb__oculto">{nivel.rotulo}</span>
+                <span className="citie-breadcrumb__oculto">
+                  {raiz ? (
+                    <span className="citie-breadcrumb__icone-casa" aria-hidden="true">
+                      <IconeCasaDaTrilha />
+                    </span>
+                  ) : null}
+                  {nivel.rotulo}
+                </span>
               )}
             </li>
           );

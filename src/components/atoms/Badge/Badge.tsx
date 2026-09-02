@@ -13,8 +13,18 @@ export type Severidade =
 
 export type TamanhoMarcador = 'sm' | 'md' | 'lg';
 
+/**
+ * Peles do Badge do UI Kit. `tonal` é a pele da casa (fundo claro da família,
+ * texto forte) e continua sendo o padrão de Tag e Status; `preenchida` é o
+ * Primary e o Destructive do kit, `contorno` o Outline, `fantasma` o Ghost.
+ */
+export type PeleMarcador = 'tonal' | 'preenchida' | 'contorno' | 'fantasma';
+
+/** Classe da pele, só quando ela difere da tonal, que é o que `.citie-sev` já desenha. */
+const classeDaPele = (pele: PeleMarcador) => (pele === 'tonal' ? '' : ` citie-sev--pele-${pele}`);
+
 /* ------------------------------------------------------------------ */
-/* Badge — contagem ou dot sobreposto a ícone, avatar ou botão         */
+/* Badge: contagem ou dot sobreposto a ícone, avatar ou botão         */
 /* ------------------------------------------------------------------ */
 
 export interface BadgeProps {
@@ -24,6 +34,8 @@ export interface BadgeProps {
   dot?: boolean;
   severity?: Severidade;
   size?: TamanhoMarcador;
+  /** Pele do kit. Contagem sobre ícone costuma pedir `preenchida`. */
+  pele?: PeleMarcador;
   /** Elemento que recebe o badge sobreposto. */
   children?: ReactNode;
 }
@@ -33,6 +45,7 @@ export function Badge({
   dot = false,
   severity = 'primary',
   size = 'md',
+  pele = 'tonal',
   children,
 }: BadgeProps) {
   // Nunca exibir "0": o badge some.
@@ -42,7 +55,7 @@ export function Badge({
 
   const marcador = (
     <span
-      className={`citie-badge citie-sev citie-sev--${severity} citie-badge--${size}${
+      className={`citie-badge citie-sev citie-sev--${severity}${classeDaPele(pele)} citie-badge--${size}${
         dot ? ' citie-badge--dot' : ''
       }${
         children
@@ -69,7 +82,7 @@ export function Badge({
 }
 
 /* ------------------------------------------------------------------ */
-/* Tag — atributo estático, não removível                              */
+/* Tag: atributo estático, não removível                              */
 /* ------------------------------------------------------------------ */
 
 export interface TagProps {
@@ -78,11 +91,15 @@ export interface TagProps {
   size?: TamanhoMarcador;
   /** Decorativo: 12px, nunca maior que o cap-height do texto. */
   icon?: ReactNode;
+  /** Pele do kit: tonal (padrão), preenchida, contorno ou fantasma. */
+  pele?: PeleMarcador;
 }
 
-export function Tag({ label, severity = 'secondary', size = 'md', icon }: TagProps) {
+export function Tag({ label, severity = 'secondary', size = 'md', icon, pele = 'tonal' }: TagProps) {
   return (
-    <span className={`citie-tag citie-sev citie-sev--${severity} citie-tag--${size}`}>
+    <span
+      className={`citie-tag citie-sev citie-sev--${severity}${classeDaPele(pele)} citie-tag--${size}`}
+    >
       {icon ? (
         <span className="citie-tag__icon" aria-hidden="true">
           {icon}
@@ -94,7 +111,7 @@ export function Tag({ label, severity = 'secondary', size = 'md', icon }: TagPro
 }
 
 /* ------------------------------------------------------------------ */
-/* Status Indicator — etapa de um fluxo de trabalho                    */
+/* Status Indicator: etapa de um fluxo de trabalho                    */
 /* ------------------------------------------------------------------ */
 
 /** Estados oficiais do glossário, com a severidade canônica de cada um. */
@@ -138,7 +155,7 @@ export function StatusIndicator({ estado, size = 'md', icon }: StatusIndicatorPr
 }
 
 /* ------------------------------------------------------------------ */
-/* Chip — entidade interativa, removível ou alternável                 */
+/* Chip: entidade interativa, removível ou alternável                 */
 /* ------------------------------------------------------------------ */
 
 export interface ChipProps {

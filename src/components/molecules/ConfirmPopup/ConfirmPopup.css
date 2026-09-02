@@ -12,8 +12,8 @@
   color: var(--citie-text-base);
   background-color: var(--citie-background-surface);
   border: 1px solid var(--citie-border-default);
-  /* Cartão ancorado é contêiner externo: raio de camada, e não raio de campo. */
-  border-radius: var(--citie-radius-2xl);
+  /* O `radius` de 10 do kit, o mesmo de toda superfície flutuante ancorada. */
+  border-radius: var(--citie-radius-lg);
   box-shadow: var(--citie-shadow-overlay);
   font-family: var(--citie-font-ui);
   animation: citie-confirm-popup-entrada var(--citie-motion-padrao) var(--citie-easing-entrada);

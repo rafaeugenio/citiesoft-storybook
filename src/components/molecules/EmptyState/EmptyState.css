@@ -31,6 +31,42 @@
   text-align: start;
 }
 
+/* ---------- Molduras do kit ---------- */
+
+/**
+ * As quatro variantes do Empty do kit: sem moldura (padrão), contorno de 1px,
+ * fundo muted e contorno tracejado. Todas no `radius` de 10 e com o respiro
+ * de card de destaque nas laterais; o vertical continua vindo do tamanho. A
+ * tracejada é a que pede ação de criação (área de soltar arquivo, primeiro
+ * item), porque o traço interrompido lê como lugar ainda por preencher.
+ */
+.citie-empty--moldura-contorno,
+.citie-empty--moldura-preenchida,
+.citie-empty--moldura-tracejada {
+  box-sizing: border-box;
+  padding-inline: var(--citie-spacing-6);
+  border-radius: var(--citie-radius-lg);
+}
+
+.citie-empty--moldura-contorno {
+  border: 1px solid var(--citie-border-default);
+  background-color: var(--citie-background-surface);
+}
+
+.citie-empty--moldura-preenchida {
+  background-color: var(--citie-background-subtle);
+}
+
+/*
+ * O traço interrompido precisa de um degrau a mais de contraste que o fio
+ * contínuo, senão os segmentos somem: `border-strong` mede 1,37:1 sobre a
+ * página no claro e 1,94:1 no escuro, na faixa perceptual da aresta de card.
+ */
+.citie-empty--moldura-tracejada {
+  border: 1px dashed var(--citie-border-strong);
+  background-color: var(--citie-background-surface);
+}
+
 .citie-empty--lg {
   padding-block: 80px;
 }

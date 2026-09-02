@@ -138,7 +138,7 @@ export const Obrigatorio: Story = {
     docs: {
       description: {
         story:
-          'Aceite de termos: sem botão de fechar e sem saída por Escape. A decisão precisa ser explícita.',
+          'Aceite de termos: sem botão de fechar e sem saída por Escape. A decisão precisa ser explícita. Com um único botão, o rodapé assume a segunda anatomia do kit e o botão ocupa a largura inteira: é a única saída, e o desenho diz isso.',
       },
     },
   },
@@ -167,6 +167,78 @@ export const Obrigatorio: Story = {
     await userEvent.keyboard('{Escape}');
     // Escape não fecha um modal obrigatório.
     await expect(dialogo.open).toBe(true);
+
+    // Rodapé de um botão só: largura total, a segunda anatomia do kit.
+    const rodape = dialogo.querySelector<HTMLElement>('.citie-dialog__rodape');
+    const botao = within(dialogo).getByRole('button', { name: 'Aceitar os termos' });
+    const larguraUtil =
+      (rodape as HTMLElement).clientWidth -
+      Number.parseFloat(getComputedStyle(rodape as Element).paddingLeft) -
+      Number.parseFloat(getComputedStyle(rodape as Element).paddingRight);
+    await expect(Math.abs(botao.getBoundingClientRect().width - larguraUtil)).toBeLessThan(1);
+  },
+};
+
+export const Anatomia: Story = {
+  name: 'Dialog · anatomia do kit',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Dialog do UI Kit: 640px de largura, raio 10, borda de 1px, shadow-lg, título 20 com subtítulo muted, botão de fechar de 30px no canto e rodapé com dois botões à direita. A story abre e mede.',
+      },
+    },
+  },
+  render: () => (
+    <ComGatilho rotulo="Abrir diálogo">
+      {({ aberto, fechar }) => (
+        <Dialog
+          aberto={aberto}
+          onClose={fechar}
+          titulo="Encerrar processo 2025/0481"
+          subtitulo="Solicitação de Maria de Fátima Souza"
+          rodape={
+            <>
+              <Button variant="secondary" onClick={fechar}>
+                Cancelar
+              </Button>
+              <Button variant="primary">Encerrar processo</Button>
+            </>
+          }
+        >
+          O processo sai da fila de análise e o histórico fica disponível só para consulta.
+        </Dialog>
+      )}
+    </ComGatilho>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Abrir diálogo' }));
+    const dialogo = canvasElement.querySelector<HTMLDialogElement>('dialog')!;
+    await waitFor(() => expect(dialogo.open).toBe(true));
+
+    const estilo = getComputedStyle(dialogo);
+    await expect(dialogo.getBoundingClientRect().width).toBe(640);
+    await expect(estilo.borderTopLeftRadius).toBe('10px');
+    await expect(estilo.borderTopWidth).toBe('1px');
+    await expect(estilo.boxShadow).not.toBe('none');
+
+    const titulo = dialogo.querySelector<HTMLElement>('.citie-dialog__titulo');
+    await expect(getComputedStyle(titulo as Element).fontSize).toBe('20px');
+
+    const fechar = within(dialogo).getByRole('button', { name: 'Fechar diálogo' });
+    await expect(fechar.getBoundingClientRect().width).toBe(30);
+    await expect(fechar.getBoundingClientRect().height).toBe(30);
+
+    // Dois botões à direita: o último termina na borda interna do rodapé.
+    const rodape = dialogo.querySelector<HTMLElement>('.citie-dialog__rodape')!;
+    const primario = within(dialogo).getByRole('button', { name: 'Encerrar processo' });
+    const bordaInterna =
+      rodape.getBoundingClientRect().right - Number.parseFloat(getComputedStyle(rodape).paddingRight);
+    await expect(Math.abs(primario.getBoundingClientRect().right - bordaInterna)).toBeLessThan(1);
+
+    await userEvent.click(fechar);
+    await waitFor(() => expect(dialogo.open).toBe(false));
   },
 };
 
@@ -176,7 +248,7 @@ export const Tamanhos: Story = {
     docs: {
       description: {
         story:
-          'sm 400px para mensagem simples, md 560px para formulário de 3 a 8 campos (padrão), lg 720px para formulário extenso, xl 960px para preview de relatório.',
+          'sm 400px para mensagem simples, md 640px para formulário de 3 a 8 campos (padrão, a largura do Dialog do kit), lg 800px para formulário extenso, xl 960px para preview de relatório.',
       },
     },
   },

@@ -11,7 +11,7 @@
   align-items: center;
   gap: var(--citie-spacing-3);
   /*
-   * Anatomia de linha real: altura mínima de 40px em densidade normal. A linha
+   * Anatomia de linha real: altura mínima de 36px em densidade normal. A linha
    * verdadeira que vai substituir este esqueleto tem essa medida, e o esqueleto
    * mais baixo faria a lista crescer quando o dado chegasse.
    */

@@ -55,18 +55,43 @@
 
 /* ---------- Controle ---------- */
 
+/*
+ * O trilho visual mede 6px, anatomia do kit. O alvo de toque do marcador é
+ * outra medida: o `<input>` inteiro é o hit-box nativo do range (é nele que
+ * o navegador captura o ponteiro ao longo do eixo perpendicular ao curso, não
+ * só na área pintada do polegar de 16px), então crescer a caixa do elemento
+ * para o mínimo de 24px do WCAG 2.5.8 aumenta o alvo real sem aumentar o
+ * traço pintado. O preenchimento mora nos pseudo-elementos de trilho
+ * (`-webkit-slider-runnable-track`, `-moz-range-track`), que herdam a altura
+ * fina; o elemento em si fica transparente e só empresta a caixa maior.
+ */
 .citie-slider__controle {
   flex: 1;
   appearance: none;
-  height: 6px;
+  height: var(--citie-touch-target-min);
   margin: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.citie-slider__controle::-webkit-slider-runnable-track {
+  height: 6px;
   border-radius: var(--citie-radius-full);
   background: linear-gradient(
     to right,
     var(--citie-brand-primary) 0 var(--preenchido, 50%),
     var(--citie-background-subtle) var(--preenchido, 50%) 100%
   );
-  cursor: pointer;
+}
+
+.citie-slider__controle::-moz-range-track {
+  height: 6px;
+  border-radius: var(--citie-radius-full);
+  background: linear-gradient(
+    to right,
+    var(--citie-brand-primary) 0 var(--preenchido, 50%),
+    var(--citie-background-subtle) var(--preenchido, 50%) 100%
+  );
 }
 
 .citie-slider--vertical .citie-slider__linha {
@@ -77,9 +102,15 @@
 .citie-slider--vertical .citie-slider__controle {
   writing-mode: vertical-lr;
   direction: rtl;
-  width: 6px;
+  /* Largura é o eixo de toque no vertical: mesmo mínimo de 24px, traço
+     pintado continuando em 6px no pseudo-elemento do trilho. */
+  width: var(--citie-touch-target-min);
   height: 160px;
   flex: none;
+}
+
+.citie-slider--vertical .citie-slider__controle::-webkit-slider-runnable-track {
+  width: 6px;
   background: linear-gradient(
     to top,
     var(--citie-brand-primary) 0 var(--preenchido, 50%),
@@ -87,11 +118,20 @@
   );
 }
 
-/* Handle: 20px, borda de marca, sombra própria. */
+.citie-slider--vertical .citie-slider__controle::-moz-range-track {
+  width: 6px;
+  background: linear-gradient(
+    to top,
+    var(--citie-brand-primary) 0 var(--preenchido, 50%),
+    var(--citie-background-subtle) var(--preenchido, 50%) 100%
+  );
+}
+
+/* Marcador de 16px, borda de marca, anel no foco (anatomia do kit). */
 .citie-slider__controle::-webkit-slider-thumb {
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   border-radius: var(--citie-radius-full);
   background-color: var(--citie-background-surface);
   border: 2px solid var(--citie-brand-primary);
@@ -103,8 +143,8 @@
 }
 
 .citie-slider__controle::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   border-radius: var(--citie-radius-full);
   background-color: var(--citie-background-surface);
   border: 2px solid var(--citie-brand-primary);
@@ -130,8 +170,15 @@
 }
 
 .citie-slider__controle:disabled {
-  background: var(--citie-state-disabled-background);
   cursor: not-allowed;
+}
+
+.citie-slider__controle:disabled::-webkit-slider-runnable-track {
+  background: var(--citie-state-disabled-background);
+}
+
+.citie-slider__controle:disabled::-moz-range-track {
+  background: var(--citie-state-disabled-background);
 }
 
 .citie-slider__controle:disabled::-webkit-slider-thumb {
@@ -147,9 +194,12 @@
 
 /* ---------- Range de duas pontas ---------- */
 
+/* Altura do trilho duplo casada com o mínimo de toque de 24px: os dois
+   `<input>` sobrepostos herdam essa altura da regra base do controle, e o
+   traço pintado de 6px do `::before` fica centrado dentro dela. */
 .citie-slider__trilho-duplo {
   position: relative;
-  height: 20px;
+  height: var(--citie-touch-target-min);
   display: flex;
   align-items: center;
 }
@@ -158,6 +208,8 @@
   content: '';
   position: absolute;
   inset-inline: 0;
+  inset-block-start: 50%;
+  translate: 0 -50%;
   height: 6px;
   border-radius: var(--citie-radius-full);
   background: linear-gradient(
@@ -171,8 +223,8 @@
 .citie-slider__controle--sobreposto {
   position: absolute;
   inset-inline: 0;
+  inset-block: 0;
   width: 100%;
-  background: none;
   pointer-events: none;
 }
 

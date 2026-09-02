@@ -25,7 +25,9 @@
 
   background-color: var(--citie-background-surface);
   border: 1px solid var(--citie-form-field-border);
-  border-radius: var(--citie-radius-md);
+  /* Mesmo raio 10 do Input e do Select: o grupo É o campo, com o mesmo
+     contorno visual do primitivo Field. */
+  border-radius: var(--citie-radius-lg);
   box-shadow: var(--citie-elevacao-do-campo);
   transition:
     border-color var(--citie-motion-rapido) var(--citie-easing-padrao),
@@ -36,6 +38,10 @@
   .citie-input-group-trilho {
     transition: none;
   }
+}
+
+.citie-input-group-trilho--mini {
+  height: var(--citie-control-height-mini);
 }
 
 .citie-input-group-trilho--small {
@@ -116,12 +122,10 @@
   white-space: nowrap;
 }
 
-.citie-input-group-trilho--small .citie-input-group-trilho__adorno {
-  font-size: var(--citie-font-size-body-sm);
-}
-
-.citie-input-group-trilho--large .citie-input-group-trilho__adorno {
-  font-size: var(--citie-font-size-body-lg);
+/* O texto do adorno acompanha o mesmo corpo Regular 14/20 do campo do Small
+   ao Large; só o Mini muda, como no controle. */
+.citie-input-group-trilho--mini .citie-input-group-trilho__adorno {
+  font-size: var(--citie-font-size-body-xs);
 }
 
 /* ---------- Botão de ação colado (Button do catálogo, sem alteração) ---------- */
@@ -155,13 +159,13 @@
    empata com a regra do botão acima, e a ordem daqui decide: peça na ponta
    ganha canto mesmo sendo botão. */
 .citie-input-group-trilho.citie-input-group-trilho > :first-child {
-  border-start-start-radius: calc(var(--citie-radius-md) - 1px);
-  border-end-start-radius: calc(var(--citie-radius-md) - 1px);
+  border-start-start-radius: calc(var(--citie-radius-lg) - 1px);
+  border-end-start-radius: calc(var(--citie-radius-lg) - 1px);
 }
 
 .citie-input-group-trilho.citie-input-group-trilho > :last-child {
-  border-start-end-radius: calc(var(--citie-radius-md) - 1px);
-  border-end-end-radius: calc(var(--citie-radius-md) - 1px);
+  border-start-end-radius: calc(var(--citie-radius-lg) - 1px);
+  border-end-end-radius: calc(var(--citie-radius-lg) - 1px);
 }
 
 /* Uma linha por junção, sempre. A classe dobrada vence tanto as regras por

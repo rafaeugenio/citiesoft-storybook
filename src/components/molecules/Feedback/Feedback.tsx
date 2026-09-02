@@ -1,6 +1,14 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode, type TransitionEvent } from 'react';
 import { Button } from '../../atoms/Button/Button';
 import { MOTION_RAPIDO_NOMINAL_MS, tempoCssEmMs } from './tempoCss';
+/**
+ * O mapa de severidade (`.citie-sev--*`, que define `--sev-fg` e `--sev-bg`)
+ * vive em Badge.css. No build estático o CSS é dividido por story, e uma
+ * página que só carrega Feedback ficava sem o mapa: o ícone e a aresta caíam
+ * na tinta de texto. A importação garante o mapa onde o Toast e a Message
+ * forem usados sozinhos.
+ */
+import '../../atoms/Badge/Badge.css';
 import './Feedback.css';
 
 export type SeveridadeFeedback =
@@ -31,9 +39,10 @@ const CLASSE_SEVERIDADE: Record<SeveridadeFeedback, string> = {
 };
 
 function IconeSeveridade({ severidade }: { severidade: SeveridadeFeedback }) {
+  // Ícone de 16 do kit, alinhado à primeira linha do texto.
   const comum = {
-    width: 20,
-    height: 20,
+    width: 16,
+    height: 16,
     viewBox: '0 0 24 24',
     fill: 'none',
     stroke: 'currentColor',
@@ -127,12 +136,14 @@ export function Toast({ id, severidade, titulo, mensagem, acao, onDismiss }: Toa
       <div className="citie-toast__conteudo">
         <p className="citie-toast__titulo">{titulo}</p>
         {mensagem ? <p className="citie-toast__mensagem">{mensagem}</p> : null}
-        {acao ? (
-          <button type="button" className="citie-toast__acao" onClick={acao.onClick}>
-            {acao.rotulo}
-          </button>
-        ) : null}
       </div>
+
+      {/* Ação à direita do texto, como no Sonner, na altura do controle Mini. */}
+      {acao ? (
+        <button type="button" className="citie-toast__acao" onClick={acao.onClick}>
+          {acao.rotulo}
+        </button>
+      ) : null}
 
       {/* Fechar é obrigatório na severidade error e opcional nas demais. */}
       <button

@@ -16,7 +16,7 @@ const meta = {
       description: {
         component: [
           '**A regra do raio é de camada.** O contêiner externo tem raio maior que o interno.',
-          'Um card de 16 com uma célula aninhada de 12 e um controle de 8 lê como profundidade.',
+          'Um card de 16 com uma célula aninhada de 12 e um controle de 10 lê como profundidade.',
           'Os três com o mesmo raio leem como adesivo colado sobre a tela.',
           '',
           'Por isso a escolha do raio parte da pergunta "o que está por dentro deste elemento",',
@@ -51,23 +51,25 @@ const RAIO: TokenDocumentado[] = [
   },
   {
     nome: 'radius-md',
-    uso: 'Controle de formulário e de ação: campo, botão, botão de paginação, item de menu. É o raio de tudo que a pessoa clica ou preenche.',
+    uso: 'Item aninhado dentro de uma superfície: item de menu, item de sidebar, linha de lista. Nos componentes ainda não migrados para o UI Kit, continua sendo o raio de campo e botão.',
     evitar:
       'usar em contêiner que envolve outros controles. Campo e moldura no mesmo raio anulam a leitura de dentro e fora.',
   },
   {
     nome: 'radius-lg',
-    uso: 'Superfície flutuante que se abre a partir de um controle: menu, menu de contexto, painel de sugestão, dock, área de upload, editor.',
+    uso: 'O `radius` de 10px do UI Kit: controle, campo, card, badge, aba, tooltip e superfície flutuante ancorada num controle (menu, painel de sugestão, dock). Os componentes migram para ele por lote.',
   },
   {
     nome: 'radius-xl',
-    uso: 'Camada intermediária dentro de um contêiner externo: card dentro de card, célula de widget, cabeçalho recuado de painel.',
+    uso: 'Camada intermediária nos componentes ainda não migrados: célula de widget, cabeçalho recuado de painel. Card, Panel, Fieldset e Dialog já saíram dele para `radius-lg`.',
     evitar:
-      'usar como raio de card de primeiro nível. Esse é `radius-2xl`, e o card externo precisa ficar acima do que ele contém.',
+      'usar em superfície de primeiro nível. O `radius` do kit para card, painel e diálogo é `radius-lg`.',
   },
   {
     nome: 'radius-2xl',
-    uso: 'Contêiner externo de primeiro nível: Card, Panel, Fieldset, Widget, Chart, Dialog e Drawer. É o teto da escala.',
+    uso: 'Moldura que envolve a tela: o Drawer lateral e o cartão de conteúdo do shell, os dois medidos em 16 no Sismental. É o teto da escala e o único degrau acima do `radius` do kit.',
+    evitar:
+      'usar em Card, Panel, Fieldset ou Dialog. Eles ficam em `radius-lg` para se lerem como conteúdo dentro da moldura, e não como uma segunda moldura.',
   },
   {
     nome: 'radius-full',
@@ -77,16 +79,25 @@ const RAIO: TokenDocumentado[] = [
 
 const DIMENSAO: TokenDocumentado[] = [
   {
+    nome: 'control-height-mini',
+    uso: 'Botão e campo dentro de linha de tabela e de badge de ação. É o Mini do UI Kit, 24px, e coincide com o piso de alvo de toque.',
+    evitar: 'usar em formulário de cidadão. Mini é para densidade de operador, com mouse.',
+  },
+  {
     nome: 'control-height-small',
     uso: 'Altura de campo e botão em densidade compacta: barra de ferramentas de tabela, filtro embutido, ação dentro de linha.',
   },
   {
     nome: 'control-height-normal',
-    uso: 'Altura padrão de campo e botão em formulário. É a altura que alinha rótulo, campo e botão numa mesma linha.',
+    uso: 'Altura padrão de campo e botão em formulário, 36px como no UI Kit. É a altura que alinha rótulo, campo e botão numa mesma linha.',
   },
   {
     nome: 'control-height-large',
-    uso: 'Altura de campo e botão em tela de entrada e em formulário de cidadão: login, busca principal, código de verificação, campo com rótulo flutuante.',
+    uso: 'Campo de destaque e botão de rodapé de diálogo, 40px. É o Large do UI Kit.',
+  },
+  {
+    nome: 'control-height-xl',
+    uso: 'Altura de campo e botão em tela de entrada e em formulário de cidadão: login, busca principal, código de verificação, campo com rótulo flutuante. É o Extra Large do UI Kit, 48px.',
   },
   {
     nome: 'touch-target-min',
@@ -96,7 +107,41 @@ const DIMENSAO: TokenDocumentado[] = [
   },
   {
     nome: 'touch-target-comfortable',
-    uso: 'Alvo recomendado para dedo, em tela de cidadão e em uso móvel: item de navegação da barra lateral, e botão que recebe o modificador de toque confortável.',
+    uso: 'Alvo recomendado para dedo, em tela de cidadão e em uso móvel: item de navegação da barra lateral, botão de fechar do Drawer, e botão que recebe o modificador de toque confortável.',
+  },
+  {
+    nome: 'botao-fechar',
+    uso: 'Botão de fechar do Dialog, 30px medido no kit e na barra superior do Sismental. Caixa quadrada com ícone de 16 no centro.',
+    evitar: 'usar no Drawer, que é alvo de dedo e fica no confortável de 44.',
+  },
+  {
+    nome: 'largura-drawer',
+    uso: 'Largura do Drawer lateral na posição `right-md`, 591px medida no drawer de cadastro do Sismental.',
+  },
+  {
+    nome: 'hub-altura',
+    uso: 'Altura do card de hub (`Card variante="hub"`), 72px medida no hub de administração do Sismental.',
+  },
+  {
+    nome: 'hub-caixa-de-icone',
+    uso: 'Caixa de 36px com fundo accent que abriga o ícone do card de hub.',
+  },
+  {
+    nome: 'hub-icone',
+    uso: 'Ícone de 20px dentro da caixa do card de hub.',
+  },
+  {
+    nome: 'hub-raio-da-caixa',
+    uso: 'Raio de 8px da caixa do ícone do hub: um degrau abaixo do card de 10, para a caixa se ler como objeto dentro dele.',
+    evitar: 'usar fora da caixa do hub. Os degraus da escala de raio continuam sendo 4, 6, 10, 12 e 16.',
+  },
+  {
+    nome: 'linha-mini',
+    uso: 'Entrelinha de 16px do texto mini (12/16 do kit), em comprimento: Tooltip e subtítulo do card de hub.',
+  },
+  {
+    nome: 'toast-recuo-de-escala',
+    uso: 'Recuo de escala por profundidade na pilha de toasts, 3% por degrau como no Sonner. O toast atrás do mais novo fica em 0,97 e o seguinte em 0,94.',
   },
 ];
 
@@ -125,7 +170,7 @@ export const RaioPorCamada: Story = {
     docs: {
       description: {
         story:
-          'A mesma pilha de três camadas, montada duas vezes. À esquerda o raio desce a cada nível, e o olho lê um card contendo uma célula contendo um controle. À direita os três estão em 16, e a pilha achata: as bordas ficam paralelas e as três caixas passam a parecer três adesivos do mesmo tamanho de canto sobrepostos.',
+          'A mesma pilha de três camadas, montada duas vezes. À esquerda o raio desce a cada nível (16, 12, 10), e o olho lê um card contendo uma célula contendo um controle. À direita os três estão em 16, e a pilha achata: as bordas ficam paralelas e as três caixas passam a parecer três adesivos do mesmo tamanho de canto sobrepostos.',
       },
     },
   },
@@ -138,7 +183,7 @@ export const RaioPorCamada: Story = {
         alignItems: 'start',
       }}
     >
-      <Bloco titulo="Raio por camada" descricao="Card 16, célula aninhada 12, controle 8.">
+      <Bloco titulo="Raio por camada" descricao="Card 16, célula aninhada 12, controle 10.">
         <PilhaDeCamadas externo="var(--citie-radius-2xl)" meio="var(--citie-radius-xl)" interno="var(--citie-radius-lg)" />
       </Bloco>
 
@@ -204,24 +249,38 @@ export const RaioPorContexto: Story = {
         colunaDoValor="Degrau"
         linhas={[
           {
-            contexto: 'Contêiner externo de primeiro nível',
+            contexto: 'Moldura que envolve a tela',
             valor: 'radius-2xl (16px)',
-            exemplo: 'Card, Panel, Fieldset, Widget, Chart, Dialog e Drawer.',
+            exemplo: 'Drawer lateral e cartão de conteúdo do shell.',
           },
           {
-            contexto: 'Camada aninhada dentro do contêiner',
+            contexto: 'Superfície de primeiro nível',
+            valor: 'radius-lg (10px)',
+            exemplo:
+              'Card, Panel, Fieldset, Dialog, Toast, Message e EmptyState com moldura. Widget e Chart migram no lote deles.',
+          },
+          {
+            contexto: 'Camada aninhada nos componentes ainda não migrados',
             valor: 'radius-xl (12px)',
-            exemplo: 'Card dentro de Card, cabeçalho recuado do Panel, célula de Widget.',
+            exemplo: 'Célula de Widget, cabeçalho recuado do Panel antigo.',
           },
           {
             contexto: 'Superfície flutuante ancorada num controle',
-            valor: 'radius-lg (8px)',
-            exemplo: 'Menu, ContextMenu, TieredMenu, painel do AutoComplete, Dock, Upload, Editor.',
+            valor: 'radius-lg (10px)',
+            exemplo:
+              'Tooltip, Popover, HoverCard, ConfirmPopup, Menu, ContextMenu, TieredMenu, painel do AutoComplete, Dock, Upload, Editor.',
           },
           {
             contexto: 'Controle de formulário e de ação',
+            valor: 'radius-lg (10px), destino do UI Kit',
+            exemplo:
+              'Field em todas as alturas, Button, Badge, aba e tooltip. Até cada lote migrar, esses componentes ainda consomem radius-md (6px).',
+          },
+          {
+            contexto: 'Item aninhado numa superfície',
             valor: 'radius-md (6px)',
-            exemplo: 'Field em todas as alturas, Button, botão de paginação, segmento de InputOtp.',
+            exemplo:
+              'Item de menu, item de sidebar, linha de Listbox, botão de paginação, segmento de InputOtp, Card dentro de Card, linha do Skeleton.',
           },
           {
             contexto: 'Elemento mais interno da pilha',
@@ -236,23 +295,18 @@ export const RaioPorContexto: Story = {
         ]}
       />
       <AchadoAberto>
-        O comentário do <code>tokens.css</code> registra a divergência de Panel, Table e Fieldset
-        em <code>lg</code> convivendo com Card e Widget em <code>xl</code> na mesma tela. O estado
-        atual do código corrigiu parte disso: Panel e Fieldset foram para <code>radius-2xl</code>,
-        cada um com o motivo escrito no próprio arquivo, e Card, Widget, Chart e Dialog já estão
-        no mesmo degrau. Sobraram <code>.citie-table-wrapper</code> e{' '}
-        <code>.citie-treetable-wrapper</code>, ambos em <code>radius-lg</code>. Uma tabela é
-        superfície de primeiro nível como o card, então numa tela de listagem com card de resumo
-        acima da tabela os dois cantos ficam a 8px de diferença. A correção é apontar os dois
-        invólucros para <code>radius-2xl</code>, e o cuidado necessário é que o wrapper usa{' '}
-        <code>overflow: auto</code>, então o raio maior corta mais canto da primeira e da última
-        célula.
+        Card, Panel, Fieldset, Dialog e as superfícies flutuantes estão em <code>radius-lg</code>{' '}
+        desde o Lote 3, que fechou a divergência de raio registrada antes em{' '}
+        <code>tokens.css</code>. O que ainda diverge: Widget e Chart continuam em{' '}
+        <code>radius-2xl</code> e Table e TreeTable em <code>radius-lg</code>, então numa tela de
+        painel o widget fica com o canto 6px acima do card ao lado. Os quatro migram no Lote 5, e
+        o destino de todos é o mesmo <code>radius-lg</code>.
       </AchadoAberto>
     </Bloco>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByText('Contêiner externo de primeiro nível')).toBeVisible();
+    await expect(canvas.getByText('Controle de formulário e de ação')).toBeVisible();
     await expect(canvas.getByText('Forma pílula')).toBeVisible();
   },
 };
@@ -286,9 +340,12 @@ export const Dimensoes: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     // Os valores vêm do CSS, então a tabela mostra as dimensões reais.
-    await expect(canvas.getByText('32px')).toBeVisible();
-    await expect(canvas.getByText('40px')).toBeVisible();
-    await expect(canvas.getByText('24px')).toBeVisible();
-    await expect(canvas.getByText('44px')).toBeVisible();
+    // A tabela recebe tokens de outros lotes (hub, drawer, botão de fechar),
+    // então cada altura é conferida por presença, com contagem mínima.
+    for (const altura of ['32px', '36px', '40px', '48px', '44px']) {
+      await expect(canvas.getAllByText(altura).length).toBeGreaterThanOrEqual(1);
+    }
+    // 24px aparece ao menos duas vezes: altura Mini e piso de alvo de toque.
+    await expect(canvas.getAllByText('24px').length).toBeGreaterThanOrEqual(2);
   },
 };

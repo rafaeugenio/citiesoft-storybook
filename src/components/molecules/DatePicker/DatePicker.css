@@ -52,12 +52,12 @@
   border: 1px solid var(--citie-border-default);
   /*
    * O mesmo raio externo dos demais overlays da rodada (Menu, HoverCard), e
-   * aqui a concentricidade fecha exata: dia em `radius-sm` 4 + padding de
-   * `spacing-3` 12 = canto externo de 16. Contêiner e conteúdo compartilham o
-   * mesmo centro de curvatura, que é o que faz o canto parecer desenhado e não
-   * sobreposto.
+   * aqui a concentricidade fecha exata: dia em `radius-md` 6 (anatomia do kit
+   * para item de 32px) + padding de `spacing-3` 12 = canto externo de 18, sem
+   * token próprio. `calc()` sobre os dois tokens existentes mantém o centro de
+   * curvatura comum sem introduzir um valor literal novo.
    */
-  border-radius: var(--citie-radius-2xl);
+  border-radius: calc(var(--citie-radius-md) + var(--citie-spacing-3));
   box-shadow: var(--citie-shadow-overlay);
   font-family: var(--citie-font-ui);
   /* Entrada a partir do campo que a disparou: curta, com a curva de entrada,
@@ -153,7 +153,9 @@
   color: var(--citie-text-base);
   background: none;
   border: 1px solid transparent;
-  border-radius: var(--citie-radius-sm);
+  /* Raio 6 (`radius-md`): item de 32px do kit, igual ao item de menu e ao
+     item selecionável de MultiSelect e AutoComplete. */
+  border-radius: var(--citie-radius-md);
   cursor: pointer;
   transition:
     background-color var(--citie-motion-rapido) var(--citie-easing-padrao),

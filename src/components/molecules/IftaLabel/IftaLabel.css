@@ -21,7 +21,8 @@
   position: absolute;
   z-index: 1;
   inset-block-start: calc(var(--citie-spacing-1) + 2px);
-  inset-inline-start: var(--citie-spacing-4);
+  /* Recuo padrão do tamanho Normal, igual ao padding do controle corrigido. */
+  inset-inline-start: var(--citie-spacing-3);
   /**
    * O DS não tem token de 12px (o Figma desenha em 12). `body-sm` (13) é o mais
    * próximo e ainda ajuda a legibilidade de um rótulo pequeno.
@@ -36,7 +37,7 @@
    */
   color: var(--citie-text-base);
   /* Rótulo longo encurta em vez de escapar da caixa. */
-  max-width: calc(100% - 2 * var(--citie-spacing-4));
+  max-width: calc(100% - 2 * var(--citie-spacing-3));
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -53,32 +54,32 @@
   padding-block-end: 0;
 }
 
+/* Corpo do valor unificado em `body-md` do Small ao Large, igual ao Input
+   corrigido no Lote 2: só o recuo lateral acompanha a escala do controle. */
 .citie-iftalabel__control--small {
   height: calc(var(--citie-control-height-small) + var(--citie-spacing-4));
-  padding-inline: var(--citie-spacing-3);
-  font-size: var(--citie-font-size-body-sm);
+  padding-inline: var(--citie-spacing-2);
 }
 
 .citie-iftalabel__control--normal {
   height: calc(var(--citie-control-height-normal) + var(--citie-spacing-4));
-  padding-inline: var(--citie-spacing-4);
+  padding-inline: var(--citie-spacing-3);
 }
 
 .citie-iftalabel__control--large {
   height: calc(var(--citie-control-height-large) + var(--citie-spacing-4));
-  padding-inline: var(--citie-spacing-5);
-  font-size: var(--citie-font-size-body-lg);
+  padding-inline: var(--citie-spacing-4);
 }
 
 /* Rótulo alinhado ao mesmo recuo do valor em cada tamanho. */
 .citie-iftalabel--small .citie-iftalabel__label {
-  inset-inline-start: var(--citie-spacing-3);
-  max-width: calc(100% - 2 * var(--citie-spacing-3));
+  inset-inline-start: var(--citie-spacing-2);
+  max-width: calc(100% - 2 * var(--citie-spacing-2));
 }
 
 .citie-iftalabel--large .citie-iftalabel__label {
-  inset-inline-start: var(--citie-spacing-5);
-  max-width: calc(100% - 2 * var(--citie-spacing-5));
+  inset-inline-start: var(--citie-spacing-4);
+  max-width: calc(100% - 2 * var(--citie-spacing-4));
 }
 
 /* Textarea dentro do invólucro: cresce em vez de fixar altura. */

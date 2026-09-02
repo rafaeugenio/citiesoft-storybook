@@ -104,10 +104,11 @@
   cursor: pointer;
 }
 
+/* Item de 32 do kit, hover em `accent`, a mesma pele dos itens de menu. */
 .citie-speeddial__acao:hover {
-  background-color: var(--citie-brand-subtle);
-  border-color: var(--citie-brand-primary);
-  color: var(--citie-brand-primary);
+  background-color: var(--citie-accent);
+  border-color: var(--citie-accent-forte);
+  color: var(--citie-accent-foreground);
 }
 
 .citie-speeddial__acao:focus-visible {

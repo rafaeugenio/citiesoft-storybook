@@ -1,14 +1,17 @@
 .citie-dialog,
 .citie-drawer {
+  /* A borda entra na medida: 640 de largura são 640, e não 642. */
+  box-sizing: border-box;
   padding: 0;
-  border: none;
+  /* Borda de 1px como no kit: no escuro ela é o que separa a camada do véu. */
+  border: 1px solid var(--citie-border-default);
   color: var(--citie-text-base);
   background-color: var(--citie-background-surface);
   font-family: var(--citie-font-ui);
   /**
-   * Degrau `dialog` da escala de elevação. Diálogo e drawer são a camada mais
-   * alta da tela, e precisam se ler como mais distantes do fundo que um menu
-   * ou um popover, que param no degrau `overlay`.
+   * Degrau `dialog` da escala de elevação, o shadow-lg do kit. Diálogo e
+   * drawer são a camada mais alta da tela, e precisam se ler como mais
+   * distantes do fundo que um menu ou um popover, que param no degrau `overlay`.
    */
   box-shadow: var(--citie-shadow-dialog);
 }
@@ -21,11 +24,12 @@
 /* ---------- Dialog ---------- */
 
 .citie-dialog {
-  width: 560px;
+  /* 640px é a largura do Dialog do kit. */
+  width: 640px;
   max-width: calc(100vw - var(--citie-spacing-8));
   max-height: 90dvh;
-  /* Contêiner externo: raio maior que o do conteúdo aninhado, para ler camada. */
-  border-radius: var(--citie-radius-2xl);
+  /* O `radius` de 10 do kit, como toda superfície de primeiro nível. */
+  border-radius: var(--citie-radius-lg);
   /* Entrada de camada alta: tempo lento e curva de entrada, para ser percebida. */
   animation: citie-dialog-entrada var(--citie-motion-lento) var(--citie-easing-entrada);
 }
@@ -49,11 +53,11 @@
 }
 
 .citie-dialog--md {
-  width: 560px;
+  width: 640px;
 }
 
 .citie-dialog--lg {
-  width: 720px;
+  width: 800px;
 }
 
 .citie-dialog--xl {
@@ -78,31 +82,41 @@
   }
 }
 
+/**
+ * Cabeçalho do kit: título e botão de fechar no canto, sem fio abaixo. O
+ * respiro entre cabeçalho e corpo sai do padding do corpo, então o cabeçalho
+ * para no topo dele. O fio só existe no rodapé, que fica fixo enquanto o
+ * corpo rola e precisa marcar onde a rolagem termina.
+ */
 .citie-dialog__cabecalho,
 .citie-drawer__cabecalho {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--citie-spacing-4);
-  padding: var(--citie-spacing-4) var(--citie-spacing-6);
-  border-block-end: 1px solid var(--citie-border-default);
+  padding: var(--citie-spacing-6) var(--citie-spacing-6) 0;
 }
 
-.citie-drawer__cabecalho {
-  padding-block: var(--citie-spacing-5);
-}
-
+/* Título 20 do kit (heading 4), em Red Hat Display. */
 .citie-dialog__titulo {
   margin: 0;
   font-family: var(--citie-font-display);
-  font-size: var(--citie-font-size-title-sm);
+  font-size: var(--citie-font-size-title-md);
   font-weight: var(--citie-font-weight-title);
+  line-height: 1.2;
   color: var(--citie-text-primary);
 }
 
+/* Título 24 do drawer, medido no cadastro de profissional do Sismental. */
+.citie-drawer__cabecalho .citie-dialog__titulo {
+  font-size: var(--citie-font-size-title-lg);
+}
+
+/* Subtítulo muted 14/20 logo abaixo do título, como no kit. */
 .citie-dialog__subtitulo {
-  margin: 4px 0 0;
-  font-size: var(--citie-font-size-body-sm);
+  margin: var(--citie-spacing-1) 0 0;
+  font-size: var(--citie-font-size-body-md);
+  line-height: var(--citie-linha-da-celula);
   color: var(--citie-text-secondary);
 }
 
@@ -122,34 +136,63 @@
   background-color: var(--citie-background-surface);
 }
 
+/**
+ * As duas anatomias de rodapé do kit: dois botões à direita, ou um único de
+ * largura total. Um botão sozinho no canto direito de um diálogo de 640px lê
+ * como ação secundária; esticado, ele lê como a única saída, que é o que um
+ * rodapé de um botão só está dizendo (aceite de termos, por exemplo).
+ */
+.citie-dialog__rodape:has(> :only-child) > * {
+  flex: 1;
+}
+
+/**
+ * Botão de fechar de 30px no canto, medido no kit. O ícone de 16 fica centrado
+ * numa caixa de 30 com raio de item aninhado; o alvo passa do piso de 24 da
+ * WCAG 2.5.8. Sobe 6px para o X alinhar ao eixo óptico do título de 20.
+ */
 .citie-overlay__fechar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex: none;
-  min-width: 24px;
-  min-height: 24px;
+  inline-size: var(--citie-botao-fechar);
+  block-size: var(--citie-botao-fechar);
+  margin-block-start: calc(-1 * var(--citie-spacing-1-5));
+  margin-inline-end: calc(-1 * var(--citie-spacing-1-5));
   padding: 0;
   color: var(--citie-text-secondary);
   background: none;
   border: none;
-  border-radius: var(--citie-radius-sm);
+  border-radius: var(--citie-radius-md);
   cursor: pointer;
+  transition:
+    background-color var(--citie-motion-rapido) var(--citie-easing-padrao),
+    color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
+/* Drawer é alvo de dedo: o botão de fechar sobe ao confortável de 44. */
 .citie-overlay__fechar--amplo {
-  min-width: 44px;
-  min-height: 44px;
+  inline-size: var(--citie-touch-target-comfortable);
+  block-size: var(--citie-touch-target-comfortable);
+  margin-block-start: calc(-1 * var(--citie-spacing-2));
+  margin-inline-end: calc(-1 * var(--citie-spacing-3));
 }
 
 .citie-overlay__fechar:hover {
-  background-color: var(--citie-background-subtle);
+  background-color: var(--citie-state-hover-overlay);
   color: var(--citie-text-primary);
 }
 
 .citie-overlay__fechar:focus-visible {
   outline: none;
   box-shadow: var(--citie-state-focus-ring);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-overlay__fechar {
+    transition: none;
+  }
 }
 
 /* ---------- ConfirmDialog ---------- */
@@ -181,12 +224,18 @@
 
 /* ---------- Drawer ---------- */
 
+/**
+ * Drawer do Sismental: painel de 591px que flutua a 8px das bordas da tela,
+ * com raio 16 nos quatro cantos. O raio maior é o que faz o painel se ler como
+ * moldura por cima dos cards de raio 10 que vivem dentro dele.
+ */
 .citie-drawer {
-  margin: 0;
-  height: 100dvh;
-  max-height: 100dvh;
+  margin: var(--citie-spacing-2);
+  height: calc(100dvh - 2 * var(--citie-spacing-2));
+  max-height: calc(100dvh - 2 * var(--citie-spacing-2));
   display: flex;
   flex-direction: column;
+  border-radius: var(--citie-radius-2xl);
   animation: citie-drawer-entrada var(--citie-motion-lento) var(--citie-easing-entrada);
 }
 
@@ -202,15 +251,15 @@
 }
 
 .citie-drawer--right-md {
-  width: 480px;
+  width: var(--citie-largura-drawer);
 }
 
 .citie-drawer--right-lg {
-  width: 640px;
+  width: 720px;
 }
 
 .citie-drawer--right-xl {
-  width: 800px;
+  width: 880px;
 }
 
 .citie-drawer--left {
@@ -219,13 +268,11 @@
 }
 
 .citie-drawer--bottom {
-  width: 100vw;
-  max-width: 100vw;
+  width: calc(100vw - 2 * var(--citie-spacing-2));
+  max-width: calc(100vw - 2 * var(--citie-spacing-2));
   height: auto;
   max-height: 90dvh;
   margin-block-start: auto;
-  border-start-start-radius: var(--citie-radius-2xl);
-  border-start-end-radius: var(--citie-radius-2xl);
 }
 
 @keyframes citie-drawer-entrada {
@@ -235,6 +282,15 @@
   }
 }
 
+/* Cabeçalho do drawer: título 24 com o botão de fechar de 44 ao lado. */
+.citie-drawer__cabecalho {
+  align-items: center;
+}
+
+/**
+ * O corpo do drawer é uma pilha de blocos de campos em cartão (Fieldset ou
+ * Card), como no cadastro do Sismental: respiro de 16 entre os blocos.
+ */
 .citie-drawer__corpo {
   flex: 1;
   overflow-y: auto;
@@ -246,12 +302,10 @@
 
 @media (max-width: 767px) {
   .citie-drawer {
-    width: 100vw;
-    max-width: 100vw;
+    width: calc(100vw - 2 * var(--citie-spacing-2));
+    max-width: calc(100vw - 2 * var(--citie-spacing-2));
     height: auto;
     max-height: 90dvh;
-    margin: auto 0 0;
-    border-start-start-radius: var(--citie-radius-2xl);
-    border-start-end-radius: var(--citie-radius-2xl);
+    margin: auto var(--citie-spacing-2) var(--citie-spacing-2);
   }
 }

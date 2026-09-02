@@ -39,14 +39,14 @@ export const Horizontal: Story = {
     const botoes = within(grupo).getAllByRole('button');
     await expect(botoes).toHaveLength(3);
 
-    // Canto só nas extremidades: a junção interna é reta dos dois lados.
+    // Canto só nas extremidades, no `radius` do kit (10px): a junção interna é reta dos dois lados.
     const [primeiro, meio, ultimo] = botoes.map((b) => getComputedStyle(b));
-    await expect(primeiro.borderTopLeftRadius).toBe('6px');
+    await expect(primeiro.borderTopLeftRadius).toBe('10px');
     await expect(primeiro.borderTopRightRadius).toBe('0px');
     await expect(meio.borderTopLeftRadius).toBe('0px');
     await expect(meio.borderTopRightRadius).toBe('0px');
     await expect(ultimo.borderTopLeftRadius).toBe('0px');
-    await expect(ultimo.borderTopRightRadius).toBe('6px');
+    await expect(ultimo.borderTopRightRadius).toBe('10px');
 
     // Uma borda por junção: o vizinho recua exatamente a espessura da borda.
     await expect(meio.marginInlineStart).toBe('-1px');
@@ -84,6 +84,8 @@ export const Teclado: Story = {
 
     // O botão em foco sobe para o plano 2: o anel vence a junção compartilhada.
     await expect(getComputedStyle(afastar).zIndex).toBe('2');
+    // E o grupo isola o empilhamento: o plano 2 vale dentro dele, nunca contra a página.
+    await expect(getComputedStyle(afastar.parentElement!).isolation).toBe('isolate');
   },
 };
 
@@ -103,10 +105,10 @@ export const Vertical: Story = {
 
     const [primeiro, ultimo] = botoes.map((b) => getComputedStyle(b));
     // Na vertical os cantos vivos são os de cima do primeiro e os de baixo do último.
-    await expect(primeiro.borderTopLeftRadius).toBe('6px');
+    await expect(primeiro.borderTopLeftRadius).toBe('10px');
     await expect(primeiro.borderBottomLeftRadius).toBe('0px');
     await expect(ultimo.borderTopLeftRadius).toBe('0px');
-    await expect(ultimo.borderBottomLeftRadius).toBe('6px');
+    await expect(ultimo.borderBottomLeftRadius).toBe('10px');
     await expect(ultimo.marginBlockStart).toBe('-1px');
 
     // Emendados na vertical: mesmo eixo, larguras iguais.

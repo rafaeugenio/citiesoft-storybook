@@ -3,25 +3,31 @@
   margin: 0;
   padding: 0;
   border: 1px solid var(--citie-border-default);
-  /* Superfície de primeiro nível, mesmo degrau externo de Card e Panel. */
-  border-radius: var(--citie-radius-2xl);
+  /**
+   * Bloco de campos do Sismental: cartão de raio 10 com borda de 1px e sem
+   * sombra. Card e Panel carregam o shadow-sm porque flutuam sobre a página;
+   * o grupo de campos vive dentro do formulário, no mesmo plano dele, e a
+   * sombra o faria competir com o cartão que o contém.
+   */
+  border-radius: var(--citie-radius-lg);
   background-color: var(--citie-background-surface);
   font-family: var(--citie-font-ui);
   color: var(--citie-text-base);
 }
 
 /**
- * A legend fica encaixada na borda superior, recuada da quina. O recuo subiu de
- * 12 para 16 porque o raio externo agora é 16: com o recuo anterior a legenda
- * começava dentro da curva e o corte da borda encostava na primeira letra.
- * Regra aplicada: quando o raio novo aperta o conteúdo, quem cede é o respiro.
+ * A legend fica encaixada na borda superior, recuada da quina. Com raio 10 o
+ * recuo de 16 deixa a legenda inteira fora da curva, e o padding de 8 nas
+ * laterais recorta a borda com folga em volta da primeira e da última letra.
+ * Título 16 Medium, o mesmo do cabeçalho de card e de painel.
  */
 .citie-fieldset__legenda {
   margin-inline-start: var(--citie-spacing-4);
   padding-inline: var(--citie-spacing-2);
   font-family: var(--citie-font-display);
-  font-size: var(--citie-font-size-body-md);
-  font-weight: 600;
+  font-size: var(--citie-font-size-body-lg);
+  font-weight: var(--citie-font-weight-action);
+  line-height: 1.5;
   color: var(--citie-text-primary);
 }
 

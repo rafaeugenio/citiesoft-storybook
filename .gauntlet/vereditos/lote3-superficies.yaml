@@ -1,0 +1,25 @@
+revisor: Loid, Especialista UI/UX, revisor cego do Lote 3
+lote: >-
+  Lote 3, superfícies e feedback (Card, Panel, Fieldset, Overlay, ConfirmPopup,
+  Tooltip, HoverCard, Feedback, EmptyState, Skeleton, SkeletonFormulario,
+  SkeletonLista, SkeletonParagrafo) e o bloco Lote 3 de tokens.css
+artefato_avaliado: >-
+  Branch revisao, sem commit. Diff lido antes do handoff, conforme o briefing.
+  Medições em worktree próprio (/Users/rafaeleugenio/dev/citiesoft-storybook-revisao-lote3,
+  --detach em HEAD, diff aplicado por git apply, node_modules por hardlink).
+status: >-
+  PARCIAL. Opinião formada pelo diff, medições e sabotagens ainda em curso.
+  Este arquivo é reescrito ao fim da revisão.
+veredito: PENDENTE
+veredito_anti_slop: PENDENTE
+
+opiniao_parcial_pelo_diff:
+  - 'Card: raio 10 (radius-lg), borda default, sombra pelo trilho de elevação. Hub com tokens novos 72/36/20/8. Cabeçalho e rodapé sem fio, respiro por custom property por densidade. Bate com o kit no papel; falta medir.'
+  - 'Dialog: 640 (md), 800 (lg), raio 10, borda 1px, shadow-dialog, fechar de 30 por token. Rodapé de um botão só estica por :has(> :only-child). Falta medir e sabotar a sombra.'
+  - 'Drawer: 591 por token, margem 8 e raio 16 (radius-2xl), título 24. Nenhum teste de largura encontrado no diff até aqui; sabotagem (c) tende a passar em silêncio.'
+  - 'Tooltip: popover e popover-foreground, 12/16, padding 6 por 8 com spacing-1-5, seta por spacing-1-5, raio 10. Corte de 2 linhas migrou para o filho. Story Anatomia guarda o fundo contra transparente, o que deve pegar a sabotagem (a).'
+  - 'Message: 12 por 16, gap 16, ícone 16, fundo de superfície com aresta tonal a 30 por cento (25 no escuro). Falta medir a aresta nos quatro níveis.'
+  - 'Toast: pilha em escala 0,97 e 0,94 por nth-last-child(of :not(saindo)), ação à direita em altura mini, título com clamp de 2 linhas. Falta conferir largura por token e a região viva.'
+  - 'Feedback.tsx importa Badge.css para trazer o mapa .citie-sev--*. O mapa é transversal (Avatar, PrazoIndicador, ValorMonetario, Badge, Feedback). Importar a folha inteira do Badge por causa de 60 linhas de custom properties é acoplamento errado; o lugar do mapa é um CSS próprio de severidade carregado por quem o consome.'
+  - 'EmptyState: quatro molduras por prop, tracejada em border-strong com medição citada. Skeleton: raio 6 em linha e 10 em campo e card, base em secondary.'
+  - 'Texto: sem travessão nas linhas novas. Há ocorrências de ", e não " e ", não " em comentários novos (Card.css, Feedback.css, tokens.css) que precisam ser lidas uma a uma para separar negação paralela de frase direta.'

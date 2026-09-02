@@ -1,0 +1,223 @@
+revisor: Gojo, Design QA, revisor cego do Lote 1
+lote: Lote 1, ações (Button, Link, Badge, Kbd, ButtonGroup, SplitButton) e o bloco Lote 1 de tokens.css
+artefato_avaliado: >-
+  Branch revisao, sem commit, diff aplicado por git apply em worktree próprio
+  (/Users/rafaeleugenio/dev/citiesoft-storybook-revisao-lote1, node_modules por
+  symlink, server.fs.allow só no worktree). Diff lido antes do handoff. Medições
+  em build estático servido em localhost, Playwright com deviceScaleFactor 3
+  (peles) e 2 (junções), nos dois temas. Worktree removido ao fim.
+veredito: APROVADO
+veredito_anti_slop: VOLTA PARA REFINO
+status: 'Rodada 1 (02/09). Final.'
+
+resumo_curto: >-
+  A anatomia do kit está inteira e medida em pixel inteiro nos cinco degraus, a
+  pele preenchida tem os três elementos (aresta clara, anel de 1px e brilho) e
+  o hover apaga o traço como o kit pede, o foco põe o anel do sistema por cima
+  em nove variantes nos dois temas e as duas sabotagens reprovam. A junção de
+  ButtonGroup e SplitButton está com um traço só a 200% nos dois temas. O que
+  segura o SURPREENDEU é o cabeçalho de Badge.css: ele afirma 24 combinações
+  medidas e só duas reprovando, e o número do primary tonal no escuro (7,82)
+  é o de outra tinta; o par real mede 4,70 sobre o canvas e 4,39 sobre a
+  superfície, que é onde a Tag vive. Mais quatro negações paralelas novas.
+
+gate_tecnico:
+  testes_claro_lote: '9 arquivos do lote, 59 de 59 verdes no worktree'
+  testes_escuro_completo: >-
+    60 falhas em 13 arquivos, 733 verdes de 793. Igual ao handoff; abaixo do
+    baseline de 62 em 14. Nenhum arquivo do lote entre as falhas (TreeSelect
+    13, CascadeSelect 9, MultiSelect 7, Filters 4, Pagination 2, AutoComplete
+    2, Listagem 6, Dashboard 7, PainelDeTFD 6, Cores 1, Terminal 1, Search 1,
+    ConsultaDeProcessos 1).
+  verificar_catalogo: 'verde, 100 componentes, todas as invariantes'
+  build_storybook: 'verde no worktree'
+  sabotagem_1_anel_do_botao: >-
+    --citie-anel-do-botao removido do :root. O color-mix fica inválido e a
+    lista --citie-elevacao-do-botao inteira cai. Resultado: 3 falhas (Button
+    "Estado · foco por teclado", Button "Regressão · anel de foco existe em
+    toda variante", SplitButton "Estado · fechado"). Reprova onde deve.
+  sabotagem_2_state_focus_ring: >-
+    --citie-state-focus-ring removido do :root claro. Resultado: 2 falhas
+    (Button "Regressão · anel de foco existe em toda variante", Link "Estado ·
+    foco por teclado"). Reprova. Registro: a story Foco do Button sozinha não
+    pega, só a varredura das nove; a guarda existe, mas mora num lugar só.
+  restauracao: 'tokens.css do worktree restaurado byte a byte da cópia; nada tocado na árvore principal.'
+
+medicoes_refeitas:
+  anatomia_por_tamanho: >-
+    getComputedStyle na story Tamanhos, dois temas: mini 24 / padding 8 / gap
+    6 / 12px; small 32 / 12 / 6 / 14; normal 36 / 16 / 8 / 14; large 40 / 24 /
+    8 / 14; xl 48 / 32 / 8 / 16. Peso 500, raio 10 em todos. Pílula 9999px com
+    altura 36. Confere com a tabela do kit. Line-height computado igual ao
+    corpo (line-height 1) em vez de 16/20/24 do kit: sem efeito visual em
+    linha única com altura fixa, registrado como POLIMENTO.
+  pele_preenchida: >-
+    Captura própria a 3x, primary claro e escuro: aresta clara no topo
+    (gradiente rgba(255,255,255,.28) claro e .4 escuro no ::before mascarado),
+    anel de 1px color-mix a 80% (#0e4eb6 no claro, #3e6fca no escuro) e brilho
+    0 2 4 na tinta clara. No hover o ::before vai a opacidade 0 e o fundo passa
+    ao degrau sólido (#0e4db8 claro, #84aefd escuro). Success, danger, warn,
+    info e contrast seguem a mesma pele com a família certa. Active desloca
+    1px (translate 0 1px) em todas as nove variantes.
+  peles_sem_preenchimento: >-
+    Secondary fundo #f4f5f7 / #232327 com hover #e8eaed / #34343a e traço claro.
+    Outline transparente com sombra dupla (anel 16% / 24% mais 0 2 4) e hover
+    em secondary. Ghost sem fundo, ::before display none, hover accent #eff5ff
+    / #202838. Disabled zera anel e brilho e apaga o traço.
+  comparacao_com_o_kit: >-
+    Lado a lado com kit-button.png: as três peles preenchidas, a secondary e a
+    outline batem em forma, raio e estados. Divergências: o brilho do kit é
+    brand-100 tingido e o nosso é brand-subtle, quase invisível sobre o branco
+    (1,10:1); a aresta do kit é brand-300 sólida e a nossa é branco a 28%,
+    mais tímida (o produtor declarou). Nenhuma das duas é drift de token.
+  foco: >-
+    Tab por teclado na story FocoEmTodasAsVariantes, lido depois da transição:
+    rgb(18,97,228) 0 0 0 3px é o primeiro item do box-shadow em primary,
+    secondary, outline, text, success, danger, warn, info e contrast; no escuro
+    rgb(77,139,252). Lido cedo demais o valor aparece em oklab a meio caminho,
+    que é a armadilha que a própria story documenta.
+  contraste_rotulo_claro_escuro: >-
+    primary 5,45 / 5,63; secondary 14,94 / 14,37 (hover 13,52 / 11,35);
+    outline 15,61 sobre o canvas #fafafa (16,29 sobre o branco) / 16,91; text
+    10,57 / 12,31 (hover sobre accent 10,07 / 9,87); success 3,30 / 5,59;
+    danger 4,83 / 4,83; warn 3,19 / 5,78; info 5,45 / 8,29; contrast 16,29 /
+    14,95. Os dois achados abertos de success e warn no claro seguem em 3,30 e
+    3,19, sem piorar.
+  badge_24_combinacoes: >-
+    As 24 Tags da story Peles medidas nos dois temas. Claro: confere com o
+    cabeçalho de Badge.css (as de contorno e fantasma saem 0,2 abaixo por
+    estarem sobre #fafafa em vez de #ffffff). Três conferidas ao acaso:
+    warn tonal 4,84 (cabeçalho 4,84), info preenchida 5,45 (5,45), danger
+    contorno 6,20 sobre #fafafa (6,47 sobre o branco). Escuro: primary tonal
+    #4d8bfc sobre brand-subtle a 14% mede 4,70 sobre o canvas #141414 e 4,39
+    sobre a superfície #1a1a1d; o cabeçalho diz 7,82, que é #84aefd sobre
+    #1a1a1d, a tinta do info. Info tonal escuro mede 6,93 / 6,47, também
+    diferente do 7,82 escrito. As outras 22 conferem.
+  link: >-
+    brand-primary #1261e4 contra text-base #3c3c3c 2,03:1 e contra
+    text-primary #202020 2,99:1: refeito, confere, concordo com o sublinhado
+    permanente do papel padrao pela G183. Identificador em "Red Hat Mono"
+    com tabular-nums, traço transparente em repouso e na cor do texto no hover
+    (medido com o foco da play removido, porque a story deixa o link focado).
+    Discreto 4,73 sobre o canvas (4,94 sobre o branco) / 6,78 no escuro.
+  buttongroup_e_splitbutton: >-
+    Capturas a 200% nos dois temas: junção com um traço só em Horizontal e
+    Vertical; clip-path inset(0 1px 0 0) e inset(0 0 0 1px) computados nos
+    ::before. Foco no segmento do meio com z-index 2 e o anel por cima dos
+    vizinhos, isolation isolate no grupo. SplitButton: gatilho 36 x 36, recuado
+    1px sobre a ação, anel de 1px como primeiro item da sombra do gatilho;
+    divisor único a 200% em primary, secondary, outline, success, danger e
+    text, e presente no desabilitado.
+  kbd: >-
+    20px, Red Hat Mono 12 peso 500, fundo secondary, borda 1px border-default,
+    raio 6, sombra 0 1px 0 border-strong nos dois temas. 10,11 / 10,46.
+  nota_do_mini: >-
+    Button.tsx (prop size) e a story Tamanhos dizem onde 24 vale: contexto
+    denso de mouse e teclado, mínimo 24 x 24 da WCAG 2.5.8, small 32 como piso
+    de formulário, comfortable 44 em cidadão e mobile. Fecha o MENOR do Lote 0.
+
+texto:
+  travessao: 'zero nos arquivos tocados'
+  negacao_paralela_em_linha_nova: >-
+    Quatro: Badge.css 312 "Controle, e não marcador"; Button.stories.tsx 99
+    "vem da sombra, e não de preenchimento"; Kbd.css 32 "`text-base`, e não
+    `text-secondary`" (linha reescrita pelo lote, a figura ficou); tokens.css
+    700, bloco Lote 1, "É a espessura da tecla, e não elevação". O handoff
+    declara zero porque o grep procura só "não é X, é Y".
+  elevacao_stories: >-
+    A linha da tecla que o Lote 0 apontou em Elevacao.stories.tsx não existe
+    mais no arquivo (nem em HEAD): a fundação Elevação não tem linha para
+    --citie-sombra-da-tecla, nem para os outros três tokens do lote. A figura
+    migrou para o comentário do token em tokens.css.
+
+achados:
+  - severidade: MAIOR
+    id_anti_slop: null
+    local: 'src/components/atoms/Badge/Badge.css, cabeçalho (linha "info 4,97 / 7,82  primary 4,97 / 7,82") e story Peles'
+    descricao: >-
+      O cabeçalho afirma 24 combinações medidas com só success e warn
+      preenchidas reprovando. No escuro, primary tonal é #4d8bfc sobre
+      brand-subtle rgba(77,139,252,.14): mede 4,70 sobre o canvas e 4,39 sobre
+      a superfície #1a1a1d, abaixo de 4,5:1 na superfície de tabela e card,
+      que é onde a Tag primary aparece. O 7,82 escrito é #84aefd sobre
+      #1a1a1d, a tinta do info, e o info tonal escuro tampouco mede 7,82
+      (6,93 / 6,47). O par primary tonal é anterior ao lote; o número errado
+      que o esconde é do lote.
+    esperado: 'Tabela do cabeçalho com o valor real de cada par, e o par que reprova marcado como achado, como success e warn.'
+    encontrado: '7,82 para primary e info tonais no escuro; real 4,70 / 4,39 e 6,93 / 6,47.'
+    correcao: >-
+      Corrigir as duas linhas. Para o primary tonal escuro, subir a tinta do
+      rótulo para info-text #84aefd (que é o que o info tonal já faz e mede
+      6,47 na superfície) ou subir a opacidade do brand-subtle escuro; decisão
+      de token, registrar como achado aberto ao lado de success e warn.
+
+  - severidade: MENOR
+    id_anti_slop: TXT-002
+    local: 'Badge.css 312; Button.stories.tsx 99; Kbd.css 32; tokens.css 700 (bloco Lote 1)'
+    descricao: 'Quatro ocorrências novas de "X, e não Y", que o briefing proíbe em qualquer forma. O grep do handoff não pega essa figura.'
+    correcao: >-
+      "Controle: altura própria (24 / 28 / 32)"; "o contorno vem da sombra";
+      "`text-base`: sobre `secondary` o secundário mede 4,53:1"; "É a
+      espessura da tecla vista de cima."
+
+  - severidade: MENOR
+    id_anti_slop: null
+    local: 'src/fundacoes/Cores.stories.tsx e Elevacao.stories.tsx'
+    descricao: >-
+      Os quatro tokens do bloco Lote 1 (secondary-hover, anel-do-botao,
+      sombra-do-contorno, sombra-da-tecla) não têm linha nas fundações. O
+      briefing pede a linha com uso e evitar; o produtor declarou o motivo
+      (arquivos em edição por outros lotes) e entregou à varredura final.
+    correcao: 'Entra na tarefa de varredura das fundações (blocos /* Lote N */). Registro aqui para não se perder.'
+
+  - severidade: POLIMENTO
+    id_anti_slop: null
+    local: 'src/components/atoms/Button/Button.css, base .citie-button'
+    descricao: 'Line-height computado igual ao corpo (1) enquanto o kit escreve Medium 12/16, 14/20 e 16/24. Sem efeito em linha única com altura fixa; vira diferença se algum dia o rótulo quebrar.'
+    correcao: 'Opcional: line-height em --citie-linha-mini / --citie-linha-da-celula / 24px por degrau, mantendo a altura fixa.'
+
+  - severidade: POLIMENTO
+    id_anti_slop: null
+    local: 'src/tokens/tokens.css, --citie-aresta-preenchimento .28 e o brilho em *-subtle'
+    descricao: 'O topo do traço e o brilho são mais tímidos que no kit (brand-300 e brand-100). O produtor declarou e entregou ao Kafka. Concordo que é ajuste de token, fora do lote.'
+    correcao: 'Decisão do DesignOps.'
+
+o_que_me_surpreendeu:
+  - >-
+    O traço em gradiente num ::before com máscara composta, e não em
+    border-image: respeita o raio 10, transiciona para o hover sólido pela
+    mesma duração das outras propriedades, e cede a coluna de 1px por
+    clip-path na junção do grupo e do split. Medi a junção a 200% nos dois
+    temas e há um traço só; o clip-path computado é exatamente o que o
+    comentário diz.
+  - >-
+    O SplitButton usa o próprio anel de 1px da pele como divisor: o gatilho
+    pinta por cima da aresta final da ação e a linha escura nasce da anatomia,
+    sem elemento a mais. Confirmei o anel como primeiro item do box-shadow do
+    gatilho e a linha única em seis variantes, inclusive no desabilitado, que
+    ganhou a regra própria.
+  - >-
+    A decisão do Link contra o kit veio com o número certo: 2,03:1 entre
+    brand-primary e text-base, refeito por mim, e a G183 citada onde vale.
+    Divergir do kit medindo é o critério do briefing.
+
+o_que_faltou_para_surpreender:
+  - >-
+    Medir o que se afirma. O cabeçalho do Badge escreve 24 pares medidos e um
+    deles carrega o número de outra tinta; o par real reprova na superfície
+    escura. Uma tabela de contraste que mente num par tira a confiança dos
+    outros 23, mesmo que eu os tenha conferido.
+  - >-
+    O grep de negação paralela que só procura "não é X, é Y". Foram quatro
+    figuras novas, uma delas num comentário de token que vai viver muito.
+
+motivo_do_veredito: >-
+  APROVADO. Anatomia, peles, foco, pressão, junções, Link e Kbd conferem com
+  o kit e com o próprio handoff, medida a medida, nos dois temas; as duas
+  sabotagens reprovam nos testes certos; o gate escuro fechou em 60 falhas em
+  13 arquivos sem nenhuma do lote; o achado de success e warn não piorou; a
+  nota do mini foi reescrita e fecha o MENOR do Lote 0. Fica em APROVADO em
+  vez de SURPREENDEU pelo MAIOR do cabeçalho do Badge, que declara medido um
+  número de outra tinta e esconde um par abaixo de 4,5:1 na superfície
+  escura. O anti-slop fica em VOLTA PARA REFINO pelas quatro negações
+  paralelas novas (TXT-002), trabalho de minutos que não toca valor de token.

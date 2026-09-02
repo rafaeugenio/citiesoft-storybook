@@ -30,7 +30,7 @@ export const Completa: Story = {
     const canvas = within(canvasElement);
 
     // O total nunca é omitido em tabela operacional, com ponto de milhar pt-BR.
-    await expect(canvas.getByText('1-25 de 1.183 registros')).toBeVisible();
+    await expect(canvas.getByText('Mostrando 1 a 25 de 1.183 registros')).toBeVisible();
     await expect(canvas.getByRole('navigation', { name: 'Paginação de solicitações' })).toBeVisible();
 
     // Na página 1, anterior e primeira ficam desabilitadas.
@@ -49,14 +49,14 @@ export const Navegacao: Story = {
     const canvas = within(canvasElement);
 
     await userEvent.click(canvas.getByRole('button', { name: 'Próxima página' }));
-    await expect(canvas.getByText('26-50 de 1.183 registros')).toBeVisible();
+    await expect(canvas.getByText('Mostrando 26 a 50 de 1.183 registros')).toBeVisible();
     await expect(canvas.getByRole('button', { name: 'Página 2' })).toHaveAttribute(
       'aria-current',
       'page',
     );
 
     await userEvent.click(canvas.getByRole('button', { name: 'Última página' }));
-    await expect(canvas.getByText('1.176-1.183 de 1.183 registros')).toBeVisible();
+    await expect(canvas.getByText('Mostrando 1.176 a 1.183 de 1.183 registros')).toBeVisible();
     await expect(canvas.getByRole('button', { name: 'Próxima página' })).toBeDisabled();
   },
 };

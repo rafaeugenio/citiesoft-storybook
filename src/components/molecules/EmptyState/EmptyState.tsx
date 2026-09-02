@@ -36,6 +36,15 @@ export interface EmptyStateProps {
    * alinhamento à esquerda de todo o resto da tela.
    */
   alinhamento?: 'centro' | 'inicio';
+  /**
+   * Moldura do bloco, as quatro variantes do Empty do UI Kit. `nenhuma`
+   * (padrão) quando o vazio ocupa a região inteira e o contêiner em volta já
+   * é o card ou a tabela. `contorno` quando o vazio precisa de limite próprio
+   * numa página sem card. `preenchida` para recuar o bloco do fundo branco de
+   * um cartão. `tracejada` para lugar ainda por preencher: área de soltar
+   * arquivo, primeiro item de uma coleção.
+   */
+  moldura?: 'nenhuma' | 'contorno' | 'preenchida' | 'tracejada';
   /** No máximo duas ações visíveis. */
   acaoPrimaria?: { rotulo: string; onClick?: () => void };
   acaoSecundaria?: { rotulo: string; onClick?: () => void };
@@ -200,6 +209,7 @@ export function EmptyState({
   ilustracao,
   size = 'lg',
   alinhamento = 'centro',
+  moldura = 'nenhuma',
   acaoPrimaria,
   acaoSecundaria,
   ajuda,
@@ -222,7 +232,14 @@ export function EmptyState({
 
   return (
     <div
-      className={`citie-empty citie-empty--${size} citie-empty--${alinhamento}`}
+      className={[
+        'citie-empty',
+        `citie-empty--${size}`,
+        `citie-empty--${alinhamento}`,
+        moldura === 'nenhuma' ? null : `citie-empty--moldura-${moldura}`,
+      ]
+        .filter(Boolean)
+        .join(' ')}
       // Anunciado ao aparecer depois de um carregamento, sem interromper a leitura.
       role="status"
       aria-live="polite"

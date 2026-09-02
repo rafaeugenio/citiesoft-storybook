@@ -1,8 +1,8 @@
 /**
  * TieredMenu — cascata de painéis (Figma CitieOne, ❖ TieredMenu).
- * As alturas de item (40px, densidade normal) e de separador (9px) são contrato
- * com o TSX:
- * o deslocamento vertical de cada submenu é calculado a partir delas.
+ * A altura de item (32px, item de menu do kit) e a de separador (9px) são
+ * contrato com o TSX: o deslocamento vertical de cada submenu é calculado a
+ * partir delas.
  */
 
 .citie-tieredmenu-bloco {
@@ -31,8 +31,8 @@
   padding: var(--citie-spacing-1);
   background: var(--citie-background-surface);
   border: 1px solid var(--citie-border-default);
-  /* Painel de menu é contêiner externo: raio de camada, item fica em raio menor. */
-  border-radius: var(--citie-radius-2xl);
+  /* Painel flutuante do kit: raio 10, item um degrau abaixo em raio-md. */
+  border-radius: var(--citie-radius-lg);
   box-shadow: var(--citie-shadow-overlay);
 }
 
@@ -57,9 +57,10 @@
   align-items: center;
   /* Anatomia de linha: líder, gap-3, conteúdo que cresce, gap-3, trilha fixa. */
   gap: var(--citie-spacing-3);
-  height: var(--citie-control-height-normal);
-  padding: 0 var(--citie-spacing-3);
-  border-radius: var(--citie-radius-lg);
+  /* Item de menu do kit: 32 de altura, raio 6. */
+  height: var(--citie-control-height-small);
+  padding: 0 var(--citie-spacing-2);
+  border-radius: var(--citie-radius-md);
   box-sizing: border-box;
   position: relative;
   cursor: pointer;
@@ -80,12 +81,14 @@
 }
 
 /**
- * Item com submenu aberto: além da cor, uma barra na borda esquerda marca a
+ * Item com submenu aberto: ativo e selecionado do kit, `accent-forte` com
+ * rótulo `text-primary` (brand-primary sobre accent-forte reprova 3,95:1,
+ * medição do Lote 0). Além da cor, uma barra na borda esquerda marca a
  * posição da cascata, para o estado não depender só de cor.
  */
 .citie-tieredmenu__item--aberto {
-  background: var(--citie-state-selected);
-  color: var(--citie-brand-primary);
+  background: var(--citie-accent-forte);
+  color: var(--citie-text-primary);
   font-weight: var(--citie-font-weight-action);
 }
 
@@ -94,9 +97,9 @@
   position: absolute;
   inset: 0 auto 0 0;
   width: 3px;
-  /* A barra segue o raio da pílula do item, senão sobra canto reto no realce. */
-  border-start-start-radius: var(--citie-radius-lg);
-  border-end-start-radius: var(--citie-radius-lg);
+  /* A barra segue o raio do item, senão sobra canto reto no realce. */
+  border-start-start-radius: var(--citie-radius-md);
+  border-end-start-radius: var(--citie-radius-md);
   background: var(--citie-brand-primary);
 }
 

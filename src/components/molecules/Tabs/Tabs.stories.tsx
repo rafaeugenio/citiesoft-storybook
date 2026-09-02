@@ -134,7 +134,7 @@ export const Vertical: Story = {
 };
 
 export const Tamanhos: Story = {
-  name: 'Tamanhos · 32 / 40 / 48px',
+  name: 'Tamanhos · 32 / 36 / 40px',
   render: (args) => (
     <div style={{ display: 'grid', gap: 24 }}>
       <Tabs {...args} size="sm" label="Subtabs" />

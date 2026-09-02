@@ -332,6 +332,55 @@ export const MedidaDeTexto: Story = {
   },
 };
 
+export const Molduras: Story = {
+  name: 'Molduras · as quatro do kit',
+  args: {
+    size: 'md',
+    ilustracao: 'cards',
+    titulo: 'Nenhum anexo enviado',
+    descricao: 'Arraste os comprovantes para cá ou escolha os arquivos no computador.',
+    acaoPrimaria: { rotulo: 'Escolher arquivos' },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: [
+          'As quatro variantes do Empty do UI Kit: sem moldura (padrão, quando o contêiner em volta',
+          'já é o card ou a tabela), contorno de 1px, fundo muted e contorno tracejado. Todas no',
+          '`radius` de 10. A tracejada é a que pede ação de criação, como a área de soltar arquivo:',
+          'o traço interrompido lê como lugar ainda por preencher.',
+        ].join(' '),
+      },
+    },
+  },
+  render: (args) => (
+    <div style={{ display: 'grid', gap: 24, gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' }}>
+      <EmptyState {...args} moldura="nenhuma" />
+      <EmptyState {...args} moldura="contorno" />
+      <EmptyState {...args} moldura="preenchida" />
+      <EmptyState {...args} moldura="tracejada" />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const blocos = canvasElement.querySelectorAll<HTMLElement>('.citie-empty');
+    await expect(blocos).toHaveLength(4);
+    const [semMoldura, contorno, preenchida, tracejada] = Array.from(blocos);
+
+    await expect(getComputedStyle(semMoldura).borderTopWidth).toBe('0px');
+    await expect(getComputedStyle(contorno).borderTopWidth).toBe('1px');
+    await expect(getComputedStyle(contorno).borderTopStyle).toBe('solid');
+    await expect(getComputedStyle(tracejada).borderTopStyle).toBe('dashed');
+    // Preenchida recua do branco da superfície: fundo diferente do bloco sem moldura.
+    await expect(getComputedStyle(preenchida).backgroundColor).not.toBe(
+      getComputedStyle(semMoldura).backgroundColor,
+    );
+    // As três molduras ficam no `radius` de 10 do kit.
+    for (const bloco of [contorno, preenchida, tracejada]) {
+      await expect(getComputedStyle(bloco).borderTopLeftRadius).toBe('10px');
+    }
+  },
+};
+
 export const Medio: Story = {
   name: 'Tamanho · md (painel lateral)',
   args: { size: 'md', acaoPrimaria: { rotulo: 'Registrar lançamento' } },

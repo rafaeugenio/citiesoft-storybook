@@ -304,6 +304,15 @@ export const ToastEmpilhado: Story = {
     await expect(canvas.getAllByRole('alert')).toHaveLength(3);
     await waitFor(() => expect(canvas.getByText('Notificação 4')).toBeVisible());
 
+    // Profundidade como no Sonner: o mais novo inteiro, os de trás recuando
+    // 3% por degrau a partir da base.
+    const toastsEmCena = canvas.getAllByRole('alert');
+    await waitFor(() => {
+      expect(getComputedStyle(toastsEmCena[2]).scale).toBe('none');
+      expect(getComputedStyle(toastsEmCena[1]).scale).toBe('0.97');
+      expect(getComputedStyle(toastsEmCena[0]).scale).toBe('0.94');
+    });
+
     // O que "eventualmente some" não cobre: o tempo entre marcar a saída e
     // remover o nó. Se a coreografia for atropelada, o intervalo despenca para
     // poucos milissegundos e o usuário vê o sumiço abrupto de novo.

@@ -33,6 +33,15 @@ export interface CardProps {
   selecionado?: boolean;
   erro?: boolean;
   midia?: ReactNode;
+  /**
+   * `hub` é o cartão de atalho do hub de administração do Sismental: 72px de
+   * altura, ícone em caixa de 36 com fundo accent à esquerda, título 14 Medium
+   * e subtítulo 12 muted. O corpo fica oculto, porque a peça é a linha de
+   * cabeçalho inteira; quase sempre vem com `href`.
+   */
+  variante?: 'padrao' | 'hub';
+  /** Ícone de 20px do hub, desenhado no traço do sistema. Só a variante `hub` o exibe. */
+  icone?: ReactNode;
 }
 
 export function Card({
@@ -45,6 +54,8 @@ export function Card({
   selecionado = false,
   erro = false,
   midia,
+  variante = 'padrao',
+  icone,
 }: CardProps) {
   // Com título, o link vive no título e a área dele é esticada por CSS. Sem
   // título não há nome para o destino, e aí o card inteiro é que vira o link.
@@ -67,6 +78,7 @@ export function Card({
   const classes = [
     'citie-card',
     `citie-card--${densidade}`,
+    variante === 'hub' ? 'citie-card--hub' : null,
     href ? 'citie-card--clicavel' : null,
     selecionado ? 'citie-card--selecionado' : null,
     erro ? 'citie-card--erro' : null,
@@ -80,6 +92,11 @@ export function Card({
 
       {titulo ? (
         <header className="citie-card__cabecalho">
+          {variante === 'hub' && icone ? (
+            <span className="citie-card__icone" aria-hidden="true">
+              {icone}
+            </span>
+          ) : null}
           <div>
             <h3 className="citie-card__titulo">
               {erro ? (

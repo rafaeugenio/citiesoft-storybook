@@ -345,7 +345,7 @@ export const Filled: Story = {
 };
 
 export const Tamanhos: Story = {
-  name: 'Size · 32 / 40 / 48px',
+  name: 'Size · 32 / 36 / 40px',
   render: (args) => (
     <div style={{ display: 'grid', gap: 16 }}>
       <TreeSelect {...args} size="small" label="Lotação (small)" />

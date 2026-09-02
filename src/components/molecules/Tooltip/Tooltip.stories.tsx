@@ -83,6 +83,49 @@ export const AtrasoNoHover: Story = {
   },
 };
 
+export const Anatomia: Story = {
+  name: 'Tooltip · anatomia invertida do kit',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Tooltip invertido: fundo `--citie-popover` na tinta oposta ao tema, texto `--citie-popover-foreground` em 12/16, padding 6 por 8, raio 10 e seta de 6px na mesma tinta. A story mede cada valor e confere que fundo e texto do balão vêm dos dois tokens de popover, e não da superfície da página.',
+      },
+    },
+  },
+  render: (args) => (
+    <div style={{ padding: 48 }}>
+      <Tooltip {...args} conteudo="Cadastro Nacional de Estabelecimentos de Saúde">
+        <Button variant="text">CNES</Button>
+      </Tooltip>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.tab();
+    const dica = await canvas.findByRole('tooltip');
+    const estilo = getComputedStyle(dica);
+
+    await expect(estilo.fontSize).toBe('12px');
+    await expect(estilo.lineHeight).toBe('16px');
+    await expect(estilo.paddingTop).toBe('6px');
+    await expect(estilo.paddingLeft).toBe('8px');
+    await expect(estilo.borderTopLeftRadius).toBe('10px');
+
+    // Fundo e texto invertidos: o balão usa os tokens de popover, e o fundo
+    // dele difere da superfície da página.
+    const raiz = getComputedStyle(dica.closest('[data-theme]') ?? document.documentElement);
+    const superficie = raiz.getPropertyValue('--citie-background-surface').trim();
+    await expect(estilo.backgroundColor).not.toBe(superficie);
+    await expect(estilo.backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
+
+    // Seta de 6px na tinta do balão.
+    const seta = getComputedStyle(dica, '::after');
+    await expect(seta.borderTopWidth).toBe('6px');
+    await expect(seta.borderTopColor).toBe(estilo.backgroundColor);
+  },
+};
+
 export const Tamanhos: Story = {
   name: 'Tooltip · tamanhos',
   render: () => (

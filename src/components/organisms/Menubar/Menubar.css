@@ -46,7 +46,8 @@
   display: inline-flex;
   align-items: center;
   gap: var(--citie-spacing-2);
-  height: var(--citie-control-height-small);
+  /* Item de barra do kit: 36 de altura, um degrau acima do item de menu. */
+  height: var(--citie-control-height-normal);
   padding-inline: var(--citie-spacing-3);
   font-family: inherit;
   font-size: var(--citie-font-size-body-md);
@@ -69,11 +70,12 @@
   box-shadow: var(--citie-state-focus-ring);
 }
 
-/* Módulo com submenu aberto: fundo de marca mais a seta girada, nunca só cor. */
+/* Módulo com submenu aberto: ativo e selecionado do kit, `accent-forte` com
+   rótulo `text-primary`, mais a seta girada, nunca só cor. */
 .citie-menubar__item--ativo,
 .citie-menubar__item--ativo:hover {
-  color: var(--citie-brand-primary);
-  background-color: var(--citie-brand-subtle);
+  color: var(--citie-text-primary);
+  background-color: var(--citie-accent-forte);
 }
 
 .citie-menubar__item[aria-disabled='true'],
@@ -122,8 +124,8 @@
   padding: var(--citie-spacing-1);
   background-color: var(--citie-background-default);
   border: 1px solid var(--citie-border-default);
-  /* Painel de menu é contêiner externo: raio de camada. */
-  border-radius: var(--citie-radius-2xl);
+  /* Painel flutuante do kit: raio 10. */
+  border-radius: var(--citie-radius-lg);
   box-shadow: var(--citie-shadow-overlay);
   animation: citie-menubar-entrada var(--citie-motion-padrao) var(--citie-easing-entrada);
 }
@@ -144,8 +146,9 @@
   align-items: center;
   gap: var(--citie-spacing-3);
   width: 100%;
-  min-height: var(--citie-control-height-normal);
-  padding: var(--citie-spacing-1) var(--citie-spacing-3);
+  /* Item de menu do kit dentro do painel: 32 de altura, raio 6. */
+  min-height: var(--citie-control-height-small);
+  padding: var(--citie-spacing-1-5) var(--citie-spacing-2);
   font-family: inherit;
   font-size: var(--citie-font-size-body-md);
   font-weight: 400;
@@ -153,7 +156,7 @@
   text-align: start;
   background: none;
   border: none;
-  border-radius: var(--citie-radius-lg);
+  border-radius: var(--citie-radius-md);
   cursor: pointer;
 }
 

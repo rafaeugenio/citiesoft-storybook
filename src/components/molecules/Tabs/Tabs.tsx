@@ -8,6 +8,10 @@ export interface AbaProps {
   /** Substantivo conciso de 1 a 3 palavras, sem verbo: "Documentos". */
   rotulo: string;
   conteudo: ReactNode;
+  /** Ícone à esquerda do rótulo (conteúdo Icon / Icon + Label do kit). */
+  icone?: ReactNode;
+  /** Esconde o rótulo visualmente; ele continua como nome acessível da aba. */
+  somenteIcone?: boolean;
   /** Contagem à direita do rótulo; acima de 99 vira "99+". */
   contagem?: number;
   /** Sinaliza erro de validação dentro do painel, sem esconder o problema. */
@@ -98,7 +102,16 @@ export function Tabs({ label, abas, variante = 'line', size = 'md', abaInicial }
                   !
                 </span>
               ) : null}
-              {aba.rotulo}
+              {aba.icone ? (
+                <span className="citie-tabs__icone" aria-hidden="true">
+                  {aba.icone}
+                </span>
+              ) : null}
+              {aba.somenteIcone ? (
+                <span className="citie-visualmente-oculto">{aba.rotulo}</span>
+              ) : (
+                aba.rotulo
+              )}
               {aba.contagem !== undefined ? (
                 <Badge value={aba.contagem} severity="secondary" size="sm" />
               ) : null}

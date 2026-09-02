@@ -1,46 +1,51 @@
 .citie-panel {
   display: block;
   background-color: var(--citie-background-surface);
-  border: 1px solid var(--citie-border-default);
   /**
-   * Painel é superfície de primeiro nível e convive com Card na mesma tela,
-   * então segue o mesmo raio externo. Em `lg` ele lia como caixa aninhada ao
-   * lado de um card, e a hierarquia de camada invertia.
+   * Mesma pele do Card, medida no kit: borda de 1px no degrau padrão, o
+   * `radius` de 10 e o shadow-sm de duas camadas. Painel e card convivem na
+   * mesma tela e agora leem como a mesma família de superfície.
    */
-  border-radius: var(--citie-radius-2xl);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-lg);
+  box-shadow: var(--citie-shadow-raised);
   font-family: var(--citie-font-ui);
   color: var(--citie-text-base);
   overflow: hidden;
 }
 
+/**
+ * O cabeçalho fica na própria superfície, sem fundo recuado: no kit o que
+ * separa o título do conteúdo é a hierarquia tipográfica. O fio abaixo dele
+ * continua, porque aqui o cabeçalho é controle de recolher e o fio marca a
+ * fronteira que o conteúdo cruza ao abrir e fechar.
+ */
 .citie-panel__cabecalho {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--citie-spacing-3);
   min-height: var(--citie-control-height-normal);
-  /**
-   * O horizontal acompanha o do corpo para título e conteúdo caírem na mesma
-   * linha vertical. Com raio 16 no contêiner, 16px de recuo ainda encostaria o
-   * título na curva da quina.
-   */
+  /* O horizontal acompanha o do corpo para título e conteúdo caírem na mesma
+     linha vertical. */
   padding: var(--citie-spacing-3) var(--citie-spacing-6);
-  background-color: var(--citie-background-subtle);
   border-block-end: 1px solid var(--citie-border-default);
 }
 
 /**
- * Painel aninhado dentro de outro painel desce um degrau de raio, pela mesma
- * razão do card aninhado: o interior precisa se ler como interior.
+ * Painel aninhado dentro de outro painel desce para o raio de item aninhado e
+ * perde a sombra, pela mesma razão do card aninhado: o interior precisa se
+ * ler como interior.
  */
 .citie-panel__corpo .citie-panel {
-  border-radius: var(--citie-radius-xl);
+  border-radius: var(--citie-radius-md);
+  box-shadow: none;
 }
 
 /**
  * Recolhido não tem corpo abaixo, então a borda do cabeçalho vira sobra
- * visual. Ela sai por cor, não por remoção, para desaparecer junto com a
- * altura em vez de sumir de golpe no primeiro quadro do colapso.
+ * visual. Ela sai por cor, para desaparecer junto com a altura ao longo do
+ * colapso, sem sumir de golpe no primeiro quadro.
  */
 .citie-panel__cabecalho {
   transition: border-block-end-color var(--citie-motion-rapido) var(--citie-easing-saida);
@@ -50,11 +55,13 @@
   border-block-end-color: transparent;
 }
 
+/* Título 16 Medium, o mesmo do cabeçalho de card. */
 .citie-panel__titulo {
   margin: 0;
-  font-size: var(--citie-font-size-body-md);
-  font-weight: 600;
-  line-height: 1.4;
+  font-family: var(--citie-font-display);
+  font-size: var(--citie-font-size-body-lg);
+  font-weight: var(--citie-font-weight-action);
+  line-height: 1.5;
   color: var(--citie-text-primary);
 }
 
@@ -74,7 +81,7 @@
   block-size: 28px;
   padding: 0;
   border: none;
-  border-radius: var(--citie-radius-full);
+  border-radius: var(--citie-radius-md);
   background-color: transparent;
   color: var(--citie-text-secondary);
   cursor: pointer;

@@ -26,6 +26,7 @@ const meta = {
       options: [
         'primary',
         'secondary',
+        'outline',
         'success',
         'danger',
         'warn',
@@ -35,7 +36,8 @@ const meta = {
       ],
       description: 'Hierarquia da ação. Máximo 1 primary por contexto visível.',
     },
-    size: { control: 'inline-radio', options: ['small', 'normal', 'large'] },
+    size: { control: 'inline-radio', options: ['mini', 'small', 'normal', 'large', 'xl'] },
+    rounded: { control: 'boolean' },
     touchTarget: { control: 'inline-radio', options: ['default', 'comfortable'] },
     onClick: { action: 'clicado' },
   },
@@ -69,6 +71,35 @@ export const Primary: Story = {
 export const Secondary: Story = {
   name: 'Secondary · ação de apoio',
   args: { variant: 'secondary', children: 'Cancelar' },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Pele Secondary do kit: fundo `--citie-secondary` com traço claro em gradiente. Rótulo mede 14,94:1 no claro e 14,37:1 no escuro; no hover (`--citie-secondary-hover`) 13,52:1 e 11,35:1.',
+      },
+    },
+  },
+};
+
+export const Outline: Story = {
+  name: 'Outline · ação de apoio sobre superfície',
+  args: { variant: 'outline', children: 'Editar' },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Pele Outline do kit: fundo transparente, traço em gradiente e `--citie-sombra-do-contorno` (anel neutro a 16% mais sombra curta). É o botão "Editar" da linha de listagem do Sismental. Rótulo em `text-primary`: 16,29:1 sobre o branco, 15,94:1 no escuro.',
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const botao = canvas.getByRole('button', { name: 'Editar' });
+    const estilo = getComputedStyle(botao);
+    // Transparente de verdade: o contorno vem da sombra.
+    await expect(estilo.backgroundColor).toBe('rgba(0, 0, 0, 0)');
+    await expect(estilo.boxShadow).not.toBe('none');
+  },
 };
 
 export const Success: Story = {
@@ -163,6 +194,14 @@ export const Info: Story = {
 export const Text: Story = {
   name: 'Text · ação terciária',
   args: { variant: 'text', children: 'Ver histórico' },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Pele Ghost do kit: sem fundo, rótulo em `text-base` (11,03:1 sobre o branco, 11,60:1 no escuro) e hover em `--citie-accent` (10,07:1 e 9,87:1). A cor de marca deixou de marcar o terciário: numa linha de tabela com cinco ações, o azul em todas anulava o azul do identificador.',
+      },
+    },
+  },
 };
 
 export const Contrast: Story = {
@@ -174,28 +213,81 @@ export const Contrast: Story = {
 /* Tamanhos                                                            */
 /* ------------------------------------------------------------------ */
 
+/** Anatomia do kit por tamanho: altura, padding horizontal e gap, em pixels. */
+const ANATOMIA_DO_KIT = {
+  mini: { altura: 24, padding: 8, gap: 6 },
+  small: { altura: 32, padding: 12, gap: 6 },
+  normal: { altura: 36, padding: 16, gap: 8 },
+  large: { altura: 40, padding: 24, gap: 8 },
+  xl: { altura: 48, padding: 32, gap: 8 },
+} as const;
+
 export const Tamanhos: Story = {
-  name: 'Tamanhos · 32 / 40 / 48px',
+  name: 'Tamanhos · 24 / 32 / 36 / 40 / 48px',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Os cinco degraus do kit. `mini` (24) é pele legítima para contexto denso operado por mouse e teclado (célula de tabela, barra de filtro, badge de ação) e coincide com o mínimo de 24 × 24 da WCAG 2.5.8. `small` (32) é o piso em formulário e barra de ferramentas; tela de cidadão e mobile somam `touchTarget="comfortable"` (44 × 44) a qualquer degrau. `xl` é o botão de tela de entrada. Padding 8 / 12 / 16 / 24 / 32 e gap 6 / 6 / 8 / 8 / 8, medidos no Figma.',
+      },
+    },
+  },
   render: (args) => (
-    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+    <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+      <Button {...args} size="mini">
+        Mini 24px
+      </Button>
       <Button {...args} size="small">
         Small 32px
       </Button>
       <Button {...args} size="normal">
-        Normal 40px
+        Normal 36px
       </Button>
       <Button {...args} size="large">
-        Large 48px
+        Large 40px
+      </Button>
+      <Button {...args} size="xl">
+        Extra large 48px
       </Button>
     </div>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const alturas = ['Small 32px', 'Normal 40px', 'Large 48px'].map((nome) =>
-      canvas.getByRole('button', { name: nome }).getBoundingClientRect().height,
-    );
-    // A spec proíbe altura abaixo de 32px em produto.
-    await expect(alturas).toEqual([32, 40, 48]);
+    const rotulos = {
+      mini: 'Mini 24px',
+      small: 'Small 32px',
+      normal: 'Normal 36px',
+      large: 'Large 40px',
+      xl: 'Extra large 48px',
+    } as const;
+    for (const [tamanho, esperado] of Object.entries(ANATOMIA_DO_KIT)) {
+      const botao = canvas.getByRole('button', { name: rotulos[tamanho as keyof typeof rotulos] });
+      const estilo = getComputedStyle(botao);
+      // Altura em pixel inteiro, e padding e gap do kit, por tamanho.
+      await expect(botao.getBoundingClientRect().height).toBe(esperado.altura);
+      await expect(estilo.paddingInlineStart).toBe(`${esperado.padding}px`);
+      await expect(estilo.gap).toBe(`${esperado.gap}px`);
+      // O `radius` do kit, 10px, em todos os degraus.
+      await expect(estilo.borderTopLeftRadius).toBe('10px');
+    }
+  },
+};
+
+export const Pilula: Story = {
+  name: 'Forma · pílula (Roundness = Round)',
+  args: { rounded: true, children: 'Nova solicitação' },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Eixo `Roundness` do kit. A pílula troca só o raio; altura, padding e pele não mudam.',
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const botao = canvas.getByRole('button', { name: 'Nova solicitação' });
+    await expect(getComputedStyle(botao).borderTopLeftRadius).toBe('9999px');
+    await expect(botao.getBoundingClientRect().height).toBe(36);
   },
 };
 
@@ -457,6 +549,7 @@ function anelDoSistema(referencia: Element) {
 const TODAS_AS_VARIANTES = [
   'primary',
   'secondary',
+  'outline',
   'text',
   'success',
   'danger',
@@ -469,7 +562,7 @@ export const FocoEmTodasAsVariantes: Story = {
   name: 'Regressão · anel de foco existe em toda variante',
   parameters: {
     // Esta story existe para medir o ANEL DE FOCO, e por isso precisa render as
-    // oito variantes juntas. Duas delas, `success` e `warn`, carregam o achado
+    // nove variantes juntas. Duas delas, `success` e `warn`, carregam o achado
     // aberto de contraste do design system (3,30:1 e 3,19:1 com rótulo branco),
     // já documentado nas stories próprias e ainda sem decisão do dono da marca.
     // A varredura fica visível no painel sem derrubar o CI, no mesmo tratamento
@@ -493,8 +586,11 @@ export const FocoEmTodasAsVariantes: Story = {
           'propriedade e por isso funcionava. A correção foi declarar uma sombra nula válida',
           '(`0 0 0 0 transparent`) na classe base.',
           '',
-          'Esta verificação percorre as oito variantes e mede o `box-shadow` computado de cada',
-          'uma sob foco. Se alguém reintroduzir o defeito, ela reprova.',
+          'Esta verificação percorre as nove variantes e mede o `box-shadow` computado de cada',
+          'uma sob foco. Se alguém reintroduzir o defeito, ela reprova. Com a pele do kit a',
+          'lista ganhou o anel de 1px e o brilho das variantes preenchidas e a sombra de',
+          'contorno da outline, e o anel do sistema precisa continuar sendo o PRIMEIRO item',
+          'da lista, por cima de todos.',
         ].join('\n'),
       },
     },
@@ -511,7 +607,7 @@ export const FocoEmTodasAsVariantes: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Navegação por teclado de verdade, e não `.focus()` programático: o
+    // Navegação por teclado de verdade, sem `.focus()` programático: o
     // `:focus-visible` depende de heurística do navegador sobre a última forma
     // de interação, e foco por script pode não acioná-lo. Testar com `.focus()`
     // mediria um estado que o usuário de teclado nunca vê.
@@ -523,7 +619,7 @@ export const FocoEmTodasAsVariantes: Story = {
 
       // A medição espera a transição assentar. `box-shadow` está na lista de
       // transições do botão, então ler o computado no instante do foco devolve
-      // o valor de PARTIDA, ainda em curso, e não o de chegada. Foi esse
+      // o valor de PARTIDA, ainda em curso, antes do de chegada. Foi esse
       // artefato que fez a primeira versão desta verificação acusar defeito
       // onde não havia.
       await waitFor(async () => {
@@ -531,7 +627,7 @@ export const FocoEmTodasAsVariantes: Story = {
         // O anel precisa existir de fato: lista inválida vira `none`, e o
         // `outline` já está suprimido, então `none` aqui é foco invisível.
         await expect(estilo.boxShadow).not.toBe('none');
-        // E precisa ser o anel do sistema, e não qualquer sombra sobrando.
+        // E precisa ser o anel do sistema, o primeiro item da lista.
         //
         // A comparação lê o token pelo navegador em vez de trazer o valor para
         // cá. A primeira versão desta asserção escrevia a cor do anel claro

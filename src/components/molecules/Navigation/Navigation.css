@@ -19,19 +19,32 @@
   align-items: center;
   gap: var(--citie-spacing-2);
   min-height: 24px;
+  /* Item do kit: 14 muted; o nível atual sobe a `text-primary` abaixo. */
   font-size: var(--citie-font-size-body-md);
+  color: var(--citie-text-secondary);
 }
 
 .citie-breadcrumb--compacto .citie-breadcrumb__item {
   font-size: var(--citie-font-size-body-sm);
 }
 
+/* Separador do kit: chevron de 16, não a barra "/". */
 .citie-breadcrumb__separador {
+  flex-shrink: 0;
   color: var(--citie-text-secondary);
 }
 
+.citie-breadcrumb__icone-casa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-inline-end: var(--citie-spacing-1);
+}
+
 .citie-breadcrumb__link {
-  color: var(--citie-brand-primary);
+  display: inline-flex;
+  align-items: center;
+  color: inherit;
   text-decoration: none;
 }
 
@@ -45,12 +58,17 @@
   border-radius: var(--citie-radius-sm);
 }
 
+/* Item atual do kit: `text-primary`, não mais `text-base`. */
 .citie-breadcrumb__atual {
-  color: var(--citie-text-base);
+  display: inline-flex;
+  align-items: center;
+  color: var(--citie-text-primary);
   font-weight: 600;
 }
 
 .citie-breadcrumb__oculto {
+  display: inline-flex;
+  align-items: center;
   color: var(--citie-text-secondary);
 }
 

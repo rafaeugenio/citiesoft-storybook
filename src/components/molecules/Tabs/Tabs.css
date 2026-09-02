@@ -63,16 +63,16 @@
 }
 
 .citie-tabs--sm .citie-tabs__aba {
-  height: 32px;
+  height: var(--citie-control-height-small);
   font-size: var(--citie-font-size-body-sm);
 }
 
 .citie-tabs--md .citie-tabs__aba {
-  height: 40px;
+  height: var(--citie-control-height-normal);
 }
 
 .citie-tabs--lg .citie-tabs__aba {
-  height: 48px;
+  height: var(--citie-control-height-large);
 }
 
 .citie-tabs__aba:hover:not(:disabled) {
@@ -100,6 +100,15 @@
   cursor: not-allowed;
 }
 
+.citie-tabs__icone {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  inline-size: 16px;
+  block-size: 16px;
+}
+
 .citie-tabs__erro {
   display: inline-flex;
   align-items: center;
@@ -125,47 +134,54 @@
   border-radius: var(--citie-radius-md);
 }
 
-/* ---------- Variante pill ---------- */
+/* ---------- Variante pill (segmentado do kit) ---------- */
 
+/**
+ * Anatomia do kit: trilho em `accent`, padding 3 (o degrau mais próximo na
+ * escala é `spacing-1`, 4px; o kit mede 3), raio 10 (`radius-lg`, e não mais o
+ * total da escala). O ativo se lê por profundidade: a pílula de superfície
+ * elevada, desenhada pelo realce deslizante, nunca só pela cor do rótulo.
+ */
 .citie-tabs--pill .citie-tabs__lista {
-  gap: var(--citie-spacing-2);
+  gap: var(--citie-spacing-1);
   border-block-end: none;
   padding: var(--citie-spacing-1);
-  background-color: var(--citie-background-subtle);
-  /**
-   * Trilho e segmento em raio total, que é o degrau de pílula da escala. O par
-   * antigo em `radius-md` deixava trilho e segmento no mesmo raio, e o ativo só
-   * se distinguia por cor.
-   */
-  border-radius: var(--citie-radius-full);
+  background-color: var(--citie-accent);
+  border-radius: var(--citie-radius-lg);
 }
 
 .citie-tabs--pill .citie-tabs__aba {
   border-block-end: none;
   margin-block-end: 0;
-  border-radius: var(--citie-radius-full);
+  padding: var(--citie-spacing-1) var(--citie-spacing-2);
+  border-radius: var(--citie-radius-lg);
+  color: var(--citie-text-secondary);
 }
 
-/**
- * O segmento ativo se lê por profundidade, e não só por cor. Quem desenha a
- * pílula de superfície é o realce deslizante; a aba só troca a cor do rótulo.
- * A superfície usa a âncora `shadow-controle` com borda de definição: a pílula
- * está apoiada no trilho, não flutuando sobre ele.
- */
+/* Hover na aba inativa: o trilho já está em `accent`, então o hover precisa de
+   um degrau mais escuro para continuar visível. */
+.citie-tabs--pill .citie-tabs__aba:hover:not(:disabled):not(.citie-tabs__aba--ativa) {
+  background-color: var(--citie-accent-forte);
+  color: var(--citie-text-primary);
+}
+
+.citie-tabs--pill .citie-tabs__aba:focus-visible {
+  border-radius: var(--citie-radius-lg);
+}
+
 .citie-tabs--pill .citie-tabs__realce {
   inset-block-start: 0;
   inset-inline-start: 0;
   inline-size: var(--citie-realce-largura);
   block-size: var(--citie-realce-altura);
   translate: var(--citie-realce-x) var(--citie-realce-y);
-  border-radius: var(--citie-radius-full);
+  border-radius: var(--citie-radius-lg);
   background-color: var(--citie-background-surface);
-  border: 1px solid var(--citie-border-default);
-  box-shadow: var(--citie-shadow-controle);
+  box-shadow: var(--citie-shadow-raised);
 }
 
 .citie-tabs--pill .citie-tabs__aba--ativa {
-  color: var(--citie-brand-primary);
+  color: var(--citie-text-primary);
 }
 
 /* ---------- Variante vertical ---------- */

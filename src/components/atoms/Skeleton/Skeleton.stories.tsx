@@ -43,7 +43,7 @@ export const Formas: Story = {
     docs: {
       description: {
         story:
-          'Linha de texto usa radius.sm, campo e botão usam radius.md, card usa radius.xl e avatar usa radius.full.',
+          'Linha e título usam radius.md (6px, o raio de item aninhado); campo e card usam radius.lg (10px, o `radius` do UI Kit); avatar usa radius.full. A cor base é `--citie-secondary`, a superfície neutra recuada do kit.',
       },
     },
   },

@@ -84,6 +84,69 @@ export const Menu: Story = {
   },
 };
 
+export const Fixa: Story = {
+  name: 'Sidebar · fixa (shell)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Navegação de shell do kit, medida no Sismental: 257px, fundo `sidebar`, item de 32 com fundo `sidebar-accent` no ativo. Cartão de contexto no topo e item ancorado no rodapé.',
+      },
+    },
+  },
+  render: () => (
+    <Sidebar
+      secoes={SECOES}
+      ativo="processos"
+      variante="fixa"
+      cabecalho={
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 28,
+              height: 28,
+              borderRadius: 6,
+              backgroundColor: 'var(--citie-accent)',
+              color: 'var(--citie-accent-foreground)',
+            }}
+            aria-hidden="true"
+          >
+            {IconePessoas}
+          </span>
+          <span style={{ fontSize: 14, fontWeight: 500 }}>CAPS AD III</span>
+        </div>
+      }
+      rodape={
+        <button
+          type="button"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            width: '100%',
+            padding: '8px 12px',
+            background: 'none',
+            border: 'none',
+            color: 'var(--citie-danger-foreground)',
+            cursor: 'pointer',
+          }}
+        >
+          Sair
+        </button>
+      }
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('navigation', { name: 'Menu principal' })).toBeVisible();
+    await expect(canvas.getByText('CAPS AD III')).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Sair' })).toBeVisible();
+  },
+};
+
 export const MenuColapsado: Story = {
   name: 'Sidebar · colapsada',
   parameters: {

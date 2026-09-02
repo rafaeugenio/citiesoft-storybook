@@ -117,8 +117,37 @@ export function DatePicker({
       {({ id, describedBy, invalid }) => (
         <div className="citie-datepicker">
           <div
-            className={`citie-field-wrapper${readOnly ? '' : ' citie-field-wrapper--has-affix'}`}
+            className={`citie-field-wrapper${readOnly ? '' : ' citie-field-wrapper--has-affix-start'}`}
           >
+            {/*
+              O estado de abertura vive num botão de verdade, porque
+              `aria-expanded` só é válido em papéis que o suportam, e num input
+              de texto simples o axe reprova.
+
+              No consolidado o gatilho sai da árvore: um botão de calendário
+              que não abre calendário seria uma promessa falsa, para o ponteiro
+              e para o leitor de tela.
+
+              À esquerda, como no campo de data do Sismental: o ícone antecede
+              o valor em vez de fechar a composição à direita, que é onde o
+              padrão do DS reserva para feedback (spinner de validação).
+            */}
+            {readOnly ? null : (
+              <button
+                type="button"
+                className="citie-field-wrapper__affix citie-field-wrapper__affix--start citie-datepicker__gatilho"
+                aria-label={`Escolher ${label.toLowerCase()}`}
+                aria-haspopup="dialog"
+                aria-expanded={aberto}
+                disabled={disabled}
+                onClick={() => setAberto(!aberto)}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <rect x="3" y="5" width="18" height="16" rx="2" />
+                  <path d="M3 10h18M8 3v4M16 3v4" strokeLinecap="round" />
+                </svg>
+              </button>
+            )}
             <input
               id={id}
               className={[
@@ -147,31 +176,6 @@ export function DatePicker({
                 }
               }}
             />
-            {/*
-              O estado de abertura vive num botão de verdade, porque
-              `aria-expanded` só é válido em papéis que o suportam, e num input
-              de texto simples o axe reprova.
-
-              No consolidado o gatilho sai da árvore: um botão de calendário
-              que não abre calendário seria uma promessa falsa, para o ponteiro
-              e para o leitor de tela.
-            */}
-            {readOnly ? null : (
-              <button
-                type="button"
-                className="citie-field-wrapper__affix citie-datepicker__gatilho"
-                aria-label={`Escolher ${label.toLowerCase()}`}
-                aria-haspopup="dialog"
-                aria-expanded={aberto}
-                disabled={disabled}
-                onClick={() => setAberto(!aberto)}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                  <rect x="3" y="5" width="18" height="16" rx="2" />
-                  <path d="M3 10h18M8 3v4M16 3v4" strokeLinecap="round" />
-                </svg>
-              </button>
-            )}
           </div>
 
           {aberto ? (

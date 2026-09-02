@@ -22,7 +22,7 @@ export interface SplitButtonProps {
   aoAcionar?: () => void;
   /** Mesma escala de severidade do Button. Máximo 1 `primary` por contexto visível. */
   variante?: ButtonVariant;
-  /** Altura do controle: 32 / 40 / 48px, igual à do Button. */
+  /** Altura do controle: 24 / 32 / 36 / 40 / 48px, os cinco degraus do Button. */
   tamanho?: ButtonSize;
   icone?: ReactNode;
   /** Figma `Raised = True`: sombra de cartão sob o par de botões. */
@@ -42,7 +42,7 @@ export interface SplitButtonProps {
 }
 
 /**
- * SplitButton — ação padrão em destaque com um gatilho de menu acoplado à direita.
+ * SplitButton: ação padrão em destaque com um gatilho de menu acoplado à direita.
  *
  * Página do Figma CitieOne `6738:49720` (❖ splitbutton). Eixos do component set
  * respeitados: `State = Idle | Open`, `Raised = False | True`,
@@ -51,9 +51,10 @@ export interface SplitButtonProps {
  * `variante`, `icone`, `elevado` e `arredondado`, já que severidade e ênfase
  * pertencem ao Button e são reaproveitadas daqui.
  *
- * Spec da marca: `design-system/03-components/buttons.md` v2.0.0 (família de
- * ação). Mesma altura do Button (32/40/48), `radius.md` nas pontas externas e o
- * mesmo anel de foco. Equivalente PrimeNG: `p-splitbutton`.
+ * Pele do UI Kit Citiesoft (docs/figma-ui-kit.md): a mesma do Button, com um
+ * divisor de 1px entre a ação e o gatilho e o gatilho quadrado (largura igual
+ * à altura). Mesma altura do Button (24/32/36/40/48), `radius` do kit (10) nas
+ * pontas externas e o mesmo anel de foco. Equivalente PrimeNG: `p-splitbutton`.
  *
  * São dois botões irmãos, não um só: o principal executa a ação padrão e o
  * gatilho declara `aria-haspopup="menu"` com nome acessível próprio. Teclado no

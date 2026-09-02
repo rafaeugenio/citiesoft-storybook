@@ -1,8 +1,8 @@
 /**
  * HoverCard Citiesoft: mini painel de dados no ponteiro ou no foco.
  *
- * Superfície de overlay: fundo de superfície, borda padrão, raio de contêiner
- * externo e a elevação `--citie-shadow-overlay`, o degrau de menu e popover na
+ * Superfície de overlay: fundo de superfície, borda padrão, o `radius` de 10
+ * do kit e a elevação `--citie-shadow-overlay`, o degrau de menu e popover na
  * escala de profundidade da fundação. Todo valor vem de token; as duas
  * larguras de moldura ficam declaradas aqui em custom properties comentadas,
  * na mesma escala que o Tooltip usa para os tamanhos dele.
@@ -49,8 +49,8 @@
 
   background-color: var(--citie-background-surface);
   border: 1px solid var(--citie-border-default);
-  /* Painel ancorado é contêiner externo: mesmo raio do Popover. */
-  border-radius: var(--citie-radius-2xl);
+  /* O `radius` de 10 do kit, o mesmo do Popover e do Tooltip. */
+  border-radius: var(--citie-radius-lg);
   box-shadow: var(--citie-shadow-overlay);
 
   animation: citie-hover-card-entrada var(--citie-motion-padrao) var(--citie-easing-entrada);

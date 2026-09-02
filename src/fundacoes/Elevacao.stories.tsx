@@ -37,9 +37,11 @@ const meta = {
           'hierarquia de profundidade da tela deixaria de significar alguma coisa.',
           '',
           '**Anatomia.** Cada degrau combina duas camadas. Uma sombra de contato, curta e um',
-          'pouco mais opaca, ancora o elemento na superfície. Uma sombra ambiente, longa e de',
-          'opacidade baixa, dá a distância. Antes existiam apenas dois degraus, ambos de camada',
-          'única, com 3px e 12px de desfoque. Sombra de camada única recorta o elemento em vez de',
+          'pouco mais opaca, ancora o elemento na superfície. Uma sombra ambiente, mais longa e',
+          'de opacidade baixa, dá a distância. `raised` e `dialog` usam os valores de `shadow-sm`',
+          'e `shadow-lg` do UI Kit Citiesoft, na escala do Tailwind: preto a 10% e spread',
+          'negativo na segunda camada. Antes existiam apenas dois degraus, ambos de camada única,',
+          'com 3px e 12px de desfoque. Sombra de camada única recorta o elemento em vez de',
           'fazê-lo flutuar, e o resultado era card e overlay praticamente indistinguíveis na tela.',
           '',
           '**O valor mostrado é lido do CSS em tempo de execução.** Troque o tema no controle da',
@@ -75,14 +77,23 @@ const ELEVACAO: TokenDocumentado[] = [
     nome: 'shadow-card',
     uso: 'Apelido de `shadow-raised`, com exatamente o mesmo valor. Mantido porque vários pontos do catálogo já consomem este nome. Em código novo, prefira `shadow-raised`.',
   },
+  {
+    nome: 'shadow-controle',
+    uso: 'Âncora de controle apoiado na superfície: botão preenchido, campo, select e textarea em repouso. É o `shadow-xs` do UI Kit, e some no foco para o anel ficar sozinho.',
+    evitar: 'confundir com elevação. O controle continua no plano da página; a sombra só diz que ele é um objeto.',
+  },
 ];
 
 const FOCO: TokenDocumentado[] = [
   {
     nome: 'state-focus-ring',
-    uso: 'Anel que marca o elemento focado pelo teclado. Vale para todo alvo focável: botão, campo, link, aba, item de menu, linha selecionável, alça de slider.',
+    uso: 'Anel que marca o elemento focado pelo teclado. Vale para todo alvo focável: botão, campo, link, aba, item de menu, linha selecionável, alça de slider. Opaco desde o Lote 0: o anel translúcido media 1,85:1 sobre o branco e 2,27:1 no escuro, abaixo dos 3:1 da WCAG 2.4.11; opaco mede 5,45:1 e 5,30:1.',
     evitar:
       'remover o anel para deixar a tela mais limpa. A WCAG 2.4.7 exige indicador de foco visível, e sem ele quem navega por teclado perde a posição na tela.',
+  },
+  {
+    nome: 'state-focus-ring-danger',
+    uso: 'O mesmo anel na matiz de perigo, para o campo inválido que recebe foco continuar dizendo que há um problema. 4,83:1 sobre o branco, 9,15:1 sobre a superfície escura.',
   },
 ];
 
@@ -91,7 +102,7 @@ export const Degraus: Story = {
   render: () => (
     <Bloco
       titulo="Degraus"
-      descricao="Quatro nomes para três alturas, porque `shadow-card` é apelido de `shadow-raised`. A altura cresce junto com o quanto o elemento interrompe a leitura da página."
+      descricao="Quatro nomes para três alturas, porque `shadow-card` é apelido de `shadow-raised`, mais a âncora de controle, que fica fora da escada. Os valores de `raised` e `dialog` são os `shadow-sm` e `shadow-lg` do UI Kit."
     >
       <TabelaDeTokens tokens={ELEVACAO} especie="sombra" legenda="Tokens de elevação" />
       <AchadoAberto>
@@ -188,7 +199,7 @@ export const Foco: Story = {
   render: () => (
     <Bloco
       titulo="Foco"
-      descricao="Um único token para toda a interface, aplicado como sombra. Quem navega por teclado precisa saber onde está a cada tabulação, e em sistema público essa é a forma de navegação de parte real dos servidores."
+      descricao="Um anel para toda a interface, aplicado como sombra, e a variante de perigo para o campo inválido. Quem navega por teclado precisa saber onde está a cada tabulação, e em sistema público essa é a forma de navegação de parte real dos servidores."
     >
       <TabelaDeTokens tokens={FOCO} especie="foco" legenda="Token de foco" />
 
@@ -230,7 +241,7 @@ export const Foco: Story = {
     const estilo = getComputedStyle(canvasElement.ownerDocument.documentElement);
     // Anel de 3px desenhado como sombra, e não como contorno do navegador.
     await expect(estilo.getPropertyValue('--citie-state-focus-ring')).toContain('0 0 0 3px');
-    await expect(canvas.getByText(/--citie-state-focus-ring/)).toBeVisible();
+    await expect(canvas.getByText('--citie-state-focus-ring')).toBeVisible();
   },
 };
 

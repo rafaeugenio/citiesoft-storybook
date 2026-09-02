@@ -1,15 +1,16 @@
 /**
- * Tokens Citiesoft — extraídos do design system oficial.
+ * Tokens Citiesoft, extraídos do design system oficial.
  * Fonte: Obsidian Vault/Citiesoft/Citiesoft-Design-System/design-system/02-tokens
  *   - color-tokens.md      (valores claro/escuro)
- *   - radius-tokens.md     (radius.sm 4 / md 6 / lg 8 / xl 12)
+ *   - radius-tokens.md     (radius.sm 4 / md 6 / lg 8 / xl 12; `lg` passou a 10
+ *                           com o UI Kit Citiesoft do Figma, ver docs/figma-ui-kit.md)
  *   - spacing-tokens.md    (escala de 4)
  *   - 01-foundations/typography.md (Inter para UI, Red Hat Display para títulos)
  *
  * Regra do DS: componente consome token semântico por nome, nunca valor literal.
  *
  * ---------------------------------------------------------------------------
- * DECISÃO DE ARQUITETURA — papel de TEXTO e papel de PREENCHIMENTO são famílias
+ * DECISÃO DE ARQUITETURA: papel de TEXTO e papel de PREENCHIMENTO são famílias
  * separadas. Não unifique.
  *
  * `--citie-*-strong` é cor de TEXTO sobre superfície. Todos os consumidores
@@ -70,23 +71,23 @@
   --citie-border-default: #e8eaed;
   --citie-border-strong: #d6d8dc;
 
-  /* Feedback — sucesso */
+  /* Feedback: sucesso */
   --citie-success-emphasis: #16a34a;
   --citie-success-strong: #15803d;
   --citie-success-background: #ecfdf3;
 
-  /* Feedback — aviso */
+  /* Feedback: aviso */
   --citie-warning-emphasis: #d97706;
   --citie-warning-strong: #b45309;
   --citie-warning-background: #fffbeb;
 
-  /* Feedback — erro / destrutivo */
+  /* Feedback: erro e destrutivo */
   --citie-danger-emphasis: #dc2626;
   --citie-danger-strong: #b91c1c;
   --citie-danger-background: #fef2f2;
 
   /**
-   * Feedback — rampa de preenchimento do controle cheio.
+   * Feedback: rampa de preenchimento do controle cheio.
    *
    * Mesma estrutura da família de marca: `*-emphasis` é o repouso (equivale a
    * `--citie-brand-primary`), `*-hover` e `*-active` são os estados, e
@@ -120,30 +121,129 @@
   --citie-warning-active: #92400e;
   --citie-warning-contrast: #ffffff;
 
-  /* Feedback — informação */
+  /* Feedback: informação */
   --citie-info-emphasis: #0e4db8;
   --citie-info-text: #1261e4;
   --citie-info-background: #eff5ff;
 
   /* Estados */
-  --citie-state-focus-ring: 0 0 0 3px rgba(18, 97, 228, 0.4);
+  /**
+   * Anel de foco. Anatomia de 3px, agora opaco, como no UI Kit.
+   *
+   * As duas opções foram medidas antes da escolha. O anel translúcido de 40%
+   * compõe #a0c0f4 sobre o branco, que mede **1,85:1**; no escuro, 50% de
+   * #4d8bfc sobre #1a1a1d compõe #34528d, **2,27:1**. Os dois reprovam o
+   * mínimo de 3:1 que a WCAG 2.4.11 (Focus Appearance) pede do indicador
+   * contra o fundo adjacente. Opaco: #1261e4 mede **5,45:1** sobre #ffffff e
+   * 5,22:1 sobre #fafafa; #4d8bfc mede **5,30:1** sobre #1a1a1d e 5,63:1
+   * sobre #141414. Passa nos dois temas, com folga.
+   *
+   * A cor fica em `rgb()` de propósito: as guardas de foco de Input e
+   * InputGroup comparam a tinta do token com a `box-shadow` computada, e o
+   * navegador serializa cor opaca como `rgb(r, g, b)`.
+   */
+  --citie-state-focus-ring: 0 0 0 3px rgb(18, 97, 228);
   /**
    * Anel de foco de campo inválido.
    *
    * Um campo com erro que recebe foco trocava a identidade de perigo pelo azul
    * de marca: borda vermelha virava borda azul com anel azul, e a pista de que
    * ali existe um problema sumia justo no momento da correção. Este anel mantém
-   * o halo na matiz de perigo, com a mesma anatomia e opacidade do anel de
-   * marca (halo de 3px; halo não carrega texto, então não tem piso de WCAG,
-   * e a borda sólida por baixo segue medida: #dc2626 dá 4,83:1 sobre #ffffff).
+   * o halo na matiz de perigo, com a mesma anatomia e a mesma opacidade do
+   * anel de marca: 3px, opaco. #dc2626 mede **4,83:1** sobre #ffffff, acima do
+   * piso de 3:1 do indicador de foco.
    */
-  --citie-state-focus-ring-danger: 0 0 0 3px rgba(220, 38, 38, 0.4);
+  --citie-state-focus-ring-danger: 0 0 0 3px rgb(220, 38, 38);
   --citie-state-disabled-background: #e8eaed;
   --citie-state-disabled-text: #a8acb3;
-  --citie-state-selected: #eff5ff;
-  --citie-state-hover-overlay: rgba(18, 97, 228, 0.08);
 
-  /* Formulário — aliases citados nas specs de campo */
+  /**
+   * Accent: o realce sólido do UI Kit para hover de aba, linha de tabela,
+   * item de menu e item de sidebar. No claro é tinta sólida da marca; no
+   * escuro é o neutro 900 da família. Substitui o véu translúcido de 8% que
+   * existia antes.
+   *
+   * O valor claro foi escolhido medindo o contraste dos três textos.
+   * O candidato #e4edfd (brand-100 derivado de #1261e4) sustenta text-primary
+   * (13,83:1) e brand-primary (4,62:1), mas derruba `text-secondary` #6b7177
+   * para **4,19:1**, e 27 componentes escrevem metadado em text-secondary
+   * dentro da linha que recebe hover e seleção. A varredura das tintas mais
+   * claras mostrou que só #eff5ff fecha os três:
+   *   text-primary #202020 / #eff5ff = **14,88:1**
+   *   text-base    #3c3c3c / #eff5ff = 10,07:1
+   *   text-secondary #6b7177 / #eff5ff = **4,51:1**
+   *   brand-primary  #1261e4 / #eff5ff = 4,97:1
+   * No escuro o valor e a medição estão no bloco `[data-theme='dark']`.
+   *
+   * GAP PARA O LOTE 5: adotar o #e4edfd do kit exige que a linha em hover
+   * troque o metadado de text-secondary por text-base, ou que text-secondary
+   * escureça, e essa é decisão de token do DesignOps.
+   *
+   * `accent-foreground` é a tinta reservada ao rótulo que quer se afirmar por
+   * cima do accent: marca escura no claro (#0b3c8f, 9,32:1) e neutro claro no
+   * escuro (#d2d3d6, 10,46:1).
+   */
+  --citie-accent: #eff5ff;
+  --citie-accent-foreground: #0b3c8f;
+  /**
+   * Accent forte: o "accent 2" do kit, um degrau acima do accent. Neutro 200
+   * da nossa família, destino da linha selecionada e do item ativo. Sobre ele:
+   *   text-primary #202020 / #d6dce4 = **11,81:1**; escuro #f5f5f6 / #29344b = 11,42:1
+   *   accent-foreground #0b3c8f / #d6dce4 = 7,40:1
+   *   brand-primary #1261e4 / #d6dce4 = **3,95:1**, reprova
+   *   text-secondary #6b7177 / #d6dce4 = **3,57:1**, reprova
+   * As duas últimas linhas são o motivo de `state-selected` ainda não apontar
+   * para cá: 25 componentes pintam o rótulo selecionado em brand-primary e o
+   * metadado em text-secondary, e o gate reprovou 27 stories quando o token
+   * foi ligado. Cada lote que migrar um componente para o accent forte troca
+   * o rótulo por text-primary ou accent-foreground no mesmo commit.
+   */
+  --citie-accent-forte: #d6dce4;
+  /**
+   * Os dois tokens de estado abaixo apontam para o accent, para os 36
+   * arquivos que já os consomem migrarem de uma vez. Hover e seleção ficam
+   * na mesma tinta até o accent forte poder entrar, pelo motivo acima.
+   */
+  --citie-state-selected: var(--citie-accent);
+  --citie-state-hover-overlay: var(--citie-accent);
+
+  /**
+   * Secondary: preenchimento do botão e do badge Secondary do kit. Superfície
+   * neutra recuada com rótulo na tinta principal: #202020 sobre #f4f5f7 mede
+   * **14,94:1** no claro, #f5f5f6 sobre #232327 mede **14,37:1** no escuro.
+   */
+  --citie-secondary: #f4f5f7;
+  --citie-secondary-foreground: #202020;
+
+  /**
+   * Popover invertido: fundo do tooltip, na tinta oposta ao tema. Existe
+   * separado de `background-surface` porque o tooltip do kit inverte o
+   * contraste da página em vez de se erguer dela. #ffffff sobre #202020 mede
+   * **16,29:1**; no escuro #141414 sobre #f5f5f6 mede **16,91:1**.
+   */
+  --citie-popover: #202020;
+  --citie-popover-foreground: #ffffff;
+
+  /**
+   * Sidebar. Sete vagas do kit traduzidas para a família de neutros e de marca
+   * que já existe aqui: o fundo é o mesmo degrau da página, o item ativo usa o
+   * accent, e o primário da sidebar é o primário da marca.
+   *   sidebar-foreground #3c3c3c / sidebar #fafafa = **10,57:1**
+   *   sidebar-foreground #3c3c3c / sidebar-accent #eff5ff = 10,07:1
+   *   sidebar-accent-foreground #0b3c8f / sidebar-accent = **9,32:1**
+   *   sidebar-primary-foreground #ffffff / sidebar-primary #1261e4 = **5,45:1**
+   * `sidebar-border` é divisor decorativo (1,15:1 sobre a sidebar) e por isso
+   * não tem piso de WCAG 1.4.11.
+   */
+  --citie-sidebar: #fafafa;
+  --citie-sidebar-foreground: #3c3c3c;
+  --citie-sidebar-accent: var(--citie-accent);
+  --citie-sidebar-accent-foreground: var(--citie-accent-foreground);
+  --citie-sidebar-primary: var(--citie-brand-primary);
+  --citie-sidebar-primary-foreground: var(--citie-brand-contrast);
+  --citie-sidebar-border: #e8eaed;
+
+  /* Formulário: aliases citados nas specs de campo */
   /**
    * Borda de campo. O valor anterior era `#e8eaed`, que mede **1,21:1** sobre o
    * branco e reprova o contraste mínimo de 3:1 que a WCAG 1.4.11 exige de
@@ -186,35 +286,33 @@
 
   /**
    * Raio. Papel de cada degrau, para o valor ser escolhido por função e não
-   * por gosto:
-   *   sm   4px  — marcador, chip, indicador, canto interno de peça pequena
-   *   md   6px  — padrão Citiesoft para controle interativo (botão, campo)
-   *   lg   8px  — superfície densa e aninhada (linha, célula, item de lista)
-   *   xl  12px  — superfície de contorno de primeiro nível (card, widget,
-   *               gráfico, diálogo, drawer, corpo do wizard)
-   *   full      — pílula e avatar
+   * por gosto. A escala segue o UI Kit Citiesoft do Figma, onde `radius` é 10:
+   *   sm   4px  : marcador, chip, indicador, canto interno de peça pequena
+   *   md   6px  : item aninhado dentro de uma superfície (item de menu, item
+   *               de sidebar, linha de lista)
+   *   lg  10px  : o `radius` do kit. Controle, campo, card, badge, aba,
+   *               tooltip e toda superfície de primeiro nível
+   *   xl  12px  : camada intermediária dentro de um contêiner externo
+   *   full      : pílula e avatar
    *
-   * `xl` estava em uso mas fora da escala declarada no cabeçalho. Optei por
-   * oficializá-lo em vez de rebaixar os pontos de uso para `lg`: 12px é hoje
-   * o raio de card, widget, gráfico e diálogo, ou seja, as superfícies mais
-   * visíveis do produto. Removê-lo trocaria uma contradição de documentação
-   * por uma mudança de identidade visual em toda tela que tem card, que é
-   * exatamente o custo que não se deve pagar para consertar um comentário.
+   * `lg` era 8px e virou 10px porque o kit tem um raio único de 10 para tudo
+   * que a pessoa clica, preenche ou lê dentro de uma moldura. A migração dos
+   * componentes para `lg` acontece por lote; até lá, `md` continua sendo o
+   * raio de controle nos arquivos que ainda não foram tocados.
    *
-   * DIVERGÊNCIA EM ABERTO: Panel, Table e Fieldset são superfície de primeiro
-   * nível e usam `lg`, então convivem com Card e Widget em `xl` na mesma tela.
-   * A correção é apontá-los para `xl`, mas são arquivos de outros donos.
+   * Card, Panel, Fieldset, Dialog, Tooltip, HoverCard, ConfirmPopup, Toast e
+   * Message já estão em `lg` (Lote 3). Table e Widget acompanham no lote deles.
    */
   --citie-radius-sm: 4px;
   --citie-radius-md: 6px;
-  --citie-radius-lg: 8px;
+  --citie-radius-lg: 10px;
   --citie-radius-xl: 12px;
   /**
-   * Raio de contêiner externo: card, painel e diálogo.
-   *
-   * A regra que ele serve é de camada, não de gosto: o contêiner externo tem
-   * raio maior que o interno, então card 16 com célula aninhada 12 e controle 8
-   * lê como profundidade. Todos com o mesmo raio lê como adesivo colado.
+   * Raio da moldura que envolve a tela: o drawer lateral e o cartão de
+   * conteúdo do shell, medidos em 16 no Sismental. É o único degrau acima do
+   * `radius` do kit, e existe para a moldura externa se ler como camada por
+   * cima dos cards de 10 que vivem dentro dela. Card, Panel, Fieldset e Dialog
+   * deixaram este degrau no Lote 3 e estão em `lg`.
    *
    * Para em 16 de propósito. Acima disso o canto come área útil de tabela, e a
    * densidade que um sistema de processo administrativo exige sofre.
@@ -223,7 +321,14 @@
   --citie-radius-full: 9999px;
 
   /* Espaçamento */
+  /**
+   * Meio degrau e degrau e meio. O kit usa 2px no padding vertical do badge e
+   * 6px no gap do botão Mini e Small e no padding vertical do botão Small. Sem
+   * eles, esses controles arredondavam para 4 ou 8 e saíam da altura do kit.
+   */
+  --citie-spacing-0-5: 2px;
   --citie-spacing-1: 4px;
+  --citie-spacing-1-5: 6px;
   --citie-spacing-2: 8px;
   --citie-spacing-3: 12px;
   --citie-spacing-4: 16px;
@@ -245,7 +350,7 @@
   /**
    * ACHADO ABERTO: `.storybook/preview-head.html` carrega só Inter (400;500;600)
    * e Red Hat Display (500;600;700). Red Hat Mono não é carregada, então este
-   * token cai no fallback do sistema — Terminal.css já declara a mesma família
+   * token cai no fallback do sistema; Terminal.css já declara a mesma família
    * e já cai. E o peso 700 pedido por Badge, Tabs, Tree, TreeSelect e Timeline
    * não existe em Inter, então o navegador sintetiza negrito falso. Correção:
    * `Inter:wght@400;500;600;700` mais `family=Red+Hat+Mono:wght@400;500` na URL
@@ -254,7 +359,7 @@
   --citie-font-mono: 'Red Hat Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
   /**
-   * Escala de corpo — Inter, via `--citie-font-ui`.
+   * Escala de corpo: Inter, via `--citie-font-ui`.
    */
   --citie-font-size-caption: 11px;
   --citie-font-size-body-xs: 12px;
@@ -263,18 +368,17 @@
   --citie-font-size-body-lg: 16px;
 
   /**
-   * Escala de título — Red Hat Display, via `--citie-font-display`.
+   * Escala de título: Red Hat Display, via `--citie-font-display`.
    *
    * Não existia, e a consequência foi medida: 49 `font-size` literais em 24
    * arquivos, com 14 valores distintos, e quatro H1 diferentes em seis
    * templates (22/600, 24/600, 24/700, mais o degrau responsivo em 20px que
    * só três dos seis aplicam). Os degraus abaixo são os valores que já
-   * predominam no código, promovidos a token — não uma escala nova imposta
-   * por cima do que existe:
-   *   title-sm 18px  — título de card, painel, diálogo, gráfico
-   *   title-md 20px  — título de seção, e degrau responsivo do H1
-   *   title-lg 24px  — H1 de página
-   *   display  32px  — número de destaque e abertura de página
+   * predominam no código, promovidos a token:
+   *   title-sm 18px  : título de card, painel, diálogo, gráfico
+   *   title-md 20px  : título de seção, e degrau responsivo do H1
+   *   title-lg 24px  : H1 de página
+   *   display  32px  : número de destaque e abertura de página
    *
    * O peso também é token porque a divergência medida é de tamanho E de peso:
    * `title` 600 é o dominante, `display` 700 fica para número de destaque.
@@ -296,21 +400,26 @@
    * de fazê-lo flutuar, e card e overlay ficavam praticamente indistinguíveis,
    * então a hierarquia de profundidade não se lia.
    *
-   * Cada degrau agora combina duas camadas: uma sombra de contato curta, que
-   * ancora o elemento na superfície, e uma sombra ambiente longa e de opacidade
+   * Cada degrau combina duas camadas: uma sombra de contato curta, que ancora
+   * o elemento na superfície, e uma sombra ambiente mais longa e de opacidade
    * baixa, que dá a distância. É a anatomia que as referências usam.
+   *
+   * Os valores de `raised` e `dialog` são os de `shadow-sm` e `shadow-lg` do
+   * UI Kit, que seguem a escala do Tailwind: preto puro a 10%, e a segunda
+   * camada com spread negativo para a sombra não vazar pelos lados. `overlay`
+   * fica entre os dois e cobre o `shadow-md` do kit.
    *
    * Regra de uso: um elemento sobe no máximo UM degrau no hover, e nunca dois.
    */
   --citie-shadow-raised:
-    0 1px 2px rgba(16, 24, 40, 0.06),
-    0 4px 12px -2px rgba(16, 24, 40, 0.08);
+    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px -1px rgba(0, 0, 0, 0.1);
   --citie-shadow-overlay:
     0 2px 4px rgba(16, 24, 40, 0.06),
     0 12px 28px -6px rgba(16, 24, 40, 0.14);
   --citie-shadow-dialog:
-    0 4px 8px rgba(16, 24, 40, 0.08),
-    0 24px 56px -12px rgba(16, 24, 40, 0.22);
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.1);
   /** Mantido como apelido de `raised`: 15 pontos do catálogo consomem este nome. */
   --citie-shadow-card: var(--citie-shadow-raised);
 
@@ -327,8 +436,10 @@
    *
    * Fica separada de `raised` de propósito. `raised` é para superfície que
    * flutua sobre o fundo (card, painel); esta é para peça que está apoiada nele.
+   * O valor é o `shadow-xs` do kit, que ele aplica em campo, select e textarea
+   * em repouso.
    */
-  --citie-shadow-controle: 0 1px 2px rgba(16, 24, 40, 0.1);
+  --citie-shadow-controle: 0 1px 2px rgba(0, 0, 0, 0.05);
 
   /**
    * Poço de campo.
@@ -448,7 +559,7 @@
 
   /**
    * Véu (scrim) de bloqueio: fundo escurecido atrás de diálogo, drawer,
-   * BlockUI e cortina do shell. Valor único para a tela inteira — antes cada
+   * BlockUI e cortina do shell. Valor único para a tela inteira; antes cada
    * componente escolhia o seu, e a cortina do shell chegou a sobrepor um véu
    * de cor diferente sobre o backdrop de Dialog na mesma tela.
    */
@@ -478,8 +589,17 @@
    * vizinhas. Altura fracionária desloca a base de todas as linhas abaixo dela
    * por frações de pixel, e a varredura vertical de uma tabela longa é
    * exatamente o que sofre com isso. Em comprimento, N linhas medem N × 20px.
+   *
+   * A célula confortável mede 44 (Lote 5, medida na célula do UI Kit: 44 de
+   * altura com padding 12 e texto 14/20; a listagem de profissionais do
+   * Sismental mede 48 por linha, e a de prontuários com identificador de duas
+   * linhas mede 60, que é 44 mais as duas linhas de 20 e 16). Era 48, e o
+   * degrau de 4px vinha da altura de controle de 40 do PrimeOne, que o Lote 0
+   * desceu para 36: com o controle em 36 e 4 de respiro por lado, 44 fecha a
+   * conta. A compacta segue em 36, a mesma altura do controle, então um botão
+   * dentro dela já desce para 32 pela regra da densidade.
    */
-  --citie-altura-de-linha-confortavel: 48px;
+  --citie-altura-de-linha-confortavel: 44px;
   --citie-altura-de-linha-compacta: 36px;
   --citie-linha-da-celula: 20px;
   --citie-largura-maxima-da-celula: 320px;
@@ -498,14 +618,128 @@
    */
   --citie-camada-cabecalho-fixo: 1020;
 
-  /* Altura de controle */
+  /**
+   * Altura de controle. Cinco degraus, os mesmos do Button e do Input do kit:
+   *   mini    24px : botão e campo em linha de tabela, dentro de badge de ação
+   *   small   32px : barra de ferramentas, filtro embutido, densidade compacta
+   *   normal  36px : o padrão de formulário. Era 40 e desceu para 36 porque o
+   *                  kit alinha o controle padrão à linha de 20px de texto com
+   *                  8px de respiro vertical
+   *   large   40px : campo de destaque e botão de rodapé de diálogo
+   *   xl      48px : tela de entrada e formulário de cidadão: login, busca
+   *                  principal, código de verificação
+   * `normal` continua sendo a altura que alinha rótulo, campo e botão numa
+   * linha; o que mudou é o valor, e os componentes que o consomem seguem
+   * junto por `var()`.
+   */
+  --citie-control-height-mini: 24px;
   --citie-control-height-small: 32px;
-  --citie-control-height-normal: 40px;
-  --citie-control-height-large: 48px;
+  --citie-control-height-normal: 36px;
+  --citie-control-height-large: 40px;
+  --citie-control-height-xl: 48px;
 
-  /* Alvo de toque — WCAG 2.5.8 mínimo 24px, recomendado 44px para cidadão/mobile */
+  /* Alvo de toque: WCAG 2.5.8 mínimo 24px, recomendado 44px para cidadão/mobile */
   --citie-touch-target-min: 24px;
   --citie-touch-target-comfortable: 44px;
+
+  /* Lote 3 */
+  /**
+   * Card de hub, medido no hub de administração do Sismental: cartão de 72px
+   * de altura com ícone de 20 numa caixa de 36 com fundo accent, título 14
+   * Medium e subtítulo 12 muted. A caixa do ícone tem raio 8, um degrau entre
+   * o item aninhado (6) e o `radius` do kit (10), porque ela é um objeto
+   * dentro do card e o raio dela precisa ser menor que o do card.
+   */
+  --citie-hub-altura: 72px;
+  --citie-hub-caixa-de-icone: 36px;
+  --citie-hub-icone: 20px;
+  --citie-hub-raio-da-caixa: 8px;
+  /**
+   * Botão de fechar de diálogo, 30px medido no kit e na barra superior do
+   * Sismental. Fica acima do piso de 24 da WCAG 2.5.8; o drawer, que é alvo de
+   * dedo, continua no confortável de 44.
+   */
+  --citie-botao-fechar: 30px;
+  /** Largura do drawer lateral, 591px medida no drawer de cadastro do Sismental. */
+  --citie-largura-drawer: 591px;
+  /**
+   * Entrelinha do texto mini (12/16 do kit), em comprimento pelo mesmo motivo
+   * de `--citie-linha-da-celula`: o tooltip de duas linhas mede 32 inteiros.
+   */
+  --citie-linha-mini: 16px;
+  /**
+   * Recuo de escala por profundidade na pilha de toasts: o toast atrás do mais
+   * novo encolhe este tanto, o seguinte o dobro. 3% por degrau é o passo do
+   * Sonner; acima disso o texto do toast de trás fica ilegível.
+   */
+  --citie-toast-recuo-de-escala: 0.03;
+
+  /* Lote 1 */
+  /**
+   * Degrau de ponteiro do Secondary. O kit desce do neutro 100 para o 50 no
+   * hover, que aqui seria clarear; a família de neutros da casa não tem degrau
+   * abaixo de `secondary` sem virar branco, então o hover sobe um degrau: o
+   * mesmo valor do neutro 200 (`border-default`), com nome próprio porque o
+   * papel é preenchimento e não borda. #202020 sobre #e8eaed mede **13,52:1**;
+   * no escuro #f5f5f6 sobre #34343a mede 11,35:1.
+   */
+  --citie-secondary-hover: #e8eaed;
+  /**
+   * Anel de 1px do controle preenchido: a matiz do preenchimento a 80%, com
+   * 20% de preto por `color-mix`. É o "anel brand-700 a 80%" do kit, derivado
+   * do próprio preenchimento para servir a todas as famílias de cor sem um
+   * token por variante. Medido no claro: primary #0e4eb6 mede 7,54:1 contra o
+   * branco e 1,39:1 contra o preenchimento; danger #b01e1e 6,88:1 e 1,43:1.
+   * No escuro primary #3e6fca mede 3,58:1 contra #1a1a1d. Reforço de 1px não
+   * carrega informação, o piso é perceptual.
+   */
+  --citie-anel-do-botao: 80%;
+  /**
+   * Sombra do botão Outline do kit: anel neutro de 1px a 16% mais a sombra
+   * curta preta a 10%. O anel compõe #e7e8e9 sobre o branco (1,23:1), mais
+   * fraco que `border-strong` de propósito: o contorno é a moldura que quase
+   * some, e o texto é quem carrega o botão.
+   */
+  --citie-sombra-do-contorno:
+    0 0 0 1px rgba(107, 113, 119, 0.16),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+  /**
+   * Tecla física do Kbd: 1px de borda forte projetada por baixo, sem desfoque.
+   * É a espessura da tecla vista de cima.
+   */
+  --citie-sombra-da-tecla: 0 1px 0 0 var(--citie-border-strong);
+
+  /* Lote 5 */
+  /**
+   * Véu de ponteiro sobre a linha selecionada. O hover comum pinta o accent
+   * sólido, e sólido por cima da seleção apagaria o accent forte justo quando
+   * o ponteiro passa pela linha escolhida. Sobre a seleção o véu volta a ser
+   * translúcido, na matiz da marca: compõe #c6d2e4 sobre #d6dce4, e o rótulo
+   * continua legível (text-primary 10,66:1, text-base 7,22:1, accent-foreground
+   * 6,68:1). Valor escuro no bloco `[data-theme='dark']`.
+   */
+  --citie-veu-sobre-selecao: rgba(18, 97, 228, 0.08);
+  /**
+   * Ícone de linha: chevron de árvore e de TreeTable, seta de ordenação do
+   * cabeçalho, ícone de item de Tree e Listbox. 16px medido no kit (Lucide em
+   * 16 dentro da célula de 44 e do item de 32). O ícone de hub segue em 20.
+   */
+  --citie-icone-de-linha: 16px;
+  /**
+   * Largura mínima do card na grade do DataView. Com 280 e gap de 12, a grade
+   * de 1110px (a largura de conteúdo do Sismental com sidebar de 257) fecha
+   * em 3 colunas, e só passa a 4 a partir de 1156. Com os 240 anteriores a
+   * mesma largura dava 4 colunas de 268, estreitas para o título de duas
+   * linhas do card.
+   */
+  --citie-largura-minima-do-card-de-grade: 280px;
+  /**
+   * Marcador da linha do tempo: círculo vazado de 12 com traço de 2 na tinta
+   * de marca, medido na evolução do prontuário do Sismental. O traço reaproveita
+   * `--citie-espessura-indicador`; o diâmetro fica aqui porque 12 não é degrau
+   * de nenhuma outra escala de ícone.
+   */
+  --citie-marcador-da-linha-do-tempo: 12px;
 }
 
 /**
@@ -589,15 +823,15 @@
 
   /**
    * Rampa de preenchimento no escuro. O repouso continua sendo `*-emphasis`,
-   * que é o mesmo nos dois temas — verde, vermelho e âmbar saturados leem bem
+   * que é o mesmo nos dois temas: verde, vermelho e âmbar saturados leem bem
    * tanto sobre #FAFAFA quanto sobre #141414. O que muda é a direção do
    * estado: no escuro o hover CLAREIA, porque escurecer aproximaria o botão do
    * fundo até ele sumir (#166534 sobre #141414 quase não se separa).
    *
    * Success e warning ganham rótulo escuro no escuro, o que de quebra conserta
    * o repouso: hoje o rótulo é branco fixo e dá 3,30:1 e 3,19:1 também no
-   * escuro. Danger mantém rótulo branco — #DC2626 com #141414 daria 3,81:1,
-   * reprova — e por isso a rampa dele escurece, que é o sentido que funciona
+   * escuro. Danger mantém rótulo branco (#DC2626 com #141414 daria 3,81:1,
+   * reprova) e por isso a rampa dele escurece, que é o sentido que funciona
    * com texto branco.
    *
    * Contraste sobre cada degrau, tema escuro:
@@ -625,18 +859,68 @@
   --citie-info-text: #84aefd;
   --citie-info-background: rgba(77, 139, 252, 0.14);
 
-  --citie-state-focus-ring: 0 0 0 3px rgba(77, 139, 252, 0.5);
+  /* Opaco, como no claro: #4d8bfc mede 5,30:1 sobre #1a1a1d e 5,63:1 sobre #141414. */
+  --citie-state-focus-ring: 0 0 0 3px rgb(77, 139, 252);
   /**
    * Halo na matiz clara de perigo do tema escuro (#fca5a5, a mesma tinta de
-   * `--citie-danger-foreground`), com a opacidade do anel de marca escuro. A
-   * borda sólida por baixo continua #dc2626, 3,60:1 sobre #1a1a1d, acima do
-   * mínimo de 3:1 da WCAG 1.4.11.
+   * `--citie-danger-foreground`), opaco como o anel de marca. #fca5a5 mede
+   * 9,15:1 sobre #1a1a1d. A borda sólida por baixo continua #dc2626, 3,60:1
+   * sobre #1a1a1d, acima do mínimo de 3:1 da WCAG 1.4.11.
    */
-  --citie-state-focus-ring-danger: 0 0 0 3px rgba(252, 165, 165, 0.5);
+  --citie-state-focus-ring-danger: 0 0 0 3px rgb(252, 165, 165);
   --citie-state-disabled-background: #34343a;
   --citie-state-disabled-text: #6b7177;
-  --citie-state-selected: rgba(77, 139, 252, 0.14);
-  --citie-state-hover-overlay: rgba(77, 139, 252, 0.14);
+
+  /**
+   * Accent no escuro. O kit usa o neutro 900, que aqui é #232327, o mesmo
+   * valor de `background-subtle`: a zebra da tabela. Ligado assim, a linha par
+   * selecionada ficou idêntica à zebra e a guarda "seleção na linha par" de
+   * Table e TreeTable reprovou no escuro. O accent escuro é, então, a tinta de
+   * marca que a seleção escura já tinha (14% de #4d8bfc sobre a superfície
+   * compunha #212a3c), agora sólida. Medido sobre #202838:
+   *   text-primary #f5f5f6 = **13,55:1**; text-secondary #9a9da3 = 5,43:1
+   *   brand-primary #4d8bfc = **4,51:1**; brand-hover #84aefd = 6,65:1
+   *   accent-foreground #d2d3d6 = 9,87:1
+   * O forte segue a mesma matiz um degrau acima, #29344b: text-primary
+   * 11,42:1, text-secondary 4,58:1, accent-foreground 8,32:1, e brand-primary
+   * #4d8bfc **3,80:1, reprova**: o motivo de `state-selected` ainda apontar
+   * para o accent vale nos dois temas.
+   */
+  --citie-accent: #202838;
+  --citie-accent-foreground: #d2d3d6;
+  --citie-accent-forte: #29344b;
+  /**
+   * Redeclarados no bloco escuro porque `var()` é resolvido no elemento que
+   * declara o token e o valor computado é o que se herda. O decorador de
+   * tema marca um container, e a raiz fica clara: sem estas linhas o
+   * container escuro herdaria o accent claro já resolvido. Medido: o gate
+   * escuro reprovou AppShell com rótulo #84aefd sobre #d6dce4, 1,60:1.
+   */
+  --citie-state-selected: var(--citie-accent);
+  --citie-state-hover-overlay: var(--citie-accent);
+  --citie-sidebar-accent: var(--citie-accent);
+  --citie-sidebar-primary: var(--citie-brand-primary);
+  --citie-sidebar-primary-foreground: var(--citie-brand-contrast);
+
+  --citie-secondary: #232327;
+  --citie-secondary-foreground: #f5f5f6;
+
+  --citie-popover: #f5f5f6;
+  --citie-popover-foreground: #141414;
+
+  /**
+   * sidebar-foreground #d2d3d6 / sidebar #141414 = 12,31:1
+   * sidebar-accent-foreground #f5f5f6 / sidebar-accent #202838 = 13,55:1
+   * sidebar-primary-foreground #141414 / sidebar-primary #4d8bfc = 5,63:1
+   */
+  --citie-sidebar: #141414;
+  --citie-sidebar-foreground: #d2d3d6;
+  /* No claro este token é apelido de accent-foreground. Aqui ele sobe para
+     text-primary porque o item ativo é a única âncora de posição numa coluna
+     inteira em #141414, e #d2d3d6 (o accent-foreground escuro) o deixaria no
+     mesmo peso dos itens em repouso. 13,55:1 sobre #202838. */
+  --citie-sidebar-accent-foreground: #f5f5f6;
+  --citie-sidebar-border: #34343a;
 
   /* `#34343a` media 1,40:1 sobre `#1a1a1d`. `#6b6b6b` mede 3,26:1 e passa. */
   --citie-form-field-border: #6b6b6b;
@@ -655,14 +939,14 @@
    * fundo já escuro.
    */
   --citie-shadow-raised:
-    0 1px 2px rgba(0, 0, 0, 0.4),
-    0 4px 12px -2px rgba(0, 0, 0, 0.45);
+    0 1px 3px 0 rgba(0, 0, 0, 0.45),
+    0 1px 2px -1px rgba(0, 0, 0, 0.45);
   --citie-shadow-overlay:
     0 2px 4px rgba(0, 0, 0, 0.45),
     0 12px 28px -6px rgba(0, 0, 0, 0.55);
   --citie-shadow-dialog:
-    0 4px 8px rgba(0, 0, 0, 0.5),
-    0 24px 56px -12px rgba(0, 0, 0, 0.65);
+    0 10px 15px -3px rgba(0, 0, 0, 0.6),
+    0 4px 6px -4px rgba(0, 0, 0, 0.6);
   --citie-shadow-card: var(--citie-shadow-raised);
 
   --citie-shadow-controle: 0 1px 2px rgba(0, 0, 0, 0.45);
@@ -684,4 +968,20 @@
    * o controle de se fundir com a superfície atrás. Por isso é mais forte.
    */
   --citie-aresta-preenchimento: rgba(255, 255, 255, 0.4);
+
+  /* Lote 1 */
+  /* Neutro 700 da família, um degrau acima de `secondary`: 11,35:1 com o rótulo. */
+  --citie-secondary-hover: #34343a;
+  /* Anel a 24% e sombra a 45%, pela regra de toda sombra do escuro. O anel
+     compõe #39393d sobre #1a1a1d, 1,51:1. */
+  --citie-sombra-do-contorno:
+    0 0 0 1px rgba(154, 157, 163, 0.24),
+    0 2px 4px rgba(0, 0, 0, 0.45);
+  /* Redeclarada porque `var()` resolve no elemento que declara o token. */
+  --citie-sombra-da-tecla: 0 1px 0 0 var(--citie-border-strong);
+
+  /* Lote 5 */
+  /* Marca a 14% sobre o accent forte escuro compõe #2e4064: text-primary
+     9,48:1, text-base 6,90:1. */
+  --citie-veu-sobre-selecao: rgba(77, 139, 252, 0.14);
 }

@@ -45,9 +45,18 @@ type Story = StoryObj<typeof meta>;
 
 const ESCALA: TokenDocumentado[] = [
   {
+    nome: 'spacing-0-5',
+    uso: 'Meio degrau, 2px: padding vertical do badge de 20px e recuo interno do trilho de abas segmentadas. Só existe porque o UI Kit usa esses dois valores.',
+    evitar: 'usar como gap entre elementos. A 2px nada se separa de nada; é ajuste interno de peça pequena.',
+  },
+  {
     nome: 'spacing-1',
     uso: 'Costura entre partes do mesmo objeto: subtítulo colado no título de card, ícone de tendência colado ao número, gap interno de chip.',
     evitar: 'usar como gap entre dois componentes distintos. A 4px eles leem como um só.',
+  },
+  {
+    nome: 'spacing-1-5',
+    uso: 'Degrau e meio, 6px: gap entre ícone e rótulo nos botões Mini e Small, e padding vertical do botão Small. Sem ele esses controles arredondavam para 4 ou 8 e saíam da altura do kit.',
   },
   {
     nome: 'spacing-2',
@@ -59,11 +68,11 @@ const ESCALA: TokenDocumentado[] = [
   },
   {
     nome: 'spacing-4',
-    uso: 'Respiro horizontal de campo e botão normais (40px de altura), respiro horizontal de célula em tabela normal, respiro interno de card na densidade compacta, gap entre título e ação no cabeçalho de card.',
+    uso: 'Respiro horizontal de campo e botão normais (36px de altura), respiro horizontal de célula em tabela normal, respiro interno de card na densidade compacta, gap entre título e ação no cabeçalho de card.',
   },
   {
     nome: 'spacing-5',
-    uso: 'Respiro horizontal de campo e botão grandes (48px de altura), recuo interno de aba, respiro de estado vazio e de área de upload.',
+    uso: 'Respiro horizontal de campo e botão grandes (40px de altura), recuo interno de aba, respiro de estado vazio e de área de upload.',
     evitar:
       'usar como respiro interno de card. Card confortável usa `spacing-6` e card compacto usa `spacing-4`. O degrau de 20px ficou reservado ao controle grande.',
   },
@@ -83,7 +92,7 @@ export const Escala: Story = {
   render: () => (
     <Bloco
       titulo="Escala de 4"
-      descricao="Sete degraus, todos múltiplos de 4. A barra tem a largura real do token, então a distância entre dois degraus se lê no comprimento antes de se ler no número."
+      descricao="Nove degraus: sete múltiplos de 4 e dois meios-degraus (2px e 6px) que o UI Kit usa em badge e em botão pequeno. A barra tem a largura real do token, então a distância entre dois degraus se lê no comprimento antes de se ler no número."
     >
       <TabelaDeTokens
         tokens={ESCALA}
@@ -105,7 +114,9 @@ export const Escala: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     // Os valores vêm do CSS, então a tabela mostra a escala real e não um texto fixo.
+    await expect(canvas.getByText('2px')).toBeVisible();
     await expect(canvas.getByText('4px')).toBeVisible();
+    await expect(canvas.getByText('6px')).toBeVisible();
     await expect(canvas.getByText('20px')).toBeVisible();
     await expect(canvas.getByText('32px')).toBeVisible();
     await expect(canvas.getByText(/--citie-spacing-8/)).toBeVisible();
@@ -164,7 +175,7 @@ export const PorContexto: Story = {
             contexto: 'Respiro de campo',
             valor: 'spacing-3 · spacing-4 · spacing-5',
             exemplo:
-              'Padding horizontal do Field e do Button, um degrau por altura: 12px no pequeno de 32px, 16px no normal de 40px, 20px no grande de 48px.',
+              'Padding horizontal do Field e do Button, um degrau por altura: 12px no pequeno de 32px, 16px no normal de 36px, 20px no grande de 40px. O UI Kit pede 24px no grande e 32px no extra grande de 48px; a migração é do lote de ações.',
           },
           {
             contexto: 'Respiro de célula de tabela',

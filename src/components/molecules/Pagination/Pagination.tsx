@@ -80,7 +80,7 @@ export function Pagination({
     <nav className={classes} aria-label={label}>
       {mostraTotal ? (
         <span className="citie-pagination__total">
-          {formatarBR(primeiroDaPagina)}-{formatarBR(ultimoDaPagina)} de{' '}
+          Mostrando {formatarBR(primeiroDaPagina)} a {formatarBR(ultimoDaPagina)} de{' '}
           {formatarBR(totalRegistros)} registros
         </span>
       ) : null}
@@ -100,12 +100,17 @@ export function Pagination({
 
         <button
           type="button"
-          className="citie-pagination__botao"
+          className={`citie-pagination__botao${
+            mostraExtremos ? ' citie-pagination__botao--rotulado' : ''
+          }`}
           aria-label="Página anterior"
           disabled={pagina === 1}
           onClick={() => irPara(pagina - 1)}
         >
-          ‹
+          <span aria-hidden="true">‹</span>
+          {/* "Anterior" e "Próximo" com texto, como no kit, só na variante completa;
+              o aria-label acima já cobre o nome acessível nas demais. */}
+          {mostraExtremos ? <span aria-hidden="true">Anterior</span> : null}
         </button>
 
         {mostraNumeros
@@ -143,12 +148,15 @@ export function Pagination({
 
         <button
           type="button"
-          className="citie-pagination__botao"
+          className={`citie-pagination__botao${
+            mostraExtremos ? ' citie-pagination__botao--rotulado' : ''
+          }`}
           aria-label="Próxima página"
           disabled={pagina === totalPaginas}
           onClick={() => irPara(pagina + 1)}
         >
-          ›
+          {mostraExtremos ? <span aria-hidden="true">Próximo</span> : null}
+          <span aria-hidden="true">›</span>
         </button>
 
         {mostraExtremos ? (

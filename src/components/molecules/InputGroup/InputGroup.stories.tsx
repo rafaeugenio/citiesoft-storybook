@@ -93,7 +93,7 @@ export const AnelDoGrupo: Story = {
     // `none`" deixou de provar o anel. A prova agora é a cor do próprio token:
     // o anel aparece quando o box-shadow computado contém a tinta dele.
     const anel = getComputedStyle(trilho).getPropertyValue('--citie-state-focus-ring').trim();
-    const corDoAnel = anel.slice(anel.indexOf('rgba'));
+    const corDoAnel = anel.slice(anel.indexOf('rgb'));
     await waitFor(() => expect(getComputedStyle(trilho).boxShadow).toContain(corDoAnel));
     // Sob foco a regra do trilho apaga a sombra do controle de vez, e o
     // computado assenta em `none`. O `waitFor` está aqui por medida, e não por
@@ -137,11 +137,11 @@ export const Juncoes: Story = {
     // O contorno é um: o trilho tem borda e raio; o controle interno, nenhum.
     const estiloTrilho = getComputedStyle(trilho);
     await expect(estiloTrilho.borderTopWidth).toBe('1px');
-    await expect(estiloTrilho.borderTopLeftRadius).toBe('6px');
+    await expect(estiloTrilho.borderTopLeftRadius).toBe('10px');
     const estiloCampo = getComputedStyle(campo);
     await expect(estiloCampo.borderTopWidth).toBe('0px');
-    // Extremidade inicial: raio concêntrico de 5px (6 do trilho menos a borda).
-    await expect(estiloCampo.borderTopLeftRadius).toBe('5px');
+    // Extremidade inicial: raio concêntrico de 9px (10 do trilho menos a borda).
+    await expect(estiloCampo.borderTopLeftRadius).toBe('9px');
     await expect(estiloCampo.borderTopRightRadius).toBe('0px');
 
     // Uma linha por junção: só o lado inicial da peça seguinte tem borda.

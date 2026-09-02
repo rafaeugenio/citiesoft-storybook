@@ -111,7 +111,14 @@
    * dos dois que herdam deste primitivo.
    */
   border: 1px solid var(--citie-form-field-border);
-  border-radius: var(--citie-radius-md);
+  /*
+   * Raio 10 (`radius-lg`) é a anatomia do UI Kit para Input, Select, Textarea
+   * e InputGroup, medida na captura `kit-input.png`. O primitivo herdava o
+   * `radius-md` de 6px do padrão anterior; a correção sobe para os 14
+   * componentes que consomem esta classe, incluindo os que só herdam o
+   * primitivo sem o próprio arquivo CSS.
+   */
+  border-radius: var(--citie-radius-lg);
   box-shadow: var(--citie-elevacao-do-campo);
   transition:
     border-color var(--citie-motion-rapido) var(--citie-easing-padrao),
@@ -149,21 +156,33 @@ select.citie-field-control:where(:not(:has(option[value='']:checked)):not(:disab
   color: var(--citie-text-placeholder);
 }
 
+/*
+ * Anatomia do UI Kit (`kit-input.png`): as quatro alturas do campo levam o
+ * texto Regular 14/20 igual, do Small ao Large. Só o Mini muda de corpo, para
+ * caber em 24px de altura. Antes o Small caía para `body-sm` (13px) e o Large
+ * subia para `body-lg` (16px): dois corpos de texto diferentes na mesma tela
+ * para o mesmo dado, o que o kit não prevê. O padding horizontal segue a
+ * coluna "Padding" da tabela, mapeada para a escala de espaçamento existente.
+ */
+.citie-field-control--mini {
+  height: var(--citie-control-height-mini);
+  padding-inline: var(--citie-spacing-1-5);
+  font-size: var(--citie-font-size-body-xs);
+}
+
 .citie-field-control--small {
   height: var(--citie-control-height-small);
-  padding-inline: var(--citie-spacing-3);
-  font-size: var(--citie-font-size-body-sm);
+  padding-inline: var(--citie-spacing-2);
 }
 
 .citie-field-control--normal {
   height: var(--citie-control-height-normal);
-  padding-inline: var(--citie-spacing-4);
+  padding-inline: var(--citie-spacing-3);
 }
 
 .citie-field-control--large {
   height: var(--citie-control-height-large);
-  padding-inline: var(--citie-spacing-5);
-  font-size: var(--citie-font-size-body-lg);
+  padding-inline: var(--citie-spacing-4);
 }
 
 /* Filled: só quando a tela inteira adota o padrão preenchido. */
@@ -268,12 +287,12 @@ select.citie-field-control:where(:not(:has(option[value='']:checked)):not(:disab
 
 .citie-input-group__addon--start {
   border-inline-end: none;
-  border-radius: var(--citie-radius-md) 0 0 var(--citie-radius-md);
+  border-radius: var(--citie-radius-lg) 0 0 var(--citie-radius-lg);
 }
 
 .citie-input-group__addon--end {
   border-inline-start: none;
-  border-radius: 0 var(--citie-radius-md) var(--citie-radius-md) 0;
+  border-radius: 0 var(--citie-radius-lg) var(--citie-radius-lg) 0;
 }
 
 .citie-input-group--start .citie-field-control {
@@ -343,6 +362,22 @@ select.citie-field-control:where(:not(:has(option[value='']:checked)):not(:disab
 
 .citie-field-wrapper--has-affix .citie-field-control {
   padding-inline-end: 40px;
+}
+
+/*
+ * Afixo à esquerda: gatilho de ícone antes do valor, como o campo de data do
+ * Sismental (`sis-form-identificacao.png`). O afixo padrão fica à direita
+ * (spinner de validação); este par existe para o DatePicker, cujo ícone de
+ * calendário abre o painel e por isso precisa continuar clicável e focável,
+ * ao contrário do spinner decorativo.
+ */
+.citie-field-wrapper__affix--start {
+  inset-inline-start: var(--citie-spacing-3);
+  inset-inline-end: auto;
+}
+
+.citie-field-wrapper--has-affix-start .citie-field-control {
+  padding-inline-start: 40px;
 }
 
 .citie-field__spinner {

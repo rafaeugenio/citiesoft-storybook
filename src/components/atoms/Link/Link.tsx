@@ -4,10 +4,10 @@ import './Link.css';
 /**
  * Papel do link na tela, que define o peso visual.
  *
- * `padrao` é o link em fluxo de texto. `identificador` é o link que abre um
- * registro a partir de uma listagem (número de processo, matrícula, protocolo):
- * ele carrega o peso de destaque porque é o alvo principal de navegação da
- * tela, e não pode competir em cor com o texto vizinho da linha.
+ * `padrao` é o link em fluxo de texto, em cor de marca e sublinhado. `identificador`
+ * é o link que abre um registro a partir de uma listagem (número de processo,
+ * matrícula, protocolo): mono com dígitos tabulares, porque é a coluna que o
+ * olho varre. `discreto` é o link secundário de área densa, em `text-secondary`.
  */
 export type PapelLink = 'padrao' | 'identificador' | 'discreto';
 
@@ -39,10 +39,13 @@ export interface LinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>,
  * sobre a zebra clara, 5,30:1 sobre o fundo escuro e 4,78:1 sobre a zebra
  * escura. Os quatro passam AA.
  *
- * O sublinhado é permanente por decisão de acessibilidade: cor sozinha não pode
- * ser o único meio de identificar um link dentro de um bloco de texto
- * (WCAG 1.4.1), e em sistema público não se pode assumir que o usuário vai
- * passar o mouse para descobrir o que é clicável.
+ * O sublinhado do papel `padrao` é permanente por decisão de acessibilidade:
+ * cor sozinha não pode ser o único meio de identificar um link dentro de um
+ * bloco de texto (WCAG 1.4.1), e a dispensa da G183 exige 3:1 entre o link e
+ * o texto vizinho, que `brand-primary` não alcança (2,03:1 contra `text-base`).
+ * `identificador` e `discreto` são links soltos, sem texto vizinho, e seguem o
+ * kit: sublinhado no hover e no foco. O identificador sai em Red Hat Mono com
+ * dígitos tabulares, como o CPF e a data das listagens de referência.
  */
 export function Link({
   href,

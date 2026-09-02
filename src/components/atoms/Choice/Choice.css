@@ -29,8 +29,9 @@
   appearance: none;
   margin: 0;
   flex: none;
-  width: 18px;
-  height: 18px;
+  /* 16 × 16, anatomia do kit para Checkbox e Radio. */
+  width: 16px;
+  height: 16px;
   background-color: var(--citie-background-surface);
   border: 1px solid var(--citie-form-field-border);
   cursor: inherit;
@@ -96,14 +97,14 @@
   background-color: var(--citie-state-disabled-text);
 }
 
-/* ---------- ToggleSwitch: trilho 35x21 ---------- */
+/* ---------- ToggleSwitch: trilho 33x18 (anatomia do kit) ---------- */
 
 .citie-switch {
   appearance: none;
   margin: 0;
   flex: none;
-  width: 35px;
-  height: 21px;
+  width: 33px;
+  height: 18px;
   border-radius: var(--citie-radius-full);
   background-color: var(--citie-border-strong);
   position: relative;
@@ -116,8 +117,9 @@
   position: absolute;
   inset-block-start: 2px;
   inset-inline-start: 2px;
-  width: 17px;
-  height: 17px;
+  /* Polegar de 14px, com 2px de folga em cada lado do trilho de 18. */
+  width: 14px;
+  height: 14px;
   border-radius: var(--citie-radius-full);
   background-color: #ffffff;
   transition: translate var(--citie-motion-rapido) var(--citie-easing-padrao);
@@ -127,9 +129,10 @@
   background-color: var(--citie-brand-primary);
 }
 
-/* A posição do botão comunica o estado junto com a cor, nunca a cor sozinha. */
+/* A posição do botão comunica o estado junto com a cor, nunca a cor sozinha.
+   Deslocamento recalculado para o trilho de 33: 33 - 14 - 2 - 2 = 15px. */
 .citie-switch:checked::after {
-  translate: 14px 0;
+  translate: 15px 0;
 }
 
 .citie-switch:focus-visible {

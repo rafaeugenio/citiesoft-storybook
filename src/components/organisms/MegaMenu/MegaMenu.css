@@ -69,10 +69,11 @@
   box-shadow: var(--citie-state-focus-ring);
 }
 
-/* State Active: fundo e cor de marca, e a seta girada — cor nunca é o único sinal. */
+/* State Active: ativo e selecionado do kit, `accent-forte` com rótulo
+   `text-primary`, e a seta girada, cor nunca é o único sinal. */
 .citie-megamenu__topo--ativo {
-  background: var(--citie-state-selected);
-  color: var(--citie-brand-primary);
+  background: var(--citie-accent-forte);
+  color: var(--citie-text-primary);
 }
 
 .citie-megamenu__topo--ativo .citie-megamenu__seta {
@@ -125,7 +126,8 @@
   padding: var(--citie-spacing-4);
   background: var(--citie-background-surface);
   border: 1px solid var(--citie-border-default);
-  border-radius: var(--citie-radius-2xl);
+  /* Painel flutuante do kit: raio 10. */
+  border-radius: var(--citie-radius-lg);
 }
 
 /* Overlay: True — o painel flutua e não empurra o conteúdo da página. */
@@ -209,10 +211,10 @@
   display: flex;
   align-items: center;
   gap: var(--citie-spacing-3);
-  /* Alvo de clique confortável mesmo quando o rótulo é curto. */
-  min-height: var(--citie-control-height-normal);
-  padding: var(--citie-spacing-1) var(--citie-spacing-3);
-  border-radius: var(--citie-radius-lg);
+  /* Item de menu do kit: 32 de altura, raio 6. */
+  min-height: var(--citie-control-height-small);
+  padding: var(--citie-spacing-1-5) var(--citie-spacing-2);
+  border-radius: var(--citie-radius-md);
   color: var(--citie-text-base);
   font-size: var(--citie-font-size-body-md);
   text-decoration: none;

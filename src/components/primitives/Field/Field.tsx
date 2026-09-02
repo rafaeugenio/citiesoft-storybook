@@ -1,7 +1,7 @@
 import { useId, type ReactNode } from 'react';
 import './Field.css';
 
-export type FieldSize = 'small' | 'normal' | 'large';
+export type FieldSize = 'mini' | 'small' | 'normal' | 'large';
 
 /** Ícone de alerta: a spec proíbe cor como único indicador de erro. */
 export function AlertIcon() {

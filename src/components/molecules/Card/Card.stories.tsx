@@ -225,6 +225,128 @@ export const Densidades: Story = {
   ),
 };
 
+/** Ícones do hub no traço 1.5 do sistema, na grade de 24. */
+const IconeMunicipios = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+    <path d="M3 6.5 9 4l6 2.5 6-2.5v13.5L15 20l-6-2.5-6 2.5Z" strokeLinejoin="round" />
+    <path d="M9 4v13.5M15 6.5V20" />
+  </svg>
+);
+
+const IconeProfissionais = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+    <circle cx="10" cy="8" r="3.5" />
+    <path d="M3.5 19.5a6.5 6.5 0 0 1 13 0" strokeLinecap="round" />
+    <path d="M17 9h4M19 7v4" strokeLinecap="round" />
+  </svg>
+);
+
+const IconeUnidades = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+    <rect x="4" y="5" width="16" height="15" rx="1.5" />
+    <path d="M4 10h16M9 20v-5h6v5" />
+    <path d="M12 5V3" strokeLinecap="round" />
+  </svg>
+);
+
+export const Hub: Story = {
+  name: 'Variante · hub de atalhos',
+  parameters: {
+    docs: {
+      description: {
+        story: [
+          'Cartão de atalho do hub de administração, medido no Sismental: 72px de altura, ícone de',
+          '20 numa caixa de 36 com fundo accent e raio 8, título 14 Medium e subtítulo 12 muted. Em',
+          'grade de três colunas, sobre o cartão de conteúdo do shell. O corpo fica oculto: a peça é',
+          'a linha inteira, e o link esticado do título faz o cartão inteiro navegar.',
+        ].join(' '),
+      },
+    },
+  },
+  render: () => (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+        gap: 16,
+        maxWidth: 1000,
+      }}
+    >
+      <Card variante="hub" icone={IconeMunicipios} titulo="Municípios" subtitulo="217 cadastrados" href="#municipios">
+        {null}
+      </Card>
+      <Card variante="hub" icone={IconeProfissionais} titulo="Profissionais" subtitulo="98 ativos" href="#profissionais">
+        {null}
+      </Card>
+      <Card variante="hub" icone={IconeUnidades} titulo="Unidades" subtitulo="34 unidades de saúde" href="#unidades">
+        {null}
+      </Card>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const card = canvasElement.querySelector<HTMLElement>('.citie-card--hub');
+    if (!card) throw new Error('Card de hub ausente.');
+
+    // Anatomia medida no Sismental: 72 de altura, caixa de ícone de 36, raio 10 no card.
+    await expect(card.getBoundingClientRect().height).toBe(72);
+    const caixa = card.querySelector<HTMLElement>('.citie-card__icone');
+    await expect(caixa?.getBoundingClientRect().width).toBe(36);
+    await expect(caixa?.getBoundingClientRect().height).toBe(36);
+    await expect(getComputedStyle(card).borderTopLeftRadius).toBe('10px');
+    await expect(getComputedStyle(caixa as Element).borderTopLeftRadius).toBe('8px');
+
+    // O ícone é decorativo; o nome do destino é o título sozinho.
+    await expect(caixa).toHaveAttribute('aria-hidden', 'true');
+    await expect(canvas.getByRole('link', { name: 'Municípios' })).toBeVisible();
+
+    // Título 14 Medium e subtítulo 12 muted.
+    const titulo = card.querySelector<HTMLElement>('.citie-card__titulo');
+    const subtitulo = card.querySelector<HTMLElement>('.citie-card__subtitulo');
+    await expect(getComputedStyle(titulo as Element).fontSize).toBe('14px');
+    await expect(getComputedStyle(titulo as Element).fontWeight).toBe('500');
+    await expect(getComputedStyle(subtitulo as Element).fontSize).toBe('12px');
+  },
+};
+
+export const Anatomia: Story = {
+  name: 'Anatomia · pele do kit',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A pele do card do UI Kit, medida na story: raio 10, borda de 1px no degrau padrão, shadow-sm de duas camadas, título 16 Medium com subtítulo 14 muted. Cabeçalho, corpo e rodapé sem fio entre eles; quem separa é a hierarquia tipográfica.',
+      },
+    },
+  },
+  args: {
+    rodape: (
+      <Button variant="primary" size="small">
+        Editar cadastro
+      </Button>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    const card = canvasElement.querySelector<HTMLElement>('.citie-card');
+    if (!card) throw new Error('Card ausente.');
+    const estilo = getComputedStyle(card);
+    await expect(estilo.borderTopLeftRadius).toBe('10px');
+    await expect(estilo.borderTopWidth).toBe('1px');
+    // A sombra do card é a `--citie-shadow-raised`, o shadow-sm de duas camadas
+    // do kit: duas sombras na lista, depois do trilho nulo.
+    await expect(estilo.boxShadow).not.toBe('none');
+    await expect(estilo.boxShadow.split('px,').length).toBeGreaterThanOrEqual(3);
+
+    const titulo = card.querySelector<HTMLElement>('.citie-card__titulo');
+    await expect(getComputedStyle(titulo as Element).fontSize).toBe('16px');
+    await expect(getComputedStyle(titulo as Element).fontWeight).toBe('500');
+
+    // Sem fio entre cabeçalho e corpo.
+    const cabecalho = card.querySelector<HTMLElement>('.citie-card__cabecalho');
+    await expect(getComputedStyle(cabecalho as Element).borderBottomWidth).toBe('0px');
+  },
+};
+
 export const ComListaInterna: Story = {
   name: 'Variante · com lista interna',
   parameters: {

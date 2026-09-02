@@ -29,25 +29,34 @@
   text-align: start;
   background-color: var(--citie-background-surface);
   border: 1px solid var(--citie-form-field-border);
-  border-radius: var(--citie-radius-md);
+  /* Mesma pele do Input e do Select: raio 10. */
+  border-radius: var(--citie-radius-lg);
   cursor: pointer;
 }
 
+/*
+ * O gatilho carrega fichas que quebram linha, então a altura não é fixa como
+ * a do Input: só o mínimo acompanha a escala do DS. O padding vem do kit
+ * ("padding 8/8/8/12" da anatomia de Select e derivados), igual nos três
+ * tamanhos porque quem varia é o conteúdo, não a régua vertical do controle.
+ * O corpo do texto é Regular 14/20 nos três, igual ao Input.
+ */
 .citie-multiselect__gatilho--small {
   min-height: var(--citie-control-height-small);
-  padding-inline: var(--citie-spacing-3);
-  font-size: var(--citie-font-size-body-sm);
+  padding-block: var(--citie-spacing-2);
+  padding-inline: var(--citie-spacing-3) var(--citie-spacing-2);
 }
 
 .citie-multiselect__gatilho--normal {
   min-height: var(--citie-control-height-normal);
-  padding-inline: var(--citie-spacing-4);
+  padding-block: var(--citie-spacing-2);
+  padding-inline: var(--citie-spacing-3) var(--citie-spacing-2);
 }
 
 .citie-multiselect__gatilho--large {
   min-height: var(--citie-control-height-large);
-  padding-inline: var(--citie-spacing-5);
-  font-size: var(--citie-font-size-body-lg);
+  padding-block: var(--citie-spacing-2);
+  padding-inline: var(--citie-spacing-3) var(--citie-spacing-2);
 }
 
 .citie-multiselect__gatilho--filled {
@@ -78,7 +87,6 @@
 .citie-multiselect__conteudo {
   flex: 1;
   min-width: 0;
-  padding-block: 6px;
 }
 
 .citie-multiselect__placeholder {
@@ -126,7 +134,8 @@
   padding: var(--citie-spacing-2);
   background-color: var(--citie-background-surface);
   border: 1px solid var(--citie-border-default);
-  border-radius: var(--citie-radius-md);
+  /* Painel de opções: raio 10, igual ao contorno externo do kit. */
+  border-radius: var(--citie-radius-lg);
   box-shadow: var(--citie-shadow-overlay);
 }
 
@@ -135,11 +144,11 @@
   box-sizing: border-box;
   height: var(--citie-control-height-small);
   margin-block-end: var(--citie-spacing-2);
-  padding-inline: var(--citie-spacing-3);
+  padding-inline: var(--citie-spacing-2);
   font-family: inherit;
-  font-size: var(--citie-font-size-body-sm);
+  font-size: var(--citie-font-size-body-md);
   border: 1px solid var(--citie-form-field-border);
-  border-radius: var(--citie-radius-sm);
+  border-radius: var(--citie-radius-lg);
 }
 
 .citie-multiselect__filtro:focus {
@@ -156,25 +165,31 @@
   overflow-y: auto;
 }
 
+/* Item de 32px, padding 5.5x8 do kit (aproximado a spacing-1-5 x spacing-2,
+   a régua mais próxima da escala existente) e raio 6, igual ao item de menu. */
 .citie-multiselect__opcao {
   display: flex;
   align-items: center;
   gap: var(--citie-spacing-2);
-  min-height: 36px;
-  padding: var(--citie-spacing-2) var(--citie-spacing-3);
+  min-height: 32px;
+  padding: var(--citie-spacing-1-5) var(--citie-spacing-2);
   font-size: var(--citie-font-size-body-md);
   color: var(--citie-text-base);
-  border-radius: var(--citie-radius-sm);
+  border-radius: var(--citie-radius-md);
   cursor: pointer;
 }
 
 .citie-multiselect__opcao:hover {
-  background-color: var(--citie-background-subtle);
+  background-color: var(--citie-accent);
 }
 
+/* Selecionado em `accent-forte`, com o rótulo na tinta primária: sobre este
+   fundo, `brand-primary` mede 3,95:1 e reprova o piso de 4,5:1 do texto
+   normal (medição do Lote 0), então o rótulo migra para `text-primary`
+   (11,81:1) e a marca de escolha fica só no ícone de check. */
 .citie-multiselect__opcao--selecionada {
-  background-color: var(--citie-state-selected);
-  color: var(--citie-brand-primary);
+  background-color: var(--citie-accent-forte);
+  color: var(--citie-text-primary);
   font-weight: 500;
 }
 

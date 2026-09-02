@@ -16,10 +16,16 @@
 
 /* Cada tamanho carrega as medidas que o rótulo precisa para alinhar com o valor
    digitado: recuo lateral igual ao padding do controle e altura do controle. */
+/*
+ * O corpo de repouso do rótulo acompanha o valor do campo, que na correção do
+ * Input do Lote 2 é Regular 14/20 do Small ao Large (só o Mini muda). Antes
+ * cada tamanho tinha o próprio corpo (13/14/16); agora os três usam o mesmo
+ * `body-md`, e só o recuo lateral e a altura seguem a escala do controle.
+ */
 .citie-floatlabel--small {
   --fl-altura: var(--citie-control-height-small);
-  --fl-recuo-inline: var(--citie-spacing-3);
-  --fl-fonte-repouso: var(--citie-font-size-body-sm);
+  --fl-recuo-inline: var(--citie-spacing-2);
+  --fl-fonte-repouso: var(--citie-font-size-body-md);
   /* Sem token de altura para o campo do variante In: é a altura do controle
      mais o espaço que o rótulo ocupa no topo. */
   --fl-altura-in: 48px;
@@ -28,7 +34,7 @@
 
 .citie-floatlabel--normal {
   --fl-altura: var(--citie-control-height-normal);
-  --fl-recuo-inline: var(--citie-spacing-4);
+  --fl-recuo-inline: var(--citie-spacing-3);
   --fl-fonte-repouso: var(--citie-font-size-body-md);
   --fl-altura-in: 56px;
   --fl-topo-rotulo-in: 7px;
@@ -36,8 +42,8 @@
 
 .citie-floatlabel--large {
   --fl-altura: var(--citie-control-height-large);
-  --fl-recuo-inline: var(--citie-spacing-5);
-  --fl-fonte-repouso: var(--citie-font-size-body-lg);
+  --fl-recuo-inline: var(--citie-spacing-4);
+  --fl-fonte-repouso: var(--citie-font-size-body-md);
   --fl-altura-in: 64px;
   --fl-topo-rotulo-in: 8px;
 }

@@ -4,19 +4,33 @@
  * Todo valor vem de token. O defeito que originou este componente foi
  * justamente a ausência dele: sem átomo, o `<a>` cru herdava o azul default do
  * navegador, que não pertence à marca e reprova contraste no tema escuro.
+ *
+ * Sublinhado por papel, e o motivo é medido:
+ *   padrao        : sublinhado permanente. O link vive dentro de um bloco de
+ *                   texto, e a WCAG 1.4.1 (G183) só dispensa o sublinhado
+ *                   quando a cor do link mede 3:1 contra o texto vizinho.
+ *                   `brand-primary` #1261e4 mede **2,03:1** contra `text-base`
+ *                   e 2,99:1 contra `text-primary`, então a cor sozinha não
+ *                   identifica o link e o traço fica.
+ *   identificador : sublinhado só no hover e no foco, como no kit. O link é o
+ *                   único conteúdo da célula, não há texto vizinho de que ele
+ *                   precise se distinguir, e o traço permanente sob dígitos em
+ *                   mono suja a coluna que o olho varre.
+ *   discreto      : sublinhado só no hover e no foco, pelo mesmo motivo; é o
+ *                   link solto de rodapé ou de área densa, em `text-secondary`.
  */
 
 .citie-link {
   color: var(--citie-brand-primary);
-  /* Sublinhado permanente: cor sozinha não identifica link (WCAG 1.4.1). */
   text-decoration: underline;
-  /* Afasta o traço das descidentes, para o sublinhado não cortar o "ç" e o "g". */
+  /* Afasta o traço das descendentes, para o sublinhado não cortar o "ç" e o "g". */
   text-underline-offset: 0.2em;
   text-decoration-thickness: 1px;
   border-radius: var(--citie-radius-sm);
   /* Hover e foco usam a duração rápida, conforme a escala de motion do sistema. */
   transition:
     color var(--citie-motion-rapido) var(--citie-easing-padrao),
+    text-decoration-color var(--citie-motion-rapido) var(--citie-easing-padrao),
     text-decoration-thickness var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
@@ -38,21 +52,39 @@
 
 /*
  * Identificador de registro numa listagem: número de processo, matrícula,
- * protocolo. É o alvo principal de navegação da tela, então ganha peso, e o
- * tabular-nums mantém os dígitos alinhados de uma linha para a outra, que é o
- * que permite varrer a coluna com o olho.
+ * protocolo. É o alvo principal de navegação da tela. Mono com dígitos
+ * tabulares, como o CPF e a data das listagens do Sismental: os dígitos
+ * ficam alinhados de uma linha para a outra, que é o que permite varrer a
+ * coluna com o olho. O sublinhado aparece no hover e no foco.
  */
 .citie-link--identificador {
+  font-family: var(--citie-font-mono);
   font-weight: var(--citie-font-weight-action);
   font-variant-numeric: tabular-nums;
+  text-decoration-color: transparent;
 }
 
 /*
  * Link secundário dentro de área densa, onde vários links competem entre si.
- * Continua sublinhado e continua usando cor de marca: o que muda é o peso.
+ * Tinta `text-secondary`: 4,94:1 sobre o branco, 4,53:1 sobre a zebra clara,
+ * 6,39:1 e 5,76:1 no escuro. Sublinhado no hover e no foco.
  */
 .citie-link--discreto {
   font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-text-secondary);
+  text-decoration-color: transparent;
+}
+
+.citie-link--identificador:hover,
+.citie-link--identificador:focus-visible,
+.citie-link--discreto:hover,
+.citie-link--discreto:focus-visible {
+  text-decoration-color: currentColor;
+}
+
+.citie-link--discreto:hover,
+.citie-link--discreto:active {
+  color: var(--citie-text-primary);
 }
 
 /* ---------- Nova aba ---------- */

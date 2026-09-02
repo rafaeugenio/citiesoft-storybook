@@ -53,9 +53,9 @@ export const Formulario: Story = {
 
     const campos = canvasElement.querySelectorAll<HTMLElement>('.citie-skeleton-formulario__campo');
     await expect(campos).toHaveLength(3);
-    // A caixa do campo replica a altura real do controle (40px em densidade
-    // normal), senão o formulário salta quando o dado chega.
+    // A caixa do campo replica a altura real do controle (36px em densidade
+    // normal, o valor do UI Kit), senão o formulário salta quando o dado chega.
     const caixa = campos[0].querySelector<HTMLElement>('.citie-skeleton--campo');
-    await expect(caixa?.getBoundingClientRect().height).toBe(40);
+    await expect(caixa?.getBoundingClientRect().height).toBe(36);
   },
 };

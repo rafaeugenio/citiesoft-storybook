@@ -14,35 +14,23 @@
    * com `none` dentro é inválida inteira e o navegador descarta a declaração.
    */
   --citie-elevacao-do-card: var(--citie-shadow-raised);
+  /* Respiro interno por densidade; o padrão é o de card de destaque. */
+  --citie-respiro-do-card: var(--citie-spacing-6);
+  --citie-respiro-do-rodape: var(--citie-spacing-4);
 
   display: block;
   position: relative;
   background-color: var(--citie-background-surface);
   /**
-   * O contorno do card usa o degrau FORTE da escala de borda, enquanto as
-   * divisórias internas (cabeçalho e rodapé) ficam no degrau padrão.
-   *
-   * O motivo é o mesmo da aresta do `Button`: borda que não faz nada é borda
-   * que não deveria estar ali. Medido, `border-default` #e8eaed sobre a página
-   * #fafafa dá **1,16:1**, ou seja, o card era lido só pela sombra e o contorno
-   * era código morto fingindo trabalhar. `border-strong` #d6d8dc dá 1,37:1
-   * sobre a página e 1,43:1 sobre o próprio preenchimento; no tema escuro,
-   * #45454c dá 1,94:1 sobre a página e 1,83:1 sobre a superfície. É a mesma
-   * faixa perceptual que a aresta do botão persegue (1,61 a 1,66), e borda de
-   * 1px vale como decoração, então o piso aqui é perceptual, com a WCAG fora de
-   * alcance.
-   *
-   * O degrau entre o contorno e as divisórias é o que faz a peça se ler como um
-   * contêiner, longe de uma pilha de fios soltos: o que fecha a caixa é mais
-   * forte do que o que a divide por dentro.
+   * Pele do card do UI Kit: borda de 1px no degrau padrão mais o shadow-sm de
+   * duas camadas. A borda sozinha mede 1,21:1 sobre o branco e 1,16:1 sobre a
+   * página; é a sombra de contato que fecha a caixa, e a borda só recorta a
+   * aresta onde a sombra desaparece (topo e laterais). Card de 1px de borda é
+   * decoração, sem piso de WCAG; o piso aqui é a captura do kit.
    */
-  border: 1px solid var(--citie-border-strong);
-  /**
-   * Card é contêiner externo, e o raio dele governa a leitura de profundidade
-   * da tela inteira: 16 por fora, 12 no que estiver aninhado, 8 ou menos no
-   * controle. Com todos no mesmo raio a pilha lê como adesivo colado.
-   */
-  border-radius: var(--citie-radius-2xl);
+  border: 1px solid var(--citie-border-default);
+  /* O `radius` de 10 do kit, como toda superfície de primeiro nível. */
+  border-radius: var(--citie-radius-lg);
   box-shadow:
     var(--citie-trilho-do-card, 0 0 0 0 transparent),
     var(--citie-elevacao-do-card);
@@ -53,41 +41,55 @@
 }
 
 /**
- * Card dentro de card desce um degrau de raio E um degrau de borda. É o degrau
- * que faz o aninhamento se ler como interior, longe de duas caixas irmãs
- * empilhadas por acidente.
+ * Card dentro de card desce para o raio de item aninhado e perde a sombra: o
+ * interior precisa se ler como interior, e uma sombra dentro de outra sombra
+ * lê como duas caixas irmãs empilhadas por acidente.
  */
 .citie-card .citie-card {
-  border-radius: var(--citie-radius-xl);
-  border-color: var(--citie-border-default);
+  --citie-elevacao-do-card: 0 0 0 0 transparent;
+
+  border-radius: var(--citie-radius-md);
 }
 
+/**
+ * Cabeçalho, corpo e rodapé compartilham o recuo horizontal e o respiro entre
+ * eles sai do próprio padding: o cabeçalho para no topo do corpo, o rodapé
+ * começa no fim dele. É a anatomia do card do kit (slots header, main e
+ * footer com o mesmo `padding` e sem fio entre eles): quem separa título de
+ * conteúdo é a hierarquia tipográfica, e o fio só volta quando o rodapé
+ * carrega ação.
+ */
 .citie-card__cabecalho {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--citie-spacing-4);
-  border-block-end: 1px solid var(--citie-border-default);
+  padding: var(--citie-respiro-do-card) var(--citie-respiro-do-card) 0;
 }
 
+/* Título 16 Medium, medido no cabeçalho de card do Sismental. */
 .citie-card__titulo {
   display: flex;
   align-items: center;
   gap: var(--citie-spacing-2);
   margin: 0;
   font-family: var(--citie-font-display);
-  font-size: var(--citie-font-size-title-sm);
-  font-weight: var(--citie-font-weight-title);
+  font-size: var(--citie-font-size-body-lg);
+  font-weight: var(--citie-font-weight-action);
+  line-height: 1.5;
   color: var(--citie-text-primary);
 }
 
+/* Subtítulo muted 14/20, logo abaixo do título. */
 .citie-card__subtitulo {
   margin: var(--citie-spacing-1) 0 0;
-  font-size: var(--citie-font-size-body-sm);
+  font-size: var(--citie-font-size-body-md);
+  line-height: var(--citie-linha-da-celula);
   color: var(--citie-text-secondary);
 }
 
 .citie-card__corpo {
+  padding: var(--citie-respiro-do-card);
   font-size: var(--citie-font-size-body-md);
 }
 
@@ -95,7 +97,7 @@
   display: flex;
   justify-content: flex-end;
   gap: var(--citie-spacing-3);
-  border-block-start: 1px solid var(--citie-border-default);
+  padding: 0 var(--citie-respiro-do-card) var(--citie-respiro-do-rodape);
   /*
    * O rodapé se levanta acima da área esticada do link. Sem isto, um botão de
    * rodapé em card navegável ficaria coberto pelo pseudo-elemento e o clique
@@ -114,39 +116,23 @@
 /* ---------- Densidades ---------- */
 
 /**
- * O respiro de cada densidade agora sai da escala, no lugar de um número
- * escolhido a cada card: destaque em `spacing-6`, compacta em `spacing-4`. O horizontal
- * de 24px já era o valor praticado no confortável, só que como literal, porque
- * a escala parava em 20px.
- *
- * O rodapé fica um degrau abaixo do corpo no eixo vertical: ele carrega ação e
- * não leitura, então respiro igual ao do corpo o faz pesar mais do que vale.
+ * O respiro de cada densidade sai da escala: destaque em `spacing-6`, compacta
+ * em `spacing-4`, ultracompacta em `spacing-3`. O rodapé fica um degrau abaixo
+ * do corpo: ele carrega ação e não leitura, então respiro igual ao do corpo o
+ * faz pesar mais do que vale.
  */
-.citie-card--confortavel .citie-card__cabecalho,
-.citie-card--confortavel .citie-card__corpo {
-  padding: var(--citie-spacing-6);
+.citie-card--compacta {
+  --citie-respiro-do-card: var(--citie-spacing-4);
+  --citie-respiro-do-rodape: var(--citie-spacing-3);
 }
 
-.citie-card--confortavel .citie-card__rodape {
-  padding: var(--citie-spacing-4) var(--citie-spacing-6);
+.citie-card--ultracompacta {
+  --citie-respiro-do-card: var(--citie-spacing-3);
+  --citie-respiro-do-rodape: var(--citie-spacing-2);
 }
 
-.citie-card--compacta .citie-card__cabecalho,
-.citie-card--compacta .citie-card__corpo {
-  padding: var(--citie-spacing-4);
-}
-
-.citie-card--compacta .citie-card__rodape {
-  padding: var(--citie-spacing-3) var(--citie-spacing-4);
-}
-
-.citie-card--ultracompacta .citie-card__cabecalho,
 .citie-card--ultracompacta .citie-card__corpo {
-  padding: var(--citie-spacing-2) var(--citie-spacing-3);
-}
-
-.citie-card--ultracompacta .citie-card__rodape {
-  padding: var(--citie-spacing-2) var(--citie-spacing-3);
+  padding-block: var(--citie-spacing-2);
 }
 
 /**
@@ -155,11 +141,74 @@
  * que é justamente o eixo em que o olho procura a mensagem de ausência.
  *
  * Vem depois das densidades e com a classe do bloco no seletor de propósito:
- * empatado em especificidade com `.citie-card--compacta .citie-card__corpo`,
+ * empatado em especificidade com `.citie-card--ultracompacta .citie-card__corpo`,
  * quem vem por último vence, e a regra passava despercebida.
  */
 .citie-card .citie-card__corpo:has(> .citie-empty) {
   padding-block: 0;
+}
+
+/* ---------- Card de hub ---------- */
+
+/**
+ * Hub de administração do Sismental: cartão de 72px com ícone em caixa de 36
+ * à esquerda, título 14 Medium e subtítulo 12 muted. É a peça da grade de
+ * atalhos, então o cabeçalho vira a linha inteira e o corpo desaparece.
+ */
+.citie-card--hub {
+  --citie-respiro-do-card: var(--citie-spacing-4);
+
+  /* 72 com a borda dentro da medida; a linha do cabeçalho se centra na altura. */
+  display: grid;
+  align-items: center;
+  min-height: var(--citie-hub-altura);
+  box-sizing: border-box;
+}
+
+.citie-card--hub .citie-card__cabecalho {
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--citie-spacing-3);
+  padding-block: var(--citie-spacing-4);
+}
+
+.citie-card--hub .citie-card__corpo {
+  display: none;
+}
+
+/**
+ * Caixa do ícone: fundo accent com o ícone na tinta de marca (#1261e4 sobre
+ * #eff5ff mede 4,97:1 no claro; #4d8bfc sobre #202838 mede 4,51:1 no escuro).
+ * Raio 8, um degrau abaixo do card, para a caixa se ler como objeto dentro
+ * dele e não como um segundo card.
+ */
+.citie-card__icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  inline-size: var(--citie-hub-caixa-de-icone);
+  block-size: var(--citie-hub-caixa-de-icone);
+  border-radius: var(--citie-hub-raio-da-caixa);
+  background-color: var(--citie-accent);
+  color: var(--citie-brand-primary);
+}
+
+.citie-card__icone svg {
+  inline-size: var(--citie-hub-icone);
+  block-size: var(--citie-hub-icone);
+}
+
+.citie-card--hub .citie-card__titulo {
+  font-family: var(--citie-font-ui);
+  font-size: var(--citie-font-size-body-md);
+  line-height: var(--citie-linha-da-celula);
+}
+
+.citie-card--hub .citie-card__subtitulo {
+  margin-block-start: 0;
+  font-size: var(--citie-font-size-body-xs);
+  line-height: var(--citie-linha-mini);
 }
 
 /* ---------- Card navegável ---------- */
@@ -231,7 +280,8 @@
  * borda acompanha e vai ao degrau de campo, que é o passo mais escuro da mesma
  * família neutra: #6b7177 mede 4,94:1 sobre branco no claro e #8f8f8f mede
  * 5,37:1 sobre a superfície escura. É a mesma regra do `Button`, onde a borda
- * aponta para o degrau de hover em vez de repetir a cor do fundo.
+ * aponta para o degrau de hover, e nunca repete a cor do fundo. O fundo vai
+ * ao accent, o realce de marca que o kit reserva ao que responde ao ponteiro.
  */
 .citie-card--clicavel:hover {
   --citie-elevacao-do-card: var(--citie-shadow-overlay);
@@ -239,8 +289,13 @@
   background-color: var(--citie-state-hover-overlay);
 }
 
+/* No hub a caixa do ícone se afirma sobre o accent do hover subindo um degrau. */
+.citie-card--hub.citie-card--clicavel:hover .citie-card__icone {
+  background-color: var(--citie-accent-forte);
+}
+
 /*
- * O foco soma com a elevação e com o trilho, em vez de substituí-los. Os dois
+ * O foco soma com a elevação e com o trilho, e os dois permanecem. Os dois
  * seletores cobrem as duas anatomias: o card com título recebe o foco no link
  * de dentro, e o card sem título é ele próprio o link.
  */
@@ -255,7 +310,7 @@
 
 /*
  * Pressão. O card desce 1px enquanto está pressionado e a elevação volta ao
- * repouso: ele afunda de novo contra a superfície em vez de continuar flutuando.
+ * repouso: ele afunda de novo contra a superfície enquanto está pressionado.
  * É a mesma devolução de sensação física do `Button`, e ela não aparece em
  * captura de tela parada: só existe no uso.
  */

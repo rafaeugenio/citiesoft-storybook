@@ -18,6 +18,16 @@ export interface SidebarProps {
   secoes: SecaoDoMenu[];
   ativo: string;
   colapsada?: boolean;
+  /**
+   * `drawer` é a navegação original, barra fina com borda de estado ativo.
+   * `fixa` é a navegação de shell do kit (medida no Sismental): 257px, fundo
+   * `sidebar`, item de 32 em `sidebar-accent`.
+   */
+  variante?: 'drawer' | 'fixa';
+  /** Cartão de contexto no topo da variante fixa: unidade, cliente ou escopo ativo. */
+  cabecalho?: ReactNode;
+  /** Item ancorado no rodapé da variante fixa, por exemplo "Sair". */
+  rodape?: ReactNode;
 }
 
 /**
@@ -25,17 +35,30 @@ export interface SidebarProps {
  * Item sem permissão nunca é renderizado, para não expor a existência de
  * funcionalidade não autorizada. Colapso é sempre ação explícita.
  */
-export function Sidebar({ secoes, ativo, colapsada = false }: SidebarProps) {
+export function Sidebar({
+  secoes,
+  ativo,
+  colapsada = false,
+  variante = 'drawer',
+  cabecalho,
+  rodape,
+}: SidebarProps) {
   const [expandidos, setExpandidos] = useState<string[]>([]);
 
   return (
     <nav
-      className={`citie-sidebar${colapsada ? ' citie-sidebar--colapsada' : ''}`}
+      className={`citie-sidebar citie-sidebar--${variante}${
+        colapsada ? ' citie-sidebar--colapsada' : ''
+      }`}
       aria-label="Menu principal"
     >
       <a className="citie-sidebar__skip" href="#conteudo">
         Pular para o conteúdo
       </a>
+
+      {variante === 'fixa' && cabecalho ? (
+        <div className="citie-sidebar__cabecalho">{cabecalho}</div>
+      ) : null}
 
       {secoes.map((secao) => (
         <div key={secao.rotulo} className="citie-sidebar__secao">
@@ -104,6 +127,10 @@ export function Sidebar({ secoes, ativo, colapsada = false }: SidebarProps) {
           </ul>
         </div>
       ))}
+
+      {variante === 'fixa' && rodape ? (
+        <div className="citie-sidebar__rodape">{rodape}</div>
+      ) : null}
     </nav>
   );
 }

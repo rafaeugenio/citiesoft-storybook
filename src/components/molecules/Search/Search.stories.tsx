@@ -182,7 +182,7 @@ export const Erro: Story = {
 };
 
 export const Tamanhos: Story = {
-  name: 'Tamanhos · 32 / 40 / 48px',
+  name: 'Tamanhos · 32 / 36 / 40px',
   render: (args) => (
     <div style={{ display: 'grid', gap: 16 }}>
       <Search {...args} size="sm" label="Busca inline em tabela densa" />

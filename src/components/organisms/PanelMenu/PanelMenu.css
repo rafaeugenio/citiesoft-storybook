@@ -15,7 +15,8 @@
 .citie-panelmenu__secao {
   background-color: var(--citie-background-surface);
   border: 1px solid var(--citie-border-default);
-  border-radius: var(--citie-radius-2xl);
+  /* Contêiner do kit: raio 10. */
+  border-radius: var(--citie-radius-lg);
   overflow: hidden;
 }
 
@@ -30,7 +31,8 @@
   align-items: center;
   gap: var(--citie-spacing-3);
   inline-size: 100%;
-  min-block-size: var(--citie-control-height-normal);
+  /* Cabeçalho de seção do kit: 40 de altura. */
+  min-block-size: var(--citie-control-height-large);
   padding: var(--citie-spacing-2) var(--citie-spacing-3);
   border: none;
   background-color: var(--citie-background-subtle);
@@ -116,18 +118,19 @@
   align-items: center;
   gap: var(--citie-spacing-3);
   inline-size: 100%;
-  min-block-size: var(--citie-control-height-normal);
+  /* Corpo do kit: item de 32, recuado em 12 (`spacing-3`) do cabeçalho. */
+  min-block-size: var(--citie-control-height-small);
   /**
    * O recuo alinha o rótulo do item com o rótulo do cabeçalho: soma o padding
    * do cabeçalho, o líder e o gap, e desconta o recuo da própria lista.
    */
-  padding: var(--citie-spacing-1) var(--citie-spacing-3);
+  padding: var(--citie-spacing-1) var(--citie-spacing-2);
   padding-inline-start: calc(
     var(--citie-spacing-3) + var(--citie-panelmenu-lider) + var(--citie-spacing-3) -
       var(--citie-spacing-1)
   );
   border: none;
-  border-radius: var(--citie-radius-lg);
+  border-radius: var(--citie-radius-md);
   background-color: transparent;
   font: inherit;
   font-size: var(--citie-font-size-body-sm);
@@ -148,18 +151,19 @@
   box-shadow: var(--citie-state-focus-ring);
 }
 
-/* Item corrente: a cor vem acompanhada de peso e da barra à esquerda, para o
-   estado não depender só do azul. */
+/* Item corrente: ativo e selecionado do kit, `accent-forte` com rótulo
+   `text-primary`, mais peso e a barra à esquerda, para o estado não depender
+   só do azul. */
 .citie-panelmenu__item--ativo {
-  background-color: var(--citie-brand-subtle);
-  color: var(--citie-brand-primary);
+  background-color: var(--citie-accent-forte);
+  color: var(--citie-text-primary);
   font-weight: var(--citie-font-weight-action);
   box-shadow: inset 3px 0 0 var(--citie-brand-primary);
 }
 
 .citie-panelmenu__item--ativo:hover {
-  background-color: var(--citie-brand-subtle);
-  color: var(--citie-brand-primary);
+  background-color: var(--citie-accent-forte);
+  color: var(--citie-text-primary);
 }
 
 /* O rótulo do item indisponível continua precisando ser lido, então usa o texto

@@ -34,12 +34,27 @@ export const Horizontal: Story = {
     fireEvent.change(controle, { target: { value: '75' } });
     await expect(controle).toHaveValue('75');
     await expect(canvas.getByText('75')).toBeVisible();
+
+    /*
+     * O marcador pintado mede 16px, anatomia do kit. O alvo de toque é outro
+     * número: o `<input>` inteiro é o hit-box nativo do range, e o WCAG 2.5.8
+     * pede 24px mínimo nele. Medir a caixa do próprio elemento, e não a do
+     * marcador, é o que prova que o alvo real cresceu e não só a moldura.
+     */
+    await expect(controle.getBoundingClientRect().height).toBeGreaterThanOrEqual(24);
   },
 };
 
 export const Vertical: Story = {
   name: 'Direction · vertical',
   args: { direction: 'vertical' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const controle = canvas.getByRole('slider', { name: 'Percentual de execução' });
+
+    // No vertical o eixo de toque é a largura, perpendicular ao curso do valor.
+    await expect(controle.getBoundingClientRect().width).toBeGreaterThanOrEqual(24);
+  },
 };
 
 export const ComEntrada: Story = {

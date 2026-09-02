@@ -3,23 +3,23 @@
   display: inline-flex;
 }
 
+/**
+ * Tooltip invertido do kit: fundo `popover` na tinta oposta ao tema, texto
+ * `popover-foreground` em 12/16, padding 6 por 8 e o `radius` de 10. Ele
+ * inverte o contraste da página, e é essa inversão que o destaca: #ffffff sobre
+ * #202020 mede 16,29:1 no claro, #141414 sobre #f5f5f6 mede 16,91:1 no escuro.
+ */
 .citie-tooltip {
   position: absolute;
   z-index: 1100;
-  /* Respiro de chip: o tooltip é rótulo curto, não painel. */
-  padding: var(--citie-spacing-1) var(--citie-spacing-2);
+  padding: var(--citie-spacing-1-5) var(--citie-spacing-2);
   font-family: var(--citie-font-ui);
-  font-size: var(--citie-font-size-body-sm);
-  line-height: 1.35;
-  color: var(--citie-text-inverse);
-  background-color: var(--citie-text-primary);
-  border-radius: var(--citie-radius-sm);
+  font-size: var(--citie-font-size-body-xs);
+  line-height: var(--citie-linha-mini);
+  color: var(--citie-popover-foreground);
+  background-color: var(--citie-popover);
+  border-radius: var(--citie-radius-lg);
   box-shadow: var(--citie-shadow-overlay);
-  /* Máximo de 2 linhas: se o conteúdo passar disso, o componente certo é o Popover. */
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
   pointer-events: none;
   /* Camada de overlay entra no tempo padrão, mais curto que o de diálogo. */
   animation: citie-overlay-ancorado-entrada var(--citie-motion-padrao) var(--citie-easing-entrada);
@@ -41,6 +41,19 @@
   .citie-popover {
     animation: none;
   }
+}
+
+/**
+ * Máximo de 2 linhas: se o conteúdo passar disso, o componente certo é o
+ * Popover. O corte vive no filho porque `overflow: hidden` recorta na borda do
+ * padding, e no próprio balão a terceira linha aparecia pela metade dentro
+ * dos 6px de respiro inferior.
+ */
+.citie-tooltip__texto {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .citie-tooltip--sm {
@@ -79,25 +92,39 @@
   translate: 0 -50%;
 }
 
-/* Seta de 6px na mesma cor do contêiner. */
+/* Seta de 6px na mesma tinta do balão. */
 .citie-tooltip::after {
   content: '';
   position: absolute;
-  border: 6px solid transparent;
+  border: var(--citie-spacing-1-5) solid transparent;
 }
 
 .citie-tooltip--top::after {
   inset-block-start: 100%;
   inset-inline-start: 50%;
-  margin-inline-start: -6px;
-  border-block-start-color: var(--citie-text-primary);
+  margin-inline-start: calc(-1 * var(--citie-spacing-1-5));
+  border-block-start-color: var(--citie-popover);
 }
 
 .citie-tooltip--bottom::after {
   inset-block-end: 100%;
   inset-inline-start: 50%;
-  margin-inline-start: -6px;
-  border-block-end-color: var(--citie-text-primary);
+  margin-inline-start: calc(-1 * var(--citie-spacing-1-5));
+  border-block-end-color: var(--citie-popover);
+}
+
+.citie-tooltip--left::after {
+  inset-inline-start: 100%;
+  inset-block-start: 50%;
+  margin-block-start: calc(-1 * var(--citie-spacing-1-5));
+  border-inline-start-color: var(--citie-popover);
+}
+
+.citie-tooltip--right::after {
+  inset-inline-end: 100%;
+  inset-block-start: 50%;
+  margin-block-start: calc(-1 * var(--citie-spacing-1-5));
+  border-inline-end-color: var(--citie-popover);
 }
 
 .citie-popover {
@@ -112,8 +139,8 @@
   color: var(--citie-text-base);
   background-color: var(--citie-background-surface);
   border: 1px solid var(--citie-border-default);
-  /* Painel ancorado é contêiner externo: acompanha o raio de painel, não o de campo. */
-  border-radius: var(--citie-radius-2xl);
+  /* Painel ancorado no `radius` de 10 do kit, com o shadow-md de overlay. */
+  border-radius: var(--citie-radius-lg);
   box-shadow: var(--citie-shadow-overlay);
   text-align: start;
   animation: citie-overlay-ancorado-entrada var(--citie-motion-padrao) var(--citie-easing-entrada);
