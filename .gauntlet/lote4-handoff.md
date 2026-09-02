@@ -73,3 +73,21 @@ em cinco organismos, sem reinventar por componente. Nenhum hex fora de
 `tokens.css`, nenhum travessão, nenhuma negação paralela nos textos novos.
 Veredito: **PASSOU**, com os três itens acima registrados para a próxima
 rodada.
+
+## Adendo: fechamento do veredito do Tanjiro
+
+Veredito em `.gauntlet/vereditos/lote4-navegacao.yaml`: APROVADO, anti-slop
+PASSOU, dois MAIOR de guarda ausente:
+
+1. Sidebar fixa: `Sidebar.stories.tsx` (story `Fixa`) ganhou assert do
+   `background-color` computado do item ativo contra `--citie-accent`
+   resolvido (via `[data-theme]`), diferente do fundo da nav e de
+   `rgba(0, 0, 0, 0)`. Sabotagem (apagar `--citie-sidebar-accent`) derrubou o
+   teste (`rgba(0, 0, 0, 0)` recebido); restaurado e verde.
+2. Tabs: `Tabs.stories.tsx` (story `Line`) ganhou assert da altura do
+   `.citie-tabs__realce` contra `--citie-espessura-indicador` resolvido, maior
+   que zero. Sabotagem (zerar o token) derrubou o teste (`0` recebido);
+   restaurado e verde.
+
+`tokens.css` conferido limpo ao final (`git diff --stat` sem saída). Suíte
+isolada nos dois arquivos: 12/12 verdes.

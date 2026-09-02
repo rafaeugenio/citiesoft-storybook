@@ -6,9 +6,15 @@ artefato_avaliado: >-
   symlink, server.fs.allow só no worktree). Diff lido antes do handoff. Medições
   em build estático servido em localhost, Playwright com deviceScaleFactor 3
   (peles) e 2 (junções), nos dois temas. Worktree removido ao fim.
-veredito: APROVADO
-veredito_anti_slop: VOLTA PARA REFINO
-status: 'Rodada 1 (02/09). Final.'
+veredito: SURPREENDEU
+veredito_anti_slop: PASSOU
+status: >-
+  Rodada 2 (02/09). Reverificação do MAIOR e do TXT-002 em worktree limpo,
+  diff reaplicado por git apply, node_modules por symlink com server.fs.allow
+  só no worktree (hardlink de diretório não existe no macOS). Veredito sobe
+  de APROVADO para SURPREENDEU; anti-slop sobe para PASSOU. A seção
+  reverificacao_rodada_2 registra o que mudou; o restante do arquivo é a
+  rodada 1 como foi escrita.
 
 resumo_curto: >-
   A anatomia do kit está inteira e medida em pixel inteiro nos cinco degraus, a
@@ -132,6 +138,7 @@ texto:
 
 achados:
   - severidade: MAIOR
+    status: FECHADO na rodada 2, medido e sabotado por mim
     id_anti_slop: null
     local: 'src/components/atoms/Badge/Badge.css, cabeçalho (linha "info 4,97 / 7,82  primary 4,97 / 7,82") e story Peles'
     descricao: >-
@@ -152,6 +159,7 @@ achados:
       de token, registrar como achado aberto ao lado de success e warn.
 
   - severidade: MENOR
+    status: FECHADO na rodada 2, grep ampliado com zero ocorrência nas formas cobertas
     id_anti_slop: TXT-002
     local: 'Badge.css 312; Button.stories.tsx 99; Kbd.css 32; tokens.css 700 (bloco Lote 1)'
     descricao: 'Quatro ocorrências novas de "X, e não Y", que o briefing proíbe em qualquer forma. O grep do handoff não pega essa figura.'
@@ -161,6 +169,7 @@ achados:
       espessura da tecla vista de cima."
 
   - severidade: MENOR
+    status: ABERTO fora do lote, entregue à varredura final das fundações por instrução do orquestrador
     id_anti_slop: null
     local: 'src/fundacoes/Cores.stories.tsx e Elevacao.stories.tsx'
     descricao: >-
@@ -221,3 +230,50 @@ motivo_do_veredito: >-
   número de outra tinta e esconde um par abaixo de 4,5:1 na superfície
   escura. O anti-slop fica em VOLTA PARA REFINO pelas quatro negações
   paralelas novas (TXT-002), trabalho de minutos que não toca valor de token.
+
+reverificacao_rodada_2:
+  ambiente: >-
+    Worktree /Users/rafaeleugenio/dev/citiesoft-storybook-revisao-lote1 recriado
+    de revisao, diff não commitado aplicado, build estático servido em
+    localhost. Badge.css do worktree conferido byte a byte com o principal.
+    Removido ao fim.
+  badge_tonal_escuro:
+    regra: "[data-theme='dark'] .citie-sev--primary:not(.citie-sev--pele-preenchida) { --sev-fg: var(--citie-brand-hover) }"
+    medido_story_nova: 'Tag primary e info sobre background-surface #1a1a1d: rótulo rgb(132,174,253), 6,47:1; sobre o canvas #141414, 6,93:1. Igual ao cabeçalho novo.'
+    medido_story_peles: 'primary tonal 6,93 no canvas (6,47 se posto na superfície); preenchida primary segue com rótulo #141414 sobre #4d8bfc, 5,63, o :not evitou a troca de tinta no preenchido.'
+    cabecalho: 'Reescrito com os pares reais (primary e info 6,47 na superfície, 6,93 no canvas), o 4,39 da tinta antiga registrado como motivo da regra.'
+    sabotagem: >-
+      Regra do escuro renomeada para uma classe inerte. Story "Tema · tonal
+      primary e info sobre superfície escura" reprova: expected
+      'rgb(77, 139, 252)' to be 'rgb(132, 174, 253)'. As outras 11 passam.
+      Regra restaurada, arquivo conferido igual ao principal.
+  txt_002:
+    grep_ampliado: >-
+      "não é X, é Y", "X, e não Y", "X, e nunca Y", "não X, mas Y", "em vez de"
+      nos seis componentes e no bloco Lote 1 de tokens.css: zero ocorrência das
+      quatro apontadas e das formas "e não". Travessão: zero.
+    residuo_herdado: >-
+      Oito linhas anteriores ao lote na forma "X, não Y" (Button.stories 7,
+      Badge.css 261 e 388, Badge.tsx 85, SplitButton.tsx 21 e 59,
+      SplitButton.stories 138) e um "em vez de" (Button.stories 632). Nenhuma
+      escrita pelo lote; a varredura do produtor não cobre essa forma. Fica
+      como padrão da casa para o DesignOps, POLIMENTO, sem segurar o gate.
+  gates_do_lote: >-
+    Claro: Button 23, Link 7, Badge 12, Kbd 3, ButtonGroup 4, SplitButton 11,
+    60 de 60. Escuro: os mesmos 60 de 60, Badge 12 de 12 com a story nova.
+    Build verde.
+
+motivo_do_veredito_rodada_2: >-
+  SURPREENDEU. O critério do briefing é o estado do componente hoje, com duas
+  ou mais decisões específicas com evidência medida e escopo limpo. Hoje há
+  três, e eu medi cada uma: o traço em gradiente mascarado que respeita o
+  raio, transiciona e cede 1px por clip-path na junção (um traço só a 200%
+  nos dois temas); o divisor do SplitButton que nasce do anel da própria pele
+  (primeiro item da sombra do gatilho, linha única em seis variantes e no
+  desabilitado); e o Link que diverge do kit com 2,03:1 refeito e a G183 no
+  lugar certo. O MAIOR fechou do jeito que o briefing pede: tinta trocada por
+  regra com guarda de :not, cabeçalho com os números reais, story nova cuja
+  sonda reprova quando eu devolvo a tinta antiga. As negações paralelas novas
+  foram reescritas e o anti-slop sobe para PASSOU. O que resta está fora do
+  lote e com dono: as linhas das fundações (varredura final), as oito "X, não
+  Y" herdadas (DesignOps) e a intensidade da aresta e do brilho (Kafka).

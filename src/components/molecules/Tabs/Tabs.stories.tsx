@@ -47,6 +47,16 @@ export const Line: Story = {
     await expect(canvas.getByRole('tabpanel')).toHaveTextContent(
       'Maria de Fátima Souza, matrícula 00123456.',
     );
+
+    // O indicador da aba ativa precisa ter espessura de verdade: sem isso o
+    // sublinhado sobrevive por acidente à cor certa e some visualmente.
+    const realce = canvasElement.querySelector('.citie-tabs__realce') as HTMLElement;
+    const tema = canvasElement.closest('[data-theme]') ?? document.documentElement;
+    const espessuraDoToken = Number.parseFloat(
+      getComputedStyle(tema).getPropertyValue('--citie-espessura-indicador'),
+    );
+    await expect(espessuraDoToken).toBeGreaterThan(0);
+    await expect(Number.parseFloat(getComputedStyle(realce).height)).toBe(espessuraDoToken);
   },
 };
 

@@ -141,9 +141,29 @@ export const Fixa: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByRole('navigation', { name: 'Menu principal' })).toBeVisible();
+    const nav = canvas.getByRole('navigation', { name: 'Menu principal' });
+    await expect(nav).toBeVisible();
     await expect(canvas.getByText('CAPS AD III')).toBeVisible();
     await expect(canvas.getByRole('button', { name: 'Sair' })).toBeVisible();
+
+    // O item ativo precisa do FUNDO de `sidebar-accent`, não só do rótulo: sem
+    // ele o estado ativo depende só da cor do texto, que reprova 1.4.1.
+    const tema = canvasElement.closest('[data-theme]') ?? document.documentElement;
+    const token = (nome: string) => getComputedStyle(tema).getPropertyValue(nome).trim();
+    const paraRgb = (hex: string) => {
+      const [r, g, b] = [1, 3, 5].map((i) => Number.parseInt(hex.slice(i, i + 2), 16));
+      return `rgb(${r}, ${g}, ${b})`;
+    };
+    const itemAtivo = canvas.getByRole('button', { name: /Processos/ });
+    const fundoDoItemAtivo = getComputedStyle(itemAtivo).backgroundColor;
+    const fundoDaSidebar = getComputedStyle(nav).backgroundColor;
+
+    // Lê o token da sidebar, e não o accent geral: hoje são apelidos, mas a
+    // guarda precisa seguir o token que o componente consome no dia em que
+    // divergirem por decisão de marca.
+    await expect(fundoDoItemAtivo).toBe(paraRgb(token('--citie-sidebar-accent')));
+    await expect(fundoDoItemAtivo).not.toBe(fundoDaSidebar);
+    await expect(fundoDoItemAtivo).not.toBe('rgba(0, 0, 0, 0)');
   },
 };
 
