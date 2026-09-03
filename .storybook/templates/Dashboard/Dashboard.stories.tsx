@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 import {
   BarChart,
+  Card,
   DonutChart,
   EmptyState,
   FilterBar,
@@ -10,7 +12,7 @@ import {
   SelectButton,
   Sparkline,
 } from '../../../src';
-import { CelulaDoDashboard, Dashboard } from './Dashboard';
+import { CelulaDoDashboard, Dashboard, GradeDoHub } from './Dashboard';
 
 /**
  * Conteúdo neutro de propósito. O template não conhece domínio: quem sabe que o
@@ -125,13 +127,15 @@ const meta = {
           '3. **Grid de gráficos** abaixo, organizado em seções temáticas.',
           '4. **Drill-down** em todo card e gráfico, levando à listagem filtrada correspondente.',
           '',
-          'A ordem entre 2 e 3 é regra, não preferência: o valor absoluto orienta a leitura da tendência que vem em seguida. Nenhum dado é editável a partir daqui — toda escrita acontece na listagem ou no formulário de destino.',
+          'A ordem entre 2 e 3 é regra, não preferência: o valor absoluto orienta a leitura da tendência que vem em seguida. Nenhum dado é editável a partir daqui: toda escrita acontece na listagem ou no formulário de destino.',
           '',
           '**Componentes do sistema usados:** `FilterBar` e `SelectButton` (filtro de período), `KpiWidget` e `Sparkline` (stat cards), `LineChart`, `BarChart`, `DonutChart` e `MeterGroup` (grid), `ListaResumoWidget` (fila de atenção), `Card`, `Skeleton`, `EmptyState`, `StatusIndicator` e `Button`.',
           '',
-          '**Regiões por slot:** `filtroDePeriodo`, `indicadores`, `secoes[].graficos` e `vazio`. A célula do grid é `CelulaDoDashboard`, que acopla a ação de drill-down ao gráfico — os stat cards já resolvem isso pelo `onDrillDown` do próprio `KpiWidget`.',
+          '**Regiões por slot:** `filtroDePeriodo`, `indicadores`, `secoes[].graficos` e `vazio`. A célula do grid é `CelulaDoDashboard`, que acopla a ação de drill-down ao gráfico; os stat cards já resolvem isso pelo `onDrillDown` do próprio `KpiWidget`.',
           '',
           '**Colunas:** 2 a 4 em tela larga, conforme a spec. A 1366 o grid de gráficos cai para 2 colunas, a 900 para 1, e a 600 os stat cards também empilham.',
+          '',
+          '**Hub de atalhos (Lote 6b):** a administração do Sismental é um painel sem indicador: título, subtítulo, abas sublinhadas e uma grade de 3 colunas de `Card variante="hub"` (72px, ícone de 20 em caixa de 36). O slot `hub` recebe as abas e `GradeDoHub` monta a grade dentro de cada painel.',
         ].join('\n'),
       },
     },
@@ -171,6 +175,97 @@ export const SemDadoNoPeriodo: Story = {
   },
 };
 
+const IconeMapa = (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z" strokeLinejoin="round" />
+    <path d="M9 4v14M15 6v14" />
+  </svg>
+);
+
+const IconePessoa = (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="12" cy="8" r="4" />
+    <path d="M4 21c0-4 3.6-6 8-6s8 2 8 6" strokeLinecap="round" />
+  </svg>
+);
+
+const IconePredio = (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <rect x="5" y="3" width="14" height="18" rx="1" />
+    <path d="M9 7h2M13 7h2M9 11h2M13 11h2M10 21v-3h4v3" strokeLinecap="round" />
+  </svg>
+);
+
+const IconeEscudo = (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z" strokeLinejoin="round" />
+  </svg>
+);
+
+const HUB = {
+  label: 'Tabelas do módulo',
+  abas: [
+    {
+      id: 'cadastros',
+      rotulo: 'Cadastros',
+      conteudo: (
+        <GradeDoHub>
+          <Card variante="hub" icone={IconeMapa} titulo="Municípios" subtitulo="217 cadastrados" href="#municipios" />
+          <Card variante="hub" icone={IconePessoa} titulo="Profissionais" subtitulo="98 ativos" href="#profissionais" />
+          <Card variante="hub" icone={IconePredio} titulo="Unidades" subtitulo="41 na rede" href="#unidades" />
+        </GradeDoHub>
+      ),
+    },
+    {
+      id: 'perfis',
+      rotulo: 'Perfis e Permissões',
+      conteudo: (
+        <GradeDoHub>
+          <Card variante="hub" icone={IconeEscudo} titulo="Perfis de acesso" subtitulo="6 perfis" href="#perfis" />
+        </GradeDoHub>
+      ),
+    },
+  ],
+};
+
+export const HubDeAtalhos: Story = {
+  name: 'Hub · abas sublinhadas e cards de atalho',
+  args: {
+    titulo: 'Administração',
+    descricao: 'Gerencie as tabelas auxiliares e os parâmetros do sistema.',
+    hub: HUB,
+    filtroDePeriodo: undefined,
+    indicadores: undefined,
+    secoes: [],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A porta de entrada de um módulo de administração, medida no hub do Sismental: abas sublinhadas logo abaixo do subtítulo e uma grade de 3 colunas de cards de hub de 72px.',
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    // Abas sublinhadas: o realce é um sublinhado de 2px sobre a borda da lista.
+    await expect(canvas.getByRole('tablist', { name: 'Tabelas do módulo' })).toBeVisible();
+    const realce = canvasElement.querySelector<HTMLElement>('.citie-tabs--line .citie-tabs__realce');
+    await expect(realce).not.toBeNull();
+    await expect(Math.round(realce!.getBoundingClientRect().height)).toBe(2);
+
+    // Três cards de hub de 72px na grade, em três colunas na largura padrão.
+    const cards = canvasElement.querySelectorAll<HTMLElement>('[role="tabpanel"]:not([hidden]) .citie-dashboard__hub .citie-card--hub');
+    await expect(cards.length).toBe(3);
+    for (const card of cards) {
+      await expect(Math.round(card.getBoundingClientRect().height)).toBe(72);
+    }
+    await expect(Math.round(cards[0].getBoundingClientRect().top)).toBe(
+      Math.round(cards[2].getBoundingClientRect().top),
+    );
+  },
+};
+
 export const DesktopLargo: Story = {
   name: 'Responsivo · 1920',
   globals: { viewport: { value: 'd1920' } },
@@ -189,4 +284,17 @@ export const Tablet: Story = {
 export const Telefone: Story = {
   name: 'Responsivo · 375',
   globals: { viewport: { value: 'm375' } },
+  play: async ({ canvasElement }) => {
+    // Coluna única: nenhum gráfico vaza do próprio cartão. A rosca de 160px
+    // deixava a legenda de 180 fora da moldura, e o axe lia o branco da página
+    // sob o texto no tema escuro (37 falhas da dívida, 2 delas aqui).
+    const legenda = canvasElement.querySelector<HTMLElement>('.citie-chart__legenda--coluna')!;
+    const cartao = legenda.closest<HTMLElement>('.citie-chart')!;
+    await expect(legenda.getBoundingClientRect().right).toBeLessThanOrEqual(
+      cartao.getBoundingClientRect().right,
+    );
+    await expect(canvasElement.querySelectorAll('.citie-dashboard__grid[data-colunas]').length).toBeGreaterThan(0);
+    const grade = canvasElement.querySelector<HTMLElement>('.citie-dashboard__grid')!;
+    await expect(getComputedStyle(grade).gridTemplateColumns.split(' ').length).toBe(1);
+  },
 };

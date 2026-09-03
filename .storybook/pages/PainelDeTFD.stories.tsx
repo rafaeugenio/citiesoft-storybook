@@ -20,7 +20,7 @@ import {
   Sparkline,
   StatusIndicator,
 } from '../../src';
-import { CelulaDoDashboard, Dashboard } from '../templates/Dashboard/Dashboard';
+import { CelulaDoDashboard, Dashboard, GradeDoHub } from '../templates/Dashboard/Dashboard';
 import {
   dadosDoPainel,
   PERIODOS,
@@ -47,9 +47,93 @@ const INTERVALO_DO_MES = dadosDoPainel('mes').intervalo;
 const INTERVALO_DO_TRIMESTRE = dadosDoPainel('trimestre').intervalo;
 
 /**
- * Painel de TFD — instância do template `Templates/Dashboard/Painel de indicadores`
+ * Painel de TFD: instância do template `Templates/Dashboard/Painel de indicadores`
  * com dados fictícios do acompanhamento de Tratamento Fora do Domicílio.
  */
+
+const IconeProcessos = (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M6 3h8l5 5v13H6z" />
+    <path d="M14 3v5h5M9 13h6M9 17h6" strokeLinecap="round" />
+  </svg>
+);
+
+const IconePessoa = (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="12" cy="8" r="4" />
+    <path d="M4 21c0-4 3.6-6 8-6s8 2 8 6" strokeLinecap="round" />
+  </svg>
+);
+
+const IconeMoeda = (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 7v10M9.5 9.5h3.75a1.75 1.75 0 0 1 0 3.5h-2.5a1.75 1.75 0 0 0 0 3.5H14.5" strokeLinecap="round" />
+  </svg>
+);
+
+const IconeRelatorio = (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M4 20h16M7 16V9M12 16V5M17 16v-6" strokeLinecap="round" />
+  </svg>
+);
+
+/**
+ * Hub de atalhos do módulo, na composição da administração do Sismental: abas
+ * sublinhadas e cards de hub de 72px. Cada card leva à listagem do domínio.
+ */
+function hubDoModulo(dados: DadosDoPainel) {
+  const recebidos = dados.indicadores.find((indicador) => indicador.id === 'recebidos');
+  return {
+    label: 'Atalhos do módulo',
+    abas: [
+      {
+        id: 'operacao',
+        rotulo: 'Operação',
+        conteudo: (
+          <GradeDoHub>
+            <Card
+              variante="hub"
+              icone={IconeProcessos}
+              titulo="Solicitações"
+              subtitulo={recebidos ? `${recebidos.valor} recebidas em ${dados.intervalo}` : 'Fila de regulação'}
+              href="#/tfd/solicitacoes"
+            />
+            <Card
+              variante="hub"
+              icone={IconePessoa}
+              titulo="Pacientes"
+              subtitulo="Cadastro e histórico de viagens"
+              href="#/tfd/pacientes"
+            />
+            <Card
+              variante="hub"
+              icone={IconeMoeda}
+              titulo="Ajuda de custo"
+              subtitulo="Lançamentos e empenhos"
+              href="#/tfd/ajuda-de-custo"
+            />
+          </GradeDoHub>
+        ),
+      },
+      {
+        id: 'relatorios',
+        rotulo: 'Relatórios',
+        conteudo: (
+          <GradeDoHub>
+            <Card
+              variante="hub"
+              icone={IconeRelatorio}
+              titulo="Viagens por município"
+              subtitulo="Exportação mensal para a regulação"
+              href="#/tfd/relatorios/municipios"
+            />
+          </GradeDoHub>
+        ),
+      },
+    ],
+  };
+}
 
 type EstadoDaTela = 'default' | 'carregando' | 'vazio' | 'erro';
 
@@ -289,6 +373,7 @@ function PainelDeTFD({ estado = 'default', periodoInicial = 'mes' }: PainelProps
           </Button>
         </>
       }
+      hub={hubDoModulo(dados)}
       filtroDePeriodo={filtro}
       indicadores={
         <KpiFaixa titulo="Indicadores de TFD" recorte={dados.intervalo}>
@@ -315,11 +400,11 @@ const meta = {
     docs: {
       description: {
         component: [
-          'Painel gerencial do TFD (Tratamento Fora do Domicílio) sobre o template `Templates/Dashboard/Painel de indicadores`. Anatomia de `design-system/09-templates/tela-dashboard.md`: filtro global de período, linha de stat cards, grid de gráficos em seções temáticas e drill-down em todo card e gráfico.',
+          'Painel gerencial do TFD (Tratamento Fora do Domicílio) sobre o template `Templates/Dashboard/Painel de indicadores`. Anatomia de `design-system/09-templates/tela-dashboard.md`: hub de atalhos com abas sublinhadas (Lote 6b, composição do Sismental), filtro global de período, linha de stat cards, grid de gráficos em seções temáticas e drill-down em todo card e gráfico.',
           '',
-          'O filtro de período vale para a tela inteira: trocar de Semana para Trimestre recarrega todos os indicadores e todos os gráficos juntos, sem exceção parcial silenciosa. Nada é editável daqui — cada drill-down leva à listagem filtrada correspondente, onde a escrita acontece.',
+          'O filtro de período vale para a tela inteira: trocar de Semana para Trimestre recarrega todos os indicadores e todos os gráficos juntos, sem exceção parcial silenciosa. Nada é editável daqui: cada drill-down leva à listagem filtrada correspondente, onde a escrita acontece.',
           '',
-          '**Cor dos gráficos.** A paleta categórica oficial (`chart.cat.1` a `chart.cat.8`) **reprova a validação de daltonismo**: com 4 séries, âmbar #F59E0B e verde #22C55E ficam a ΔE 5,7 em protanopia, abaixo do piso de 6; no conjunto de 8, verde #22C55E e teal #14B8A6 ficam a ΔE 11,3 mesmo para visão tricromata; e quatro cores ficam abaixo de 3:1 contra o fundo claro. A proposta corrigida de 6 slots está documentada no `README.md` do repositório e exportada como `PALETA_PROPOSTA` — `#1261E4 · #B45309 · #7C3AED · #15803D · #0891B2 · #DC2626`. É ela que estes exemplos usam.',
+          '**Cor dos gráficos.** A paleta categórica oficial (`chart.cat.1` a `chart.cat.8`) **reprova a validação de daltonismo**: com 4 séries, âmbar #F59E0B e verde #22C55E ficam a ΔE 5,7 em protanopia, abaixo do piso de 6; no conjunto de 8, verde #22C55E e teal #14B8A6 ficam a ΔE 11,3 mesmo para visão tricromata; e quatro cores ficam abaixo de 3:1 contra o fundo claro. A proposta corrigida de 6 slots está documentada no `README.md` do repositório e exportada como `PALETA_PROPOSTA` (`#1261E4 · #B45309 · #7C3AED · #15803D · #0891B2 · #DC2626`). É ela que estes exemplos usam.',
           '',
           '**Dados fictícios e determinísticos** em `.storybook/fixtures/painel-tfd.ts`: sem `Math.random()`, sem data corrente e sem dado pessoal real.',
         ].join('\n'),
@@ -334,6 +419,21 @@ type Story = StoryObj<typeof meta>;
 export const ComDados: Story = {
   name: 'Padrão · com dados',
   args: { estado: 'default', periodoInicial: 'mes' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    // Hub de atalhos antes do filtro: abas sublinhadas e três cards de 72.
+    const abas = canvas.getByRole('tablist', { name: 'Atalhos do módulo' });
+    const filtro = canvas.getByRole('group', { name: 'Período dos indicadores' });
+    await expect(abas.getBoundingClientRect().bottom).toBeLessThanOrEqual(filtro.getBoundingClientRect().top);
+    const cards = canvasElement.querySelectorAll<HTMLElement>('[role="tabpanel"]:not([hidden]) .citie-card--hub');
+    await expect(cards.length).toBe(3);
+    await expect(Math.round(cards[0].getBoundingClientRect().height)).toBe(72);
+    // O card de solicitações mostra o mesmo agregado do indicador.
+    await expect(canvas.getByRole('link', { name: 'Solicitações' })).toBeVisible();
+    await expect(canvas.getByText(`${RECEBIDOS_NO_MES} recebidas em ${INTERVALO_DO_MES}`)).toBeVisible();
+    // A região viva da faixa continua única.
+    await expect(canvasElement.querySelectorAll('[role="status"][aria-live="polite"]').length).toBe(1);
+  },
 };
 
 export const TrocaDePeriodo: Story = {

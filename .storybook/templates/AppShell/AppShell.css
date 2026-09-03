@@ -269,8 +269,8 @@
 /**
  * "Sair" ancorado no rodapé da navegação: item de 32 em vermelho, mesma
  * anatomia dos outros itens (padding 4×12, raio 6). A tinta é
- * `danger-foreground` (#b91c1c sobre #fafafa 6,26:1; escuro #fca5a5 sobre
- * #141414 9,72:1).
+ * `danger-foreground` (#b91c1c sobre #fafafa 6,20:1; escuro #fca5a5 sobre
+ * #141414 9,71:1).
  */
 .citie-app-shell__sair {
   display: flex;
@@ -488,7 +488,7 @@
   }
 
   .citie-app-shell__modulo {
-    max-inline-size: 14ch;
+    max-inline-size: 24ch;
   }
 }
 

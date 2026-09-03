@@ -27,6 +27,13 @@ export interface DadosDeAuditoria {
   alteradoEm?: string;
 }
 
+/** Uma seção da navegação lateral do formulário longo (Sismental). */
+export interface SecaoNavegavel {
+  id: string;
+  /** Nome curto da seção, o mesmo do título do bloco: "Identificação". */
+  rotulo: string;
+}
+
 export interface FormularioProps {
   apresentacao?: ApresentacaoFormulario;
   /** Overlay começa fechado: quem controla é a tela de origem. Ignorado em `pagina`. */
@@ -36,6 +43,23 @@ export interface FormularioProps {
   subtitulo?: string;
   /** Trilha com o link de volta à listagem. Usada na apresentação em página. */
   trilha?: NivelDaTrilha[];
+  /**
+   * Navegação de seções em coluna à esquerda (formulário longo do Sismental):
+   * lista vertical de rótulos, o ativo em cor de marca. Só na apresentação em
+   * página. Com ela, o rodapé passa a "Voltar" à esquerda e "Salvar seção" +
+   * "Salvar e Avançar" à direita, e o título da seção ativa (20 Medium) abre
+   * a coluna de conteúdo.
+   */
+  navegacao?: SecaoNavegavel[];
+  /** Seção ativa da navegação. */
+  secaoAtiva?: string;
+  onSecao?: (id: string) => void;
+  /** Rótulos do rodapé do formulário longo. */
+  rotuloVoltar?: string;
+  rotuloSalvarSecao?: string;
+  rotuloAvancar?: string;
+  onVoltar?: () => void;
+  onSalvarSecao?: () => void;
   /** Aviso no topo do corpo: consolidação de erros do envio, conflito, indisponibilidade. */
   aviso?: ReactNode;
   /** Campos do corpo, em `SecaoDoFormulario` ou direto em `CampoDoFormulario`. */
@@ -125,6 +149,12 @@ function AreaDeAuditoria({ dados }: { dados: DadosDeAuditoria }) {
  * 3. Rodapé fixo, "Cancelar" à esquerda e o primário "Salvar [Entidade]" à direita;
  * 4. Área de auditoria, somente leitura, exibida após o primeiro salvamento.
  *
+ * Formulário longo (Lote 6b, identificação do prontuário do Sismental): com
+ * `navegacao`, a página ganha a coluna de seções à esquerda, o título da
+ * seção ativa em 20 Medium, os blocos de campos em cartão (Fieldset, raio 10,
+ * sem sombra, título 16 Medium) e o rodapé "Voltar" / "Salvar seção" /
+ * "Salvar e Avançar".
+ *
  * A ordem interna do corpo é responsabilidade de quem preenche: identificadores
  * primeiro, obrigatórios em seguida, opcionais por último.
  *
@@ -140,6 +170,14 @@ export function Formulario({
   titulo,
   subtitulo,
   trilha,
+  navegacao,
+  secaoAtiva,
+  onSecao,
+  rotuloVoltar = 'Voltar',
+  rotuloSalvarSecao = 'Salvar seção',
+  rotuloAvancar = 'Salvar e Avançar',
+  onVoltar,
+  onSalvarSecao,
   aviso,
   children,
   auditoria,
@@ -153,6 +191,8 @@ export function Formulario({
   onSalvar,
 }: FormularioProps) {
   const idFormulario = `formulario-${useId()}`;
+  const comNavegacao = apresentacao === 'pagina' && Boolean(navegacao && navegacao.length > 0);
+  const secaoAtual = navegacao?.find((secao) => secao.id === secaoAtiva) ?? navegacao?.[0];
 
   // Região 2. O `form` fica no corpo e o primário do rodapé aponta para ele
   // pelo atributo `form`, o que mantém o envio por Enter funcionando mesmo com
@@ -185,21 +225,47 @@ export function Formulario({
   );
 
   // Regiões 3 e 4, nesta ordem: ações do rodapé e, abaixo, a auditoria.
+  // Formulário longo (Sismental): "Voltar" à esquerda, "Salvar seção" e
+  // "Salvar e Avançar" à direita. Cadastro simples: "Cancelar" e o primário.
   const rodape = (
     <div className="citie-tpl-formulario__rodape">
       <div className="citie-tpl-formulario__acoes">
-        <Button variant="text" onClick={onCancelar} disabled={salvando}>
-          {rotuloCancelar}
-        </Button>
-        <Button
-          type="submit"
-          form={idFormulario}
-          variant="primary"
-          loading={salvando}
-          loadingLabel={rotuloSalvando}
-        >
-          {rotuloSalvar}
-        </Button>
+        {comNavegacao ? (
+          <>
+            <Button variant="secondary" onClick={onVoltar ?? onCancelar} disabled={salvando}>
+              {rotuloVoltar}
+            </Button>
+            <div className="citie-tpl-formulario__acoes-principais">
+              <Button variant="secondary" onClick={onSalvarSecao} disabled={salvando}>
+                {rotuloSalvarSecao}
+              </Button>
+              <Button
+                type="submit"
+                form={idFormulario}
+                variant="primary"
+                loading={salvando}
+                loadingLabel={rotuloSalvando}
+              >
+                {rotuloAvancar}
+              </Button>
+            </div>
+          </>
+        ) : (
+          <>
+            <Button variant="text" onClick={onCancelar} disabled={salvando}>
+              {rotuloCancelar}
+            </Button>
+            <Button
+              type="submit"
+              form={idFormulario}
+              variant="primary"
+              loading={salvando}
+              loadingLabel={rotuloSalvando}
+            >
+              {rotuloSalvar}
+            </Button>
+          </>
+        )}
       </div>
       {auditoria ? <AreaDeAuditoria dados={auditoria} /> : null}
     </div>
@@ -232,6 +298,52 @@ export function Formulario({
       >
         {corpo}
       </Dialog>
+    );
+  }
+
+  if (comNavegacao) {
+    return (
+      <main className="citie-tpl-formulario citie-tpl-formulario--longo">
+        <header className="citie-tpl-formulario__cabecalho citie-visualmente-oculto">
+          {trilha && trilha.length > 0 ? <Breadcrumb niveis={trilha} /> : null}
+          <h1 className="citie-tpl-formulario__titulo">{titulo}</h1>
+          {subtitulo ? <p className="citie-tpl-formulario__subtitulo">{subtitulo}</p> : null}
+        </header>
+
+        <div className="citie-tpl-formulario__colunas">
+          {/* Navegação de seções: lista vertical, o ativo em cor de marca. */}
+          <nav className="citie-tpl-formulario__navegacao" aria-label={`Seções de ${titulo}`}>
+            <ul className="citie-tpl-formulario__secoes-lista">
+              {navegacao!.map((secao) => {
+                const ativa = secao.id === secaoAtual?.id;
+                return (
+                  <li key={secao.id}>
+                    <button
+                      type="button"
+                      className={`citie-tpl-formulario__secao-link${
+                        ativa ? ' citie-tpl-formulario__secao-link--ativa' : ''
+                      }`}
+                      aria-current={ativa ? 'step' : undefined}
+                      onClick={() => onSecao?.(secao.id)}
+                    >
+                      {secao.rotulo}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+
+          <div className="citie-tpl-formulario__conteudo">
+            {secaoAtual ? (
+              <h2 className="citie-tpl-formulario__titulo-da-secao">{secaoAtual.rotulo}</h2>
+            ) : null}
+            {corpo}
+          </div>
+        </div>
+
+        <div className="citie-tpl-formulario__rodape--fixo">{rodape}</div>
+      </main>
     );
   }
 

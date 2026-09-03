@@ -7,12 +7,15 @@ import {
   ConfirmDialog,
   EmptyState,
   FilterBar,
+  Identificador,
+  Link,
   Pagination,
   Search,
   Select,
   StatusIndicator,
   Table,
   mascararCPF,
+  resumoDePaginacao,
   type Coluna,
   type FiltroAtivo,
 } from '../../src';
@@ -113,7 +116,10 @@ const TRILHA = (
 
 /**
  * Ordem fixa das colunas, conforme a spec: seleção, identificador, campos
- * descritivos, campos numéricos e de data, status e ações à direita.
+ * descritivos, campos numéricos e de data, status e ações à direita. A pele
+ * do Lote 6b segue a listagem de prontuários do Sismental: protocolo em mono,
+ * paciente com o CPF mascarado na segunda linha do `Identificador`, data em
+ * mono, e as ações geradas pela própria tabela.
  */
 function colunas(): Coluna<LinhaDoProcesso>[] {
   return [
@@ -122,16 +128,21 @@ function colunas(): Coluna<LinhaDoProcesso>[] {
       cabecalho: 'Protocolo',
       ordenavel: true,
       largura: '132px',
+      mono: true,
       // Regra fixa: o identificador leva ao detalhe por link, nunca por botão.
-      render: (linha) => <a href={`#/tfd/solicitacoes/${linha.protocolo}`}>{linha.protocolo}</a>,
+      render: (linha) => (
+        <Link papel="identificador" href={`#/tfd/solicitacoes/${linha.protocolo}`}>
+          {linha.protocolo}
+        </Link>
+      ),
     },
-    { chave: 'paciente', cabecalho: 'Paciente', render: (linha) => linha.paciente },
     {
-      chave: 'cpf',
-      cabecalho: 'CPF',
-      largura: '128px',
+      chave: 'paciente',
+      cabecalho: 'Paciente',
       // CPF sempre mascarado na listagem; valor completo só no detalhe.
-      render: (linha) => mascararCPF(linha.cpf),
+      render: (linha) => (
+        <Identificador principal={linha.paciente} secundario={mascararCPF(linha.cpf)} />
+      ),
     },
     { chave: 'destino', cabecalho: 'Destino', render: (linha) => linha.destino },
     { chave: 'unidade', cabecalho: 'Unidade de origem', render: (linha) => linha.unidade },
@@ -148,6 +159,7 @@ function colunas(): Coluna<LinhaDoProcesso>[] {
       cabecalho: 'Data da viagem',
       ordenavel: true,
       largura: '148px',
+      mono: true,
       render: (linha) => formatarData(linha.dataViagem),
     },
     {
@@ -156,32 +168,29 @@ function colunas(): Coluna<LinhaDoProcesso>[] {
       largura: '164px',
       render: (linha) => <StatusIndicator estado={linha.situacao} size="sm" />,
     },
-    {
-      chave: 'acoes',
-      cabecalho: 'Ações',
-      alinhamento: 'direita',
-      largura: '104px',
-      // A coluna de ações fica à direita e nunca recebe ordenação nem filtro.
-      render: (linha) => (
-        <>
-          <Button
-            variant="text"
-            size="small"
-            iconOnly
-            icon={<IconeOlho />}
-            aria-label={`Abrir solicitação ${linha.protocolo}`}
-          />
-          <Button
-            variant="text"
-            size="small"
-            iconOnly
-            icon={<IconeLapis />}
-            aria-label={`Editar solicitação ${linha.protocolo}`}
-          />
-        </>
-      ),
-    },
   ];
+}
+
+/** Ações por linha, geradas pela tabela na última coluna: abrir e editar. */
+function acoesDaLinha(linha: LinhaDoProcesso) {
+  return (
+    <>
+      <Button
+        variant="text"
+        size="small"
+        iconOnly
+        icon={<IconeOlho />}
+        aria-label={`Abrir solicitação ${linha.protocolo}`}
+      />
+      <Button
+        variant="text"
+        size="small"
+        iconOnly
+        icon={<IconeLapis />}
+        aria-label={`Editar solicitação ${linha.protocolo}`}
+      />
+    </>
+  );
 }
 
 export interface ConsultaDeProcessosProps {
@@ -279,8 +288,6 @@ export function ConsultaDeProcessos({
             colunas={colunas()}
             linhas={[]}
             chaveDaLinha={(linha) => linha.protocolo}
-            densidade="compacta"
-            zebra
             semConteudo={
               <EmptyState
                 situacao="permissao"
@@ -395,8 +402,8 @@ export function ConsultaDeProcessos({
             linhas={daPagina}
             chaveDaLinha={(linha) => linha.protocolo}
             rotuloDaLinha={(linha) => `solicitação ${linha.protocolo}`}
-            densidade="compacta"
-            zebra
+            acoesDaLinha={acoesDaLinha}
+            acoesSempreVisiveis
             selecionavel={!erro}
             carregando={carregando}
             semConteudo={semConteudo}
@@ -442,9 +449,13 @@ export function ConsultaDeProcessos({
               label="Paginação de solicitações de TFD"
               totalRegistros={encontrados.length}
               itensPorPagina={porPagina}
+              variant="simples"
               onPageChange={setPagina}
             />
           )
+        }
+        resumo={
+          !temRodape ? undefined : resumoDePaginacao(pagina, porPagina, encontrados.length)
         }
       />
 
@@ -495,8 +506,9 @@ const meta = {
           'nenhum dado pessoal real, CPF sempre mascarado na listagem.',
           '',
           'Componentes do sistema: `Breadcrumb`, `Button`, `Search`, `Select`, `FilterBar`,',
-          '`Table`, `Skeleton` (pelo estado de carregamento do `Table`), `StatusIndicator`,',
-          '`EmptyState`, `Pagination` e `ConfirmDialog`.',
+          '`Table` (com `Identificador`, `mascararCPF` e `resumoDePaginacao`), `Link`, `Skeleton`',
+          '(pelo estado de carregamento do `Table`), `StatusIndicator`, `EmptyState`, `Pagination`',
+          'e `ConfirmDialog`. Pele do Lote 6b: listagem de prontuários do Sismental.',
         ].join('\n'),
       },
     },
@@ -525,8 +537,12 @@ export const ComDados: Story = {
     await expect(canvas.getByText('24 processos encontrados')).toBeVisible();
     // A primeira página mostra 10 dos 24; o 11º registro fica para a próxima.
     await expect(canvas.queryByRole('link', { name: PROTOCOLO_INEXISTENTE })).toBeNull();
-    // Texto do resumo na anatomia do kit (Lote 4): "Mostrando X a Y de Z registros".
+    // Resumo à direita do rodapé (Lote 6b), no texto do kit: "Mostrando X a Y de Z registros".
     await expect(canvas.getByText('Mostrando 1 a 10 de 24 registros')).toBeVisible();
+    // Identificador em duas linhas: nome e CPF mascarado, e o protocolo em mono.
+    await expect(canvas.getByText(mascararCPF(PRIMEIRO.cpf))).toBeVisible();
+    const protocolo = canvas.getByRole('link', { name: PRIMEIRO.protocolo });
+    await expect(getComputedStyle(protocolo).fontFamily).toContain('Red Hat Mono');
     await expect(
       canvas.getByRole('navigation', { name: 'Paginação de solicitações de TFD' }),
     ).toBeVisible();

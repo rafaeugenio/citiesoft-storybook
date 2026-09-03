@@ -27,6 +27,11 @@ export interface SelectProps
    * valor, preservando Tab e Escape.
    */
   readOnly?: boolean;
+  /**
+   * Rótulo só para o leitor de tela (linha de filtro: o placeholder "Todos os
+   * setores" já nomeia o escopo). Ver `FieldWrapperProps.rotuloOculto`.
+   */
+  rotuloOculto?: boolean;
 }
 
 /**
@@ -43,6 +48,7 @@ export function Select({
   error,
   placeholder = 'Selecione',
   readOnly = false,
+  rotuloOculto = false,
   required,
   className,
   ...rest
@@ -59,7 +65,13 @@ export function Select({
     .join(' ');
 
   return (
-    <FieldWrapper label={label} required={required} helper={helper} error={error}>
+    <FieldWrapper
+      label={label}
+      required={required}
+      helper={helper}
+      error={error}
+      rotuloOculto={rotuloOculto}
+    >
       {({ id, describedBy, invalid }) => (
         <div
           className={`citie-select-wrapper${readOnly ? ' citie-select-wrapper--readonly' : ''}`}

@@ -28,10 +28,11 @@
 .citie-tpl-formulario__titulo {
   margin: 0;
   font-family: var(--citie-font-display);
-  font-size: 22px;
-  font-weight: 600;
+  font-size: var(--citie-font-size-title-lg);
+  font-weight: var(--citie-font-weight-title);
+  letter-spacing: -0.01em;
   color: var(--citie-text-primary);
-  line-height: 1.3;
+  line-height: 1.2;
 }
 
 .citie-tpl-formulario__subtitulo {
@@ -62,6 +63,91 @@
 .citie-tpl-formulario__corpo--rolavel:focus-visible {
   outline: none;
   box-shadow: var(--citie-state-focus-ring);
+}
+
+/* ---------- Formulário longo: navegação de seções à esquerda ---------- */
+
+.citie-tpl-formulario--longo {
+  max-width: none;
+}
+
+.citie-tpl-formulario__colunas {
+  display: grid;
+  grid-template-columns: var(--citie-largura-da-navegacao-de-secoes) minmax(0, 1fr);
+  gap: var(--citie-spacing-8);
+  flex: 1;
+  align-items: start;
+  padding-block: var(--citie-spacing-2) var(--citie-spacing-6);
+}
+
+/* A coluna acompanha a rolagem do conteúdo, abaixo da barra do shell. */
+.citie-tpl-formulario__navegacao {
+  position: sticky;
+  top: calc(var(--citie-altura-da-barra) + var(--citie-spacing-4));
+}
+
+.citie-tpl-formulario__secoes-lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Rótulo de seção: 14 em text-base, 32 de altura; o ativo em marca e Medium. */
+.citie-tpl-formulario__secao-link {
+  display: block;
+  inline-size: 100%;
+  min-block-size: var(--citie-control-height-small);
+  padding: var(--citie-spacing-1) var(--citie-spacing-2);
+  font: inherit;
+  font-size: var(--citie-font-size-body-md);
+  line-height: var(--citie-linha-da-celula);
+  color: var(--citie-text-base);
+  text-align: start;
+  background: none;
+  border: none;
+  border-radius: var(--citie-radius-md);
+  cursor: pointer;
+  transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
+}
+
+.citie-tpl-formulario__secao-link:hover {
+  background-color: var(--citie-accent);
+}
+
+.citie-tpl-formulario__secao-link:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-tpl-formulario__secao-link--ativa {
+  font-weight: var(--citie-font-weight-action);
+  color: var(--citie-brand-primary);
+}
+
+.citie-tpl-formulario__conteudo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-4);
+  min-inline-size: 0;
+}
+
+/* Título da seção ativa: 20 Medium, como "Identificação" no Sismental. */
+.citie-tpl-formulario__titulo-da-secao {
+  margin: 0;
+  font-family: var(--citie-font-display);
+  font-size: var(--citie-font-size-title-md);
+  font-weight: var(--citie-font-weight-action);
+  line-height: 1.3;
+  color: var(--citie-text-primary);
+}
+
+.citie-tpl-formulario__acoes-principais {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-3);
 }
 
 /* ---------- Grade de 12 colunas ---------- */
@@ -156,8 +242,31 @@
 
 /* ---------- Responsividade ---------- */
 
-/* Tablet: 12 colunas viram 6, e o que ocupava meia largura vira largura cheia. */
+/* Tablet: 12 colunas viram 6, e o que ocupava meia largura vira largura cheia.
+   A navegação de seções sobe para uma linha rolável acima do conteúdo. */
 @media (max-width: 1023px) {
+  .citie-tpl-formulario__colunas {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--citie-spacing-4);
+  }
+
+  .citie-tpl-formulario__navegacao {
+    position: static;
+    overflow-x: auto;
+    padding-block-end: var(--citie-spacing-2);
+    border-block-end: 1px solid var(--citie-border-default);
+  }
+
+  .citie-tpl-formulario__secoes-lista {
+    flex-direction: row;
+    gap: var(--citie-spacing-1);
+  }
+
+  .citie-tpl-formulario__secao-link {
+    inline-size: auto;
+    white-space: nowrap;
+  }
+
   .citie-tpl-formulario__grade {
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
@@ -199,5 +308,15 @@
 
   .citie-tpl-formulario__acoes > * {
     flex: 1;
+  }
+
+  .citie-tpl-formulario--longo .citie-tpl-formulario__acoes {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .citie-tpl-formulario__acoes-principais {
+    flex-direction: column-reverse;
+    align-items: stretch;
   }
 }

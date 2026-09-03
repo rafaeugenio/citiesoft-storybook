@@ -23,9 +23,11 @@
 .citie-wizard__titulo {
   margin: 0;
   font-family: var(--citie-font-display);
-  font-size: 24px;
-  line-height: 1.25;
-  font-weight: 600;
+  /* Título de página 24 SemiBold, o mesmo degrau da listagem e do painel (Lote 6b). */
+  font-size: var(--citie-font-size-title-lg);
+  line-height: 1.2;
+  font-weight: var(--citie-font-weight-title);
+  letter-spacing: -0.01em;
   color: var(--citie-text-primary);
 }
 

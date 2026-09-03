@@ -34,6 +34,13 @@ export interface FieldWrapperProps {
   error?: string;
   /** Contagem de caracteres, usada pelo Textarea. */
   counter?: { current: number; limit: number };
+  /**
+   * Rótulo só para o leitor de tela. Na linha de filtro do Sismental o select
+   * de escopo ("Todos os setores") vive ao lado da busca sem rótulo visível,
+   * porque o placeholder já nomeia o escopo. O `<label>` continua no DOM,
+   * ligado ao campo por `for`/`id`; só sai da pintura (WCAG 1.3.1 e 4.1.2).
+   */
+  rotuloOculto?: boolean;
   children: (ids: {
     id: string;
     describedBy: string | undefined;
@@ -51,6 +58,7 @@ export function FieldWrapper({
   helper,
   error,
   counter,
+  rotuloOculto = false,
   children,
 }: FieldWrapperProps) {
   const uid = useId();
@@ -69,8 +77,11 @@ export function FieldWrapper({
   const proximoDoLimite = counter ? counter.current >= counter.limit * 0.9 : false;
 
   return (
-    <div className="citie-field">
-      <label className="citie-field__label" htmlFor={id}>
+    <div className={`citie-field${rotuloOculto ? ' citie-field--rotulo-oculto' : ''}`}>
+      <label
+        className={`citie-field__label${rotuloOculto ? ' citie-visualmente-oculto' : ''}`}
+        htmlFor={id}
+      >
         {label}
         {required ? (
           <span className="citie-field__required" aria-hidden="true">

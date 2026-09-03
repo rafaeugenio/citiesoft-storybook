@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Button } from '../../../src';
+import { Button, Tabs, type AbaProps } from '../../../src';
 import './Dashboard.css';
 
 /**
@@ -35,15 +35,21 @@ export interface DashboardProps {
   descricao?: string;
   /** Ações de tela que não escrevem dado: exportar, imprimir, atualizar. */
   acoes?: ReactNode;
-  /** Região 1: filtro global de período, sempre no topo. */
-  filtroDePeriodo: ReactNode;
-  /** Região 2: linha de stat cards, sempre antes dos gráficos. */
-  indicadores: ReactNode;
+  /**
+   * Hub de atalhos do Sismental (administração): abas sublinhadas logo abaixo
+   * do subtítulo, cada painel com uma `GradeDoHub` de `Card variante="hub"`.
+   * Vem antes do filtro e dos indicadores; é a porta de entrada do módulo.
+   */
+  hub?: { label: string; abas: AbaProps[] };
+  /** Região 1: filtro global de período, sempre no topo. Opcional num hub puro. */
+  filtroDePeriodo?: ReactNode;
+  /** Região 2: linha de stat cards, sempre antes dos gráficos. Opcional num hub puro. */
+  indicadores?: ReactNode;
   /** Nome acessível da região dos indicadores. */
   rotuloDosIndicadores?: string;
   colunasDosIndicadores?: ColunasDoGrid;
   /** Região 3: grid de gráficos em seções temáticas. */
-  secoes: SecaoDoDashboard[];
+  secoes?: SecaoDoDashboard[];
   colunasDosGraficos?: ColunasDoGrid;
   /** Ocupa o lugar do grid quando o período inteiro não tem dado. */
   vazio?: ReactNode;
@@ -53,11 +59,12 @@ export function Dashboard({
   titulo,
   descricao,
   acoes,
+  hub,
   filtroDePeriodo,
   indicadores,
   rotuloDosIndicadores = 'Indicadores do período',
   colunasDosIndicadores = 4,
-  secoes,
+  secoes = [],
   colunasDosGraficos = 2,
   vazio,
 }: DashboardProps) {
@@ -71,25 +78,38 @@ export function Dashboard({
         {acoes ? <div className="citie-dashboard__acoes">{acoes}</div> : null}
       </header>
 
+      {/* Hub de atalhos: abas sublinhadas e cards de hub, como a administração do Sismental. */}
+      {hub ? (
+        <section className="citie-dashboard__abas" aria-labelledby="dashboard-hub">
+          {/* O card de hub traz `h3`; sem este `h2` a tela saltaria de `h1` para `h3`. */}
+          <h2 className="citie-visualmente-oculto" id="dashboard-hub">
+            {hub.label}
+          </h2>
+          <Tabs label={hub.label} abas={hub.abas} variante="line" />
+        </section>
+      ) : null}
+
       {/* Região 1. Fica acima de tudo e vale para todos os widgets da tela. */}
-      <div className="citie-dashboard__filtro">{filtroDePeriodo}</div>
+      {filtroDePeriodo ? <div className="citie-dashboard__filtro">{filtroDePeriodo}</div> : null}
 
       {vazio ? (
         <div className="citie-dashboard__vazio">{vazio}</div>
       ) : (
         <>
           {/* Região 2. O valor absoluto vem antes da tendência, por regra da spec. */}
-          <section className="citie-dashboard__indicadores" aria-labelledby="dashboard-indicadores">
-            <h2 className="citie-visualmente-oculto" id="dashboard-indicadores">
-              {rotuloDosIndicadores}
-            </h2>
-            <div
-              className="citie-dashboard__linha"
-              data-colunas={colunasDosIndicadores}
-            >
-              {indicadores}
-            </div>
-          </section>
+          {indicadores ? (
+            <section className="citie-dashboard__indicadores" aria-labelledby="dashboard-indicadores">
+              <h2 className="citie-visualmente-oculto" id="dashboard-indicadores">
+                {rotuloDosIndicadores}
+              </h2>
+              <div
+                className="citie-dashboard__linha"
+                data-colunas={colunasDosIndicadores}
+              >
+                {indicadores}
+              </div>
+            </section>
+          ) : null}
 
           {/* Região 3. Um bloco por assunto do módulo. */}
           {secoes.map((secao) => (
@@ -119,6 +139,11 @@ export function Dashboard({
       )}
     </main>
   );
+}
+
+/** Grade de 3 colunas de `Card variante="hub"` (2 a 900px, 1 a 600px). */
+export function GradeDoHub({ children }: { children: ReactNode }) {
+  return <div className="citie-dashboard__hub">{children}</div>;
 }
 
 export interface CelulaDoDashboardProps {

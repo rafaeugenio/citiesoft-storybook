@@ -83,6 +83,11 @@
   color: var(--citie-text-secondary);
 }
 
+/* A KpiFaixa já é a linha inteira de indicadores: ocupa todas as colunas da grade. */
+.citie-dashboard__linha > .citie-kpi-faixa {
+  grid-column: 1 / -1;
+}
+
 /* Uma grade só, com o número de colunas vindo do atributo de dado. */
 .citie-dashboard__linha,
 .citie-dashboard__grid {
@@ -199,4 +204,9 @@
   .citie-dashboard__filtro {
     position: static;
   }
+}
+
+/* Abas do hub pousam no fundo da tela (ou do cartão do shell), sem superfície própria. */
+.citie-dashboard__abas .citie-tabs {
+  background-color: transparent;
 }

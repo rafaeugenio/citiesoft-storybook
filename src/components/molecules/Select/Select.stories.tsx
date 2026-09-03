@@ -162,3 +162,39 @@ export const Tamanhos: Story = {
     await expect(alturas).toEqual([32, 36, 40]);
   },
 };
+
+/**
+ * Linha de filtro do Sismental: o select de escopo fica ao lado da busca sem
+ * rótulo pintado, porque o placeholder ("Todos os setores") já diz o escopo.
+ * O rótulo continua no DOM, ligado ao campo, e é o nome acessível.
+ */
+export const RotuloOculto: Story = {
+  name: 'Composição · rótulo oculto na linha de filtro',
+  args: {
+    label: 'Setor',
+    placeholder: 'Todos os setores',
+    rotuloOculto: true,
+    options: [
+      { value: 'regulacao', label: 'Regulação' },
+      { value: 'tfd', label: 'TFD' },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    // O nome acessível sobrevive: o leitor de tela ainda ouve "Setor".
+    const campo = canvas.getByLabelText('Setor');
+    await expect(campo).toBeInTheDocument();
+
+    // O rótulo existe no DOM, mas não ocupa a linha: caixa de 1px recortada.
+    const rotulo = canvasElement.querySelector<HTMLLabelElement>('label[for]')!;
+    await expect(rotulo).toHaveClass('citie-visualmente-oculto');
+    const caixa = rotulo.getBoundingClientRect();
+    await expect(caixa.height).toBeLessThanOrEqual(1);
+    await expect(caixa.width).toBeLessThanOrEqual(1);
+
+    // Sem rótulo pintado, o campo é a primeira linha do bloco: o topo do
+    // select coincide com o topo do `.citie-field` (sem deslocamento de 28px).
+    const bloco = canvasElement.querySelector('.citie-field')!.getBoundingClientRect();
+    await expect(Math.round(campo.getBoundingClientRect().top - bloco.top)).toBe(0);
+  },
+};
