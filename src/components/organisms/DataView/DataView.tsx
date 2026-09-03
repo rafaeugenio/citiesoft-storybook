@@ -62,6 +62,13 @@ export interface DataViewProps {
   vazioPorFiltro?: VazioDataView;
   /** Substantivo contado na região de contagem. */
   unidadeDeContagem?: { singular: string; plural: string };
+  /**
+   * Campo de busca da barra, à direita do alternador de visão e antes da
+   * ordenação, como na captura de produtos do kit. O DataView só posiciona;
+   * quem filtra é o consumidor, que devolve `itens` já recortados e marca
+   * `filtroAtivo` para o vazio certo aparecer.
+   */
+  busca?: ReactNode;
   onVisaoChange?: (visao: VisaoDataView) => void;
   onOrdenacaoChange?: (ordenacao: string) => void;
 }
@@ -187,6 +194,7 @@ export function DataView({
   vazioEstrutural,
   vazioPorFiltro,
   unidadeDeContagem = { singular: 'resultado', plural: 'resultados' },
+  busca,
   onVisaoChange,
   onOrdenacaoChange,
 }: DataViewProps) {
@@ -230,28 +238,32 @@ export function DataView({
 
   return (
     <section className="citie-dataview" aria-label={legenda}>
+      {/* Barra do kit: alternador de visão à esquerda; busca e ordenação à direita. */}
       <div className="citie-dataview__cabecalho">
-        {ordenacoes && ordenacoes.length > 0 ? (
-          <div className="citie-dataview__ordenacao">
-            <Select
-              label="Ordenar por"
-              size="small"
-              placeholder="Ordem padrão"
-              options={ordenacoes.map(({ value, label }) => ({ value, label }))}
-              defaultValue={ordenacao}
-              onChange={(evento) => trocarOrdenacao(evento.target.value)}
-            />
-          </div>
-        ) : (
-          <span />
-        )}
-
         <SelectButton
           legend="Visualização dos resultados"
           options={OPCOES_DE_VISAO}
           defaultValue={[visaoInicial]}
           onChangeValue={trocarVisao}
         />
+
+        {busca || (ordenacoes && ordenacoes.length > 0) ? (
+          <div className="citie-dataview__controles">
+            {busca ? <div className="citie-dataview__busca">{busca}</div> : null}
+            {ordenacoes && ordenacoes.length > 0 ? (
+              <div className="citie-dataview__ordenacao">
+                <Select
+                  label="Ordenar por"
+                  size="normal"
+                  placeholder="Ordem padrão"
+                  options={ordenacoes.map(({ value, label }) => ({ value, label }))}
+                  defaultValue={ordenacao}
+                  onChange={(evento) => trocarOrdenacao(evento.target.value)}
+                />
+              </div>
+            ) : null}
+          </div>
+        ) : null}
       </div>
 
       <p className="citie-dataview__contagem" role="status" aria-live="polite">

@@ -19,29 +19,31 @@
   justify-content: space-between;
   gap: var(--citie-spacing-2);
   font-size: var(--citie-font-size-body-md);
-  font-weight: 500;
+  font-weight: var(--citie-font-weight-action);
   color: var(--citie-text-primary);
 }
 
 .citie-picklist__contagem {
   font-size: var(--citie-font-size-body-sm);
   font-weight: 400;
+  font-variant-numeric: tabular-nums;
   /* Texto auxiliar precisa ser lido: nunca a cor de desabilitado. */
   color: var(--citie-text-secondary);
 }
 
+/* Cada painel é um cartão do kit: raio 10, borda padrão e shadow-sm, como no OrderList. */
 .citie-picklist__lista {
   overflow-y: auto;
   background-color: var(--citie-background-surface);
-  border: 1px solid var(--citie-form-field-border);
-  border-radius: var(--citie-radius-md);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-lg);
+  box-shadow: var(--citie-shadow-raised);
   padding: var(--citie-spacing-1);
 }
 
 .citie-picklist__lista:focus-visible {
   outline: none;
   box-shadow: var(--citie-state-focus-ring);
-  border-color: var(--citie-brand-primary);
 }
 
 .citie-picklist__lista[aria-disabled='true'] {
@@ -68,37 +70,54 @@
   color: var(--citie-text-secondary);
 }
 
+/* Item de 36, padding 8, raio 6 dentro do cartão de 10. */
 .citie-picklist__item {
   display: flex;
   align-items: flex-start;
   gap: var(--citie-spacing-2);
-  padding: var(--citie-spacing-2) var(--citie-spacing-3);
-  border-radius: var(--citie-radius-sm);
+  min-height: var(--citie-control-height-normal);
+  box-sizing: border-box;
+  padding: var(--citie-spacing-2);
+  border-radius: var(--citie-radius-md);
   font-size: var(--citie-font-size-body-md);
+  line-height: var(--citie-linha-da-celula);
   color: var(--citie-text-base);
   cursor: pointer;
+  transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-picklist__item:hover {
-  background-color: var(--citie-state-hover-overlay);
+  background-color: var(--citie-accent);
 }
 
-.citie-picklist__item--selecionado {
-  background-color: var(--citie-state-selected);
+/* Selecionado no accent forte com rótulo text-primary; a marca acompanha. */
+.citie-picklist__item--selecionado,
+.citie-picklist__item--selecionado:hover {
+  background-color: var(--citie-accent-forte);
   color: var(--citie-text-primary);
 }
 
-/* Item ativo pelo teclado: contorno, já que a cor de fundo indica seleção. */
+/* Item ativo pelo teclado: contorno de 2px, já que a cor de fundo indica seleção. */
 .citie-picklist__item--ativo {
-  outline: 2px solid var(--citie-brand-primary);
-  outline-offset: -2px;
+  outline: var(--citie-espessura-indicador) solid var(--citie-brand-primary);
+  outline-offset: calc(-1 * var(--citie-espessura-indicador));
 }
 
 .citie-picklist__marca {
   flex: none;
-  width: 1em;
+  width: var(--citie-icone-de-linha);
   color: var(--citie-brand-primary);
   font-weight: var(--citie-font-weight-action);
+}
+
+.citie-picklist__item--selecionado .citie-picklist__marca {
+  color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-picklist__item {
+    transition: none;
+  }
 }
 
 .citie-picklist__texto {
@@ -114,6 +133,11 @@
 .citie-picklist__item-descricao {
   font-size: var(--citie-font-size-body-sm);
   color: var(--citie-text-secondary);
+}
+
+/* Sobre o accent forte o text-secondary mede 3,57:1; sobe para text-base (7,99:1). */
+.citie-picklist__item--selecionado .citie-picklist__item-descricao {
+  color: var(--citie-text-base);
 }
 
 .citie-picklist__controles {

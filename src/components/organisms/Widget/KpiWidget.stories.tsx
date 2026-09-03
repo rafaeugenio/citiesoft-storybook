@@ -124,13 +124,13 @@ export const KpiVazio: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Valor vira traço e a variação some, porque não há base de comparação.',
+        story: 'Valor vira o texto "Sem dado" e a variação some, porque não há base de comparação.',
       },
     },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByText('—')).toBeVisible();
+    await expect(canvas.getByText('Sem dado')).toBeVisible();
     await expect(canvas.queryByText(/acima de/)).toBeNull();
   },
 };

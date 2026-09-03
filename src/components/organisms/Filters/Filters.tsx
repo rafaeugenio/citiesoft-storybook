@@ -1,5 +1,45 @@
 import type { ReactNode } from 'react';
+import { Badge } from '../../atoms/Badge/Badge';
+import { Button } from '../../atoms/Button/Button';
 import './Filters.css';
+
+export interface BotaoDeFiltroProps {
+  /** Nome da dimensão: "Situação", "Prioridade". */
+  rotulo: string;
+  /** Quantos valores da dimensão estão aplicados. Zero esconde o contador. */
+  contador?: number;
+  aberto?: boolean;
+  onClick?: () => void;
+}
+
+/**
+ * Botão de dimensão da barra do kit ("Status", "Priority"): outline de 32 com
+ * chevron de 16 e, com filtro aplicado, o contador em badge secondary. Abre o
+ * painel de valores da dimensão; o painel em si é do consumidor (Select,
+ * MultiSelect ou popover).
+ */
+export function BotaoDeFiltro({ rotulo, contador = 0, aberto = false, onClick }: BotaoDeFiltroProps) {
+  return (
+    <Button variant="outline" size="small" aria-expanded={aberto} onClick={onClick}>
+      {rotulo}
+      {contador > 0 ? <Badge value={contador} severity="secondary" size="sm" /> : null}
+      <svg
+        className="citie-filtros__dimensao-chevron"
+        viewBox="0 0 16 16"
+        width="16"
+        height="16"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="m4 6 4 4 4-4" />
+      </svg>
+    </Button>
+  );
+}
 
 export type DimensaoDoFiltro = 'select' | 'data' | 'busca';
 
@@ -68,7 +108,7 @@ export function FilterBar({
                 aria-label={`Remover filtro ${filtro.rotulo}: ${filtro.valor}`}
                 onClick={() => onRemover?.(filtro.id)}
               >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" aria-hidden="true">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
                   <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
                 </svg>
               </button>

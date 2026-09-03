@@ -1,6 +1,6 @@
 .citie-dialog,
 .citie-drawer {
-  /* A borda entra na medida: 640 de largura são 640, e não 642. */
+  /* A borda entra na medida de 640; sem isto o diálogo media 642. */
   box-sizing: border-box;
   padding: 0;
   /* Borda de 1px como no kit: no escuro ela é o que separa a camada do véu. */

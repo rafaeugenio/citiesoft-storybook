@@ -1,3 +1,10 @@
+/**
+ * Linha do tempo na anatomia da evolução do prontuário do Sismental: marcador
+ * circular vazado de 12 com traço de 2 na tinta de marca, fio de 1px em
+ * `border-default` ligando os marcadores, título 14 Medium em marca com o
+ * carimbo em mono 12 muted alinhado à direita, autoria 12 abaixo e o corpo em
+ * cartão de citação (fundo subtle, raio 10, borda).
+ */
 .citie-timeline {
   list-style: none;
   margin: 0;
@@ -12,12 +19,12 @@
   padding-block-end: var(--citie-spacing-5);
 }
 
-/* Trilha vertical de 1px, alinhada ao centro do marcador. */
+/* Fio de 1px alinhado ao centro do marcador de 12, começando logo abaixo dele. */
 .citie-timeline__item::before {
   content: '';
   position: absolute;
-  inset-block: 16px 0;
-  inset-inline-start: 7px;
+  inset-block: calc(var(--citie-spacing-1) + var(--citie-marcador-da-linha-do-tempo)) 0;
+  inset-inline-start: calc(var(--citie-marcador-da-linha-do-tempo) / 2);
   width: 1px;
   background-color: var(--citie-border-default);
 }
@@ -34,93 +41,133 @@
   padding-block-end: var(--citie-spacing-3);
 }
 
-/* Realce lateral: exclusão em danger, ação automática em info. */
+/**
+ * Realce lateral por estado: exclusão em danger, ação automática em info. A
+ * faixa codifica estado e vem com o rótulo de estado no nome acessível do
+ * item, então a informação nunca depende só da cor (exceção do LAY-004).
+ * Com o realce, o fio da linha do tempo se desloca junto com o marcador.
+ */
 .citie-timeline__item--critico,
 .citie-timeline__item--sistema {
   padding-inline-start: var(--citie-spacing-3);
-  border-inline-start: 3px solid var(--citie-danger-emphasis);
+  border-inline-start: var(--citie-espessura-do-trilho) solid var(--citie-danger-strong);
+}
+
+.citie-timeline__item--critico::before,
+.citie-timeline__item--sistema::before {
+  inset-inline-start: calc(var(--citie-spacing-3) + var(--citie-marcador-da-linha-do-tempo) / 2);
 }
 
 .citie-timeline__item--sistema {
-  border-inline-start-color: var(--citie-info-emphasis);
+  border-inline-start-color: var(--citie-brand-primary);
 }
 
+/**
+ * Marcador: anel de 12 com traço de 2. O estado muda a tinta do traço e, no
+ * atual e no concluído, o preenchimento; o nome do estado vai no texto oculto
+ * do título. Sem símbolo dentro: em 12px nenhum glifo é legível, e o glifo em
+ * texto que ficava aqui mudava de desenho com a fonte.
+ *
+ * Tintas do traço, medidas sobre a superfície clara: brand-primary 5,45:1,
+ * warning-strong 5,02:1, danger-strong 6,47:1, todas acima do 3:1 de
+ * componente de interface. O futuro fica em border-strong (1,43:1) de
+ * propósito: é o estado "ainda sem nada", e o rótulo oculto o nomeia.
+ */
 .citie-timeline__marcador {
   position: relative;
   z-index: 1;
   flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 15px;
-  height: 15px;
-  margin-block-start: 2px;
+  box-sizing: border-box;
+  width: var(--citie-marcador-da-linha-do-tempo);
+  height: var(--citie-marcador-da-linha-do-tempo);
+  margin-block-start: var(--citie-spacing-1);
   border-radius: var(--citie-radius-full);
-  font-size: 9px;
-  font-weight: var(--citie-font-weight-display);
-  color: #ffffff;
-  background-color: var(--citie-border-strong);
+  background-color: var(--citie-background-surface);
+  border: var(--citie-espessura-indicador) solid var(--citie-brand-primary);
 }
 
 .citie-timeline__marcador--concluido {
-  background-color: var(--citie-success-emphasis);
+  background-color: var(--citie-brand-primary);
 }
 
+/* Etapa atual: anel de marca com o halo de foco atrás, para se achar na varredura. */
 .citie-timeline__marcador--atual {
   background-color: var(--citie-brand-primary);
-  box-shadow: var(--citie-state-focus-ring);
+  box-shadow: 0 0 0 var(--citie-espessura-indicador) var(--citie-background-surface), var(--citie-state-focus-ring);
 }
 
 .citie-timeline__marcador--pendente {
-  background-color: var(--citie-warning-emphasis);
+  border-color: var(--citie-warning-strong);
 }
 
 .citie-timeline__marcador--bloqueado {
-  background-color: var(--citie-danger-emphasis);
+  border-color: var(--citie-danger-strong);
 }
 
 .citie-timeline__marcador--cancelado {
-  background-color: var(--citie-state-disabled-text);
+  border-color: var(--citie-state-disabled-text);
 }
 
 .citie-timeline__marcador--informacional {
-  background-color: var(--citie-info-emphasis);
+  border-color: var(--citie-brand-primary);
+  border-style: dashed;
 }
 
-/* Etapa futura fica vazia, só contorno. */
+/* Etapa futura fica vazia, só o contorno neutro. */
 .citie-timeline__marcador--futuro {
-  background-color: transparent;
-  border: 1px solid var(--citie-border-strong);
+  border-color: var(--citie-border-strong);
 }
 
 .citie-timeline__conteudo {
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
-  gap: var(--citie-spacing-1);
+  gap: var(--citie-spacing-0-5);
   min-width: 0;
 }
 
-.citie-timeline__data {
-  font-size: var(--citie-font-size-body-xs);
-  color: var(--citie-text-secondary);
+/* Título à esquerda e carimbo à direita na mesma linha, como no Sismental. */
+.citie-timeline__linha-de-titulo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--citie-spacing-3);
 }
 
+/* Título 14 Medium em marca: 5,45:1 no claro, 5,30:1 no escuro. */
 .citie-timeline__titulo {
   margin: 0;
   font-size: var(--citie-font-size-body-md);
   font-weight: var(--citie-font-weight-action);
-  color: var(--citie-text-primary);
+  line-height: var(--citie-linha-da-celula);
+  color: var(--citie-brand-primary);
+}
+
+/* Carimbo em mono 12 muted, dígitos tabulares, sem quebra. */
+.citie-timeline__data {
+  flex: none;
+  font-family: var(--citie-font-mono);
+  font-size: var(--citie-font-size-body-xs);
+  line-height: var(--citie-linha-mini);
+  font-variant-numeric: tabular-nums;
+  color: var(--citie-text-secondary);
+  white-space: nowrap;
 }
 
 .citie-timeline__ator {
   margin: 0;
   font-size: var(--citie-font-size-body-xs);
+  line-height: var(--citie-linha-mini);
   color: var(--citie-text-secondary);
+}
+
+.citie-timeline__ator-nome {
+  color: var(--citie-text-base);
 }
 
 .citie-timeline__alternar {
   align-self: flex-start;
-  margin-block-start: var(--citie-spacing-2);
+  margin-block-start: var(--citie-spacing-1);
   padding: 0;
   font-family: inherit;
   font-size: var(--citie-font-size-body-sm);
@@ -128,18 +175,19 @@
   color: var(--citie-brand-primary);
   background: none;
   border: none;
+  border-radius: var(--citie-radius-sm);
   cursor: pointer;
 }
 
 .citie-timeline__alternar:focus-visible {
   outline: none;
   box-shadow: var(--citie-state-focus-ring);
-  border-radius: var(--citie-radius-sm);
 }
 
- /**
- * Bloco aninhado dentro do item: raio menor que o do contêiner que o abriga,
- * conforme a hierarquia de camada da seção 3.
+/**
+ * Cartão de citação: o corpo do registro em fundo subtle com borda e o
+ * `radius` de 10, como a evolução transcrita do Sismental. Texto 13/20 em
+ * text-base (10,11:1 sobre o subtle).
  *
  * A abertura é acordeão, então usa `motion-padrao` com `easing-entrada`. O
  * movimento acompanha uma mudança que também se lê parada (o botão troca de
@@ -150,8 +198,10 @@
   padding: var(--citie-spacing-3);
   background-color: var(--citie-background-subtle);
   border: 1px solid var(--citie-border-default);
-  border-radius: var(--citie-radius-md);
+  border-radius: var(--citie-radius-lg);
   font-size: var(--citie-font-size-body-sm);
+  line-height: var(--citie-linha-da-celula);
+  color: var(--citie-text-base);
   animation: citie-timeline-detalhe var(--citie-motion-padrao) var(--citie-easing-entrada) both;
 }
 
@@ -183,7 +233,7 @@
 /* ---------- Audit log ---------- */
 
 .citie-audit__mudanca {
-  margin: 0 0 4px;
+  margin: 0 0 var(--citie-spacing-1);
   font-size: var(--citie-font-size-body-sm);
   color: var(--citie-text-base);
 }

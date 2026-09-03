@@ -4,6 +4,7 @@ import { DataView, type ItemDataView, type OrdenacaoDataView } from './DataView'
 import { Avatar } from '../../atoms/Avatar/Avatar';
 import { StatusIndicator, type EstadoDeFluxo } from '../../atoms/Badge/Badge';
 import { Button } from '../../atoms/Button/Button';
+import { Search } from '../../molecules/Search/Search';
 
 interface Unidade {
   codigo: string;
@@ -69,6 +70,7 @@ const meta = {
     legenda: 'Unidades de saúde',
     itens: ITENS,
     ordenacoes: ORDENACOES,
+    busca: <Search label="Buscar unidade" placeholder="Buscar unidade" size="md" />,
     itensPorPagina: 4,
     unidadeDeContagem: { singular: 'unidade', plural: 'unidades' },
     vazioEstrutural: {

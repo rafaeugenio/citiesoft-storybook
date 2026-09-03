@@ -1,14 +1,9 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode, type TransitionEvent } from 'react';
 import { Button } from '../../atoms/Button/Button';
 import { MOTION_RAPIDO_NOMINAL_MS, tempoCssEmMs } from './tempoCss';
-/**
- * O mapa de severidade (`.citie-sev--*`, que define `--sev-fg` e `--sev-bg`)
- * vive em Badge.css. No build estático o CSS é dividido por story, e uma
- * página que só carrega Feedback ficava sem o mapa: o ícone e a aresta caíam
- * na tinta de texto. A importação garante o mapa onde o Toast e a Message
- * forem usados sozinhos.
- */
-import '../../atoms/Badge/Badge.css';
+/* Mapa de severidade (`.citie-sev--*`) antes da folha própria: o build divide
+   CSS por story, e uma página só com Feedback ficava sem `--sev-fg`. */
+import '../../../tokens/severidade.css';
 import './Feedback.css';
 
 export type SeveridadeFeedback =

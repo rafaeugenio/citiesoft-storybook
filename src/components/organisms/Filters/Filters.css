@@ -1,3 +1,9 @@
+/**
+ * Barra de filtro na anatomia do kit e do Sismental: os controles ficam numa
+ * linha de 36 (campo de busca largo, botões outline de dimensão com chevron e
+ * contador, "Redefinir" em ghost, ou busca mais selects), e os filtros ativos
+ * viram badges de contorno com botão de fechar logo abaixo.
+ */
 .citie-filtros {
   display: flex;
   flex-direction: column;
@@ -25,7 +31,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--citie-spacing-2);
-  animation: citie-filtros-entrada 200ms ease-out;
+  animation: citie-filtros-entrada var(--citie-motion-padrao) var(--citie-easing-entrada);
 }
 
 @keyframes citie-filtros-entrada {
@@ -34,53 +40,76 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .citie-filtros__chips {
-    animation: none;
-  }
+/**
+ * Botão de dimensão do kit ("Status", "Priority"): outline de 32 com o rótulo,
+ * o chevron de 16 e, com filtro aplicado, o contador em badge secondary. O
+ * botão em si é o `Button` outline small; aqui só o miolo.
+ */
+.citie-filtros__dimensao-chevron {
+  inline-size: var(--citie-icone-de-linha);
+  block-size: var(--citie-icone-de-linha);
+  color: var(--citie-text-secondary);
 }
 
+/**
+ * Filtro ativo como badge de contorno do kit com botão de fechar: 24 de
+ * altura (o mínimo do alvo de remoção, WCAG 2.5.8), padding 2 × 8, gap 4, raio
+ * 10, borda 1px em border-strong e texto 12 SemiBold. O rótulo da dimensão
+ * fica muted e o valor em text-primary (16,29:1 sobre a superfície no claro,
+ * 15,94:1 no escuro), no lugar do brand-primary sobre brand-subtle que media
+ * 4,39:1 no escuro.
+ */
 .citie-filtro-chip {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  height: 28px;
-  padding: var(--citie-spacing-1) var(--citie-spacing-2);
-  font-size: var(--citie-font-size-body-sm);
-  background-color: var(--citie-brand-subtle);
-  border: 1px solid color-mix(in srgb, var(--citie-brand-primary) 25%, transparent);
-  border-radius: var(--citie-radius-full);
+  gap: var(--citie-spacing-1);
+  height: var(--citie-control-height-mini);
+  box-sizing: border-box;
+  padding: var(--citie-spacing-0-5) var(--citie-spacing-2);
+  font-size: var(--citie-font-size-body-xs);
+  font-weight: var(--citie-font-weight-title);
+  line-height: var(--citie-linha-mini);
+  color: var(--citie-text-primary);
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-border-strong);
+  border-radius: var(--citie-radius-lg);
+  transition:
+    background-color var(--citie-motion-rapido) var(--citie-easing-padrao),
+    border-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-filtro-chip:hover {
-  background-color: var(--citie-state-hover-overlay);
-  border-color: var(--citie-brand-primary);
+  background-color: var(--citie-accent);
+  border-color: var(--citie-form-field-border-hover);
 }
 
 .citie-filtro-chip__rotulo {
   color: var(--citie-text-secondary);
-  font-weight: 500;
+  font-weight: var(--citie-font-weight-action);
 }
 
 .citie-filtro-chip__valor {
-  color: var(--citie-brand-primary);
-  font-weight: 600;
+  color: inherit;
 }
 
+/* O botão de fechar ocupa a altura inteira do chip: alvo de 24 × 24 com o X de 12. */
 .citie-filtro-chip__remover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  /* Área de clique mínima de 24x24 com o ícone de 12px. */
-  min-width: 24px;
-  min-height: 24px;
-  margin-inline-end: -6px;
+  inline-size: var(--citie-touch-target-min);
+  block-size: var(--citie-touch-target-min);
+  margin-inline-end: calc(-1 * var(--citie-spacing-2));
   padding: 0;
-  color: var(--citie-brand-primary);
+  color: var(--citie-text-secondary);
   background: none;
   border: none;
-  border-radius: var(--citie-radius-full);
+  border-radius: var(--citie-radius-lg);
   cursor: pointer;
+}
+
+.citie-filtro-chip__remover:hover {
+  color: var(--citie-text-primary);
 }
 
 .citie-filtro-chip__remover:focus-visible {
@@ -88,30 +117,45 @@
   box-shadow: var(--citie-state-focus-ring);
 }
 
+/* "Limpar tudo" e "Redefinir" em ghost: só o rótulo, hover no accent. */
 .citie-filtros__limpar {
+  height: var(--citie-control-height-mini);
   padding: 0 var(--citie-spacing-2);
   font-family: inherit;
   font-size: var(--citie-font-size-body-sm);
-  font-weight: 500;
-  color: var(--citie-text-secondary);
+  font-weight: var(--citie-font-weight-action);
+  color: var(--citie-text-base);
   background: none;
   border: none;
-  text-decoration: underline;
+  border-radius: var(--citie-radius-md);
   cursor: pointer;
+  transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-filtros__limpar:hover {
+  background-color: var(--citie-accent);
   color: var(--citie-text-primary);
 }
 
 .citie-filtros__limpar:focus-visible {
   outline: none;
   box-shadow: var(--citie-state-focus-ring);
-  border-radius: var(--citie-radius-sm);
 }
 
 .citie-filtros__contagem {
   margin: 0;
   font-size: var(--citie-font-size-body-sm);
   color: var(--citie-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-filtros__chips {
+    animation: none;
+  }
+
+  .citie-filtro-chip,
+  .citie-filtros__limpar {
+    transition: none;
+  }
 }

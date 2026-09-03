@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import type { Severidade } from '../../atoms/Badge/Badge';
-import '../../atoms/Badge/Badge.css';
+import '../../../tokens/severidade.css';
 import './Avatar.css';
 
 export type TamanhoAvatar = 'normal' | 'large' | 'x-large';

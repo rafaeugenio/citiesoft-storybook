@@ -1,8 +1,8 @@
 import './ValorMonetario.css';
-// O mapa canônico de severidade mora em Badge.css. A linha de reembolso consome
+// O mapa canônico de severidade mora em src/tokens/severidade.css. A linha de reembolso consome
 // `--sev-fg` de lá em vez de repetir a escolha de cor aqui, para o âmbar de
 // atenção continuar saindo de um lugar só.
-import '../../atoms/Badge/Badge.css';
+import '../../../tokens/severidade.css';
 
 const formatadorMoeda = new Intl.NumberFormat('pt-BR', {
   style: 'currency',

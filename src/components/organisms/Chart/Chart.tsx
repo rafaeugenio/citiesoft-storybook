@@ -79,6 +79,40 @@ export interface Serie {
   valores: number[];
 }
 
+/**
+ * Dica de dado: a categoria apontada e o valor de cada série nela, na pele
+ * invertida do Tooltip. Posição em pixel da moldura, que coincide com a
+ * unidade do viewBox porque ele é medido (ver `useLarguraMedida`).
+ */
+interface DicaDeDado {
+  x: number;
+  y: number;
+  categoria: string;
+  linhas: { rotulo: string; cor: string; valor: string }[];
+}
+
+function useDica() {
+  const [dica, setDica] = useState<DicaDeDado | null>(null);
+  return { dica, mostrar: setDica, esconder: () => setDica(null) };
+}
+
+function Dica({ dica }: { dica: DicaDeDado | null }) {
+  if (!dica) return null;
+  return (
+    // O conteúdo já está no `<title>` de cada marca; a dica é reforço visual.
+    <div className="citie-chart__dica" aria-hidden="true" style={{ left: dica.x, top: dica.y }}>
+      <span className="citie-chart__dica-categoria">{dica.categoria}</span>
+      {dica.linhas.map((linha) => (
+        <span key={linha.rotulo} className="citie-chart__dica-serie">
+          <span className="citie-chart__marcador" style={{ backgroundColor: linha.cor }} />
+          {linha.rotulo}
+          <span className="citie-chart__dica-valor">{linha.valor}</span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
 export type EstadoDoGrafico = 'default' | 'carregando' | 'vazio' | 'erro';
 
 export interface ChartProps {
@@ -202,72 +236,93 @@ export function BarChart(props: ChartProps) {
   const grupoLargura = areaLargura / categorias.length;
   // 2px de respiro entre barras adjacentes, conforme a spec de marcas.
   const barraLargura = Math.max(4, (grupoLargura - 12) / series.length - 2);
+  const { dica, mostrar, esconder } = useDica();
+
+  /** A dica de um grupo mostra todas as séries da categoria, no topo da barra mais alta. */
+  const dicaDoGrupo = (indiceCategoria: number): DicaDeDado => {
+    const maior = Math.max(...series.map((serie) => serie.valores[indiceCategoria]));
+    return {
+      x: margem.esquerda + grupoLargura * (indiceCategoria + 0.5),
+      y: margem.topo + areaAltura * (1 - maior / maximo),
+      categoria: categorias[indiceCategoria],
+      linhas: series.map((serie, indiceSerie) => ({
+        rotulo: serie.rotulo,
+        cor: paleta[indiceSerie % paleta.length],
+        valor: formatar(serie.valores[indiceCategoria]),
+      })),
+    };
+  };
 
   return (
     <ChartCard {...props}>
-      <svg
-        ref={referencia}
-        className="citie-chart__area"
-        viewBox={`0 0 ${largura} ${altura}`}
-        role="img"
-        aria-label={`${props.titulo}. Consulte a tabela alternativa para os valores exatos.`}
-      >
-        {[0, 0.25, 0.5, 0.75, 1].map((fracao) => {
-          const y = margem.topo + areaAltura * (1 - fracao);
-          return (
-            <g key={fracao}>
-              <line
-                x1={margem.esquerda}
-                x2={largura - margem.direita}
-                y1={y}
-                y2={y}
-                className="citie-chart__grade"
-              />
-              <text x={margem.esquerda - 8} y={y + 4} className="citie-chart__eixo" textAnchor="end">
-                {formatar(Math.round(maximo * fracao))}
+      <div className="citie-chart__moldura">
+        <svg
+          ref={referencia}
+          className="citie-chart__area"
+          viewBox={`0 0 ${largura} ${altura}`}
+          role="img"
+          aria-label={`${props.titulo}. Consulte a tabela alternativa para os valores exatos.`}
+          onPointerLeave={esconder}
+        >
+          {[0, 0.25, 0.5, 0.75, 1].map((fracao) => {
+            const y = margem.topo + areaAltura * (1 - fracao);
+            return (
+              <g key={fracao}>
+                <line
+                  x1={margem.esquerda}
+                  x2={largura - margem.direita}
+                  y1={y}
+                  y2={y}
+                  className={`citie-chart__grade${fracao === 0 ? ' citie-chart__grade--base' : ''}`}
+                />
+                <text x={margem.esquerda - 8} y={y + 4} className="citie-chart__eixo" textAnchor="end">
+                  {formatar(Math.round(maximo * fracao))}
+                </text>
+              </g>
+            );
+          })}
+
+          {categorias.map((categoria, indiceCategoria) => (
+            <g key={categoria}>
+              {series.map((serie, indiceSerie) => {
+                const valor = serie.valores[indiceCategoria];
+                const alturaBarra = (valor / maximo) * areaAltura;
+                const x =
+                  margem.esquerda +
+                  grupoLargura * indiceCategoria +
+                  6 +
+                  indiceSerie * (barraLargura + 2);
+
+                return (
+                  <path
+                    key={serie.rotulo}
+                    className="citie-chart__barra"
+                    d={caminhoDaBarra(
+                      x,
+                      margem.topo + areaAltura - alturaBarra,
+                      barraLargura,
+                      alturaBarra,
+                    )}
+                    fill={paleta[indiceSerie % paleta.length]}
+                    onPointerEnter={() => mostrar(dicaDoGrupo(indiceCategoria))}
+                  >
+                    <title>{`${serie.rotulo} · ${categoria}: ${formatar(valor)}`}</title>
+                  </path>
+                );
+              })}
+              <text
+                x={margem.esquerda + grupoLargura * (indiceCategoria + 0.5)}
+                y={altura - 10}
+                className="citie-chart__eixo"
+                textAnchor="middle"
+              >
+                {categoria}
               </text>
             </g>
-          );
-        })}
-
-        {categorias.map((categoria, indiceCategoria) => (
-          <g key={categoria}>
-            {series.map((serie, indiceSerie) => {
-              const valor = serie.valores[indiceCategoria];
-              const alturaBarra = (valor / maximo) * areaAltura;
-              const x =
-                margem.esquerda +
-                grupoLargura * indiceCategoria +
-                6 +
-                indiceSerie * (barraLargura + 2);
-
-              return (
-                <path
-                  key={serie.rotulo}
-                  className="citie-chart__barra"
-                  d={caminhoDaBarra(
-                    x,
-                    margem.topo + areaAltura - alturaBarra,
-                    barraLargura,
-                    alturaBarra,
-                  )}
-                  fill={paleta[indiceSerie % paleta.length]}
-                >
-                  <title>{`${serie.rotulo} · ${categoria}: ${formatar(valor)}`}</title>
-                </path>
-              );
-            })}
-            <text
-              x={margem.esquerda + grupoLargura * (indiceCategoria + 0.5)}
-              y={altura - 10}
-              className="citie-chart__eixo"
-              textAnchor="middle"
-            >
-              {categoria}
-            </text>
-          </g>
-        ))}
-      </svg>
+          ))}
+        </svg>
+        <Dica dica={dica} />
+      </div>
     </ChartCard>
   );
 }
@@ -287,90 +342,109 @@ export function LineChart(props: ChartProps) {
   const posX = (indice: number) =>
     margem.esquerda + (areaLargura / Math.max(1, categorias.length - 1)) * indice;
   const posY = (valor: number) => margem.topo + areaAltura * (1 - valor / maximo);
+  const { dica, mostrar, esconder } = useDica();
+
+  /** A dica de um ponto mostra todas as séries da categoria, sobre o ponto mais alto. */
+  const dicaDaCategoria = (indice: number): DicaDeDado => ({
+    x: posX(indice),
+    y: Math.min(...series.map((serie) => posY(serie.valores[indice]))),
+    categoria: categorias[indice],
+    linhas: series.map((serie, indiceSerie) => ({
+      rotulo: serie.rotulo,
+      cor: paleta[indiceSerie % paleta.length],
+      valor: formatar(serie.valores[indice]),
+    })),
+  });
 
   return (
     <ChartCard {...props}>
-      <svg
-        ref={referencia}
-        className="citie-chart__area"
-        viewBox={`0 0 ${largura} ${altura}`}
-        role="img"
-        aria-label={`${props.titulo}. Consulte a tabela alternativa para os valores exatos.`}
-      >
-        {[0, 0.5, 1].map((fracao) => {
-          const y = margem.topo + areaAltura * (1 - fracao);
-          return (
-            <g key={fracao}>
-              <line
-                x1={margem.esquerda}
-                x2={largura - margem.direita}
-                y1={y}
-                y2={y}
-                className="citie-chart__grade"
-              />
-              <text x={margem.esquerda - 8} y={y + 4} className="citie-chart__eixo" textAnchor="end">
-                {formatar(Math.round(maximo * fracao))}
-              </text>
-            </g>
-          );
-        })}
-
-        {series.map((serie, indiceSerie) => {
-          const cor = paleta[indiceSerie % paleta.length];
-          const caminho = serie.valores
-            .map((valor, indice) => `${indice === 0 ? 'M' : 'L'} ${posX(indice)} ${posY(valor)}`)
-            .join(' ');
-
-          return (
-            <g key={serie.rotulo}>
-              {/* Linha de 2px, nunca 1px nem acima de 3px. */}
-              <path
-                className="citie-chart__serie"
-                d={caminho}
-                fill="none"
-                stroke={cor}
-                strokeWidth="2"
-                strokeLinejoin="round"
-                /* Extremidade de dado arredondada, seção 8 da spec estrutural. */
-                strokeLinecap="round"
-              />
-              {serie.valores.map((valor, indice) => (
-                <circle
-                  key={`${serie.rotulo}-${indice}`}
-                  cx={posX(indice)}
-                  cy={posY(valor)}
-                  r="4"
-                  fill={cor}
-                >
-                  <title>{`${serie.rotulo} · ${categorias[indice]}: ${formatar(valor)}`}</title>
-                </circle>
-              ))}
-              {/* Rótulo direto: com até 4 séries a identidade não depende da legenda. */}
-              {series.length <= 4 ? (
-                <text
-                  x={posX(serie.valores.length - 1) + 8}
-                  y={posY(serie.valores[serie.valores.length - 1]) + 4}
-                  className="citie-chart__rotulo-direto"
-                >
-                  {serie.rotulo}
+      <div className="citie-chart__moldura">
+        <svg
+          ref={referencia}
+          className="citie-chart__area"
+          viewBox={`0 0 ${largura} ${altura}`}
+          role="img"
+          aria-label={`${props.titulo}. Consulte a tabela alternativa para os valores exatos.`}
+          onPointerLeave={esconder}
+        >
+          {[0, 0.5, 1].map((fracao) => {
+            const y = margem.topo + areaAltura * (1 - fracao);
+            return (
+              <g key={fracao}>
+                <line
+                  x1={margem.esquerda}
+                  x2={largura - margem.direita}
+                  y1={y}
+                  y2={y}
+                  className={`citie-chart__grade${fracao === 0 ? ' citie-chart__grade--base' : ''}`}
+                />
+                <text x={margem.esquerda - 8} y={y + 4} className="citie-chart__eixo" textAnchor="end">
+                  {formatar(Math.round(maximo * fracao))}
                 </text>
-              ) : null}
-            </g>
-          );
-        })}
+              </g>
+            );
+          })}
 
-        {categorias.map((categoria, indice) => (
-          <text
-            key={categoria}
-            x={posX(indice)}
-            y={altura - 10}
-            className="citie-chart__eixo"
-            textAnchor="middle"
-          >
-            {categoria}
-          </text>
-        ))}
-      </svg>
+          {series.map((serie, indiceSerie) => {
+            const cor = paleta[indiceSerie % paleta.length];
+            const caminho = serie.valores
+              .map((valor, indice) => `${indice === 0 ? 'M' : 'L'} ${posX(indice)} ${posY(valor)}`)
+              .join(' ');
+
+            return (
+              <g key={serie.rotulo}>
+                {/* Linha de 2px, nunca 1px nem acima de 3px. */}
+                <path
+                  className="citie-chart__serie"
+                  d={caminho}
+                  fill="none"
+                  stroke={cor}
+                  strokeWidth="2"
+                  strokeLinejoin="round"
+                  /* Extremidade de dado arredondada, seção 8 da spec estrutural. */
+                  strokeLinecap="round"
+                />
+                {serie.valores.map((valor, indice) => (
+                  <circle
+                    key={`${serie.rotulo}-${indice}`}
+                    className="citie-chart__ponto"
+                    cx={posX(indice)}
+                    cy={posY(valor)}
+                    r="4"
+                    fill={cor}
+                    onPointerEnter={() => mostrar(dicaDaCategoria(indice))}
+                  >
+                    <title>{`${serie.rotulo} · ${categorias[indice]}: ${formatar(valor)}`}</title>
+                  </circle>
+                ))}
+                {/* Rótulo direto: com até 4 séries a identidade não depende da legenda. */}
+                {series.length <= 4 ? (
+                  <text
+                    x={posX(serie.valores.length - 1) + 8}
+                    y={posY(serie.valores[serie.valores.length - 1]) + 4}
+                    className="citie-chart__rotulo-direto"
+                  >
+                    {serie.rotulo}
+                  </text>
+                ) : null}
+              </g>
+            );
+          })}
+
+          {categorias.map((categoria, indice) => (
+            <text
+              key={categoria}
+              x={posX(indice)}
+              y={altura - 10}
+              className="citie-chart__eixo"
+              textAnchor="middle"
+            >
+              {categoria}
+            </text>
+          ))}
+        </svg>
+        <Dica dica={dica} />
+      </div>
     </ChartCard>
   );
 }
@@ -404,6 +478,27 @@ export function DonutChart({ fatias, ...resto }: DonutProps) {
   const espessura = 26;
   const circunferencia = 2 * Math.PI * raio;
   let acumulado = 0;
+  const { dica, mostrar, esconder } = useDica();
+
+  /**
+   * Na rosca a dica segue o ponteiro, porque a fatia não tem um "topo" onde
+   * ancorar. A posição é lida em pixel da moldura.
+   */
+  const mostrarFatia = (
+    evento: { clientX: number; clientY: number; currentTarget: SVGElement },
+    fatia: { rotulo: string; valor: number },
+    cor: string,
+  ) => {
+    const moldura = evento.currentTarget.closest('.citie-chart__moldura');
+    if (!moldura) return;
+    const caixa = moldura.getBoundingClientRect();
+    mostrar({
+      x: evento.clientX - caixa.left,
+      y: evento.clientY - caixa.top,
+      categoria: fatia.rotulo,
+      linhas: [{ rotulo: `${Math.round((fatia.valor / total) * 100)}%`, cor, valor: formatar(fatia.valor) }],
+    });
+  };
 
   return (
     <ChartCard
@@ -412,11 +507,13 @@ export function DonutChart({ fatias, ...resto }: DonutProps) {
       series={[{ rotulo: 'Total', valores: finais.map((fatia) => fatia.valor) }]}
     >
       <div className="citie-chart__donut-bloco">
+        <div className="citie-chart__moldura">
         <svg
           className="citie-chart__area citie-chart__area--donut"
           viewBox="0 0 200 200"
           role="img"
           aria-label={`${resto.titulo}. Consulte a tabela alternativa para os valores exatos.`}
+          onPointerLeave={esconder}
         >
           {finais.map((fatia, indice) => {
             const fracao = fatia.valor / total;
@@ -425,12 +522,14 @@ export function DonutChart({ fatias, ...resto }: DonutProps) {
               return (
                 <circle
                   key={fatia.rotulo}
+                  className="citie-chart__fatia"
                   cx="100"
                   cy="100"
                   r={raio}
                   fill="none"
                   stroke={paleta[indice % paleta.length]}
                   strokeWidth={espessura}
+                  onPointerMove={(evento) => mostrarFatia(evento, fatia, paleta[indice % paleta.length])}
                 >
                   <title>{`${fatia.rotulo}: ${formatar(fatia.valor)}`}</title>
                 </circle>
@@ -461,6 +560,7 @@ export function DonutChart({ fatias, ...resto }: DonutProps) {
             return (
               <circle
                 key={fatia.rotulo}
+                className="citie-chart__fatia"
                 cx="100"
                 cy="100"
                 r={raio}
@@ -471,12 +571,13 @@ export function DonutChart({ fatias, ...resto }: DonutProps) {
                 strokeDasharray={`${visivel} ${circunferencia - visivel}`}
                 strokeDashoffset={-offset}
                 transform="rotate(-90 100 100)"
+                onPointerMove={(evento) => mostrarFatia(evento, fatia, paleta[indice % paleta.length])}
               >
                 <title>{`${fatia.rotulo}: ${formatar(fatia.valor)}`}</title>
               </circle>
             );
           })}
-          {/* Anatomia de métrica, seção 4: rótulo micro acima, número abaixo. */}
+          {/* Anatomia de métrica, seção 4: rótulo 12 muted acima, número abaixo. */}
           <text x="100" y="90" className="citie-chart__donut-rotulo" textAnchor="middle">
             No total
           </text>
@@ -484,6 +585,8 @@ export function DonutChart({ fatias, ...resto }: DonutProps) {
             {formatar(total)}
           </text>
         </svg>
+        <Dica dica={dica} />
+        </div>
 
         <ul className="citie-chart__legenda citie-chart__legenda--coluna">
           {finais.map((fatia, indice) => (

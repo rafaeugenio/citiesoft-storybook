@@ -123,6 +123,11 @@ export const Degraus: Story = {
     // Duas camadas por degrau: a sombra de contato e a ambiente, separadas por vírgula.
     const dialog = estilo.getPropertyValue('--citie-shadow-dialog');
     await expect(dialog.split(',').length).toBeGreaterThan(4);
+    // Três degraus, três valores: apontar um token para outro achata a escada.
+    const degraus = ['--citie-shadow-raised', '--citie-shadow-overlay', '--citie-shadow-dialog'].map(
+      (token) => estilo.getPropertyValue(token).replace(/\s+/g, ' ').trim(),
+    );
+    await expect(new Set(degraus).size).toBe(3);
     // O apelido resolve exatamente para o mesmo valor do degrau `raised`.
     await expect(estilo.getPropertyValue('--citie-shadow-card').trim()).toBe(
       estilo.getPropertyValue('--citie-shadow-raised').trim(),

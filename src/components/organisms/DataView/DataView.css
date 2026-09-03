@@ -6,29 +6,45 @@
   color: var(--citie-text-base);
 }
 
-/* header do Figma: ordenação à esquerda, alternador de visão à direita. */
+/**
+ * Barra na anatomia da captura de produtos do kit: o alternador de visão
+ * (SelectButton) à esquerda, e à direita a busca e a ordenação, todos em 36.
+ */
 .citie-dataview__cabecalho {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: var(--citie-spacing-4);
+  gap: var(--citie-spacing-3);
   flex-wrap: wrap;
 }
 
-.citie-dataview__ordenacao {
+.citie-dataview__controles {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--citie-spacing-3);
+  flex-wrap: wrap;
+}
+
+.citie-dataview__busca {
   min-width: 240px;
+}
+
+.citie-dataview__ordenacao {
+  min-width: 200px;
 }
 
 .citie-dataview__contagem {
   margin: 0;
   font-size: var(--citie-font-size-body-sm);
   color: var(--citie-text-secondary);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ------------------------------------------------------------------ */
 /* Visão em lista                                                      */
 /* ------------------------------------------------------------------ */
 
+/* A lista é o mesmo cartão da tabela: raio 10, borda e shadow-sm. */
 .citie-dataview__lista {
   display: flex;
   flex-direction: column;
@@ -38,18 +54,29 @@
   border: 1px solid var(--citie-border-default);
   border-radius: var(--citie-radius-lg);
   background-color: var(--citie-background-surface);
+  box-shadow: var(--citie-shadow-raised);
   overflow: hidden;
 }
 
+/* Linha com o mesmo ritmo da célula de tabela: 44 de mínimo, padding 12, gap 8. */
 .citie-dataview__linha {
   display: flex;
   align-items: center;
-  gap: var(--citie-spacing-3);
-  padding: var(--citie-spacing-3) var(--citie-spacing-4);
+  gap: var(--citie-spacing-2);
+  min-height: var(--citie-altura-de-linha-confortavel);
+  box-sizing: border-box;
+  padding: var(--citie-spacing-2) var(--citie-spacing-3);
+  transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-dataview__linha + .citie-dataview__linha {
   border-block-start: 1px solid var(--citie-border-default);
+}
+
+@media (hover: hover) {
+  .citie-dataview__linha:hover {
+    background-color: var(--citie-accent);
+  }
 }
 
 .citie-dataview__midia {
@@ -63,11 +90,12 @@
   min-width: 0;
 }
 
+/* Título 14 Medium em text-primary, o mesmo identificador da célula de tabela. */
 .citie-dataview__titulo {
   margin: 0;
-  font-family: var(--citie-font-display);
-  font-size: var(--citie-font-size-body-lg);
-  font-weight: 600;
+  font-size: var(--citie-font-size-body-md);
+  font-weight: var(--citie-font-weight-action);
+  line-height: var(--citie-linha-da-celula);
   color: var(--citie-text-primary);
 }
 
@@ -86,11 +114,18 @@
   box-shadow: var(--citie-state-focus-ring);
 }
 
+/* Subtítulo 12/16 muted, a segunda linha do identificador. */
 .citie-dataview__subtitulo,
 .citie-dataview__descricao {
-  margin: 4px 0 0;
-  font-size: var(--citie-font-size-body-sm);
+  margin: 0;
+  font-size: var(--citie-font-size-body-xs);
+  line-height: var(--citie-linha-mini);
   color: var(--citie-text-secondary);
+}
+
+.citie-dataview__descricao {
+  font-size: var(--citie-font-size-body-sm);
+  line-height: var(--citie-linha-da-celula);
 }
 
 .citie-dataview__meta {
@@ -111,16 +146,20 @@
 .citie-dataview__acoes {
   display: flex;
   flex-shrink: 0;
-  gap: var(--citie-spacing-2);
+  gap: var(--citie-spacing-1);
 }
 
 /* ------------------------------------------------------------------ */
 /* Visão em grade                                                      */
 /* ------------------------------------------------------------------ */
 
+/**
+ * Grade de cards do kit: cada célula é um `Card` (raio 10, borda, shadow-sm),
+ * com largura mínima que fecha 3 colunas em 1110px, ver o token.
+ */
 .citie-dataview__grade {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--citie-largura-minima-do-card-de-grade), 1fr));
   gap: var(--citie-spacing-3);
   margin: 0;
   padding: 0;
@@ -153,8 +192,10 @@
 .citie-dataview__linha-esqueleto {
   display: flex;
   align-items: center;
-  gap: var(--citie-spacing-3);
-  padding: var(--citie-spacing-3) var(--citie-spacing-4);
+  gap: var(--citie-spacing-2);
+  min-height: var(--citie-altura-de-linha-confortavel);
+  box-sizing: border-box;
+  padding: var(--citie-spacing-2) var(--citie-spacing-3);
 }
 
 .citie-dataview__linha-esqueleto + .citie-dataview__linha-esqueleto {
@@ -165,17 +206,18 @@
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--citie-spacing-1-5);
 }
 
 .citie-dataview__celula-esqueleto {
   display: flex;
   flex-direction: column;
   gap: var(--citie-spacing-2);
-  padding: var(--citie-spacing-3);
+  padding: var(--citie-spacing-4);
   border: 1px solid var(--citie-border-default);
-  border-radius: var(--citie-radius-xl);
+  border-radius: var(--citie-radius-lg);
   background-color: var(--citie-background-surface);
+  box-shadow: var(--citie-shadow-raised);
 }
 
 @media (max-width: 640px) {
@@ -185,5 +227,11 @@
 
   .citie-dataview__texto {
     flex-basis: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-dataview__linha {
+    transition: none;
   }
 }

@@ -122,6 +122,20 @@ export const PainelDeFiltros: Story = {
 
     // Alvo de toque de 44x44 no botão de fechar do painel.
     await expect(fechar.getBoundingClientRect().width).toBeGreaterThanOrEqual(44);
+
+    // Drawer do Sismental: 591 de largura pelo token, a 8px do topo, da
+    // direita e da base da janela, com raio 16 nos cantos.
+    const caixa = painel.getBoundingClientRect();
+    await expect(caixa.width).toBe(591);
+    await expect(caixa.top).toBe(8);
+    // Direita e base se medem pela margem computada: no runner a barra de
+    // rolagem do canvas desloca `innerWidth` e `innerHeight` em 16px e a conta
+    // pela viewport reprovava com o painel no lugar certo.
+    const margens = getComputedStyle(painel);
+    await expect(margens.marginRight).toBe('8px');
+    await expect(margens.marginBottom).toBe('8px');
+    await expect(margens.height).toBe(`${window.innerHeight - 16}px`);
+    await expect(getComputedStyle(painel).borderTopLeftRadius).toBe('16px');
     // Placeholder de filtro indica ausência de seleção, nunca vazio.
     await expect(within(painel).getByLabelText('Município')).toHaveDisplayValue(
       'Todos os municípios',

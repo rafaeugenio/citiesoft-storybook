@@ -21,16 +21,6 @@ const ROTULO_DO_ESTADO: Record<EstadoDoEvento, string> = {
   informacional: 'Informativo',
 };
 
-const SIMBOLO_DO_ESTADO: Record<EstadoDoEvento, string> = {
-  concluido: '✓',
-  atual: '',
-  pendente: '⏱',
-  bloqueado: '✕',
-  cancelado: '–',
-  futuro: '',
-  informacional: 'i',
-};
-
 export interface EventoDaTimeline {
   id: string;
   /** Verbo no passado e voz ativa: "Solicitação recebida". */
@@ -53,7 +43,8 @@ function formatarDataHora(iso: string) {
   const yyyy = data.getFullYear();
   const hh = String(data.getHours()).padStart(2, '0');
   const min = String(data.getMinutes()).padStart(2, '0');
-  return `${dd}/${mm}/${yyyy} às ${hh}:${min}`;
+  // Carimbo em mono: data e hora sem preposição, no formato do Sismental.
+  return `${dd}/${mm}/${yyyy} ${hh}:${min}`;
 }
 
 export interface TimelineProps {
@@ -87,22 +78,29 @@ function ItemDaTimeline({ evento, compacta }: { evento: EventoDaTimeline; compac
         evento.realce ? ` citie-timeline__item--${evento.realce}` : ''
       }`}
     >
+      {/*
+        Marcador vazado de 12 sem símbolo dentro: o estado vai no traço e no
+        texto oculto do título. Glifo em 12px não é legível, e o que ficava aqui
+        mudava de desenho com a fonte.
+      */}
       <span
         className={`citie-timeline__marcador citie-timeline__marcador--${evento.estado}`}
         aria-hidden="true"
-      >
-        {SIMBOLO_DO_ESTADO[evento.estado]}
-      </span>
+      />
 
       <div className="citie-timeline__conteudo">
-        <time className="citie-timeline__data" dateTime={evento.data}>
-          {formatarDataHora(evento.data)}
-        </time>
-        <p className="citie-timeline__titulo">
-          {evento.titulo}
-          <span className="citie-visualmente-oculto"> ({ROTULO_DO_ESTADO[evento.estado]})</span>
+        <div className="citie-timeline__linha-de-titulo">
+          <p className="citie-timeline__titulo">
+            {evento.titulo}
+            <span className="citie-visualmente-oculto"> ({ROTULO_DO_ESTADO[evento.estado]})</span>
+          </p>
+          <time className="citie-timeline__data" dateTime={evento.data}>
+            {formatarDataHora(evento.data)}
+          </time>
+        </div>
+        <p className="citie-timeline__ator">
+          Por <span className="citie-timeline__ator-nome">{evento.ator}</span>
         </p>
-        <p className="citie-timeline__ator">{evento.ator}</p>
 
         {temDetalhe ? (
           <>

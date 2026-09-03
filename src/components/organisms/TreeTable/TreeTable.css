@@ -1,9 +1,10 @@
 .citie-treetable-wrapper {
   border: 1px solid var(--citie-border-default);
-  /* Mesmo degrau da `Table`: superfície de contorno de primeiro nível é `xl`. */
-  border-radius: var(--citie-radius-xl);
+  /* Mesmo cartão da `Table`: o `radius` de 10 do kit, borda e shadow-sm. */
+  border-radius: var(--citie-radius-lg);
   overflow: auto;
   background-color: var(--citie-background-surface);
+  box-shadow: var(--citie-shadow-raised);
 }
 
 .citie-treetable {
@@ -21,43 +22,42 @@
   border-spacing: 0;
   /* Densidade padrão, para a tabela nunca ficar sem anatomia de linha. */
   --citie-altura-da-linha: var(--citie-altura-de-linha-confortavel);
-  --citie-respiro-da-celula: var(--citie-spacing-4);
+  --citie-respiro-da-celula: var(--citie-spacing-3);
   font-family: var(--citie-font-ui);
   font-size: var(--citie-font-size-body-md);
   color: var(--citie-text-base);
 }
 
-/* Faixa de título (treetable-header do Figma). */
+/**
+ * Faixa de título (treetable-header do Figma), na anatomia do cabeçalho de
+ * cartão da `Table`: 16 Medium em text-primary sobre a superfície, e o fio de
+ * baixo separa o título do cabeçalho de coluna.
+ */
 .citie-treetable__titulo {
-  padding: var(--citie-spacing-3) var(--citie-spacing-4);
-  background-color: var(--citie-background-subtle);
+  padding: var(--citie-spacing-4);
   border-block-end: 1px solid var(--citie-border-default);
-  font-size: var(--citie-font-size-body-md);
-  font-weight: var(--citie-font-weight-title);
+  font-size: var(--citie-font-size-body-lg);
+  font-weight: var(--citie-font-weight-action);
+  line-height: var(--citie-linha-da-celula);
   color: var(--citie-text-primary);
 }
 
 /**
- * Cabeçalho de coluna com a mesma anatomia da `Table`: rótulo micro em
- * maiúscula e cor secundária.
- *
- * Ficara para trás na rodada anterior, e a consequência era ver duas tabelas de
- * sistemas diferentes na mesma tela: a plana com cabeçalho de metadado e a de
- * árvore com cabeçalho competindo com o dado em peso e em cor.
- *
- * Contraste conferido: `text-secondary` sobre `background-subtle` mede 4,64:1,
- * acima dos 4,5:1 que a WCAG 1.4.3 exige para texto.
+ * Cabeçalho de coluna com a mesma anatomia da `Table`: Medium 14/20 em caixa
+ * normal, na tinta base, separado do dado por peso. Ver o comentário em
+ * `Table.css`; a TreeTable acompanha para as duas tabelas não parecerem de
+ * sistemas diferentes na mesma tela.
  */
 .citie-treetable th {
-  font-size: var(--citie-font-size-body-xs);
-  font-weight: var(--citie-font-weight-title);
-  color: var(--citie-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  font-size: var(--citie-font-size-body-md);
+  font-weight: var(--citie-font-weight-action);
+  line-height: var(--citie-linha-da-celula);
+  color: var(--citie-text-base);
   text-align: start;
-  background-color: var(--citie-background-subtle);
-  border-block-end: 1px solid var(--citie-border-strong);
+  background-color: var(--citie-background-surface);
+  border-block-end: 1px solid var(--citie-border-default);
   white-space: nowrap;
+  transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-treetable td {
@@ -91,6 +91,7 @@
 .citie-treetable__conteudo {
   display: flex;
   align-items: center;
+  gap: var(--citie-spacing-2);
   min-width: 0;
   min-block-size: var(--citie-linha-da-celula);
   line-height: var(--citie-linha-da-celula);
@@ -168,7 +169,7 @@
   align-items: center;
   justify-content: center;
   flex: none;
-  /* Alvo de 24x24 mesmo com o chevron desenhado em 16px. */
+  /* Alvo de 24x24 com o chevron de 16 (`--citie-icone-de-linha`) dentro. */
   inline-size: var(--citie-touch-target-min);
   block-size: var(--citie-touch-target-min);
   padding: 0;
@@ -177,13 +178,20 @@
   border: none;
   border-radius: var(--citie-radius-sm);
   cursor: pointer;
+  /* A rotação do chevron anda no token rápido, e para sob movimento reduzido. */
   transition:
     transform var(--citie-motion-rapido) var(--citie-easing-padrao),
     background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
+.citie-treetable__toggle svg {
+  inline-size: var(--citie-icone-de-linha);
+  block-size: var(--citie-icone-de-linha);
+}
+
+/* Sobre a linha em hover (accent) o toggle recua um degrau para o accent forte. */
 .citie-treetable__toggle:hover {
-  background-color: var(--citie-state-hover-overlay);
+  background-color: var(--citie-accent-forte);
   color: var(--citie-text-primary);
 }
 
@@ -234,12 +242,12 @@
  */
 .citie-treetable--confortavel {
   --citie-altura-da-linha: var(--citie-altura-de-linha-confortavel);
-  --citie-respiro-da-celula: var(--citie-spacing-4);
+  --citie-respiro-da-celula: var(--citie-spacing-3);
 }
 
 .citie-treetable--compacta {
   --citie-altura-da-linha: var(--citie-altura-de-linha-compacta);
-  --citie-respiro-da-celula: var(--citie-spacing-3);
+  --citie-respiro-da-celula: var(--citie-spacing-2);
 }
 
 .citie-treetable th,
@@ -287,8 +295,24 @@
 
 @layer citie-linha-selecao {
   .citie-treetable__linha--selecionada {
-    --citie-fundo-da-linha: var(--citie-state-selected);
+    --citie-fundo-da-linha: var(--citie-accent-forte);
   }
+}
+
+/*
+ * Rótulo da linha selecionada em text-primary sobre o accent forte, e os
+ * tokens de metadado e de link re-apontados no escopo do conteúdo, pelo mesmo
+ * motivo medido em `Table.css` (text-secondary 3,57:1 e brand-primary 3,95:1
+ * sobre #d6dce4 reprovam o piso de texto).
+ */
+.citie-treetable__linha--selecionada td {
+  color: var(--citie-text-primary);
+}
+
+.citie-treetable__linha--selecionada .citie-treetable__conteudo {
+  --citie-text-secondary: var(--citie-text-base);
+  --citie-brand-primary: var(--citie-accent-foreground);
+  --citie-brand-hover: var(--citie-accent-foreground);
 }
 
 /* ---------- Linhas de grade ---------- */
@@ -329,8 +353,15 @@
  * intacta, então apontar não desloca nada.
  */
 @media (hover: hover) {
+  /* Accent sólido sobre linha comum; véu translúcido sobre a selecionada, e a
+     borda de campo sobe um degrau, como em `Table.css`. */
   .citie-treetable tbody tr:hover {
-    --citie-veu-de-realce: var(--citie-state-hover-overlay);
+    --citie-veu-de-realce: var(--citie-accent);
+    --citie-form-field-border: var(--citie-form-field-border-hover);
+  }
+
+  .citie-treetable tbody tr.citie-treetable__linha--selecionada:hover {
+    --citie-veu-de-realce: var(--citie-veu-sobre-selecao);
   }
 
   .citie-treetable tbody tr:hover td,
@@ -339,13 +370,13 @@
   }
 
   .citie-treetable tbody tr:hover td:first-child {
-    border-start-start-radius: var(--citie-radius-lg);
-    border-end-start-radius: var(--citie-radius-lg);
+    border-start-start-radius: var(--citie-radius-md);
+    border-end-start-radius: var(--citie-radius-md);
   }
 
   .citie-treetable tbody tr:hover td:last-child {
-    border-start-end-radius: var(--citie-radius-lg);
-    border-end-end-radius: var(--citie-radius-lg);
+    border-start-end-radius: var(--citie-radius-md);
+    border-end-end-radius: var(--citie-radius-md);
   }
 }
 
@@ -416,34 +447,45 @@
 
 /* ---------- Ordenação ---------- */
 
+/* Mesma anatomia da `Table`: botão com ícone de 16 e a coluna inteira em
+   `background-subtle` sob o ponteiro e enquanto ordena. */
 .citie-treetable__ordenar {
   display: inline-flex;
   align-items: center;
   gap: var(--citie-spacing-1);
   padding: 0;
   font: inherit;
-  /*
-   * O `font` abreviado não cobre estas duas, e elemento de formulário não as
-   * herda do `th`. Sem elas, a coluna ordenável ficaria em caixa normal ao lado
-   * das não ordenáveis em maiúscula, e o cabeçalho pareceria ter dois estilos.
-   * O defeito era o mesmo que a `Table` já tinha corrigido.
-   */
-  text-transform: inherit;
-  letter-spacing: inherit;
-  color: var(--citie-text-secondary);
+  color: inherit;
   background: none;
   border: none;
+  border-radius: var(--citie-radius-sm);
   cursor: pointer;
 }
 
+.citie-treetable__ordenar .citie-table__ordenar-icone {
+  flex: none;
+  inline-size: var(--citie-icone-de-linha);
+  block-size: var(--citie-icone-de-linha);
+  color: var(--citie-text-secondary);
+}
+
+.citie-treetable th:has(.citie-treetable__ordenar:hover),
+.citie-treetable th[aria-sort='ascending'],
+.citie-treetable th[aria-sort='descending'] {
+  background-color: var(--citie-background-subtle);
+}
+
 .citie-treetable__ordenar--ativa {
+  color: var(--citie-text-primary);
+}
+
+.citie-treetable__ordenar--ativa .citie-table__ordenar-icone {
   color: var(--citie-brand-primary);
 }
 
 .citie-treetable__ordenar:focus-visible {
   outline: none;
   box-shadow: var(--citie-state-focus-ring);
-  border-radius: var(--citie-radius-sm);
 }
 
 /* ---------- Rodapé de totais ---------- */
@@ -459,6 +501,7 @@
 @media (prefers-reduced-motion: reduce) {
   .citie-treetable tbody tr,
   .citie-treetable tbody td,
+  .citie-treetable th,
   .citie-treetable__toggle {
     transition: none;
   }

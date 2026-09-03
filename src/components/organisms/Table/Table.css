@@ -1,19 +1,103 @@
+/**
+ * Envoltório: o cartão da tabela.
+ *
+ * A pele é a do Card do UI Kit (Lote 3): borda de 1px no degrau padrão, o
+ * `radius` de 10 e o shadow-sm de duas camadas. A listagem do Sismental é
+ * exatamente isso, uma tabela dentro de um cartão com raio 10, borda e sombra
+ * curta, e o cabeçalho, a linha de filtro e o rodapé de paginação vivem dentro
+ * do mesmo cartão. Antes o envoltório estava em `xl` (12) sem sombra, um degrau
+ * acima de todo cartão vizinho.
+ *
+ * A gramática de camada continua valendo para dentro: envoltório `lg` 10,
+ * plate da linha em hover `md` 6, controle dentro da célula `md` 6 pelo
+ * próprio token de controle.
+ */
 .citie-table-wrapper {
   border: 1px solid var(--citie-border-default);
-  /**
-   * `xl`, um degrau acima do `lg` que estava aqui. A tabela é superfície de
-   * contorno de primeiro nível, do mesmo grupo de Card, Widget e diálogo, e
-   * estava um degrau abaixo deles: numa
-   * tela onde a listagem convive com card, o canto de 8px ao lado do de 16px lê
-   * como duas peças de sistemas diferentes. A divergência estava anotada em
-   * `tokens.css` como pendente por ser arquivo de outro dono.
-   *
-   * A gramática de camada segue valendo para dentro: envoltório `xl` 12, plate
-   * da linha `lg` 8, controle `md` 6. Externo sempre maior que o interno.
-   */
-  border-radius: var(--citie-radius-xl);
+  border-radius: var(--citie-radius-lg);
   overflow: auto;
   background-color: var(--citie-background-surface);
+  box-shadow: var(--citie-shadow-raised);
+  font-family: var(--citie-font-ui);
+}
+
+/* ---------- Cabeçalho, filtro e rodapé do cartão ---------- */
+
+/**
+ * Cabeçalho do cartão, medido na lista de profissionais do Sismental: título
+ * 16 Medium, subtítulo 14 muted logo abaixo, ação primária alinhada à direita
+ * na mesma linha. O respiro é o `spacing-4` do card compacto do kit.
+ */
+.citie-table__cabecalho {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--citie-spacing-4);
+  padding: var(--citie-spacing-4);
+}
+
+.citie-table__titulo {
+  margin: 0;
+  font-size: var(--citie-font-size-body-lg);
+  font-weight: var(--citie-font-weight-action);
+  line-height: var(--citie-linha-da-celula);
+  color: var(--citie-text-primary);
+}
+
+.citie-table__subtitulo {
+  margin: var(--citie-spacing-1) 0 0;
+  font-size: var(--citie-font-size-body-md);
+  color: var(--citie-text-secondary);
+}
+
+.citie-table__acao-principal {
+  flex: none;
+}
+
+/**
+ * Linha de filtro dentro do cartão: busca larga à esquerda, select de escopo
+ * à direita, os dois em 36. A busca cresce e o select fica no tamanho do
+ * próprio conteúdo, como no Sismental.
+ */
+.citie-table__filtros {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--citie-spacing-3);
+  padding: 0 var(--citie-spacing-4) var(--citie-spacing-4);
+}
+
+.citie-table__filtros > :first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Com cabeçalho ou filtro acima, um fio na tabela separa os dois planos. O fio
+   é da tabela, e não do `th`, para o cabeçalho de coluna seguir medindo 45. */
+.citie-table-wrapper:has(.citie-table__cabecalho, .citie-table__filtros) .citie-table {
+  border-block-start: 1px solid var(--citie-border-default);
+}
+
+/**
+ * Rodapé: paginação à esquerda e o resumo "Mostrando 1 a 10 de 98 registros"
+ * à direita, 14 muted, separados do corpo pelo fio do último `td`, que volta
+ * a existir quando há rodapé.
+ */
+.citie-table__rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--citie-spacing-4);
+  flex-wrap: wrap;
+  padding: var(--citie-spacing-3) var(--citie-spacing-4);
+  border-block-start: 1px solid var(--citie-border-default);
+}
+
+.citie-table__resumo {
+  margin: 0;
+  margin-inline-start: auto;
+  font-size: var(--citie-font-size-body-md);
+  color: var(--citie-text-secondary);
+  font-variant-numeric: tabular-nums;
 }
 
 .citie-table {
@@ -42,34 +126,34 @@
   border-spacing: 0;
   /* Densidade padrão, para a tabela nunca ficar sem anatomia de linha. */
   --citie-altura-da-linha: var(--citie-altura-de-linha-confortavel);
-  --citie-respiro-da-celula: var(--citie-spacing-4);
+  --citie-respiro-da-celula: var(--citie-spacing-3);
   font-family: var(--citie-font-ui);
   font-size: var(--citie-font-size-body-md);
   color: var(--citie-text-base);
 }
 
 /**
- * Cabeçalho de coluna: rótulo micro em maiúscula, na cor secundária.
+ * Cabeçalho de coluna: Medium 14/20 em caixa normal, na tinta base.
  *
- * Antes ele usava corpo `sm` em `text-primary`, então competia em peso e em cor
- * com o dado da linha e a hierarquia da tabela não se lia. O cabeçalho é
- * metadado: ele nomeia a coluna e depois some do caminho, enquanto o dado é o
- * que o servidor veio ler.
+ * O kit e as duas listagens do Sismental escrevem o cabeçalho no mesmo corpo
+ * do dado e o separam por peso, Medium contra Regular, e não por caixa alta
+ * com entreletra. A micro maiúscula que estava aqui vinha do protótipo TFD e
+ * fazia o cabeçalho se ler como rótulo de formulário; com 44px de linha e o
+ * fio de 1px, o Medium já dá a hierarquia sem gritar.
  *
- * A anatomia abaixo é a mesma que o protótipo TFD já pratica. Contraste
- * conferido: `text-secondary` sobre `background-subtle` mede 4,64:1, acima dos
- * 4,5:1 que a WCAG 1.4.3 exige para texto.
+ * Contraste: text-base #3c3c3c mede 11,03:1 sobre a superfície e 10,11:1 sobre
+ * o `background-subtle` da coluna ordenável em hover.
  */
 .citie-table th {
-  font-size: var(--citie-font-size-body-xs);
-  font-weight: var(--citie-font-weight-title);
-  color: var(--citie-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  font-size: var(--citie-font-size-body-md);
+  font-weight: var(--citie-font-weight-action);
+  line-height: var(--citie-linha-da-celula);
+  color: var(--citie-text-base);
   text-align: start;
-  background-color: var(--citie-background-subtle);
-  border-block-end: 1px solid var(--citie-border-strong);
+  background-color: var(--citie-background-surface);
+  border-block-end: 1px solid var(--citie-border-default);
   white-space: nowrap;
+  transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
 }
 
 .citie-table td {
@@ -97,6 +181,9 @@
  * ~17px; no flex a altura da linha volta a ser padding mais conteúdo, como a
  * spec define.
  *
+ * O gap de 8 é o do kit entre as peças de uma célula (avatar e nome, switch e
+ * texto, ícone e rótulo).
+ *
  * A entrelinha é comprimento fixo: ver o comentário de
  * `--citie-linha-da-celula` em `tokens.css`. Proporção de 1,4 sobre corpo de
  * 14px dava caixa de 19,6px e célula de duas linhas em altura fracionária.
@@ -104,6 +191,7 @@
 .citie-table__conteudo {
   display: flex;
   align-items: center;
+  gap: var(--citie-spacing-2);
   min-width: 0;
   min-block-size: var(--citie-linha-da-celula);
   line-height: var(--citie-linha-da-celula);
@@ -124,38 +212,79 @@
   justify-content: center;
 }
 
+/* ---------- Conteúdos de célula ---------- */
+
+/**
+ * Identificador em duas linhas, medido na listagem de prontuários: nome em
+ * 14/20 na tinta do dado e o CPF em mono 12/16 muted logo abaixo. As duas
+ * linhas somam 36, dentro dos 44 da célula confortável.
+ */
+.citie-table__identificador {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.citie-table__identificador-principal {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.citie-table__identificador-secundario {
+  font-family: var(--citie-font-mono);
+  font-size: var(--citie-font-size-body-xs);
+  line-height: var(--citie-linha-mini);
+  font-variant-numeric: tabular-nums;
+  color: var(--citie-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Data, código e número em mono com dígitos tabulares: a coluna alinha na vertical. */
+.citie-table__celula--mono .citie-table__conteudo {
+  font-family: var(--citie-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/**
+ * Linha inativa: o registro existe e está desligado. A tinta desce para
+ * text-secondary (4,94:1 sobre a superfície, 4,53:1 sobre a zebra), acima do
+ * piso de texto; a cor de desabilitado fica fora porque a linha continua
+ * legível e acionável. O texto oculto "(inativo)" vai na primeira célula.
+ */
+.citie-table__linha--inativa td {
+  color: var(--citie-text-secondary);
+}
+
 /* ---------- Densidades ---------- */
 
 /**
  * Em célula de tabela o `height` é altura de conteúdo e o padding vertical soma
- * por cima (48 + 12 + 12 + borda = 73). Por isso a altura fica no `height` e o
- * respiro vertical vira espaço mínimo do container interno, mantendo os 48px e
- * os 36px que a spec define.
+ * por cima (44 + 12 + 12 + borda = 69). Por isso a altura fica no `height` e o
+ * respiro vertical vira espaço mínimo do container interno, mantendo os 44px e
+ * os 36px que o kit define.
  *
- * A densidade agora publica dois valores em custom property, e a regra de
- * célula é uma só. Antes eram quatro blocos repetindo `height` e `padding`, e a
- * `TreeTable` repetia os mesmos quatro com os mesmos literais.
+ * A densidade publica dois valores em custom property, e a regra de célula é
+ * uma só. O padding horizontal é o 12 do kit na confortável e desce para 8 na
+ * compacta.
  */
 .citie-table--confortavel {
   --citie-altura-da-linha: var(--citie-altura-de-linha-confortavel);
-  --citie-respiro-da-celula: var(--citie-spacing-4);
+  --citie-respiro-da-celula: var(--citie-spacing-3);
 }
 
 .citie-table--compacta {
   --citie-altura-da-linha: var(--citie-altura-de-linha-compacta);
-  --citie-respiro-da-celula: var(--citie-spacing-3);
+  --citie-respiro-da-celula: var(--citie-spacing-2);
 }
 
 /**
- * A densidade compacta é um contrato de 36px, e um controle de 40px dentro dela
- * empurra a linha para 41px. Medido antes: numa tabela compacta, a linha com
- * botão de tamanho normal media 41,00px contra 37,00px das vizinhas, e um degrau
- * de 4px a cada poucas linhas é o que cansa a varredura vertical.
- *
- * A correção re-aponta o token de altura que os próprios controles consomem, em
- * vez de a tabela redesenhar botão alheio: dentro de uma célula compacta, altura
- * normal e grande passam a valer a pequena. Continua sendo alvo de 32px, acima
- * dos 24px que a WCAG 2.5.8 exige.
+ * A densidade compacta é um contrato de 36px, e um controle de 36px dentro dela
+ * encosta no fio e a linha perde o respiro; um de 40 a empurra para 41. A
+ * correção re-aponta o token de altura que os próprios controles consomem, em
+ * vez de a tabela redesenhar botão alheio: dentro de uma célula compacta,
+ * altura normal e grande passam a valer a pequena. Continua sendo alvo de
+ * 32px, acima dos 24px que a WCAG 2.5.8 exige.
  */
 .citie-table--compacta .citie-table__conteudo,
 .citie-table--compacta .citie-table__acoes {
@@ -175,20 +304,26 @@
  * O fundo da linha é composto em duas camadas, cada uma com o seu papel.
  *
  * A camada de baixo é a cor de estado do dado: zebra ou seleção. A de cima é o
- * véu de ponteiro, que é translúcido e portanto SOMA à camada de baixo,
- * preservando-a. Antes as duas disputavam a mesma propriedade e a linha
- * selecionada, declarada depois, simplesmente parava de responder ao ponteiro.
+ * véu de ponteiro, que SOMA à camada de baixo e a preserva. Antes as
+ * duas disputavam a mesma propriedade e a linha selecionada, declarada depois,
+ * simplesmente parava de responder ao ponteiro.
  *
  * O véu é `background-image` porque `background-color` já carrega a camada de
  * estado; e a cor dele vive na propriedade registrada `--citie-veu-de-realce`,
  * declarada em `tokens.css`, que é o que permite a transição.
  *
- * Contraste medido depois da composição, tema claro, texto `text-base` #3c3c3c:
- *   linha branca + véu   → #ecf2fd, 9,50:1
- *   linha zebrada + véu  → #e2e9ff, 9,25:1
- *   linha selecionada    → #eff5ff, 9,44:1
- *   selecionada + véu    → #dde9fd, 9,01:1
- * Tema escuro, texto #d2d3d6 sobre selecionada + véu (#273757): 7,92:1.
+ * Com o accent sólido do kit o véu ganhou dois valores: sobre linha comum e
+ * zebrada ele é o próprio accent, opaco, e a zebra some sob o ponteiro como no
+ * kit; sobre a linha selecionada ele volta a ser translúcido
+ * (`--citie-veu-sobre-selecao`), senão o accent forte da seleção sumiria justo
+ * quando o ponteiro passa pela linha escolhida.
+ *
+ * Contraste medido depois da composição, tema claro:
+ *   linha em hover (accent #eff5ff)          text-base 10,07:1, text-secondary 4,51:1
+ *   linha selecionada (accent forte #d6dce4) text-primary 11,81:1, text-base 7,99:1
+ *   selecionada + véu (#c6d2e4)              text-primary 10,66:1, text-base 7,22:1
+ * Tema escuro: hover #202838 com text-base 9,87:1; selecionada #29344b com
+ * text-primary 11,42:1; selecionada + véu #2e4064 com text-primary 9,48:1.
  * Todas acima dos 4,5:1 da WCAG 1.4.3.
  */
 .citie-table tbody td {
@@ -209,9 +344,14 @@
  * Os mesmos nomes valem na `TreeTable`, que pinta a mesma propriedade, e a
  * ordem declarada lá é a mesma.
  *
- * Cor resultante da linha par selecionada, tema claro: `state-selected`
- * #eff5ff, com o texto `text-base` #3c3c3c em 9,44:1, acima dos 4,5:1 da WCAG
- * 1.4.3. Tema escuro: rgba(77,139,252,0.14) sobre `surface-base`.
+ * A seleção pinta o accent forte, o "accent 2" do kit, e o rótulo da linha
+ * sobe para text-primary no mesmo commit, como o Lote 0 pediu: sobre #d6dce4 o
+ * brand-primary mede 3,95:1 e o text-secondary 3,57:1, os dois abaixo do piso
+ * de texto. Por isso, dentro da linha selecionada, o metadado escrito em
+ * text-secondary passa a text-base (7,99:1) e o link em brand-primary passa a
+ * accent-foreground (7,40:1), por re-apontamento dos dois tokens no escopo da
+ * linha. A célula de seleção fica de fora do re-apontamento, para o checkbox
+ * e o trilho continuarem na tinta de marca.
  */
 @layer citie-linha-zebra, citie-linha-selecao;
 
@@ -223,8 +363,18 @@
 
 @layer citie-linha-selecao {
   .citie-table__linha--selecionada {
-    --citie-fundo-da-linha: var(--citie-state-selected);
+    --citie-fundo-da-linha: var(--citie-accent-forte);
   }
+}
+
+.citie-table__linha--selecionada td {
+  color: var(--citie-text-primary);
+}
+
+.citie-table__linha--selecionada .citie-table__conteudo {
+  --citie-text-secondary: var(--citie-text-base);
+  --citie-brand-primary: var(--citie-accent-foreground);
+  --citie-brand-hover: var(--citie-accent-foreground);
 }
 
 /* ---------- Header fixo ---------- */
@@ -265,7 +415,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .citie-table tbody tr,
-  .citie-table tbody td {
+  .citie-table tbody td,
+  .citie-table th {
     transition: none;
   }
 }
@@ -284,18 +435,28 @@
  *    apontada é a primeira, o fio do cabeçalho permanece, e está certo: o
  *    cabeçalho é outro plano;
  * 3. a célula de início e a de fim arredondam os cantos, o que só é possível
- *    porque a tabela usa `separate`. O raio é `lg`, um degrau abaixo do `xl` do
+ *    porque a tabela usa `separate`. O raio é `md`, um degrau abaixo do `lg` do
  *    envoltório, seguindo a regra de camada.
  *
  * `transparent` no lugar de remover a borda mantém a geometria intacta: zero
  * deslocamento de linha ao apontar, que é o defeito clássico desta técnica.
+ *
+ * Um campo dentro da linha em hover sobe a borda para
+ * `--citie-form-field-border-hover`: a borda de repouso #8f8f8f mede 2,95:1
+ * sobre o accent (medição do revisor do Lote 0) e reprova o 3:1 da WCAG
+ * 1.4.11; a de hover mede 4,51:1 no claro e 4,57:1 no escuro.
  *
  * Tudo dentro de `@media (hover: hover)`: onde não existe ponteiro, não existe
  * estado intermediário para revelar.
  */
 @media (hover: hover) {
   .citie-table tbody tr:hover {
-    --citie-veu-de-realce: var(--citie-state-hover-overlay);
+    --citie-veu-de-realce: var(--citie-accent);
+    --citie-form-field-border: var(--citie-form-field-border-hover);
+  }
+
+  .citie-table tbody tr.citie-table__linha--selecionada:hover {
+    --citie-veu-de-realce: var(--citie-veu-sobre-selecao);
   }
 
   .citie-table tbody tr:hover td,
@@ -304,13 +465,13 @@
   }
 
   .citie-table tbody tr:hover td:first-child {
-    border-start-start-radius: var(--citie-radius-lg);
-    border-end-start-radius: var(--citie-radius-lg);
+    border-start-start-radius: var(--citie-radius-md);
+    border-end-start-radius: var(--citie-radius-md);
   }
 
   .citie-table tbody tr:hover td:last-child {
-    border-start-end-radius: var(--citie-radius-lg);
-    border-end-end-radius: var(--citie-radius-lg);
+    border-start-end-radius: var(--citie-radius-md);
+    border-end-end-radius: var(--citie-radius-md);
   }
 }
 
@@ -337,33 +498,49 @@
 
 /* ---------- Ordenação ---------- */
 
+/**
+ * Coluna ordenável: o rótulo é um botão com o ícone de 16 ao lado, e a coluna
+ * inteira ganha o fundo `background-subtle` sob o ponteiro e enquanto ordena,
+ * como a coluna Priority da captura de tarefas do kit. O fundo é do `th`, e
+ * não do botão, para a faixa ocupar a célula inteira.
+ */
 .citie-table__ordenar {
   display: inline-flex;
   align-items: center;
   gap: var(--citie-spacing-1);
   padding: 0;
   font: inherit;
-  /*
-   * O `font` abreviado não cobre estas duas, e elemento de formulário não as
-   * herda do `th`. Sem elas, a coluna ordenável ficava em caixa normal ao lado
-   * das não ordenáveis em maiúscula, e o cabeçalho parecia ter dois estilos.
-   */
-  text-transform: inherit;
-  letter-spacing: inherit;
-  color: var(--citie-text-secondary);
+  color: inherit;
   background: none;
   border: none;
+  border-radius: var(--citie-radius-sm);
   cursor: pointer;
 }
 
+.citie-table__ordenar-icone {
+  flex: none;
+  inline-size: var(--citie-icone-de-linha);
+  block-size: var(--citie-icone-de-linha);
+  color: var(--citie-text-secondary);
+}
+
+.citie-table th:has(.citie-table__ordenar:hover),
+.citie-table th[aria-sort='ascending'],
+.citie-table th[aria-sort='descending'] {
+  background-color: var(--citie-background-subtle);
+}
+
 .citie-table__ordenar--ativa {
+  color: var(--citie-text-primary);
+}
+
+.citie-table__ordenar--ativa .citie-table__ordenar-icone {
   color: var(--citie-brand-primary);
 }
 
 .citie-table__ordenar:focus-visible {
   outline: none;
   box-shadow: var(--citie-state-focus-ring);
-  border-radius: var(--citie-radius-sm);
 }
 
 /* ---------- Barra de ações em massa ---------- */
@@ -373,11 +550,11 @@
   align-items: center;
   gap: var(--citie-spacing-3);
   padding: var(--citie-spacing-3) var(--citie-spacing-4);
-  background-color: var(--citie-brand-subtle);
+  background-color: var(--citie-accent);
   border-block-end: 1px solid var(--citie-border-default);
-  font-size: var(--citie-font-size-body-sm);
+  font-size: var(--citie-font-size-body-md);
   font-weight: var(--citie-font-weight-action);
-  color: var(--citie-text-primary);
+  color: var(--citie-accent-foreground);
 }
 
 .citie-table__ausente {
@@ -413,9 +590,13 @@
  * `:focus-within` é o que mantém a coluna alcançável por teclado, e o
  * `prefers-reduced-motion` não se aplica aqui porque a mudança é de opacidade
  * de revelação, com o layout parado.
+ *
+ * `acoesSempreVisiveis` desliga a revelação: é o caso do botão outline
+ * "Editar" da lista de profissionais do Sismental, que fica visível em toda
+ * linha porque é a ação principal da tela.
  */
 @media (hover: hover) {
-  .citie-table__acoes {
+  .citie-table:not(.citie-table--acoes-visiveis) .citie-table__acoes {
     opacity: 0;
     transition: opacity var(--citie-motion-rapido) var(--citie-easing-padrao);
   }

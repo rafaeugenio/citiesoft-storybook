@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react';
+import '../../../tokens/severidade.css';
 import './Badge.css';
 
 /** Mapa canônico de severidade. Nunca aplicar hex direto fora dele. */

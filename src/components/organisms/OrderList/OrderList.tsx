@@ -215,7 +215,7 @@ export function OrderList({
       ).map(([direcao, icone]) => (
         <Button
           key={direcao}
-          variant="secondary"
+          variant="outline"
           size="small"
           iconOnly
           icon={icone}

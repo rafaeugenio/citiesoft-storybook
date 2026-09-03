@@ -36,83 +36,8 @@
  * Tag e Status continua tonal.
  */
 
-.citie-sev {
-  --sev-bg: var(--citie-background-subtle);
-  --sev-fg: var(--citie-text-base);
-  --sev-preenchimento: var(--citie-secondary);
-  --sev-rotulo: var(--citie-secondary-foreground);
-  --sev-contorno: var(--citie-border-strong);
-}
-
-.citie-sev--success {
-  --sev-bg: var(--citie-success-background);
-  --sev-fg: var(--citie-success-strong);
-  --sev-preenchimento: var(--citie-success-emphasis);
-  --sev-rotulo: var(--citie-success-contrast);
-  --sev-contorno: var(--sev-fg);
-}
-
-.citie-sev--info {
-  --sev-bg: var(--citie-info-background);
-  --sev-fg: var(--citie-info-text);
-  --sev-preenchimento: var(--citie-info-text);
-  --sev-rotulo: var(--citie-brand-contrast);
-  --sev-contorno: var(--sev-fg);
-}
-
-.citie-sev--warn {
-  --sev-bg: var(--citie-warning-background);
-  --sev-fg: var(--citie-warning-strong);
-  --sev-preenchimento: var(--citie-warning-emphasis);
-  --sev-rotulo: var(--citie-warning-contrast);
-  --sev-contorno: var(--sev-fg);
-}
-
-.citie-sev--danger {
-  --sev-bg: var(--citie-danger-background);
-  --sev-fg: var(--citie-danger-foreground);
-  --sev-preenchimento: var(--citie-danger-emphasis);
-  --sev-rotulo: var(--citie-danger-contrast);
-  --sev-contorno: var(--sev-fg);
-}
-
-.citie-sev--secondary {
-  --sev-bg: var(--citie-background-subtle);
-  --sev-fg: var(--citie-text-base);
-  --sev-preenchimento: var(--citie-secondary);
-  --sev-rotulo: var(--citie-secondary-foreground);
-  --sev-contorno: var(--citie-border-strong);
-}
-
-.citie-sev--primary {
-  --sev-bg: var(--citie-brand-subtle);
-  --sev-fg: var(--citie-brand-primary);
-  --sev-preenchimento: var(--citie-brand-primary);
-  --sev-rotulo: var(--citie-brand-contrast);
-  --sev-contorno: var(--sev-fg);
-}
-
-/*
- * Primary tonal no escuro: a tinta sobe um degrau na rampa de marca.
- * `brand-primary` #4d8bfc sobre `brand-subtle` (14% da mesma tinta sobre a
- * superfície) mede 4,39:1 em #1a1a1d e 4,70:1 em #141414; `brand-hover`
- * #84aefd mede **6,47:1** e **6,93:1**, e é a mesma tinta que o info tonal já
- * usa (`info-text`). A pele preenchida fica fora do seletor: lá o rótulo é
- * `brand-contrast` sobre o preenchimento sólido (5,63:1), e esta regra, mais
- * específica que `.citie-sev--pele-preenchida`, venceria a tinta dela. O gate
- * escuro da story `Anatomia` pegou isso na primeira versão.
- */
-[data-theme='dark'] .citie-sev--primary:not(.citie-sev--pele-preenchida) {
-  --sev-fg: var(--citie-brand-hover);
-}
-
-.citie-sev--contrast {
-  --sev-bg: var(--citie-text-primary);
-  --sev-fg: var(--citie-text-inverse);
-  --sev-preenchimento: var(--citie-text-primary);
-  --sev-rotulo: var(--citie-text-inverse);
-  --sev-contorno: var(--citie-text-primary);
-}
+/* O mapa `.citie-sev` / `.citie-sev--*` vive em `src/tokens/severidade.css`,
+   importado por `Badge.tsx` antes desta folha. Aqui ficam só as peles. */
 
 /* ---------- Peles do kit ---------- */
 

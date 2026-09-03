@@ -8,6 +8,7 @@ import {
 } from 'react';
 import { Checkbox } from '../../atoms/Choice/Choice';
 import { Skeleton } from '../../atoms/Skeleton/Skeleton';
+import { IconeDeOrdenacao } from '../Table/Table';
 import './TreeTable.css';
 
 export type AlinhamentoDaColuna = 'esquerda' | 'direita' | 'centro';
@@ -283,9 +284,7 @@ export function TreeTable<T>({
                       onClick={() => alternarOrdenacao(coluna.chave)}
                     >
                       {coluna.cabecalho}
-                      <span aria-hidden="true">
-                        {ativa ? (ordenacao.direcao === 'ascending' ? '↑' : '↓') : '↕'}
-                      </span>
+                      <IconeDeOrdenacao direcao={ativa ? ordenacao.direcao : undefined} />
                     </button>
                   ) : (
                     coluna.cabecalho

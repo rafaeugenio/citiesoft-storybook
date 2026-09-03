@@ -69,7 +69,7 @@ const RAIO: TokenDocumentado[] = [
     nome: 'radius-2xl',
     uso: 'Moldura que envolve a tela: o Drawer lateral e o cartão de conteúdo do shell, os dois medidos em 16 no Sismental. É o teto da escala e o único degrau acima do `radius` do kit.',
     evitar:
-      'usar em Card, Panel, Fieldset ou Dialog. Eles ficam em `radius-lg` para se lerem como conteúdo dentro da moldura, e não como uma segunda moldura.',
+      'usar em Card, Panel, Fieldset ou Dialog. Eles ficam em `radius-lg` para se lerem como conteúdo dentro da moldura.',
   },
   {
     nome: 'radius-full',

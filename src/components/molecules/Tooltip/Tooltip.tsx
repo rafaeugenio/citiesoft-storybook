@@ -1,4 +1,4 @@
-import { useId, useRef, useState, type ReactElement, type ReactNode } from 'react';
+import { useEffect, useId, useRef, useState, type ReactElement, type ReactNode } from 'react';
 import { cloneElement } from 'react';
 import './Tooltip.css';
 
@@ -42,6 +42,23 @@ export function Tooltip({
     clearTimeout(timer.current);
     setVisivel(false);
   };
+
+  // Escape fecha o balão sem mover o foco, o "dispensável" da WCAG 1.4.13,
+  // como o HoverCard já faz. O preventDefault consome a tecla em camadas: com
+  // o balão aberto dentro de um diálogo modal, o primeiro Escape fecha só o
+  // balão e o diálogo segue aberto.
+  useEffect(() => {
+    if (!visivel) return;
+    const aoTeclar = (evento: KeyboardEvent) => {
+      if (evento.key === 'Escape') {
+        evento.preventDefault();
+        clearTimeout(timer.current);
+        setVisivel(false);
+      }
+    };
+    document.addEventListener('keydown', aoTeclar);
+    return () => document.removeEventListener('keydown', aoTeclar);
+  }, [visivel]);
 
   const gatilho = cloneElement(children, {
     // Associação explícita entre gatilho e texto, para o leitor de tela.

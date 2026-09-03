@@ -84,7 +84,22 @@ export const Vertical: Story = {
     // A data usa <time datetime> em ISO 8601.
     const tempo = canvasElement.querySelector('time')!;
     await expect(tempo).toHaveAttribute('datetime', '2025-03-18T14:32:00');
-    await expect(tempo).toHaveTextContent('18/03/2025 às 14:32');
+    // Carimbo em mono 12 muted, à direita do título, como no Sismental.
+    await expect(tempo).toHaveTextContent('18/03/2025 14:32');
+    await expect(getComputedStyle(tempo).fontFamily).toMatch(/Red Hat Mono/);
+    await expect(getComputedStyle(tempo).fontSize).toBe('12px');
+
+    // Marcador vazado de 12 com traço de 2 na tinta de marca; título 14 Medium em marca.
+    const marcador = canvasElement.querySelector('.citie-timeline__marcador') as HTMLElement;
+    await expect(marcador.getBoundingClientRect().width).toBe(12);
+    await expect(getComputedStyle(marcador).borderTopWidth).toBe('2px');
+    await expect(marcador.textContent).toBe('');
+    const titulo = canvasElement.querySelector('.citie-timeline__titulo') as HTMLElement;
+    // Token lido no próprio título, onde o tema já está herdado.
+    const marca = getComputedStyle(titulo).getPropertyValue('--citie-brand-primary').trim();
+    const [r, g, b] = [1, 3, 5].map((i) => parseInt(marca.slice(i, i + 2), 16));
+    await expect(getComputedStyle(titulo).color).toBe(`rgb(${r}, ${g}, ${b})`);
+    await expect(Number(getComputedStyle(titulo).fontWeight)).toBe(500);
   },
 };
 

@@ -1,10 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { SemRegistro, Table, mascararCPF, type Coluna } from './Table';
+import { Identificador, SemRegistro, Table, mascararCPF, resumoDePaginacao, type Coluna } from './Table';
 import { StatusIndicator, type EstadoDeFluxo } from '../../atoms/Badge/Badge';
 import { Button } from '../../atoms/Button/Button';
+import { Switch } from '../../atoms/Choice/Choice';
 import { Link } from '../../atoms/Link/Link';
 import { EmptyState } from '../../molecules/EmptyState/EmptyState';
+import { Pagination } from '../../molecules/Pagination/Pagination';
+import { Search } from '../../molecules/Search/Search';
+import { Select } from '../../molecules/Select/Select';
 
 interface Solicitacao {
   processo: string;
@@ -54,7 +58,7 @@ const COLUNAS: Coluna<Solicitacao>[] = [
     ordenavel: true,
     render: (linha) => reais(linha.valor),
   },
-  { chave: 'emissao', cabecalho: 'Emissão', alinhamento: 'centro', render: (linha) => linha.emissao },
+  { chave: 'emissao', cabecalho: 'Emissão', mono: true, render: (linha) => linha.emissao },
   {
     chave: 'estado',
     cabecalho: 'Situação',
@@ -150,22 +154,55 @@ async function conferirRegua(canvasElement: HTMLElement, alturaEsperada: number)
     // Inteira: cada célula pinta o próprio fio de 1px inteiro, e a linha
     // assenta em coordenada redonda.
     await expect(Number.isInteger(altura)).toBe(true);
-    // Uniforme, cabeçalho e última linha inclusive.
-    await expect(altura).toBe(alturaEsperada + 1);
   }
+  // Uniforme, cabeçalho e última linha inclusive. A lista inteira entra na
+  // comparação para a falha dizer qual linha destoou.
+  await expect(alturas).toEqual(alturas.map(() => alturaEsperada + 1));
 }
 
 export const Confortavel: Story = {
-  name: 'Densidade · confortável (48px)',
+  name: 'Densidade · confortável (44px)',
+  parameters: {
+    docs: {
+      description: {
+        story: [
+          'Anatomia do UI Kit: célula de 44 com padding 12, corpo Regular 14/20 em `text-base`,',
+          'cabeçalho Medium 14/20 em caixa normal separado do dado por peso, fio de 1px em',
+          '`border-default` e a última linha sem fio. Era 48 com cabeçalho em micro maiúscula; os',
+          'dois valores vinham do PrimeOne, e o kit alinha a célula ao controle de 36 com 4 de',
+          'respiro por lado.',
+        ].join('\n'),
+      },
+    },
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const grid = canvas.getByRole('grid', { name: 'Solicitações de TFD, 4 registros' });
     await expect(grid).toBeVisible();
 
-    // 48px de célula mais o fio de 1px, igual em toda linha e no cabeçalho.
-    // Antes desta rodada, as mesmas linhas mediam 48,50 no cabeçalho, 49,00 no
-    // corpo e 48,50 na última.
-    await conferirRegua(canvasElement, 48);
+    // 44px de célula mais o fio de 1px, igual em toda linha e no cabeçalho.
+    await conferirRegua(canvasElement, 44);
+
+    // Cabeçalho Medium 14 em caixa normal: peso separa cabeçalho de dado, e
+    // não caixa alta com entreletra.
+    const cabecalho = canvas.getByRole('columnheader', { name: /Servidor/ });
+    const estilo = getComputedStyle(cabecalho);
+    await expect(estilo.textTransform).toBe('none');
+    await expect(estilo.fontSize).toBe('14px');
+    await expect(Number(estilo.fontWeight)).toBe(500);
+    // Corpo Regular 14 no dado.
+    const dado = canvas.getByText('Maria de Fátima Souza');
+    await expect(getComputedStyle(dado).fontSize).toBe('14px');
+    await expect(Number(getComputedStyle(dado).fontWeight)).toBe(400);
+
+    // Coluna mono: a data alinha na vertical com dígitos tabulares.
+    const data = canvas.getAllByText('12/03/2025')[0];
+    await expect(getComputedStyle(data).fontFamily).toMatch(/Red Hat Mono/);
+
+    // Envoltório é cartão: raio 10, borda e sombra curta.
+    const cartao = canvasElement.querySelector('.citie-table-wrapper') as HTMLElement;
+    await expect(getComputedStyle(cartao).borderRadius).toBe('10px');
+    await expect(getComputedStyle(cartao).boxShadow).not.toBe('none');
 
     // CPF sai mascarado na listagem; o valor completo só no detalhe.
     await expect(canvas.getByText('***.***.**9-00')).toBeVisible();
@@ -269,6 +306,19 @@ export const SelecaoNaLinhaPar: Story = {
       await expect(fundo(par)).toBe(fundo(impar));
       await expect(fundo(par)).not.toBe(parEmRepouso);
     });
+
+    // A seleção é o accent forte do kit, distinto do accent de hover, e o
+    // rótulo sobe para text-primary no mesmo golpe (11,81:1 medido no claro).
+    // O token é lido na própria célula, onde o tema já está herdado.
+    const celula = par.querySelector('td') as HTMLElement;
+    const token = (nome: string) => getComputedStyle(celula).getPropertyValue(nome).trim();
+    const paraRgb = (hex: string) => {
+      const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+      return `rgb(${r}, ${g}, ${b})`;
+    };
+    await expect(fundo(par)).toBe(paraRgb(token('--citie-accent-forte')));
+    await expect(fundo(par)).not.toBe(paraRgb(token('--citie-accent')));
+    await expect(getComputedStyle(celula).color).toBe(paraRgb(token('--citie-text-primary')));
   },
 };
 
@@ -348,6 +398,156 @@ export const VazioComFiltro: Story = {
 
 /** As mesmas colunas, sem a coluna de ações montada à mão. */
 const COLUNAS_SEM_ACOES = COLUNAS.filter((coluna) => coluna.chave !== 'acoes');
+
+/* ---------- Listagem em cartão, como no Sismental ---------- */
+
+interface Profissional {
+  id: string;
+  nome: string;
+  cpf: string;
+  profissao: string;
+  unidade: string;
+  cadastro: string;
+  ativo: boolean;
+}
+
+const PROFISSIONAIS: Profissional[] = [
+  { id: 'p1', nome: 'Ana Neri', cpf: '111.222.333-44', profissao: 'Enfermeira', unidade: 'CAPS AD III, São Luís', cadastro: '08/03/2026', ativo: true },
+  { id: 'p2', nome: 'Manuel Braga', cpf: '222.333.444-55', profissao: 'Psicólogo', unidade: 'CAPS AD III, São Luís', cadastro: '11/03/2026', ativo: true },
+  { id: 'p3', nome: 'Raimundo Nonato', cpf: '333.444.555-66', profissao: 'Psiquiatra', unidade: 'CAPS II, Imperatriz', cadastro: '14/03/2026', ativo: true },
+  { id: 'p4', nome: 'Vitória Lima', cpf: '444.555.666-77', profissao: 'Médica', unidade: 'CAPS II, Imperatriz', cadastro: '20/03/2026', ativo: true },
+  { id: 'p5', nome: 'Marcos Aquino', cpf: '555.666.777-88', profissao: 'Educador físico', unidade: 'CAPS AD III, São Luís', cadastro: '02/04/2026', ativo: false },
+];
+
+const IconeDeLapis = (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <path
+      d="M10.8 2.2 13.8 5.2 5.6 13.4H2.6v-3z"
+      stroke="currentColor"
+      strokeWidth="1.3"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const COLUNAS_DE_PROFISSIONAL: Coluna<Profissional>[] = [
+  {
+    chave: 'nome',
+    cabecalho: 'Profissional',
+    ordenavel: true,
+    render: (linha) => <Identificador principal={linha.nome} secundario={mascararCPF(linha.cpf)} />,
+  },
+  { chave: 'profissao', cabecalho: 'Profissão', render: (linha) => linha.profissao },
+  { chave: 'unidade', cabecalho: 'Unidade', render: (linha) => linha.unidade },
+  { chave: 'cadastro', cabecalho: 'Cadastro', mono: true, ordenavel: true, render: (linha) => linha.cadastro },
+  {
+    chave: 'ativo',
+    cabecalho: 'Status',
+    render: (linha) => (
+      <Switch label={linha.ativo ? 'Ativo' : 'Inativo'} defaultChecked={linha.ativo} />
+    ),
+  },
+];
+
+export const EmCartao: Story = {
+  name: 'Composição · listagem em cartão',
+  render: () => (
+    <Table<Profissional>
+      legenda="Profissionais, 98 registros"
+      colunas={COLUNAS_DE_PROFISSIONAL}
+      linhas={PROFISSIONAIS}
+      chaveDaLinha={(linha) => linha.id}
+      rotuloDaLinha={(linha) => linha.nome}
+      linhaInativa={(linha) => !linha.ativo}
+      acoesSempreVisiveis
+      cabecalho={{
+        titulo: 'Profissionais',
+        subtitulo: 'Equipe cadastrada nas unidades da rede',
+        acao: (
+          <Button variant="primary" icon={<span aria-hidden="true">+</span>}>
+            Cadastrar profissional
+          </Button>
+        ),
+      }}
+      filtros={
+        <>
+          <Search label="Pesquisar profissional" placeholder="Pesquisar" size="md" />
+          <Select
+            label="Status"
+            placeholder="Todos os status"
+            options={[
+              { value: 'ativo', label: 'Ativo' },
+              { value: 'inativo', label: 'Inativo' },
+            ]}
+          />
+        </>
+      }
+      acoesDaLinha={(linha) => (
+        <Button variant="outline" size="small" icon={IconeDeLapis} aria-label={`Editar ${linha.nome}`}>
+          Editar
+        </Button>
+      )}
+      paginacao={
+        <Pagination label="Paginação de profissionais" totalRegistros={98} itensPorPagina={10} variant="simples" />
+      }
+      resumo={resumoDePaginacao(1, 10, 98, ['profissional', 'profissionais'])}
+    />
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: [
+          'A listagem do Sismental inteira dentro do cartão da tabela: cabeçalho com título 16',
+          'Medium, subtítulo muted e ação primária à direita; linha de filtro com busca larga e',
+          'select de escopo; identificador em duas linhas (nome 14 mais CPF em mono 12 muted);',
+          'data em mono; coluna de status com switch e texto; botão outline "Editar" com lápis',
+          'visível em toda linha porque é a ação principal da tela; linha inativa em',
+          '`text-secondary` com "Inativo" anunciado ao leitor de tela; rodapé com paginação à',
+          'esquerda e "Mostrando 1 a 10 de 98 profissionais" à direita.',
+          '',
+          'O que se copia do Sismental é a composição. A cor é a da casa: azul Citiesoft no',
+          'botão, accent no hover, accent forte na seleção.',
+        ].join('\n'),
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.getByRole('heading', { name: 'Profissionais' })).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Cadastrar profissional' })).toBeVisible();
+    await expect(canvas.getByText('Mostrando 1 a 10 de 98 profissionais')).toBeVisible();
+
+    // Identificador em duas linhas dentro dos 44px: nome mais CPF em mono muted.
+    const cpf = canvas.getByText('***.***.**3-44');
+    await expect(getComputedStyle(cpf).fontFamily).toMatch(/Red Hat Mono/);
+    await expect(getComputedStyle(cpf).fontSize).toBe('12px');
+    await conferirRegua(canvasElement, 44);
+
+    // Linha inativa recua para text-secondary e diz "Inativo" a quem não vê a cor.
+    const inativa = canvas.getByText('Marcos Aquino').closest('tr') as HTMLElement;
+    await expect(inativa).toHaveClass('citie-table__linha--inativa');
+    await expect(within(inativa).getByText('Inativo.')).toBeInTheDocument();
+
+    // Ação principal visível sem hover, em botão outline de 32.
+    const editar = canvas.getByRole('button', { name: 'Editar Ana Neri' });
+    await expect(getComputedStyle(editar).opacity).toBe('1');
+    await expect(editar.getBoundingClientRect().height).toBe(32);
+  },
+};
+
+export const ResumoDePaginacao: Story = {
+  name: 'Regra · resumo de paginação',
+  play: async () => {
+    await expect(resumoDePaginacao(1, 10, 98, ['profissional', 'profissionais'])).toBe(
+      'Mostrando 1 a 10 de 98 profissionais',
+    );
+    // A última página nunca diz "91 a 100" numa lista de 98.
+    await expect(resumoDePaginacao(10, 10, 98)).toBe('Mostrando 91 a 98 de 98 registros');
+    await expect(resumoDePaginacao(1, 10, 1)).toBe('Mostrando 1 a 1 de 1 registro');
+    await expect(resumoDePaginacao(1, 10, 0)).toBe('Nenhum registro para mostrar');
+  },
+};
 
 export const AcoesPorLinha: Story = {
   name: 'Controle · ações por linha',

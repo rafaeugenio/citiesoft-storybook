@@ -5,6 +5,8 @@ import { Dialog } from './Overlay';
 import { Button } from '../../atoms/Button/Button';
 import { Input } from '../../molecules/Input/Input';
 import { Select } from '../../molecules/Select/Select';
+import { Card } from '../../molecules/Card/Card';
+import { Popover } from '../../molecules/Tooltip/Tooltip';
 
 /**
  * Toda story aqui começa FECHADA, com um gatilho visível.
@@ -192,7 +194,19 @@ export const Anatomia: Story = {
   render: () => (
     <ComGatilho rotulo="Abrir diálogo">
       {({ aberto, fechar }) => (
-        <Dialog
+        <>
+          {/* Os três degraus da escada de elevação na mesma página: card em
+              `raised`, painel ancorado em `overlay`, diálogo em `dialog`. A play
+              function mede os três e exige que sejam distintos. */}
+          <div style={{ display: 'grid', gap: 16, maxWidth: 420, marginBlockStart: 16 }}>
+            <Card titulo="Resumo do processo" densidade="compacta">
+              Solicitação de TFD com destino a São Luís, aberta em 12/03/2025.
+            </Card>
+            <Popover label="Detalhe do prazo" gatilho={<span>Prazo</span>} aberto onClose={() => {}}>
+              Prazo de análise até 18/03/2025.
+            </Popover>
+          </div>
+          <Dialog
           aberto={aberto}
           onClose={fechar}
           titulo="Encerrar processo 2025/0481"
@@ -208,6 +222,7 @@ export const Anatomia: Story = {
         >
           O processo sai da fila de análise e o histórico fica disponível só para consulta.
         </Dialog>
+        </>
       )}
     </ComGatilho>
   ),
@@ -221,7 +236,32 @@ export const Anatomia: Story = {
     await expect(dialogo.getBoundingClientRect().width).toBe(640);
     await expect(estilo.borderTopLeftRadius).toBe('10px');
     await expect(estilo.borderTopWidth).toBe('1px');
-    await expect(estilo.boxShadow).not.toBe('none');
+
+    // Escada de elevação: card, painel ancorado e diálogo carregam três sombras
+    // distintas, cada uma igual ao próprio token resolvido no tema corrente.
+    // A sonda resolve o token no mesmo contêiner de tema; trocar
+    // `--citie-shadow-dialog` por `raised` reprova aqui.
+    const resolver = (token: string) => {
+      const sonda = document.createElement('div');
+      sonda.style.boxShadow = `var(${token})`;
+      dialogo.append(sonda);
+      const valor = getComputedStyle(sonda).boxShadow;
+      sonda.remove();
+      return valor;
+    };
+    const card = canvasElement.querySelector<HTMLElement>('.citie-card')!;
+    const painel = canvasElement.querySelector<HTMLElement>('.citie-popover')!;
+    const sombraDoCard = getComputedStyle(card).boxShadow;
+    const sombraDoPainel = getComputedStyle(painel).boxShadow;
+    const sombraDoDialogo = estilo.boxShadow;
+    // O card soma o trilho nulo à elevação: a parte final é o token `raised`.
+    await expect(sombraDoCard.endsWith(resolver('--citie-shadow-raised'))).toBe(true);
+    await expect(sombraDoPainel).toBe(resolver('--citie-shadow-overlay'));
+    await expect(sombraDoDialogo).toBe(resolver('--citie-shadow-dialog'));
+    await expect(new Set([sombraDoCard, sombraDoPainel, sombraDoDialogo]).size).toBe(3);
+    // A primeira camada do diálogo projeta ao menos 10px para baixo (shadow-lg).
+    const deslocamentoY = Number.parseFloat(sombraDoDialogo.match(/\)\s+(-?[\d.]+)px\s+(-?[\d.]+)px/)?.[2] ?? '0');
+    await expect(deslocamentoY).toBeGreaterThanOrEqual(10);
 
     const titulo = dialogo.querySelector<HTMLElement>('.citie-dialog__titulo');
     await expect(getComputedStyle(titulo as Element).fontSize).toBe('20px');

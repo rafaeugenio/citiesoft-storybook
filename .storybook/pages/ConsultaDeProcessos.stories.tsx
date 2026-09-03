@@ -525,7 +525,8 @@ export const ComDados: Story = {
     await expect(canvas.getByText('24 processos encontrados')).toBeVisible();
     // A primeira página mostra 10 dos 24; o 11º registro fica para a próxima.
     await expect(canvas.queryByRole('link', { name: PROTOCOLO_INEXISTENTE })).toBeNull();
-    await expect(canvas.getByText('1-10 de 24 registros')).toBeVisible();
+    // Texto do resumo na anatomia do kit (Lote 4): "Mostrando X a Y de Z registros".
+    await expect(canvas.getByText('Mostrando 1 a 10 de 24 registros')).toBeVisible();
     await expect(
       canvas.getByRole('navigation', { name: 'Paginação de solicitações de TFD' }),
     ).toBeVisible();

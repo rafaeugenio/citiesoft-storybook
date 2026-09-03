@@ -89,7 +89,7 @@ export const Anatomia: Story = {
     docs: {
       description: {
         story:
-          'Tooltip invertido: fundo `--citie-popover` na tinta oposta ao tema, texto `--citie-popover-foreground` em 12/16, padding 6 por 8, raio 10 e seta de 6px na mesma tinta. A story mede cada valor e confere que fundo e texto do balão vêm dos dois tokens de popover, e não da superfície da página.',
+          'Tooltip invertido: fundo `--citie-popover` na tinta oposta ao tema, texto `--citie-popover-foreground` em 12/16, padding 6 por 8, raio 10 e seta de 6px na mesma tinta. A story mede cada valor, confere que fundo e texto do balão vêm dos dois tokens de popover, e fecha com Escape sem mover o foco (WCAG 1.4.13).',
       },
     },
   },
@@ -123,6 +123,13 @@ export const Anatomia: Story = {
     const seta = getComputedStyle(dica, '::after');
     await expect(seta.borderTopWidth).toBe('6px');
     await expect(seta.borderTopColor).toBe(estilo.backgroundColor);
+
+    // WCAG 1.4.13: Escape dispensa o balão e o foco fica onde estava.
+    const gatilho = canvas.getByRole('button', { name: 'CNES' });
+    await expect(gatilho).toHaveFocus();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(canvas.queryByRole('tooltip')).toBeNull());
+    await expect(gatilho).toHaveFocus();
   },
 };
 

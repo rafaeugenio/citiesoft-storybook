@@ -1,7 +1,6 @@
 /**
- * Painel de gráfico: contêiner externo, então respiro de card de destaque
- * (`spacing-6`), raio de camada externa (`radius-2xl`) e elevação `raised`,
- * conforme as seções 1 a 3 da spec estrutural.
+ * Painel de gráfico: o Card do kit (raio 10, borda, shadow-sm) com o respiro
+ * de card de destaque (`spacing-6`), como o card de gráfico do kit.
  */
 .citie-chart {
   margin: 0;
@@ -9,9 +8,71 @@
   font-family: var(--citie-font-ui);
   background-color: var(--citie-background-surface);
   border: 1px solid var(--citie-border-default);
-  border-radius: var(--citie-radius-2xl);
+  border-radius: var(--citie-radius-lg);
   box-shadow: var(--citie-shadow-raised);
 }
+
+/* Moldura da área de plotagem: referência de posição da dica. */
+.citie-chart__moldura {
+  position: relative;
+}
+
+/**
+ * Dica de dado na pele invertida do Tooltip (Lote 3): fundo `popover`, texto
+ * 12/16 em `popover-foreground` (16,29:1 claro, 16,91:1 escuro), padding 6 × 8,
+ * raio 10 e a sombra de overlay. Posicionada pelo componente no ponto do dado,
+ * deslocada para cima; `pointer-events: none` para o ponteiro continuar sobre
+ * a marca. A mesma informação vive no `<title>` de cada marca, para o leitor
+ * de tela e para o teclado.
+ */
+.citie-chart__dica {
+  position: absolute;
+  z-index: 1;
+  transform: translate(-50%, calc(-100% - var(--citie-spacing-2)));
+  display: flex;
+  flex-direction: column;
+  gap: var(--citie-spacing-0-5);
+  padding: var(--citie-spacing-1-5) var(--citie-spacing-2);
+  font-size: var(--citie-font-size-body-xs);
+  line-height: var(--citie-linha-mini);
+  color: var(--citie-popover-foreground);
+  background-color: var(--citie-popover);
+  border-radius: var(--citie-radius-lg);
+  box-shadow: var(--citie-shadow-overlay);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: citie-chart-dica var(--citie-motion-rapido) var(--citie-easing-entrada) both;
+}
+
+@keyframes citie-chart-dica {
+  from {
+    opacity: 0;
+  }
+}
+
+.citie-chart__dica-categoria {
+  font-weight: var(--citie-font-weight-action);
+}
+
+.citie-chart__dica-serie {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-1-5);
+}
+
+.citie-chart__dica-valor {
+  margin-inline-start: auto;
+  padding-inline-start: var(--citie-spacing-3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Marca sob o ponteiro escurece um degrau: o dado apontado se destaca da série. */
+.citie-chart__barra:hover,
+.citie-chart__ponto:hover,
+.citie-chart__fatia:hover {
+  filter: brightness(0.92);
+}
+
 
 .citie-chart__cabecalho {
   display: flex;
@@ -51,12 +112,19 @@
   max-width: 200px;
 }
 
-/* Grade recessiva, nunca competindo com os dados. */
+/* Grade recessiva e tracejada, como a do card de gráfico do kit: nunca compete com o dado. */
 .citie-chart__grade {
   stroke: var(--citie-chart-grade);
   stroke-width: 1;
+  stroke-dasharray: 3 3;
 }
 
+/* A linha de base fica sólida: é de onde o dado nasce. */
+.citie-chart__grade--base {
+  stroke-dasharray: none;
+}
+
+/* Rótulo de eixo 12/16 muted, dígitos tabulares. */
 .citie-chart__eixo {
   font-family: var(--citie-font-ui);
   font-size: var(--citie-font-size-body-xs);
@@ -104,7 +172,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .citie-chart__barra,
-  .citie-chart__serie {
+  .citie-chart__serie,
+  .citie-chart__dica {
     animation: none;
   }
 }
@@ -139,11 +208,12 @@
   color: var(--citie-text-secondary);
 }
 
+/* Amostra de cor da legenda e da dica: quadrado de 8 com raio 2, como no kit. */
 .citie-chart__marcador {
-  width: 10px;
-  height: 10px;
+  width: var(--citie-spacing-2);
+  height: var(--citie-spacing-2);
   flex: none;
-  border-radius: var(--citie-radius-sm);
+  border-radius: var(--citie-spacing-0-5);
 }
 
 .citie-chart__donut-bloco {
@@ -162,11 +232,11 @@
   fill: var(--citie-text-primary);
 }
 
-/* Rótulo micro em maiúscula, acima do número (seção 4). */
+/* Rótulo 12 Medium muted em caixa normal, acima do número, como o rótulo do KPI. */
 .citie-chart__donut-rotulo {
   font-family: var(--citie-font-ui);
-  font-size: var(--citie-font-size-caption);
-  text-transform: uppercase;
+  font-size: var(--citie-font-size-body-xs);
+  font-weight: var(--citie-font-weight-action);
   fill: var(--citie-text-secondary);
 }
 
@@ -195,9 +265,10 @@
   border-block-end: 1px solid var(--citie-border-default);
 }
 
+/* Cabeçalho da tabela alternativa na anatomia da Table: Medium, sem caixa alta. */
 .citie-chart__tabela thead th {
-  color: var(--citie-text-primary);
-  font-weight: 600;
+  color: var(--citie-text-base);
+  font-weight: var(--citie-font-weight-action);
 }
 
 .citie-chart__tabela td {

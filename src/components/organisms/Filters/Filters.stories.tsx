@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
-import { FilterBar, ordenarFiltros, type FiltroAtivo } from './Filters';
+import { BotaoDeFiltro, FilterBar, ordenarFiltros, type FiltroAtivo } from './Filters';
+import { Button } from '../../atoms/Button/Button';
 import { Search } from '../../molecules/Search/Search';
 import { Select } from '../../molecules/Select/Select';
 
@@ -137,6 +138,57 @@ export const RemocaoIndividual: Story = {
 export const Compacta: Story = {
   name: 'Variante · compacta',
   args: { densidade: 'compacta' },
+};
+
+export const BarraDoKit: Story = {
+  name: 'Composição · barra de dimensões do kit',
+  args: {
+    controles: (
+      <>
+        <Search label="Filtrar solicitações" placeholder="Filtrar solicitações" size="md" />
+        <BotaoDeFiltro rotulo="Situação" contador={2} />
+        <BotaoDeFiltro rotulo="Prioridade" />
+        <Button variant="text" size="small">
+          Redefinir
+        </Button>
+      </>
+    ),
+    filtros: [
+      { id: 'situacao-analise', rotulo: 'Situação', valor: 'Em análise', dimensao: 'select' },
+      { id: 'situacao-devolvido', rotulo: 'Situação', valor: 'Devolvido', dimensao: 'select' },
+    ],
+    resultado: { total: 27, substantivo: ['solicitação', 'solicitações'] },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: [
+          'A barra da captura de tarefas do kit: campo de filtro à esquerda, um botão outline',
+          'por dimensão com chevron de 16 e contador em badge quando há valor aplicado, e',
+          '"Redefinir" em ghost. Os filtros ativos aparecem como badge de contorno com fechar,',
+          'em 24 de altura (o alvo mínimo de remoção), texto 12 SemiBold em `text-primary`.',
+          'A listagem do Sismental usa a outra forma da mesma barra, busca mais select, que é',
+          'a story de cima.',
+        ].join('\n'),
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const situacao = canvas.getByRole('button', { name: 'Situação' });
+    await expect(situacao).toHaveAttribute('aria-expanded', 'false');
+    await expect(situacao.getBoundingClientRect().height).toBe(32);
+    await expect(within(situacao).getByText('2')).toBeVisible();
+
+    // Chip de filtro ativo: badge de contorno de 24 com raio 10 e alvo de 24 no fechar.
+    const chip = canvasElement.querySelector('.citie-filtro-chip') as HTMLElement;
+    await expect(chip.getBoundingClientRect().height).toBe(24);
+    await expect(getComputedStyle(chip).borderRadius).toBe('10px');
+    const remover = canvas.getByRole('button', { name: 'Remover filtro Situação: Em análise' });
+    await expect(remover.getBoundingClientRect().height).toBe(24);
+    await expect(remover.getBoundingClientRect().width).toBe(24);
+  },
 };
 
 export const ResultadoUnico: Story = {

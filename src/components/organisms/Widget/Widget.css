@@ -1,13 +1,9 @@
 /**
- * PENDENTE DE TOKEN: entrelinhamento do rótulo micro.
- *
- * A anatomia de métrica pede rótulo em maiúscula com entrelinhamento largo, e
- * a escala de tipografia não tem degrau de `letter-spacing`. O valor está
- * declarado uma vez aqui, e não espalhado por regra, para que a promoção a
- * token seja uma troca de linha só.
+ * Card de indicador na pele do kit: raio 10, borda no degrau padrão e
+ * shadow-sm, padding 16; rótulo 12 Medium muted em caixa normal, valor em
+ * display com dígitos tabulares, período 12 muted, delta em badge tonal.
  */
 .citie-widget {
-  --citie-widget-tracking-rotulo: 0.06em;
   /**
    * Anel de seleção reservado desde o repouso, em transparente.
    *
@@ -15,7 +11,7 @@
    * seleção sem ganhar 2px de caixa, e a faixa inteira de indicadores não
    * salta quando o operador clica em um deles.
    */
-  --citie-widget-anel: inset 0 0 0 2px transparent;
+  --citie-widget-anel: inset 0 0 0 var(--citie-espessura-indicador) transparent;
 
   display: flex;
   flex-direction: column;
@@ -27,9 +23,9 @@
   text-align: start;
   background-color: var(--citie-background-surface);
   border: 1px solid var(--citie-border-default);
-  /* Contêiner externo do painel: raio maior que o das peças aninhadas. */
-  border-radius: var(--citie-radius-2xl);
+  border-radius: var(--citie-radius-lg);
   box-shadow: var(--citie-widget-anel), var(--citie-shadow-raised);
+  color: var(--citie-text-base);
 }
 
 .citie-widget--clicavel {
@@ -61,16 +57,18 @@
  * repouso e em hover, que a marcação não muda a caixa de ninguém.
  */
 .citie-widget--filtro:hover:not(.citie-widget--ativo) {
-  --citie-widget-anel: inset 0 0 0 2px var(--citie-border-strong);
+  --citie-widget-anel: inset 0 0 0 var(--citie-espessura-indicador) var(--citie-border-strong);
 }
 
 /**
- * Filtro aplicado. A seleção se lê parada, por anel e por fundo recuado, e o
+ * Filtro aplicado. A seleção se lê parada, por anel e por fundo em accent, e o
  * `aria-pressed` do botão carrega a mesma informação para o leitor de tela.
+ * O fundo fica no accent (e não no forte) porque o rótulo 12 muted precisa
+ * dos 4,51:1 que só o accent sustenta.
  */
 .citie-widget--ativo {
-  --citie-widget-anel: inset 0 0 0 2px var(--citie-brand-primary);
-  background-color: var(--citie-state-selected);
+  --citie-widget-anel: inset 0 0 0 var(--citie-espessura-indicador) var(--citie-brand-primary);
+  background-color: var(--citie-accent);
 }
 
 .citie-widget--erro {
@@ -85,13 +83,12 @@
   gap: var(--citie-spacing-3);
 }
 
-/* Anatomia de métrica, parte 1: rótulo micro em maiúscula, sempre acima do número. */
+/* Anatomia de métrica, parte 1: rótulo 12 Medium muted, sempre acima do número. */
 .citie-widget__rotulo {
   margin: 0;
-  font-size: var(--citie-font-size-caption);
-  font-weight: var(--citie-font-weight-title);
-  letter-spacing: var(--citie-widget-tracking-rotulo);
-  text-transform: uppercase;
+  font-size: var(--citie-font-size-body-xs);
+  font-weight: var(--citie-font-weight-action);
+  line-height: var(--citie-linha-mini);
   color: var(--citie-text-secondary);
 }
 
@@ -116,57 +113,45 @@
   font-weight: var(--citie-font-weight-title);
 }
 
+/* Sem dado o número dá lugar a um texto curto em muted, no corpo do período. */
+.citie-widget__sem-dado {
+  margin: 0;
+  font-size: var(--citie-font-size-title-sm);
+  font-weight: var(--citie-font-weight-action);
+  line-height: 1.1;
+  color: var(--citie-text-secondary);
+}
+
 .citie-widget__periodo {
   margin: 0;
-  font-size: var(--citie-font-size-body-sm);
+  font-size: var(--citie-font-size-body-xs);
+  line-height: var(--citie-linha-mini);
   color: var(--citie-text-secondary);
 }
 
 /**
- * Anatomia de métrica, parte 3: tendência como pílula, com ícone circular de
- * seta e o período comparado escrito por extenso ao lado.
+ * Anatomia de métrica, parte 3: o delta em badge tonal (Tag do Lote 1, 20 de
+ * altura, SemiBold 12) com a seta de 12 dentro, e o período comparado escrito
+ * por extenso ao lado, em 12 muted. Forma, palavra e cor: a cor é a terceira
+ * pista, nunca a única.
  */
 .citie-widget__tendencia {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  align-self: flex-start;
-  gap: var(--citie-spacing-1);
+  flex-wrap: wrap;
+  gap: var(--citie-spacing-2);
   margin: 0;
-  padding: var(--citie-spacing-1) var(--citie-spacing-2) var(--citie-spacing-1)
-    var(--citie-spacing-1);
-  font-size: var(--citie-font-size-body-sm);
-  font-weight: var(--citie-font-weight-title);
-  border-radius: var(--citie-radius-full);
-}
-
-.citie-widget__tendencia-icone {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-  width: var(--citie-spacing-4);
-  height: var(--citie-spacing-4);
-  font-size: var(--citie-font-size-caption);
-  border-radius: var(--citie-radius-full);
-  background-color: var(--citie-background-surface);
+  font-size: var(--citie-font-size-body-xs);
+  line-height: var(--citie-linha-mini);
+  color: var(--citie-text-secondary);
 }
 
 .citie-widget__tendencia-texto {
   font-variant-numeric: tabular-nums;
 }
 
-.citie-widget__tendencia--alta {
-  background-color: var(--citie-success-background);
-  color: var(--citie-success-strong);
-}
-
-.citie-widget__tendencia--baixa {
-  background-color: var(--citie-danger-background);
-  color: var(--citie-danger-foreground);
-}
-
 .citie-widget__meta-trilho {
-  height: 6px;
+  height: var(--citie-spacing-1-5);
   background-color: var(--citie-background-subtle);
   border-radius: var(--citie-radius-full);
   overflow: hidden;
@@ -180,34 +165,18 @@
 
 .citie-widget__meta-texto {
   margin: var(--citie-spacing-2) 0 0;
-  font-size: var(--citie-font-size-body-sm);
+  font-size: var(--citie-font-size-body-xs);
+  line-height: var(--citie-linha-mini);
   color: var(--citie-text-secondary);
 }
 
 .citie-widget__falha {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--citie-spacing-1-5);
   margin: 0;
   font-size: var(--citie-font-size-body-md);
-  font-weight: 600;
-  color: var(--citie-danger-foreground);
-}
-
-.citie-widget__alerta {
-  padding: 2px var(--citie-spacing-2);
-  font-size: 11px;
-  font-weight: 600;
-  border-radius: var(--citie-radius-full);
-}
-
-.citie-widget__alerta--warn {
-  background-color: var(--citie-warning-background);
-  color: var(--citie-warning-strong);
-}
-
-.citie-widget__alerta--danger {
-  background-color: var(--citie-danger-background);
+  font-weight: var(--citie-font-weight-title);
   color: var(--citie-danger-foreground);
 }
 
@@ -217,14 +186,16 @@
   padding: 0;
 }
 
-/* Altura mínima de 40px em densidade normal, conforme a anatomia de linha. */
+/* Linha de 44, o ritmo da célula de tabela, com fio de 1px entre itens. */
 .citie-widget__item {
   display: flex;
   align-items: center;
   gap: var(--citie-spacing-3);
-  min-height: 40px;
+  min-height: var(--citie-altura-de-linha-confortavel);
+  box-sizing: border-box;
   padding-block: var(--citie-spacing-2);
   font-size: var(--citie-font-size-body-md);
+  line-height: var(--citie-linha-da-celula);
   color: var(--citie-text-base);
   border-block-end: 1px solid var(--citie-border-default);
 }
@@ -234,7 +205,7 @@
 }
 
 .citie-widget__item-principal {
-  font-weight: 500;
+  font-weight: var(--citie-font-weight-action);
   color: var(--citie-text-primary);
 }
 

@@ -217,7 +217,7 @@ const meta = {
     docs: {
       description: {
         component: [
-          'Tabela hierárquica: cada linha expande revelando as filhas, com recuo de 16px (`spacing.4`) por nível e total agregado no nó pai. Página do Figma CitieOne `❖ TreeTable` (`6738:49729`); variantes cobertas: Size (Default e Small, mapeados para as densidades de 48px e 36px da marca), Grid Lines, Sortable com Sort Order, Selection em cascata, treetable-node-toggle-button, treetable-header e treetable-footer. Equivalente PrimeNG: `p-treetable`.',
+          'Tabela hierárquica: cada linha expande revelando as filhas, com recuo de 16px (`spacing.4`) por nível e total agregado no nó pai. Página do Figma CitieOne `❖ TreeTable` (`6738:49729`); variantes cobertas: Size (Default e Small, mapeados para as densidades de 44px e 36px do kit), Grid Lines, Sortable com Sort Order, Selection em cascata, treetable-node-toggle-button, treetable-header e treetable-footer. Equivalente PrimeNG: `p-treetable`.',
           '',
           '**A `Table` é o padrão do sistema para exibir conjunto de registros.** A TreeTable é',
           'exceção, para o caso em que as linhas têm relação de pai e filho e o pai só faz sentido',
@@ -279,7 +279,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Confortavel: Story = {
-  name: 'Densidade · confortável (48px)',
+  name: 'Densidade · confortável (44px)',
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const arvore = canvas.getByRole('treegrid', {
@@ -296,7 +296,7 @@ export const Confortavel: Story = {
 
     const filha = canvas.getByRole('row', { name: /3\.1 Pessoal e encargos sociais/ });
     await expect(filha).toHaveAttribute('aria-level', '2');
-    await conferirRegua(canvasElement, 48);
+    await conferirRegua(canvasElement, 44);
 
     /*
      * O fio de hierarquia é contínuo, e não uma coluna de traços.

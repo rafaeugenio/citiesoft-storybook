@@ -1,7 +1,7 @@
 import './PrazoIndicador.css';
-// Severidade sai do mapa canônico de Badge.css, o mesmo que StatusIndicator,
+// Severidade sai do mapa canônico de src/tokens/severidade.css, o mesmo que StatusIndicator,
 // Tag e Chip consomem. Nenhuma cor nova entra por aqui.
-import '../../atoms/Badge/Badge.css';
+import '../../../tokens/severidade.css';
 
 export type FaixaDePrazo = 'atrasado' | 'hoje' | 'proximo' | 'folgado';
 

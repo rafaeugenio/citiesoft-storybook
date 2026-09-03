@@ -118,8 +118,8 @@
 /**
  * O respiro de cada densidade sai da escala: destaque em `spacing-6`, compacta
  * em `spacing-4`, ultracompacta em `spacing-3`. O rodapé fica um degrau abaixo
- * do corpo: ele carrega ação e não leitura, então respiro igual ao do corpo o
- * faz pesar mais do que vale.
+ * do corpo: ele carrega ação, então respiro igual ao do corpo de leitura o faz
+ * pesar mais do que vale.
  */
 .citie-card--compacta {
   --citie-respiro-do-card: var(--citie-spacing-4);
@@ -180,7 +180,7 @@
  * Caixa do ícone: fundo accent com o ícone na tinta de marca (#1261e4 sobre
  * #eff5ff mede 4,97:1 no claro; #4d8bfc sobre #202838 mede 4,51:1 no escuro).
  * Raio 8, um degrau abaixo do card, para a caixa se ler como objeto dentro
- * dele e não como um segundo card.
+ * dele.
  */
 .citie-card__icone {
   display: inline-flex;

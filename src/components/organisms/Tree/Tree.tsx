@@ -114,8 +114,8 @@ function Chevron({ aberto }: { aberto: boolean }) {
   return (
     <svg
       className={`citie-tree__chevron${aberto ? ' citie-tree__chevron--aberto' : ''}`}
-      width="14"
-      height="14"
+      width="16"
+      height="16"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -131,8 +131,8 @@ function Girador() {
   return (
     <svg
       className="citie-tree__girador"
-      width="14"
-      height="14"
+      width="16"
+      height="16"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"

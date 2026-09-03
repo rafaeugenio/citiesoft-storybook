@@ -1,8 +1,29 @@
 import type { ReactNode } from 'react';
+import { Tag } from '../../atoms/Badge/Badge';
 import { Button } from '../../atoms/Button/Button';
 import { Skeleton } from '../../atoms/Skeleton/Skeleton';
+import { AlertIcon } from '../../primitives/Field/Field';
 import { ValorEmTransicao } from './ValorEmTransicao';
 import './Widget.css';
+
+/** Seta de 12 do delta, no traço do sistema; aponta para cima ou para baixo. */
+function SetaDeTendencia({ paraCima }: { paraCima: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 12 12"
+      width="12"
+      height="12"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {paraCima ? <path d="M2.5 8.5 6 5l3.5 3.5" /> : <path d="M2.5 3.5 6 7l3.5-3.5" />}
+    </svg>
+  );
+}
 
 export type EstadoDoWidget = 'default' | 'carregando' | 'vazio' | 'erro';
 
@@ -69,7 +90,7 @@ export function KpiWidget({
       <div className="citie-widget citie-widget--erro" role="alert">
         <p className="citie-widget__rotulo">{rotulo}</p>
         <p className="citie-widget__falha">
-          <span aria-hidden="true">⚠</span> Falha ao carregar
+          <AlertIcon /> Falha ao carregar
         </p>
         <Button variant="secondary" size="small">
           Tentar novamente
@@ -85,7 +106,8 @@ export function KpiWidget({
 
       {estado === 'vazio' ? (
         <>
-          <p className="citie-widget__valor">—</p>
+          {/* Texto no lugar do número: um traço solto não diz se é zero ou ausência. */}
+          <p className="citie-widget__sem-dado">Sem dado</p>
           <p className="citie-widget__periodo">Nenhum dado disponível para o período</p>
         </>
       ) : (
@@ -102,23 +124,21 @@ export function KpiWidget({
 
           {variacao ? (
             /**
-             * Pílula de tendência: ícone circular de seta mais texto.
+             * Delta em badge tonal (a Tag do kit) com a seta dentro, e o
+             * período comparado por extenso ao lado.
              *
              * O significado vem por forma (a seta) e por palavra ("acima de
              * fevereiro"). A cor entra como terceira pista e nunca como única,
              * o que é exigência de acessibilidade e não escolha estética.
              */
-            <p
-              className={`citie-widget__tendencia${
-                positiva ? ' citie-widget__tendencia--alta' : ' citie-widget__tendencia--baixa'
-              }`}
-            >
-              <span className="citie-widget__tendencia-icone" aria-hidden="true">
-                {positiva ? '▲' : '▼'}
-              </span>
+            <p className="citie-widget__tendencia">
+              <Tag
+                label={`${positiva ? '+' : ''}${variacao.percentual.toLocaleString('pt-BR')}%`}
+                severity={positiva ? 'success' : 'danger'}
+                size="sm"
+                icon={<SetaDeTendencia paraCima={positiva} />}
+              />
               <span className="citie-widget__tendencia-texto">
-                {positiva ? '+' : ''}
-                {variacao.percentual.toLocaleString('pt-BR')}%{' '}
                 {positiva ? 'acima' : 'abaixo'} de {variacao.comparadoA}
               </span>
             </p>

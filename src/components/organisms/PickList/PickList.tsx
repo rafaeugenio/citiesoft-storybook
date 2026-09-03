@@ -290,7 +290,7 @@ export function PickList({
   const renderarReordenacao = (lado: Lado) => (
     <div className="citie-picklist__controles" role="group" aria-label={`Reordenar ${rotulos[lado]}`}>
       <Button
-        variant="secondary"
+        variant="outline"
         size="small"
         iconOnly
         icon={<IconeSeta direcao="cima" />}
@@ -299,7 +299,7 @@ export function PickList({
         onClick={() => reordenar(lado, 'subir')}
       />
       <Button
-        variant="secondary"
+        variant="outline"
         size="small"
         iconOnly
         icon={<IconeSetaDupla direcao="cima" />}
@@ -308,7 +308,7 @@ export function PickList({
         onClick={() => reordenar(lado, 'topo')}
       />
       <Button
-        variant="secondary"
+        variant="outline"
         size="small"
         iconOnly
         icon={<IconeSeta direcao="baixo" />}
@@ -317,7 +317,7 @@ export function PickList({
         onClick={() => reordenar(lado, 'descer')}
       />
       <Button
-        variant="secondary"
+        variant="outline"
         size="small"
         iconOnly
         icon={<IconeSetaDupla direcao="baixo" />}
@@ -336,7 +336,7 @@ export function PickList({
 
       <div className="citie-picklist__controles" role="group" aria-label="Transferir itens">
         <Button
-          variant="secondary"
+          variant="outline"
           size="small"
           iconOnly
           icon={<IconeSeta direcao="direita" />}
@@ -345,7 +345,7 @@ export function PickList({
           onClick={() => transferir('origem', false)}
         />
         <Button
-          variant="secondary"
+          variant="outline"
           size="small"
           iconOnly
           icon={<IconeSetaDupla direcao="direita" />}
@@ -354,7 +354,7 @@ export function PickList({
           onClick={() => transferir('origem', true)}
         />
         <Button
-          variant="secondary"
+          variant="outline"
           size="small"
           iconOnly
           icon={<IconeSetaDupla direcao="esquerda" />}
@@ -363,7 +363,7 @@ export function PickList({
           onClick={() => transferir('destino', true)}
         />
         <Button
-          variant="secondary"
+          variant="outline"
           size="small"
           iconOnly
           icon={<IconeSeta direcao="esquerda" />}

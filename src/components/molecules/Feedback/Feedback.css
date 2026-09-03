@@ -165,8 +165,8 @@
 /**
  * Anatomia de linha: o líder ocupa exatamente a caixa da primeira linha do
  * título (font-size × entrelinha) e centra o ícone de 16 nela. Com corpo de
- * três linhas, o ícone permanece na primeira, e não no centro do bloco. A cor
- * é a tinta da severidade: é o ícone que carrega a severidade, e não o fundo.
+ * três linhas, o ícone permanece na primeira. A cor é a tinta da severidade:
+ * a severidade mora no ícone e na aresta, e o fundo fica na superfície.
  */
 .citie-toast__icone,
 .citie-message__icone {
@@ -185,7 +185,7 @@
 /**
  * Título Medium 14/20 do kit. Com a ação à direita sobra menos largura para o
  * título, então ele pode dobrar uma vez; a partir da terceira linha corta,
- * porque título de toast é uma frase de ação e resultado, e não um parágrafo.
+ * porque título de toast é uma frase de ação e resultado.
  */
 .citie-toast__titulo {
   margin: 0;

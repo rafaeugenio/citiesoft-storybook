@@ -12,7 +12,24 @@ export interface Coluna<T> {
   alinhamento?: Alinhamento;
   ordenavel?: boolean;
   largura?: string;
+  /**
+   * Data, código, protocolo e número em Red Hat Mono com dígitos tabulares,
+   * como as datas da listagem de prontuários do Sismental: a coluna alinha na
+   * vertical e a varredura compara sem contar casas.
+   */
+  mono?: boolean;
   render: (linha: T) => ReactNode;
+}
+
+/**
+ * Cabeçalho do cartão da tabela, medido na lista de profissionais do
+ * Sismental: título 16 Medium, subtítulo muted e a ação primária à direita.
+ */
+export interface CabecalhoDaTabela {
+  titulo: string;
+  subtitulo?: string;
+  /** Botão primário da tela: "Cadastrar profissional". */
+  acao?: ReactNode;
 }
 
 export interface TableProps<T> {
@@ -58,6 +75,34 @@ export interface TableProps<T> {
    * sozinha não comunica nada a quem não a enxerga.
    */
   destaqueDaLinha?: (linha: T) => DestaqueDeLinha | undefined;
+  /**
+   * Linha inativa: o registro existe e está desligado (profissional inativo,
+   * unidade descredenciada). A tinta da linha desce para text-secondary e o
+   * texto oculto "(inativo)" entra na primeira célula, para a informação não
+   * depender só da cor. Diferente de `destaqueDaLinha`, que chama atenção;
+   * aqui a linha recua.
+   */
+  linhaInativa?: (linha: T) => boolean;
+  /**
+   * Mantém as ações por linha visíveis sem hover. É o caso do botão outline
+   * "Editar" da lista de profissionais: ação principal da tela, presente em
+   * toda linha. O padrão continua sendo revelar no hover e no foco.
+   */
+  acoesSempreVisiveis?: boolean;
+  /**
+   * Cartão da listagem, como no Sismental: cabeçalho com título, subtítulo e
+   * ação primária; linha de filtro (busca larga à esquerda, select de escopo à
+   * direita); rodapé com paginação à esquerda e o resumo à direita. Os três
+   * são opcionais e vivem dentro do mesmo envoltório da tabela, com o mesmo
+   * raio 10, borda e sombra curta do Card.
+   */
+  cabecalho?: CabecalhoDaTabela;
+  /** Busca e selects da linha de filtro. O primeiro filho cresce. */
+  filtros?: ReactNode;
+  /** Paginação. Fica à esquerda no rodapé; o `resumo` fica à direita. */
+  paginacao?: ReactNode;
+  /** "Mostrando 1 a 10 de 98 registros". Ver `resumoDePaginacao`. */
+  resumo?: string;
 }
 
 export interface DestaqueDeLinha {
@@ -71,6 +116,34 @@ const CLASSE_ALINHAMENTO: Record<Alinhamento, string> = {
   direita: 'citie-table__celula--direita',
   centro: 'citie-table__celula--centro',
 };
+
+const classeDaCelula = <T,>(coluna: Coluna<T>) =>
+  `${CLASSE_ALINHAMENTO[coluna.alinhamento ?? 'esquerda']}${coluna.mono ? ' citie-table__celula--mono' : ''}`;
+
+/**
+ * Ícone de ordenação de 16, no traço do sistema: as duas setas em repouso, e
+ * só a seta da direção quando a coluna ordena. Substitui as setas em texto
+ * (↑ ↓ ↕), que mudavam de desenho e de peso com a fonte.
+ */
+export function IconeDeOrdenacao({ direcao }: { direcao?: 'ascending' | 'descending' }) {
+  return (
+    <svg
+      className="citie-table__ordenar-icone"
+      viewBox="0 0 16 16"
+      width="16"
+      height="16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {direcao !== 'descending' ? <path d="M5.5 6.5 8 4l2.5 2.5M8 4v4.5" /> : null}
+      {direcao !== 'ascending' ? <path d="M5.5 9.5 8 12l2.5-2.5M8 12V7.5" /> : null}
+    </svg>
+  );
+}
 
 /**
  * Tabela operacional (tables-data-grid.md).
@@ -92,6 +165,12 @@ export function Table<T>({
   acoesEmMassa,
   acoesDaLinha,
   destaqueDaLinha,
+  linhaInativa,
+  acoesSempreVisiveis = false,
+  cabecalho,
+  filtros,
+  paginacao,
+  resumo,
 }: TableProps<T>) {
   const [selecionados, setSelecionados] = useState<string[]>([]);
   const [ordenacao, setOrdenacao] = useState<{ chave: string; direcao: 'ascending' | 'descending' } | null>(
@@ -124,6 +203,20 @@ export function Table<T>({
       role="group"
       aria-label={`Rolagem horizontal de ${legenda}`}
     >
+      {cabecalho ? (
+        <header className="citie-table__cabecalho">
+          <div>
+            <h3 className="citie-table__titulo">{cabecalho.titulo}</h3>
+            {cabecalho.subtitulo ? (
+              <p className="citie-table__subtitulo">{cabecalho.subtitulo}</p>
+            ) : null}
+          </div>
+          {cabecalho.acao ? <div className="citie-table__acao-principal">{cabecalho.acao}</div> : null}
+        </header>
+      ) : null}
+
+      {filtros ? <div className="citie-table__filtros">{filtros}</div> : null}
+
       {acoesEmMassa && selecionados.length > 0 ? (
         <div className="citie-table__acoes-massa" role="status">
           <span>{selecionados.length} selecionados</span>
@@ -134,7 +227,7 @@ export function Table<T>({
       <table
         className={`citie-table citie-table--${densidade}${zebra ? ' citie-table--zebra' : ''}${
           headerFixo ? ' citie-table--header-fixo' : ''
-        }`}
+        }${acoesSempreVisiveis ? ' citie-table--acoes-visiveis' : ''}`}
         role="grid"
         aria-label={legenda}
         aria-busy={carregando || undefined}
@@ -170,9 +263,7 @@ export function Table<T>({
                       onClick={() => alternarOrdenacao(coluna.chave)}
                     >
                       {coluna.cabecalho}
-                      <span aria-hidden="true">
-                        {ativa ? (ordenacao.direcao === 'ascending' ? '↑' : '↓') : '↕'}
-                      </span>
+                      <IconeDeOrdenacao direcao={ativa ? ordenacao.direcao : undefined} />
                     </button>
                   ) : (
                     coluna.cabecalho
@@ -221,9 +312,11 @@ export function Table<T>({
               const chave = chaveDaLinha(linha);
               const marcada = selecionados.includes(chave);
               const destaque = destaqueDaLinha?.(linha);
+              const inativa = linhaInativa?.(linha) ?? false;
               const classes = [
                 marcada ? 'citie-table__linha--selecionada' : null,
                 destaque ? `citie-table__linha--destaque citie-table__linha--destaque-${destaque.severidade}` : null,
+                inativa ? 'citie-table__linha--inativa' : null,
               ]
                 .filter(Boolean)
                 .join(' ');
@@ -244,10 +337,7 @@ export function Table<T>({
                     </td>
                   ) : null}
                   {colunas.map((coluna, posicao) => (
-                    <td
-                      key={coluna.chave}
-                      className={CLASSE_ALINHAMENTO[coluna.alinhamento ?? 'esquerda']}
-                    >
+                    <td key={coluna.chave} className={classeDaCelula(coluna)}>
                       <div className="citie-table__conteudo">
                         {/*
                           O motivo do destaque entra na primeira célula de dado, e
@@ -257,6 +347,9 @@ export function Table<T>({
                         */}
                         {destaque && posicao === 0 ? (
                           <span className="citie-visualmente-oculto">{destaque.motivo}. </span>
+                        ) : null}
+                        {inativa && posicao === 0 ? (
+                          <span className="citie-visualmente-oculto">Inativo. </span>
                         ) : null}
                         {coluna.render(linha)}
                       </div>
@@ -273,8 +366,46 @@ export function Table<T>({
           )}
         </tbody>
       </table>
+
+      {paginacao || resumo ? (
+        <footer className="citie-table__rodape">
+          {paginacao}
+          {resumo ? <p className="citie-table__resumo">{resumo}</p> : null}
+        </footer>
+      ) : null}
     </div>
   );
+}
+
+/**
+ * Identificador em duas linhas, como na listagem de prontuários do Sismental:
+ * o nome em 14 e, abaixo, o CPF ou a matrícula em mono 12 muted. Cabe nos
+ * 44px da célula confortável (20 + 16). Combine com `mascararCPF`.
+ */
+export function Identificador({ principal, secundario }: { principal: ReactNode; secundario: ReactNode }) {
+  return (
+    <span className="citie-table__identificador">
+      <span className="citie-table__identificador-principal">{principal}</span>
+      <span className="citie-table__identificador-secundario">{secundario}</span>
+    </span>
+  );
+}
+
+/**
+ * "Mostrando 1 a 10 de 98 profissionais". O intervalo é calculado a partir da
+ * página, para o texto nunca dizer "11 a 20" numa lista de 15.
+ */
+export function resumoDePaginacao(
+  pagina: number,
+  itensPorPagina: number,
+  total: number,
+  substantivo: [string, string] = ['registro', 'registros'],
+) {
+  if (total === 0) return `Nenhum ${substantivo[0]} para mostrar`;
+  const inicio = (pagina - 1) * itensPorPagina + 1;
+  const fim = Math.min(pagina * itensPorPagina, total);
+  const nome = total === 1 ? substantivo[0] : substantivo[1];
+  return `Mostrando ${inicio.toLocaleString('pt-BR')} a ${fim.toLocaleString('pt-BR')} de ${total.toLocaleString('pt-BR')} ${nome}`;
 }
 
 /** Dado ausente recebe legenda explícita, nunca célula em branco nem "N/A". */

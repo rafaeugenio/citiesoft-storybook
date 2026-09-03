@@ -740,6 +740,22 @@
    * de nenhuma outra escala de ícone.
    */
   --citie-marcador-da-linha-do-tempo: 12px;
+
+  /* Lote 6a */
+  /**
+   * Caixa de severidade do AlertDialog: 40px com ícone de 20, medida do kit
+   * (briefing do lote). Um degrau acima da caixa de ícone do hub (36, Lote 3):
+   * o AlertDialog é a única superfície de primeiro nível cujo ícone precisa
+   * carregar a severidade sozinho, sem título de card ao lado para reforçar.
+   */
+  --citie-alert-dialog-caixa-de-icone: 40px;
+  --citie-alert-dialog-icone: 20px;
+  /**
+   * Largura do AlertDialog, 480px medida no briefing do lote: um degrau acima
+   * do ConfirmDialog (400px, Overlay.css), porque a caixa de ícone de 40 ao
+   * lado do título de 20 pede mais respiro lateral que o confirm sem ícone.
+   */
+  --citie-largura-alert-dialog: 480px;
 }
 
 /**
@@ -984,4 +1000,6 @@
   /* Marca a 14% sobre o accent forte escuro compõe #2e4064: text-primary
      9,48:1, text-base 6,90:1. */
   --citie-veu-sobre-selecao: rgba(77, 139, 252, 0.14);
+
+  /* Lote 6a: dimensional, mesmo valor nos dois temas. Sem redeclaração. */
 }
