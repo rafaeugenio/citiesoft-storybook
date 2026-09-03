@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
-import { Avatar, Badge, Button, Menubar, Search } from '../../../src';
-import { AppShell } from './AppShell';
+import { Avatar, Badge, Menubar } from '../../../src';
+import { AppShell, BotaoDaBarra, SeletorDeContexto } from './AppShell';
 
 /* ------------------------------------------------------------------ */
 /* Breakpoints do projeto                                              */
@@ -39,18 +39,52 @@ const IconeEstoque = (
   </svg>
 );
 
+const IconePainel = (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <rect x="4" y="4" width="6" height="6" rx="1" />
+    <rect x="14" y="4" width="6" height="6" rx="1" />
+    <rect x="4" y="14" width="6" height="6" rx="1" />
+    <rect x="14" y="14" width="6" height="6" rx="1" />
+  </svg>
+);
+
+const IconeEscudo = (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z" strokeLinejoin="round" />
+  </svg>
+);
+
+const IconePredio = (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <rect x="5" y="3" width="14" height="18" rx="1" />
+    <path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2M10 21v-3h4v3" strokeLinecap="round" />
+  </svg>
+);
+
+const IconeLupa = (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="11" cy="11" r="6" />
+    <path d="m20 20-4.5-4.5" strokeLinecap="round" />
+  </svg>
+);
+
 const IconeSino = (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 1.5 5.5h-15S6 13 6 9z" strokeLinejoin="round" />
     <path d="M10 18a2 2 0 0 0 4 0" strokeLinecap="round" />
   </svg>
 );
 
 /**
- * Seções do menu. O item de auditoria não aparece porque o perfil da sessão não
- * tem permissão: a Sidebar exige ausência do DOM, nunca ocultação por CSS.
+ * Seções do menu, nos grupos do Sismental (Visão Geral, Operação, Análise,
+ * Administração). O item de auditoria não aparece porque o perfil da sessão
+ * não tem permissão: a Sidebar exige ausência do DOM, nunca ocultação por CSS.
  */
 const SECOES = [
+  {
+    rotulo: 'Visão Geral',
+    itens: [{ id: 'painel', rotulo: 'Painel Inicial', icone: IconePainel }],
+  },
   {
     rotulo: 'Operação',
     itens: [
@@ -68,8 +102,8 @@ const SECOES = [
     ],
   },
   {
-    rotulo: 'Sistema',
-    itens: [{ id: 'perfis', rotulo: 'Perfis de acesso' }],
+    rotulo: 'Administração',
+    itens: [{ id: 'perfis', rotulo: 'Perfis e Permissões', icone: IconeEscudo }],
   },
 ];
 
@@ -79,24 +113,27 @@ const TRILHA = [
   { rotulo: 'Solicitações' },
 ];
 
-const Busca = (
-  <Search
-    label="Buscar no sistema"
-    placeholder="Buscar solicitações, servidores, documentos..."
+const Contexto = (
+  <SeletorDeContexto
+    rotulo="Secretaria de Saúde"
+    icone={IconePredio}
+    acao="Trocar unidade"
+    onClick={() => {}}
   />
 );
 
 /**
- * Contagem de não lidas com severidade `contrast`, a única do mapa de 7 cujo
- * fundo é opaco (`text.primary` sobre `text.inverse`). As demais severidades
- * têm fundo translúcido e um anel da cor de `background.surface`: sobre a barra
- * pintada com o azul da marca, o fundo do badge compõe com o azul por baixo e o
- * texto reprova AA. Com fundo próprio o badge não depende da superfície.
+ * Busca e notificações como botões de ícone de 30, como na barra do
+ * Sismental. A contagem entra pelo `Badge` preenchido (Lote 1), que tem fundo
+ * opaco e por isso não depende da superfície da barra.
  */
 const AcoesDaBarra = (
-  <Badge value={3} severity="contrast">
-    <Button variant="text" iconOnly icon={IconeSino} aria-label="Notificações: 3 não lidas" />
-  </Badge>
+  <>
+    <BotaoDaBarra icone={IconeLupa} aria-label="Buscar no sistema" />
+    <Badge value={3} severity="primary" pele="preenchida" size="sm">
+      <BotaoDaBarra icone={IconeSino} aria-label="Notificações: 3 não lidas" />
+    </Badge>
+  </>
 );
 
 const Perfil = (
@@ -107,7 +144,7 @@ const Perfil = (
   />
 );
 
-const AcoesDaTrilha = (
+const AcoesDaTela = (
   <Menubar
     label="Ações da tela"
     itens={[
@@ -124,23 +161,54 @@ const AcoesDaTrilha = (
   />
 );
 
-const RodapeDoMenu = <span style={{ fontSize: 'var(--citie-font-size-body-sm)' }}>versão 2.14.0</span>;
-
 /** Marcador de área de conteúdo. O conteúdo real pertence às páginas. */
 function AreaDeExemplo({ titulo, altura = 320 }: { titulo: string; altura?: number }) {
   return (
     <>
-      <h1 style={{ margin: '0 0 var(--citie-spacing-4)' }}>{titulo}</h1>
+      <h1
+        style={{
+          margin: '0 0 var(--citie-spacing-4)',
+          fontFamily: 'var(--citie-font-display)',
+          fontSize: 'var(--citie-font-size-title-lg)',
+          fontWeight: 'var(--citie-font-weight-title)',
+        }}
+      >
+        {titulo}
+      </h1>
       <div
         style={{
           blockSize: altura,
           borderRadius: 'var(--citie-radius-lg)',
-          border: '1px dashed var(--citie-border-default)',
+          border: '1px dashed var(--citie-border-strong)',
           background: 'var(--citie-background-subtle)',
         }}
       />
     </>
   );
+}
+
+/** Contêiner de tema do decorador: é filho do canvas, e é nele que o tema vale. */
+function contêinerDeTema(canvasElement: HTMLElement) {
+  return (
+    canvasElement.querySelector<HTMLElement>('[data-theme]') ??
+    canvasElement.closest<HTMLElement>('[data-theme]') ??
+    canvasElement
+  );
+}
+
+/** Lê um token no contêiner de tema do decorador. */
+function token(canvasElement: HTMLElement, nome: string) {
+  return getComputedStyle(contêinerDeTema(canvasElement)).getPropertyValue(nome).trim();
+}
+
+/** Resolve um token de cor para a serialização `rgb()` do navegador. */
+function corDoToken(canvasElement: HTMLElement, nome: string) {
+  const sonda = document.createElement('span');
+  sonda.style.color = `var(${nome})`;
+  contêinerDeTema(canvasElement).appendChild(sonda);
+  const cor = getComputedStyle(sonda).color;
+  sonda.remove();
+  return cor;
 }
 
 /* ------------------------------------------------------------------ */
@@ -157,29 +225,28 @@ const meta = {
     docs: {
       description: {
         component: [
-          'Moldura persistente de toda tela autenticada dos sistemas internos Citiesoft. Anatomia tirada de `design-system/03-components/navigation-sidebar-header.md` v2.0.0 (seções Sidebar e Header). Os outros templates da biblioteca vivem dentro deste.',
+          'Moldura persistente de toda tela autenticada dos sistemas internos Citiesoft, recomposta no Lote 6b sobre a composição do Sismental (`docs/figma-ui-kit.md`, "Composição de tela"). Os outros templates da biblioteca vivem dentro deste.',
           '',
-          '**Regiões, na ordem da spec**',
+          '**Regiões, medidas no Sismental**',
           '',
-          '| Região | Slot | Conteúdo esperado |',
+          '| Região | Slot | Anatomia |',
           '|---|---|---|',
-          '| Barra · início | interno + `moduloAtual` | gatilho de menu, marca oficial e nome do módulo atual |',
-          '| Barra · centro | `busca` | busca global (`Search`) |',
-          '| Barra · fim | `acoesDaBarra`, `perfil` | notificações e tema (`Button` + `Badge`), avatar (`Avatar`) |',
-          '| Menu lateral | `secoes`, `itemAtivo`, `rodapeDoMenu` | `Sidebar` do sistema e o rodapé de perfil ou versão |',
-          '| Trilha | `trilha`, `acoesDaTrilha` | `Breadcrumb` e ações de escopo da tela (`Button`, `Menubar`) |',
-          '| Conteúdo | `children` | o único `main` do documento, com `id="conteudo"` |',
+          '| Barra · início | interno | 52px de altura; logo Citiesoft à esquerda e o botão de recolher a navegação no fim da coluna de 257 |',
+          '| Barra · centro | `trilha`, `moduloAtual`, `busca` | `Breadcrumb` com o ícone de casa; no celular sobra o nome do módulo |',
+          '| Barra · fim | `acoesDaBarra`, `perfil` | `BotaoDaBarra` de 30px (busca, notificações), divisor vertical, `Avatar` de 32 |',
+          '| Navegação | `secoes`, `itemAtivo`, `contexto`, `onSair`, `rodapeDoMenu` | `Sidebar` fixa de 257 com o `SeletorDeContexto` em cartão no topo e "Sair" em vermelho ancorado no rodapé |',
+          '| Ações da tela | `acoesDaTrilha` | linha acima do conteúdo (`Button`, `Menubar`) |',
+          '| Conteúdo | `children`, `moldura` | o único `main`; `direto` sobre o fundo da página (listagem) ou `cartao` branco de raio 16 a 8px do fundo (formulário, administração) |',
+          '| Rodapé | `rodape` | "Desenvolvido por Citiesoft @ 2026", a marca em `Link` |',
           '| Painel lateral direito | `painelLateral` + `rotuloDoPainelLateral` | detalhe, ajuda ou histórico; opcional |',
           '',
-          '**Componentes do sistema usados**: `Sidebar`, `Breadcrumb` e `Button` dentro do template; `Search`, `Avatar`, `Badge` e `Menubar` preenchendo os slots nas stories.',
+          '**Componentes do sistema usados**: `Sidebar` (variante `fixa`), `Breadcrumb`, `Button` e `Link` dentro do template; `Avatar`, `Badge` e `Menubar` preenchendo os slots nas stories.',
           '',
           '**Acessibilidade**: um único `main` por tela, alvo do skip link que a própria `Sidebar` publica. Navegação principal nomeada ("Menu principal") e trilha nomeada ("Trilha de navegação"), porque há mais de uma navegação na tela. O item ativo do menu carrega `aria-current="page"`, e item sem permissão não é renderizado. Nada disso é reimplementado aqui: pertence à `Sidebar`.',
           '',
-          '**Colapso e drawer são estados diferentes.** O colapso para 64px é preferência de trabalho no desktop e só muda por clique no gatilho da barra, nunca por largura da viewport. Abaixo de 768px o menu vira drawer off-canvas, aberto pelo botão de menu da barra, com foco preso enquanto aberto, Escape para fechar e devolução do foco ao gatilho.',
+          '**Colapso e drawer são estados diferentes.** O colapso para 72px é preferência de trabalho no desktop e só muda por clique no gatilho da barra, nunca por largura da viewport. Abaixo de 768px o menu vira drawer off-canvas, aberto pelo botão de menu da barra, com foco preso enquanto aberto, Escape para fechar e devolução do foco ao gatilho.',
           '',
           '**Marca**: SVGs oficiais de `public/marca/`. `fundoDaBarra="claro"` usa `LogoHorizontal3.svg`; `fundoDaBarra="escuro"` usa `LogoHorizontal2.svg` sobre o azul da marca.',
-          '',
-          '**Cuidado ao preencher os slots da barra com `fundoDaBarra="escuro"`.** A barra passa a ser superfície de marca, e não `background.surface`. As severidades do mapa canônico (`danger`, `success`, `warn`, `info`, `primary`) têm fundo translúcido e contam com um anel da cor de `background.surface` para se destacar: sobre o azul, o fundo compõe com o azul por baixo e o texto reprova AA. Nesse contexto use `contrast`, a única severidade de fundo opaco. A contagem de item de menu não tem esse problema: é a `contagem` nativa da `Sidebar`, sem `Badge` sobreposto.',
         ].join('\n'),
       },
     },
@@ -189,11 +256,10 @@ const meta = {
     secoes: SECOES,
     itemAtivo: 'solicitacoes',
     trilha: TRILHA,
-    busca: Busca,
+    contexto: Contexto,
     acoesDaBarra: AcoesDaBarra,
     perfil: Perfil,
-    acoesDaTrilha: AcoesDaTrilha,
-    rodapeDoMenu: RodapeDoMenu,
+    onSair: () => {},
     children: <AreaDeExemplo titulo="Área de conteúdo da tela" />,
   },
 } satisfies Meta<typeof AppShell>;
@@ -202,8 +268,82 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /* ------------------------------------------------------------------ */
-/* Stories: os quatro breakpoints                                      */
+/* Stories: anatomia e os quatro breakpoints                            */
 /* ------------------------------------------------------------------ */
+
+export const Anatomia: Story = {
+  name: 'Anatomia · 52 / 257 / 30 / 32',
+  globals: { viewport: { value: 'desktop' } },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Medidas do Sismental por token: barra de 52, navegação de 257, botão de ícone de 30, avatar de 32, item ativo em accent e "Sair" em vermelho no rodapé da navegação.',
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const barra = canvasElement.querySelector<HTMLElement>('.citie-app-shell__barra')!;
+    await expect(Math.round(barra.getBoundingClientRect().height)).toBe(
+      parseFloat(token(canvasElement, '--citie-altura-da-barra')),
+    );
+    await expect(Math.round(barra.getBoundingClientRect().height)).toBe(52);
+
+    const navegacao = canvas.getByRole('navigation', { name: 'Menu principal' });
+    await expect(Math.round(navegacao.getBoundingClientRect().width)).toBe(257);
+
+    const busca = canvas.getByRole('button', { name: 'Buscar no sistema' });
+    await expect(Math.round(busca.getBoundingClientRect().width)).toBe(30);
+    await expect(Math.round(busca.getBoundingClientRect().height)).toBe(30);
+
+    const avatar = canvas.getByRole('button', { name: 'Ver perfil de Maria de Fátima Souza' });
+    await expect(Math.round(avatar.getBoundingClientRect().width)).toBe(32);
+    await expect(Math.round(avatar.getBoundingClientRect().height)).toBe(32);
+
+    // Seletor de contexto no topo da navegação, "Sair" no rodapé.
+    const contexto = canvas.getByRole('button', { name: 'Trocar unidade: Secretaria de Saúde' });
+    const sair = canvas.getByRole('button', { name: 'Sair' });
+    await expect(navegacao.contains(contexto)).toBe(true);
+    await expect(navegacao.contains(sair)).toBe(true);
+    await expect(contexto.getBoundingClientRect().top).toBeLessThan(sair.getBoundingClientRect().top);
+    await expect(getComputedStyle(sair).color).toBe(corDoToken(canvasElement, '--citie-danger-foreground'));
+
+    // Trilha com casa na barra, e o rodapé com a marca em link.
+    const trilha = canvas.getByRole('navigation', { name: 'Trilha de navegação' });
+    await expect(barra.contains(trilha)).toBe(true);
+    const marca = canvas.getByRole('link', { name: /Citiesoft/ });
+    await expect(marca.closest('footer')).not.toBeNull();
+    await expect(marca.closest('footer')).toHaveTextContent(/Desenvolvido por Citiesoft.*@ 2026/);
+  },
+};
+
+export const MolduraEmCartao: Story = {
+  name: 'Moldura · conteúdo em cartão de raio 16',
+  globals: { viewport: { value: 'desktop' } },
+  args: { moldura: 'cartao', moduloAtual: 'Pessoas', itemAtivo: 'pessoas' },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Formulário e administração vivem num cartão branco de raio 16 a 8px do fundo cinza da página (`--citie-margem-da-moldura`). Listagem simples usa `moldura="direto"`.',
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const main = canvas.getByRole('main');
+    const estilo = getComputedStyle(main);
+    await expect(estilo.borderRadius).toBe('16px');
+    await expect(estilo.marginTop).toBe('8px');
+    await expect(estilo.marginLeft).toBe('8px');
+    await expect(estilo.backgroundColor).toBe(corDoToken(canvasElement, '--citie-background-surface'));
+    // O cartão é uma superfície distinta do fundo da página.
+    const fundo = getComputedStyle(canvasElement.querySelector('.citie-app-shell')!).backgroundColor;
+    await expect(estilo.backgroundColor).not.toBe(fundo);
+  },
+};
 
 export const DesktopLargo: Story = {
   name: '1920 · desktop largo com painel',
@@ -211,13 +351,14 @@ export const DesktopLargo: Story = {
   args: {
     painelLateral: <AreaDeExemplo titulo="Painel de apoio" altura={200} />,
     rotuloDoPainelLateral: 'Detalhes da seleção',
+    acoesDaTrilha: AcoesDaTela,
     children: <AreaDeExemplo titulo="Área de conteúdo da tela" />,
   },
   parameters: {
     docs: {
       description: {
         story:
-          'Largura máxima: menu expandido em 260px, conteúdo e painel lateral direito lado a lado.',
+          'Largura máxima: navegação expandida em 257px, ações da tela acima do conteúdo, conteúdo e painel lateral direito lado a lado.',
       },
     },
   },
@@ -282,7 +423,7 @@ export const Celular: Story = {
     docs: {
       description: {
         story:
-          'Abaixo de 768px o menu sai do fluxo e vira drawer, acionado pelo botão da barra superior. Enquanto fechado ele fica invisível para leitor de tela e fora da ordem de foco.',
+          'Abaixo de 768px o menu sai do fluxo e vira drawer, acionado pelo botão da barra superior. Enquanto fechado ele fica invisível para leitor de tela e fora da ordem de foco. A trilha cede lugar ao nome do módulo.',
       },
     },
   },
@@ -292,6 +433,7 @@ export const Celular: Story = {
 
     // O drawer começa fechado, para não cobrir a documentação.
     await expect(gatilho).toHaveAttribute('aria-expanded', 'false');
+    await expect(canvas.getByText('Solicitações', { selector: '.citie-app-shell__modulo' })).toBeVisible();
   },
 };
 
@@ -307,7 +449,7 @@ export const MenuColapsado: Story = {
     docs: {
       description: {
         story:
-          'Menu em 64px icon-only, estado escolhido pelo usuário no gatilho da barra. O template nunca colapsa sozinho por largura da viewport; abaixo de 768px o menu vira drawer, que é outro estado.',
+          'Navegação em 72px só com ícones, estado escolhido pelo usuário no gatilho da barra. O seletor de contexto some e "Sair" vira ícone com o nome acessível preservado. O template nunca colapsa sozinho por largura da viewport; abaixo de 768px o menu vira drawer, que é outro estado.',
       },
     },
   },
@@ -320,6 +462,9 @@ export const MenuColapsado: Story = {
       'title',
       'Solicitações',
     );
+    await expect(canvas.getByRole('button', { name: 'Sair' })).toBeInTheDocument();
+    const navegacao = canvas.getByRole('navigation', { name: 'Menu principal' });
+    await expect(Math.round(navegacao.getBoundingClientRect().width)).toBe(72);
   },
 };
 

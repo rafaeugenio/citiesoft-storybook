@@ -1,12 +1,18 @@
 /**
- * Layout do shell de aplicação. Só grade, regiões, espaçamento entre zonas e
- * comportamento responsivo: cor, tipografia, raio e sombra vêm dos tokens.
+ * Layout do shell de aplicação, medido no Sismental (Lote 6b). Só grade,
+ * regiões, espaçamento entre zonas e comportamento responsivo: cor,
+ * tipografia, raio e sombra vêm dos tokens.
+ *
+ * Anatomia: barra de 52 (`--citie-altura-da-barra`), navegação fixa de 257
+ * (`--citie-largura-da-sidebar`), conteúdo direto sobre o fundo da página ou
+ * em cartão de raio 16 a 8px do fundo (`--citie-margem-da-moldura`), rodapé
+ * com a marca separado por linha fina.
  */
 
 .citie-app-shell {
   display: grid;
   grid-template-rows: auto 1fr;
-  min-block-size: 100%;
+  min-block-size: 100dvh;
   font-family: var(--citie-font-ui);
   background-color: var(--citie-background-default);
   color: var(--citie-text-base);
@@ -19,33 +25,47 @@
   inset-block-start: 0;
   z-index: 20;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  /* Início com a largura da navegação, para a trilha começar alinhada ao conteúdo. */
+  grid-template-columns: var(--citie-largura-da-sidebar) minmax(0, 1fr) auto;
   align-items: center;
-  gap: var(--citie-spacing-4);
-  block-size: 56px;
-  padding-inline: var(--citie-spacing-4);
+  /* Os 52 incluem a borda inferior: a medida do Sismental é da caixa inteira. */
+  box-sizing: border-box;
+  block-size: var(--citie-altura-da-barra);
   background-color: var(--citie-background-surface);
   border-block-end: 1px solid var(--citie-border-default);
 }
 
-.citie-app-shell--compacto .citie-app-shell__barra {
-  block-size: 48px;
-}
-
 .citie-app-shell[data-fundo-da-barra='escuro'] .citie-app-shell__barra {
-  background-color: var(--citie-brand-primary);
-  color: var(--citie-brand-contrast);
+  background-color: var(--citie-sidebar-primary);
+  /* Rótulo do primário da sidebar (Lote 0): #ffffff sobre #1261e4 5,45:1 no
+     claro e #141414 sobre #4d8bfc 5,63:1 no escuro. `brand-contrast` fica em
+     branco nos dois temas e mediria 3,0:1 sobre o azul do escuro. */
+  color: var(--citie-sidebar-primary-foreground);
 }
 
-.citie-app-shell__barra-inicio,
+.citie-app-shell__barra-inicio {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--citie-spacing-2);
+  block-size: 100%;
+  padding-inline: var(--citie-spacing-5) var(--citie-spacing-3);
+  border-inline-end: 1px solid var(--citie-border-default);
+}
+
+.citie-app-shell__barra-centro {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-4);
+  min-inline-size: 0;
+  padding-inline: var(--citie-spacing-5);
+}
+
 .citie-app-shell__barra-fim {
   display: flex;
   align-items: center;
-  gap: var(--citie-spacing-2);
-}
-
-.citie-app-shell__barra-fim {
-  justify-content: flex-end;
+  gap: var(--citie-spacing-3);
+  padding-inline-end: var(--citie-spacing-5);
 }
 
 .citie-app-shell__barra-acoes,
@@ -66,6 +86,12 @@
   background-color: var(--citie-border-default);
 }
 
+/* Avatar de 32 no slot de perfil: o átomo tem 28 e 42, sem degrau em 32. */
+.citie-app-shell__barra-perfil .citie-avatar {
+  inline-size: var(--citie-avatar-da-barra);
+  block-size: var(--citie-avatar-da-barra);
+}
+
 /* Nome do módulo: texto, não heading. A hierarquia de heading é da página. */
 .citie-app-shell__modulo {
   font-size: var(--citie-font-size-body-md);
@@ -75,10 +101,75 @@
   text-overflow: ellipsis;
 }
 
-/* A busca global tem largura de leitura, não a largura toda da barra. */
-.citie-app-shell__barra-centro {
-  justify-self: center;
-  inline-size: min(100%, 480px);
+.citie-app-shell__trilha {
+  min-inline-size: 0;
+}
+
+/* A busca global expandida tem largura de leitura, não a largura toda da barra. */
+.citie-app-shell__busca {
+  flex: 1 1 auto;
+  max-inline-size: 480px;
+  margin-inline-start: auto;
+}
+
+/**
+ * Botão de ícone da barra: 30 (`--citie-botao-fechar`, a medida do kit e da
+ * barra do Sismental), raio `md`, borda 1px, ícone em `text-base`.
+ */
+.citie-app-shell__botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--citie-botao-fechar);
+  block-size: var(--citie-botao-fechar);
+  padding: 0;
+  color: var(--citie-text-base);
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-md);
+  cursor: pointer;
+  transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
+}
+
+.citie-app-shell__botao > span {
+  display: inline-flex;
+}
+
+.citie-app-shell__botao:hover {
+  background-color: var(--citie-accent);
+}
+
+.citie-app-shell__botao:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-app-shell[data-fundo-da-barra='escuro'] .citie-app-shell__botao {
+  color: inherit;
+  background-color: transparent;
+  border-color: color-mix(in srgb, var(--citie-sidebar-primary-foreground) 40%, transparent);
+}
+
+.citie-app-shell[data-fundo-da-barra='escuro'] .citie-app-shell__divisor,
+.citie-app-shell[data-fundo-da-barra='escuro'] .citie-app-shell__barra-inicio {
+  border-color: color-mix(in srgb, var(--citie-sidebar-primary-foreground) 40%, transparent);
+  background-color: color-mix(in srgb, var(--citie-sidebar-primary-foreground) 40%, transparent);
+}
+
+.citie-app-shell[data-fundo-da-barra='escuro'] .citie-app-shell__barra-inicio {
+  background-color: transparent;
+}
+
+/**
+ * Sobre o azul da marca todo texto da barra vai para o rótulo do primário: a
+ * trilha em `text-secondary` mediria 1,2:1 sobre #4d8bfc no escuro.
+ */
+.citie-app-shell[data-fundo-da-barra='escuro'] .citie-app-shell__modulo,
+.citie-app-shell[data-fundo-da-barra='escuro'] .citie-breadcrumb__link,
+.citie-app-shell[data-fundo-da-barra='escuro'] .citie-breadcrumb__atual,
+.citie-app-shell[data-fundo-da-barra='escuro'] .citie-breadcrumb__separador,
+.citie-app-shell[data-fundo-da-barra='escuro'] .citie-breadcrumb__icone-casa {
+  color: var(--citie-sidebar-primary-foreground);
 }
 
 /* ---------- Corpo: menu lateral + área de trabalho ---------- */
@@ -86,32 +177,29 @@
 .citie-app-shell__corpo {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  align-items: start;
+  align-items: stretch;
 }
 
 .citie-app-shell__lateral {
   position: sticky;
-  inset-block-start: 56px;
+  inset-block-start: var(--citie-altura-da-barra);
   display: flex;
   flex-direction: column;
-  block-size: calc(100vh - 56px);
-  background-color: var(--citie-background-surface);
+  block-size: calc(100dvh - var(--citie-altura-da-barra));
   overflow-y: auto;
-}
-
-.citie-app-shell--compacto .citie-app-shell__lateral {
-  inset-block-start: 48px;
-  block-size: calc(100vh - 48px);
 }
 
 .citie-app-shell__lateral > .citie-sidebar {
   flex: 1 1 auto;
-  border-inline-end: none;
+  min-block-size: 100%;
+  /* Os 257 (e os 72 colapsados) incluem a borda direita, como no Sismental. */
+  box-sizing: border-box;
 }
 
 .citie-app-shell__lateral-rodape {
-  padding: var(--citie-spacing-3) var(--citie-spacing-4);
-  border-block-start: 1px solid var(--citie-border-default);
+  padding: var(--citie-spacing-2) var(--citie-spacing-2) 0;
+  font-size: var(--citie-font-size-body-sm);
+  color: var(--citie-text-secondary);
 }
 
 .citie-app-shell__lateral-fechar {
@@ -120,29 +208,121 @@
   padding-inline: var(--citie-spacing-2);
 }
 
+/**
+ * Seletor de contexto: cartão de superfície com borda, raio 10, ícone em
+ * caixa de 28 com tinta de marca sobre accent, rótulo 14 Medium, chevron
+ * duplo muted. Ocupa a largura do cabeçalho da navegação.
+ */
+.citie-app-shell__contexto {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-2);
+  inline-size: 100%;
+  min-block-size: var(--citie-control-height-large);
+  padding: var(--citie-spacing-1-5) var(--citie-spacing-2);
+  font: inherit;
+  font-size: var(--citie-font-size-body-md);
+  font-weight: var(--citie-font-weight-action);
+  color: var(--citie-text-primary);
+  text-align: start;
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-lg);
+  cursor: pointer;
+  transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
+}
+
+.citie-app-shell__contexto:hover {
+  background-color: var(--citie-accent);
+}
+
+.citie-app-shell__contexto:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-app-shell__contexto-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  inline-size: 28px;
+  block-size: 28px;
+  color: var(--citie-brand-primary);
+  background-color: var(--citie-accent);
+  border-radius: var(--citie-radius-md);
+}
+
+.citie-app-shell__contexto-rotulo {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.citie-app-shell__contexto-chevron {
+  display: inline-flex;
+  color: var(--citie-text-secondary);
+}
+
+/**
+ * "Sair" ancorado no rodapé da navegação: item de 32 em vermelho, mesma
+ * anatomia dos outros itens (padding 4×12, raio 6). A tinta é
+ * `danger-foreground` (#b91c1c sobre #fafafa 6,26:1; escuro #fca5a5 sobre
+ * #141414 9,72:1).
+ */
+.citie-app-shell__sair {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-2);
+  inline-size: 100%;
+  min-block-size: var(--citie-control-height-small);
+  padding: var(--citie-spacing-1) var(--citie-spacing-3);
+  font: inherit;
+  font-size: var(--citie-font-size-body-md);
+  color: var(--citie-danger-foreground);
+  text-align: start;
+  background: none;
+  border: none;
+  border-radius: var(--citie-radius-md);
+  cursor: pointer;
+  transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
+}
+
+.citie-app-shell__sair > span:first-child {
+  display: inline-flex;
+}
+
+.citie-app-shell__sair:hover {
+  background-color: var(--citie-danger-background);
+}
+
+.citie-app-shell__sair:focus-visible {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+.citie-sidebar--colapsada .citie-app-shell__sair {
+  justify-content: center;
+  padding-inline: 0;
+}
+
 /* ---------- Área de trabalho ---------- */
 
 .citie-app-shell__area {
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto 1fr auto;
   min-inline-size: 0;
-  border-inline-start: 1px solid var(--citie-border-default);
 }
 
-.citie-app-shell__trilha {
+.citie-app-shell__acoes-da-tela {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--citie-spacing-4);
-  flex-wrap: wrap;
-  padding: var(--citie-spacing-3) var(--citie-spacing-5);
-  border-block-end: 1px solid var(--citie-border-default);
-}
-
-.citie-app-shell__trilha-acoes {
-  display: flex;
-  align-items: center;
+  justify-content: flex-end;
   gap: var(--citie-spacing-2);
+  flex-wrap: wrap;
+  padding: var(--citie-spacing-3) var(--citie-spacing-8) 0;
 }
 
 .citie-app-shell__palco {
@@ -155,21 +335,45 @@
   grid-template-columns: minmax(0, 1fr) 320px;
 }
 
+/* Direto: o conteúdo pousa no fundo da página, como a listagem de prontuários. */
 .citie-app-shell__conteudo {
   min-inline-size: 0;
-  padding: var(--citie-spacing-5);
+  padding: var(--citie-spacing-6) var(--citie-spacing-8);
+}
+
+/* Cartão: moldura branca de raio 16 a 8px do fundo, como o formulário. */
+.citie-app-shell--cartao .citie-app-shell__conteudo {
+  margin: var(--citie-margem-da-moldura);
+  background-color: var(--citie-background-surface);
+  border: 1px solid var(--citie-border-default);
+  border-radius: var(--citie-radius-2xl);
 }
 
 /* O `main` recebe foco pelo skip link, e o anel precisa aparecer. */
 .citie-app-shell__conteudo:focus-visible {
-  outline: 2px solid var(--citie-state-focus-ring);
-  outline-offset: -2px;
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
 }
 
 .citie-app-shell__painel {
-  padding: var(--citie-spacing-5);
+  padding: var(--citie-spacing-6);
   border-inline-start: 1px solid var(--citie-border-default);
   background-color: var(--citie-background-subtle);
+}
+
+/* Rodapé: linha fina, texto 14 centrado, a marca em link de marca. */
+.citie-app-shell__rodape {
+  margin-inline: var(--citie-spacing-8);
+  padding-block: var(--citie-spacing-4);
+  font-size: var(--citie-font-size-body-md);
+  color: var(--citie-text-base);
+  text-align: center;
+  border-block-start: 1px solid var(--citie-border-default);
+}
+
+.citie-app-shell--cartao .citie-app-shell__rodape {
+  margin-inline: var(--citie-margem-da-moldura);
+  border-block-start: none;
 }
 
 /* ---------- Alternância entre os gatilhos de menu ---------- */
@@ -189,6 +393,16 @@
     border-inline-start: none;
     border-block-start: 1px solid var(--citie-border-default);
   }
+
+  .citie-app-shell__conteudo {
+    padding: var(--citie-spacing-5);
+  }
+
+  .citie-app-shell__acoes-da-tela,
+  .citie-app-shell__rodape {
+    padding-inline: var(--citie-spacing-5);
+    margin-inline: var(--citie-spacing-5);
+  }
 }
 
 /* ---------- Abaixo de 768px: o menu vira drawer off-canvas ---------- */
@@ -206,17 +420,14 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .citie-app-shell__area {
-    border-inline-start: none;
-  }
-
   .citie-app-shell__lateral {
     position: fixed;
     inset-block: 0;
     inset-inline-start: 0;
     z-index: 40;
-    block-size: 100vh;
-    border-inline-end: 1px solid var(--citie-border-default);
+    inline-size: var(--citie-largura-da-sidebar);
+    block-size: 100dvh;
+    background-color: var(--citie-sidebar);
     box-shadow: var(--citie-shadow-overlay);
     transform: translateX(-100%);
     /* Fechado, o menu sai da ordem de foco e da leitura do leitor de tela. */
@@ -243,41 +454,49 @@
     padding: var(--citie-spacing-4);
   }
 
-  .citie-app-shell__trilha {
-    padding-inline: var(--citie-spacing-4);
+  .citie-app-shell__rodape {
+    margin-inline: var(--citie-spacing-4);
   }
 
-  /* A barra fica só com marca, gatilho do menu e perfil; a busca desce. */
+  /* A barra fica com marca, gatilho do menu, módulo e perfil. */
   .citie-app-shell__barra {
-    grid-template-columns: auto auto;
-    grid-template-areas:
-      'inicio fim'
-      'centro centro';
-    block-size: auto;
-    row-gap: var(--citie-spacing-2);
-    padding-block: var(--citie-spacing-2);
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    block-size: var(--citie-altura-da-barra);
   }
 
   .citie-app-shell__barra-inicio {
-    grid-area: inicio;
-  }
-
-  .citie-app-shell__barra-fim {
-    grid-area: fim;
+    padding-inline: var(--citie-spacing-3);
+    border-inline-end: none;
   }
 
   .citie-app-shell__barra-centro {
-    grid-area: centro;
-    inline-size: 100%;
+    padding-inline: 0 var(--citie-spacing-3);
+  }
+
+  .citie-app-shell__barra-fim {
+    padding-inline-end: var(--citie-spacing-3);
+  }
+
+  .citie-app-shell__trilha,
+  .citie-app-shell__barra-acoes,
+  .citie-app-shell__divisor {
+    display: none;
+  }
+
+  .citie-app-shell__modulo.citie-app-shell__so-mobile {
+    display: block;
   }
 
   .citie-app-shell__modulo {
-    max-inline-size: 12ch;
+    max-inline-size: 14ch;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .citie-app-shell__lateral {
+  .citie-app-shell__lateral,
+  .citie-app-shell__botao,
+  .citie-app-shell__contexto,
+  .citie-app-shell__sair {
     transition: none;
   }
 }

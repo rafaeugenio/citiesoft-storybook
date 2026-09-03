@@ -756,6 +756,45 @@
    * lado do título de 20 pede mais respiro lateral que o confirm sem ícone.
    */
   --citie-largura-alert-dialog: 480px;
+
+  /* Lote 6b */
+  /**
+   * Barra superior do shell, 52px medida na listagem de prontuários e no
+   * formulário de identificação do Sismental (logo à esquerda com o botão de
+   * recolher, trilha com casa, busca e notificações em botão de ícone de 30,
+   * divisor e avatar de 32 à direita). Um degrau abaixo dos 56 anteriores.
+   */
+  --citie-altura-da-barra: 52px;
+  /**
+   * Largura da navegação fixa, 257px medida no Sismental (Lote 4 a gravou
+   * como literal em `Sidebar.css`; o shell precisa do mesmo número para a
+   * coluna e para o deslocamento do drawer, então vira token).
+   */
+  --citie-largura-da-sidebar: 257px;
+  /**
+   * Avatar da barra superior, 32px medido no Sismental. O `Avatar` da casa
+   * tem degraus 28 / 42 / 56 e nenhum em 32; o shell aplica esta medida ao
+   * slot de perfil. Gap registrado para o átomo ganhar o degrau.
+   */
+  --citie-avatar-da-barra: 32px;
+  /**
+   * Margem da moldura de conteúdo: o cartão branco de raio 16 fica a 8px do
+   * fundo cinza da página nas telas de formulário e de administração, e o
+   * cartão de acesso a 10px da tela. Medidos no Sismental.
+   */
+  --citie-margem-da-moldura: 8px;
+  --citie-margem-do-acesso: 10px;
+  /**
+   * Coluna de navegação de seções do formulário longo, 216px: os rótulos do
+   * Sismental começam a 305 e o conteúdo a 553, com o maior rótulo
+   * ("Riscos e vigilância") cabendo em uma linha. Some ao gap de 32.
+   */
+  --citie-largura-da-navegacao-de-secoes: 216px;
+  /**
+   * Painel de marca do cartão de acesso: 38% da largura no Sismental (o cartão
+   * de 1420 dá 540 ao painel). Abaixo de 900px ele some e o formulário fica só.
+   */
+  --citie-largura-do-painel-de-marca: 38%;
 }
 
 /**
@@ -1002,4 +1041,5 @@
   --citie-veu-sobre-selecao: rgba(77, 139, 252, 0.14);
 
   /* Lote 6a: dimensional, mesmo valor nos dois temas. Sem redeclaração. */
+  /* Lote 6b: dimensional, mesmo valor nos dois temas. Sem redeclaração. */
 }

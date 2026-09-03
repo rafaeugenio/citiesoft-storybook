@@ -27,6 +27,11 @@ export interface Coluna<T> {
  */
 export interface CabecalhoDaTabela {
   titulo: string;
+  /**
+   * Nível do título na página, 2 a 4. Padrão 2: o cartão costuma ser a
+   * primeira seção abaixo do `h1` da tela. Numa tela que já tem `h2`, passe 3.
+   */
+  nivel?: 2 | 3 | 4;
   subtitulo?: string;
   /** Botão primário da tela: "Cadastrar profissional". */
   acao?: ReactNode;
@@ -117,6 +122,12 @@ const CLASSE_ALINHAMENTO: Record<Alinhamento, string> = {
   centro: 'citie-table__celula--centro',
 };
 
+/** Título do cartão no nível que a página pede, para a hierarquia de títulos não pular. */
+function TituloDoCartao({ nivel, children }: { nivel: 2 | 3 | 4; children: ReactNode }) {
+  const Tag = `h${nivel}` as const;
+  return <Tag className="citie-table__titulo">{children}</Tag>;
+}
+
 const classeDaCelula = <T,>(coluna: Coluna<T>) =>
   `${CLASSE_ALINHAMENTO[coluna.alinhamento ?? 'esquerda']}${coluna.mono ? ' citie-table__celula--mono' : ''}`;
 
@@ -206,7 +217,7 @@ export function Table<T>({
       {cabecalho ? (
         <header className="citie-table__cabecalho">
           <div>
-            <h3 className="citie-table__titulo">{cabecalho.titulo}</h3>
+            <TituloDoCartao nivel={cabecalho.nivel ?? 2}>{cabecalho.titulo}</TituloDoCartao>
             {cabecalho.subtitulo ? (
               <p className="citie-table__subtitulo">{cabecalho.subtitulo}</p>
             ) : null}

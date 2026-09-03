@@ -190,4 +190,11 @@ export const Tamanhos: Story = {
       <Search {...args} size="lg" label="Busca global do header" />
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    // As três alturas vêm dos tokens de controle, os mesmos do Input e do Select.
+    for (const [tamanho, altura] of [['sm', 32], ['md', 36], ['lg', 40]] as const) {
+      const campo = canvasElement.querySelector(`.citie-search--${tamanho}`) as HTMLElement;
+      await expect(campo.getBoundingClientRect().height).toBe(altura);
+    }
+  },
 };

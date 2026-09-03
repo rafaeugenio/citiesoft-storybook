@@ -70,7 +70,8 @@
   color: var(--citie-text-secondary);
 }
 
-/* Item de 36, padding 8, raio 6 dentro do cartão de 10. */
+/* Item com mínimo de 36 em `border-box`, padding 8, raio 6 dentro do cartão de 10.
+   Com rótulo e descrição o conteúdo passa de 36 e o item cresce. */
 .citie-picklist__item {
   display: flex;
   align-items: flex-start;

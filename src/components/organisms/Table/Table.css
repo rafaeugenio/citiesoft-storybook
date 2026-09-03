@@ -72,7 +72,7 @@
 }
 
 /* Com cabeçalho ou filtro acima, um fio na tabela separa os dois planos. O fio
-   é da tabela, e não do `th`, para o cabeçalho de coluna seguir medindo 45. */
+   é da própria tabela, então o cabeçalho de coluna segue medindo 45. */
 .citie-table-wrapper:has(.citie-table__cabecalho, .citie-table__filtros) .citie-table {
   border-block-start: 1px solid var(--citie-border-default);
 }
@@ -136,8 +136,7 @@
  * Cabeçalho de coluna: Medium 14/20 em caixa normal, na tinta base.
  *
  * O kit e as duas listagens do Sismental escrevem o cabeçalho no mesmo corpo
- * do dado e o separam por peso, Medium contra Regular, e não por caixa alta
- * com entreletra. A micro maiúscula que estava aqui vinha do protótipo TFD e
+ * do dado e o separam por peso: Medium no cabeçalho, Regular no dado. A micro maiúscula que estava aqui vinha do protótipo TFD e
  * fazia o cabeçalho se ler como rótulo de formulário; com 44px de linha e o
  * fio de 1px, o Medium já dá a hierarquia sem gritar.
  *

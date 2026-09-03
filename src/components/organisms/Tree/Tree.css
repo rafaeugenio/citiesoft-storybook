@@ -62,6 +62,8 @@
   display: flex;
   align-items: center;
   gap: var(--citie-spacing-2);
+  /* `border-box`: o mínimo de 32 inclui o padding. Em `content-box` a linha fechava em 40. */
+  box-sizing: border-box;
   min-height: var(--citie-control-height-small);
   padding-block: var(--citie-spacing-1);
   padding-inline-end: var(--citie-spacing-2);

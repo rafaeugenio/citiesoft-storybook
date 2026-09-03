@@ -1,0 +1,180 @@
+lote: 5-dados
+revisor: gojo
+veredito: REPROVADO
+veredito_anti_slop: PASSOU
+gate_tecnico: VERDE (isolado no lote, worktree limpo em 117533a); catálogo verde
+
+resumo: >
+  Revisão cega do diff 79f898e..117533a nos 11 componentes e no bloco Lote 5
+  de tokens.css, medida em worktree próprio (hardlinks de node_modules,
+  Storybook dev na porta 6015, Playwright com leitura de pixel para cor
+  composta). A anatomia da Table, da TreeTable, do DataView, dos Filters, da
+  Timeline, do Widget e do Chart bate com o kit e com o Sismental em número:
+  célula 45 com fio (44 mais 1) e 37 na compacta, padding 12 e 8, cabeçalho
+  14 Medium sem caixa alta em text-base, ícone de ordenação 16, cartão raio
+  10 com shadow-sm, última linha com fio transparente, hover no accent
+  (#eff5ff / #202838, igual ao token nos dois temas), seleção no accent
+  forte (#d6dce4 / #29344b) com rótulo text-primary (11,81 / 11,42), véu
+  composto sobre a seleção medido em #c6d2e4 e #2e4063 (o cálculo por alfa
+  dá #c6d2e4 e #2e4064), metadado re-apontado em 7,99 / 8,32 e link em
+  7,40 / 8,32, borda de campo em linha comum sob hover 4,51 / 4,57 e em
+  linha selecionada sob hover 3,23 / 3,20, CPF mono 12 muted sobre hover
+  4,51 / 5,43, linha inativa 4,94 / 6,39, Timeline com marcador 12 e traço
+  2 em marca (5,45 / 5,30), carimbo mono 12 (4,94 / 6,39), cartão de
+  citação raio 10 em 13/20 text-base, Widget raio 10 com delta em Tag de 20
+  (4,76 / 8,25 por pixel composto), Chart com dica na pele popover (16,29 /
+  16,91), raio 10, 12/16. Zebra perde para a seleção nas duas paridades.
+  Teclado: ações por linha revelam por focus-within (medido com Tab), Tree
+  com aria-expanded e activedescendant, tabela em role grid com aria-sort.
+  Quatro achados MAIOR impedem a aprovação: duas sabotagens do briefing
+  passam em silêncio, o item de Tree e de Listbox mede 40 e não os 32 que o
+  handoff declara, e a busca das duas composições do lote mede 40 ao lado
+  de um select de 36.
+
+gates:
+  claro_isolado: "15 arquivos, 115 / 115"
+  escuro_isolado: "15 arquivos, 115 / 115"
+  escuro_suite_inteira: "37 falhas em 10 arquivos (TreeSelect 13, CascadeSelect 9, MultiSelect 7, AutoComplete 2, Cores, Terminal, Sidebar, Search, Dashboard, PainelDeTFD com 1); nenhuma no lote. O handoff diz 38 em 11 com ConsultaDeProcessos, que já não falha no commit"
+  verificar_catalogo: "verde: 100 componentes, 7 invariantes, build privado no worktree"
+  texto: "zero travessão nas linhas adicionadas; três negações paralelas, ver MENOR"
+
+sabotagens:
+  a_apagar_veu_sobre_selecao: "PASSOU EM SILÊNCIO: Table e TreeTable 24 / 24 sem o token nos dois temas"
+  b_celula_48: "REPROVA como deve: Table Confortável, Table Em cartão e TreeTable Confortável falham (3 de 56); DataView e Widget seguem verdes porque não afirmam 44"
+  c_apagar_reapontamento_text_secondary: "PASSOU EM SILÊNCIO: Table 12 / 12 com o re-apontamento removido"
+
+achados:
+  - severidade: MAIOR
+    status: ABERTO
+    local: "organisms/Table/Table.stories.tsx e TreeTable.stories.tsx; tokens.css --citie-veu-sobre-selecao"
+    descricao: >
+      Sabotagem a do briefing: apagar --citie-veu-sobre-selecao nos dois
+      temas deixa a linha selecionada sem resposta ao ponteiro (a
+      propriedade registrada cai no initial-value transparent) e Table mais
+      TreeTable seguem 24 / 24. O handoff explica que userEvent.hover não
+      gera :hover na suíte, e é verdade, mas nada impede a guarda por token:
+      nenhuma story lê o valor resolvido do véu.
+    correcao: >
+      Na story SelecaoNaLinhaPar (Table e TreeTable), afirmar que
+      getPropertyValue('--citie-veu-sobre-selecao') na célula selecionada
+      resolve para uma cor com alfa entre 0 e 1 (regex de rgba), e que
+      difere de --citie-accent. É a mesma técnica que fechou o MAIOR da
+      Sidebar no Lote 4.
+  - severidade: MAIOR
+    status: ABERTO
+    local: "organisms/Table/Table.css linhas 372 a 377; Table.stories.tsx"
+    descricao: >
+      Sabotagem c do briefing: remover o re-apontamento de --citie-text-secondary
+      dentro de .citie-table__linha--selecionada .citie-table__conteudo
+      deixa o metadado em 3,58:1 sobre o accent forte (medido) e a suíte da
+      Table segue 12 / 12. O axe não pega porque nenhuma story de seleção
+      tem texto em text-secondary dentro de linha selecionada: as colunas
+      padrão levam Link, Tag e Button. Injetando um span em text-secondary
+      na linha selecionada, o re-apontamento funciona (7,99 / 8,32), mas a
+      guarda não existe.
+    correcao: >
+      Dar à story de seleção uma coluna com Identificador (CPF em
+      text-secondary) ou SemRegistro, e afirmar a cor computada do
+      metadado igual a --citie-text-base resolvido; com isso o axe também
+      passa a cobrir o caso por color-contrast.
+  - severidade: MAIOR
+    status: ABERTO
+    local: "organisms/Tree/Tree.css .citie-tree__linha; molecules/Listbox/Listbox.css .citie-listbox__opcao"
+    descricao: >
+      O handoff declara item de 32 (kit: item de sidebar e de menu, padding
+      4 × 8, raio 6). Medido nos dois temas: 40px. A regra combina
+      min-height: var(--citie-control-height-small) com padding-block de 4
+      em box-sizing content-box, então o mínimo de 32 vale para o conteúdo
+      e a caixa fecha em 40. O item de sidebar e de menu do Lote 4 mede 32;
+      a árvore e a lista ficam um degrau acima na mesma tela. O filtro da
+      Tree tem box-sizing border-box e mede 32 certo; a linha não.
+    correcao: >
+      box-sizing: border-box nas duas regras (ou min-height 24 no conteúdo),
+      e um assert de altura 32 na story Básico da Tree e na Default do
+      Listbox, como a Table faz com conferirRegua.
+  - severidade: MAIOR
+    status: ABERTO
+    escopo: "cruza lote: Search não foi repaginado em nenhum lote"
+    local: "organisms/Table story Em cartão (.citie-table__filtros); organisms/DataView barra (.citie-dataview__busca); molecules/Search/Search.css"
+    descricao: >
+      A linha de filtro do cartão e a barra do DataView colocam Search
+      size md ao lado de Select normal: a busca mede 40 e o select 36 nos
+      dois temas (kit e Sismental: os dois em 36; Table.css declara "os
+      dois em 36"). Search.css guarda 32 / 40 / 48 em literal, sem token, e
+      ficou fora da lista do Lote 2. A captura table-em-cartao mostra o
+      desalinhamento.
+    correcao: >
+      Search consumindo --citie-control-height-small / normal / xl (32 / 36
+      / 48) é a correção de origem, para o dono do Lote 2 ou DesignOps. No
+      lote, as duas stories podem usar size sm até lá, com o assert de 36
+      no campo de busca da linha de filtro.
+  - severidade: MENOR
+    status: ABERTO
+    local: "Table.css linhas 75 e 139; Listbox.css linha 16"
+    descricao: >
+      Três negações paralelas em linha adicionada: "é da tabela, e não do
+      th", "Medium contra Regular, e não por caixa alta", "raio de campo,
+      e não o de painel". O handoff afirma zero.
+    correcao: "Dizer o que é: o fio é da tabela; o peso separa cabeçalho de dado; o raio é o de campo."
+  - severidade: MENOR
+    status: ABERTO
+    local: "organisms/Table/Table.tsx cabeçalho do cartão"
+    descricao: >
+      O título do cartão é um h3 fixo. Numa página cujo título é h1 e o
+      cartão é a primeira seção, o nível pula; numa que já tem h3, ele se
+      nivela com a seção pai.
+    correcao: "Prop nivel (2 a 4) em CabecalhoDaTabela, com padrão 2."
+  - severidade: MENOR
+    status: ABERTO
+    local: "organisms/Widget/Widget.tsx delta em Tag size sm"
+    descricao: >
+      Widget.css e o handoff declaram o delta em "badge tonal 20 de altura,
+      SemiBold 12"; a Tag sm mede 20 e 600, mas em 11px. O kit escreve o
+      badge em 12.
+    correcao: "Alinhar a Tag sm a 12 (dono do Lote 1) ou corrigir a declaração do Widget para 11."
+  - severidade: POLIMENTO
+    status: OBSERVACAO
+    local: "organisms/Timeline"
+    descricao: >
+      O marcador vazado do Sismental aqui só aparece nos estados pendente,
+      bloqueado, cancelado, futuro e informacional; concluído e atual
+      pintam o disco cheio, então uma linha do tempo comum (todos
+      concluídos) fica inteira em discos cheios, o contrário da
+      referência. A decisão é declarada no CSS e codifica estado; fica
+      registrada como divergência consciente.
+  - severidade: POLIMENTO
+    status: OBSERVACAO
+    local: "OrderList.css e PickList.css comentário 'Item de 36'"
+    descricao: >
+      Com min-height 36 em content-box e padding 8, o item mede 52 e 56; o
+      conteúdo de duas linhas já passa de 36, então o mínimo não manda.
+      Comentário promete uma altura que a regra não entrega.
+  - severidade: POLIMENTO
+    status: OBSERVACAO
+    local: ".gauntlet/capturas-lote5/table-em-cartao--*.png"
+    descricao: >
+      Captura anterior à troca do Pagination para simples: mostra dois
+      resumos. Ao vivo, o texto do Pagination é visualmente oculto e só o
+      resumo aparece, como o handoff diz. Recapturar.
+
+anti_slop:
+  rota: produto B2G (UI Kit Citiesoft)
+  ids_conferidos:
+    - "COR-012: hover cinza trocado por accent de marca em Tree, Listbox, OrderList, PickList, DataView e chip de filtro, medido igual ao token"
+    - "ICO-001: glifos de texto (✓ ⏱ ✕ ↑ ↓ ↕ ▲ ▼ ⚠) trocados por SVG no traço do sistema"
+    - "LAY-004: faixa lateral da Timeline mantida com rótulo de estado no nome acessível, exceção declarada"
+  veredito: PASSOU
+
+o_que_me_surpreendeu: >
+  A composição do véu sobre a seleção medida por pixel bate com o cálculo
+  por alfa nos dois temas (#c6d2e4 e #2e4063 contra #2e4064), e o
+  re-apontamento da borda de campo dentro da linha em hover, um problema
+  que o Lote 0 só tinha medido, agora resolve de fato: 4,51 / 4,57 na
+  linha comum e 3,23 / 3,20 na selecionada, medidos com um campo injetado
+  na célula. conferirRegua comparando a lista inteira de alturas faz a
+  sabotagem b apontar a linha certa.
+
+o_que_faltou_para_surpreender: >
+  Escopo limpo. Duas das três sabotagens do briefing passam em silêncio, e
+  o item de 32 declarado para Tree e Listbox mede 40. Com esses três
+  fechados e a busca alinhada a 36, o lote está a uma rodada de APROVADO.

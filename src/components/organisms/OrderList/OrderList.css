@@ -65,11 +65,14 @@
   cursor: not-allowed;
 }
 
-/* Item de 36 (a altura de controle do kit), padding 8, raio 6 dentro do cartão de 10. */
+/* Item com mínimo de 36 (a altura de controle do kit) em `border-box`, padding 8,
+   raio 6 dentro do cartão de 10. Com rótulo e detalhe o conteúdo passa de 36
+   e o item cresce: o mínimo vale para o item de uma linha só. */
 .citie-orderlist__item {
   display: flex;
   align-items: center;
   gap: var(--citie-spacing-3);
+  box-sizing: border-box;
   min-height: var(--citie-control-height-normal);
   padding: var(--citie-spacing-2);
   border-radius: var(--citie-radius-md);

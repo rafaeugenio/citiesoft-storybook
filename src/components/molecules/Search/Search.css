@@ -6,6 +6,8 @@
 }
 
 .citie-search {
+  /* A altura do token inclui a borda de 1px: em `content-box` o campo media 34 / 38 / 42. */
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: var(--citie-spacing-2);
@@ -14,18 +16,20 @@
   border-radius: var(--citie-radius-md);
 }
 
+/* Alturas pelos tokens de controle (32 / 36 / 40); os literais 32 / 40 / 48
+   deixavam a busca de 40 ao lado do select de 36 na linha de filtro. */
 .citie-search--sm {
-  height: 32px;
+  height: var(--citie-control-height-small);
   padding-inline: var(--citie-spacing-3);
 }
 
 .citie-search--md {
-  height: 40px;
+  height: var(--citie-control-height-normal);
   padding-inline: var(--citie-spacing-3);
 }
 
 .citie-search--lg {
-  height: 48px;
+  height: var(--citie-control-height-large);
   padding-inline: var(--citie-spacing-4);
 }
 

@@ -1,5 +1,13 @@
-import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { Breadcrumb, Button, Sidebar, type NivelDaTrilha, type SecaoDoMenu } from '../../../src';
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type ButtonHTMLAttributes,
+  type KeyboardEvent,
+  type ReactNode,
+} from 'react';
+import { Breadcrumb, Button, Link, Sidebar, type NivelDaTrilha, type SecaoDoMenu } from '../../../src';
 import './AppShell.css';
 
 /* ------------------------------------------------------------------ */
@@ -12,17 +20,20 @@ const IconeMenu = (
   </svg>
 );
 
+/** Painel lateral com a divisória, o ícone de recolher do Sismental. */
 const IconeColapsar = (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M4 5v14" strokeLinecap="round" />
-    <path d="M20 12H9m4-4-4 4 4 4" strokeLinecap="round" strokeLinejoin="round" />
+    <rect x="3" y="4" width="18" height="16" rx="2" />
+    <path d="M9 4v16" />
+    <path d="m15 10-2 2 2 2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
 const IconeExpandir = (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M4 5v14" strokeLinecap="round" />
-    <path d="M9 12h11m-4-4 4 4-4 4" strokeLinecap="round" strokeLinejoin="round" />
+    <rect x="3" y="4" width="18" height="16" rx="2" />
+    <path d="M9 4v16" />
+    <path d="m13 10 2 2-2 2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
@@ -31,6 +42,73 @@ const IconeFechar = (
     <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
   </svg>
 );
+
+const IconeSair = (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4" strokeLinecap="round" />
+    <path d="M14 8l4 4-4 4M18 12H9" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+/** Chevron duplo do seletor de contexto: o rótulo "troca" sem ser um select. */
+const IconeChevronDuplo = (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="m8 9 4-4 4 4M8 15l4 4 4-4" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+/* ------------------------------------------------------------------ */
+/* Peças do shell                                                      */
+/* ------------------------------------------------------------------ */
+
+export interface BotaoDaBarraProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  /** Ação nomeada: "Buscar no sistema", "Notificações: 3 não lidas". */
+  'aria-label': string;
+  icone: ReactNode;
+}
+
+/**
+ * Botão de ícone da barra superior: 30px (`--citie-botao-fechar`, a mesma
+ * medida do fechar de diálogo e dos botões da barra do Sismental), raio
+ * `md`, borda 1px. O `Button` da casa desce a 24 e sobe a 32; 30 é a medida
+ * da barra, então a peça vive no shell.
+ */
+export function BotaoDaBarra({ icone, className, ...rest }: BotaoDaBarraProps) {
+  return (
+    <button type="button" className={`citie-app-shell__botao${className ? ` ${className}` : ''}`} {...rest}>
+      <span aria-hidden="true">{icone}</span>
+    </button>
+  );
+}
+
+export interface SeletorDeContextoProps {
+  /** Escopo ativo da sessão: "Unidade de Saúde", "Secretaria", "Cliente". */
+  rotulo: string;
+  /** Ícone de 16 desenhado no traço do sistema. */
+  icone: ReactNode;
+  /** Nome acessível da ação de trocar: "Trocar unidade". */
+  acao: string;
+  onClick?: () => void;
+}
+
+/**
+ * Cartão de contexto do topo da navegação fixa, medido no Sismental: ícone
+ * em caixa de 28 com tinta de marca sobre accent, rótulo 14 Medium e chevron
+ * duplo à direita. É um botão porque troca o escopo da sessão inteira.
+ */
+export function SeletorDeContexto({ rotulo, icone, acao, onClick }: SeletorDeContextoProps) {
+  return (
+    <button type="button" className="citie-app-shell__contexto" aria-label={`${acao}: ${rotulo}`} onClick={onClick}>
+      <span className="citie-app-shell__contexto-icone" aria-hidden="true">
+        {icone}
+      </span>
+      <span className="citie-app-shell__contexto-rotulo">{rotulo}</span>
+      <span className="citie-app-shell__contexto-chevron" aria-hidden="true">
+        {IconeChevronDuplo}
+      </span>
+    </button>
+  );
+}
 
 /* ------------------------------------------------------------------ */
 /* API de slots                                                        */
@@ -41,29 +119,34 @@ export interface AppShellProps {
 
   /**
    * Nome do módulo atual. Reflete exatamente o item ativo do menu lateral
-   * (consistência absoluta, spec de navegação). Renderizado como texto, nunca
-   * como heading: a hierarquia de heading pertence ao conteúdo da página.
+   * (consistência absoluta, spec de navegação). Aparece na barra quando não
+   * há trilha, e no celular no lugar dela. Renderizado como texto, nunca como
+   * heading: a hierarquia de heading pertence ao conteúdo da página.
    */
   moduloAtual: string;
   /**
-   * Slot central da barra: a busca global. Preencha com `Search` do sistema,
-   * porque só a página conhece o escopo ("Buscar processos, servidores...").
+   * Trilha de navegação, na barra superior, com o ícone de casa no primeiro
+   * nível (Breadcrumb). Omitida, a barra mostra `moduloAtual`.
+   */
+  trilha?: NivelDaTrilha[];
+  /**
+   * Slot central da barra, para a busca global expandida (`Search`). O shell
+   * do Sismental prefere a busca como botão de ícone em `acoesDaBarra`; este
+   * slot fica para telas cuja tarefa principal é buscar.
    */
   busca?: ReactNode;
   /**
-   * Slot do fim da barra, antes do perfil: notificações, alternador de tema e
-   * outras ações globais. Preencha com `Button` e `Badge`.
+   * Slot do fim da barra, antes do divisor e do perfil: busca e notificações
+   * como `BotaoDaBarra` de 30px, tema e outras ações globais.
    */
   acoesDaBarra?: ReactNode;
-  /** Slot do fim da barra: avatar e menu de perfil. Preencha com `Avatar`. */
+  /** Slot do fim da barra: avatar de 32 e menu de perfil. Preencha com `Avatar`. */
   perfil?: ReactNode;
   /**
    * Fundo da barra superior, que decide qual logotipo oficial entra:
    * `claro` usa LogoHorizontal3.svg, `escuro` usa LogoHorizontal2.svg.
    */
   fundoDaBarra?: 'claro' | 'escuro';
-  /** Barra compacta de 48px, para telas que precisam de máxima área de conteúdo. */
-  compacto?: boolean;
 
   /* ---------- Menu lateral ---------- */
 
@@ -71,7 +154,14 @@ export interface AppShellProps {
   secoes: SecaoDoMenu[];
   /** Identificador do item ativo do menu. */
   itemAtivo: string;
-  /** Slot do rodapé do menu lateral: ações de perfil ou versão do sistema. */
+  /** Cartão de contexto no topo da navegação (`SeletorDeContexto`). */
+  contexto?: ReactNode;
+  /**
+   * Ação de encerrar a sessão, ancorada no rodapé da navegação, em vermelho,
+   * como no Sismental. Omitida, o rodapé fica com `rodapeDoMenu` ou vazio.
+   */
+  onSair?: () => void;
+  /** Slot livre do rodapé do menu lateral: versão do sistema, por exemplo. */
   rodapeDoMenu?: ReactNode;
   /**
    * Estado inicial do colapso. O colapso em si é sempre ação explícita do
@@ -79,20 +169,23 @@ export interface AppShellProps {
    */
   colapsadaInicial?: boolean;
 
-  /* ---------- Trilha de navegação ---------- */
-
-  /** Níveis da trilha. Omitido, a região não é renderizada. */
-  trilha?: NivelDaTrilha[];
-  /**
-   * Slot alinhado à direita da trilha: ações de escopo da tela inteira
-   * (exportar, nova solicitação). Preencha com `Button` ou `Menubar`.
-   */
-  acoesDaTrilha?: ReactNode;
-
   /* ---------- Conteúdo ---------- */
 
+  /**
+   * Ações de escopo da tela inteira (exportar, competência), numa linha acima
+   * do conteúdo. Preencha com `Button` ou `Menubar`.
+   */
+  acoesDaTrilha?: ReactNode;
+  /**
+   * `direto`: o conteúdo fica sobre o fundo cinza da página (listagem simples).
+   * `cartao`: o conteúdo vive num cartão branco de raio 16 a 8px do fundo
+   * (formulário e administração), como no Sismental.
+   */
+  moldura?: 'direto' | 'cartao';
   /** Conteúdo da tela. Vai dentro do único `main` do documento. */
   children: ReactNode;
+  /** Rodapé "Desenvolvido por Citiesoft @ 2026" com a marca em link. Ligado por padrão. */
+  rodape?: boolean;
 
   /* ---------- Painel lateral direito ---------- */
 
@@ -107,28 +200,32 @@ export interface AppShellProps {
 /* ------------------------------------------------------------------ */
 
 /**
- * Moldura persistente das telas autenticadas: barra superior, menu lateral,
- * trilha, conteúdo e painel opcional. Anatomia de
- * `03-components/navigation-sidebar-header.md` v2.0.0.
+ * Moldura persistente das telas autenticadas, medida no Sismental: barra
+ * superior de 52, navegação fixa de 257 com seletor de contexto e "Sair" no
+ * rodapé, trilha na barra, conteúdo direto ou em cartão de raio 16, rodapé
+ * com a marca. Anatomia em `docs/figma-ui-kit.md`, "Composição de tela".
  *
- * O menu lateral é o componente `Sidebar` do sistema, que já traz skip link,
- * `aria-current` no item ativo, variante colapsada e a regra de item sem
+ * O menu lateral é o `Sidebar` do sistema na variante `fixa` (Lote 4), que já
+ * traz skip link, `aria-current` no item ativo, colapso e a regra de item sem
  * permissão ausente do DOM. Nada disso é reimplementado aqui.
  */
 export function AppShell({
   moduloAtual,
+  trilha,
   busca,
   acoesDaBarra,
   perfil,
   fundoDaBarra = 'claro',
-  compacto = false,
   secoes,
   itemAtivo,
+  contexto,
+  onSair,
   rodapeDoMenu,
   colapsadaInicial = false,
-  trilha,
   acoesDaTrilha,
+  moldura = 'direto',
   children,
+  rodape = true,
   painelLateral,
   rotuloDoPainelLateral,
 }: AppShellProps) {
@@ -189,14 +286,31 @@ export function AppShell({
   const logotipo =
     fundoDaBarra === 'escuro' ? '/marca/LogoHorizontal2.svg' : '/marca/LogoHorizontal3.svg';
 
+  const rodapeDaNavegacao =
+    onSair || rodapeDoMenu ? (
+      <>
+        {onSair ? (
+          <button type="button" className="citie-app-shell__sair" onClick={onSair}>
+            <span aria-hidden="true">{IconeSair}</span>
+            {colapsada ? <span className="citie-visualmente-oculto">Sair</span> : 'Sair'}
+          </button>
+        ) : null}
+        {rodapeDoMenu && !colapsada ? (
+          <div className="citie-app-shell__lateral-rodape">{rodapeDoMenu}</div>
+        ) : null}
+      </>
+    ) : undefined;
+
   return (
     <div
-      className={`citie-app-shell${compacto ? ' citie-app-shell--compacto' : ''}`}
+      className={`citie-app-shell citie-app-shell--${moldura}`}
       data-fundo-da-barra={fundoDaBarra}
     >
       {/* ---------- Barra superior ---------- */}
       <header className="citie-app-shell__barra">
         <div className="citie-app-shell__barra-inicio">
+          <img className="citie-app-shell__marca" src={logotipo} alt="Citiesoft" />
+
           {/* Abaixo de 768px o menu vira drawer, acionado só por este botão. */}
           <Button
             ref={gatilhoDoDrawer}
@@ -213,28 +327,37 @@ export function AppShell({
 
           {/* No desktop o mesmo canto controla o colapso, sempre explícito. */}
           <Button
-            className="citie-app-shell__so-desktop"
+            className="citie-app-shell__so-desktop citie-app-shell__recolher"
             variant="text"
             iconOnly
+            size="small"
             icon={colapsada ? IconeExpandir : IconeColapsar}
             aria-label={colapsada ? 'Expandir menu principal' : 'Colapsar menu principal'}
             aria-expanded={!colapsada}
             aria-controls={idDaLateral}
             onClick={() => setColapsada((atual) => !atual)}
           />
-
-          <img className="citie-app-shell__marca" src={logotipo} alt="Citiesoft" />
-
-          <span className="citie-app-shell__divisor" aria-hidden="true" />
-
-          <span className="citie-app-shell__modulo">{moduloAtual}</span>
         </div>
 
-        {busca ? <div className="citie-app-shell__barra-centro">{busca}</div> : null}
+        <div className="citie-app-shell__barra-centro">
+          {trilha ? (
+            <div className="citie-app-shell__trilha">
+              <Breadcrumb niveis={trilha} />
+            </div>
+          ) : null}
+          {/* No celular a trilha inteira não cabe: fica o nome do módulo. */}
+          <span className={`citie-app-shell__modulo${trilha ? ' citie-app-shell__so-mobile' : ''}`}>
+            {moduloAtual}
+          </span>
+          {busca ? <div className="citie-app-shell__busca">{busca}</div> : null}
+        </div>
 
         <div className="citie-app-shell__barra-fim">
           {acoesDaBarra ? (
             <div className="citie-app-shell__barra-acoes">{acoesDaBarra}</div>
+          ) : null}
+          {acoesDaBarra && perfil ? (
+            <span className="citie-app-shell__divisor" aria-hidden="true" />
           ) : null}
           {perfil ? <div className="citie-app-shell__barra-perfil">{perfil}</div> : null}
         </div>
@@ -251,8 +374,6 @@ export function AppShell({
           data-aberta={drawerAberto ? 'sim' : 'nao'}
           onKeyDown={aoTeclarNoDrawer}
         >
-          <Sidebar secoes={secoes} ativo={itemAtivo} colapsada={colapsada} />
-
           {/* Fechar só existe no drawer; no desktop o CSS o remove. */}
           <div className="citie-app-shell__lateral-fechar citie-app-shell__so-mobile">
             <Button
@@ -265,9 +386,14 @@ export function AppShell({
             />
           </div>
 
-          {rodapeDoMenu ? (
-            <div className="citie-app-shell__lateral-rodape">{rodapeDoMenu}</div>
-          ) : null}
+          <Sidebar
+            variante="fixa"
+            secoes={secoes}
+            ativo={itemAtivo}
+            colapsada={colapsada}
+            cabecalho={colapsada ? undefined : contexto}
+            rodape={rodapeDaNavegacao}
+          />
         </div>
 
         {drawerAberto ? (
@@ -279,14 +405,8 @@ export function AppShell({
         ) : null}
 
         <div className="citie-app-shell__area">
-          {/* ---------- Trilha de navegação ---------- */}
-          {trilha || acoesDaTrilha ? (
-            <div className="citie-app-shell__trilha">
-              {trilha ? <Breadcrumb niveis={trilha} /> : null}
-              {acoesDaTrilha ? (
-                <div className="citie-app-shell__trilha-acoes">{acoesDaTrilha}</div>
-              ) : null}
-            </div>
+          {acoesDaTrilha ? (
+            <div className="citie-app-shell__acoes-da-tela">{acoesDaTrilha}</div>
           ) : null}
 
           <div
@@ -295,7 +415,8 @@ export function AppShell({
             }`}
           >
             {/* ---------- Conteúdo principal ---------- */}
-            {/* `conteudo` é o alvo do skip link que a Sidebar já publica. */}
+            {/* `conteudo` é o alvo do skip link que a Sidebar já publica. A
+                moldura em cartão é o próprio `main`: raio 16, borda, 8px do fundo. */}
             <main id="conteudo" className="citie-app-shell__conteudo" tabIndex={-1}>
               {children}
             </main>
@@ -307,6 +428,16 @@ export function AppShell({
               </aside>
             ) : null}
           </div>
+
+          {rodape ? (
+            <footer className="citie-app-shell__rodape">
+              Desenvolvido por{' '}
+              <Link href="https://citiesoft.com.br" papel="padrao" novaAba>
+                Citiesoft
+              </Link>{' '}
+              @ 2026
+            </footer>
+          ) : null}
         </div>
       </div>
     </div>

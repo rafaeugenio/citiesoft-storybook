@@ -114,6 +114,53 @@ export const Confirmacao: Story = {
   },
 };
 
+export const CicloDeTab: Story = {
+  name: 'Interação · ciclo de Tab não escapa do diálogo',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'O `dialog` nativo torna o fundo inerte e devolve o foco ao gatilho ao fechar, mas não recicla o Tab sozinho: sem a prisão de foco de `useDialogModal`, o Tab a partir do último botão escapava para o `<body>` com o modal ainda aberto na tela. Medido com Tab e Shift+Tab reais.',
+      },
+    },
+  },
+  render: () => (
+    <ComGatilho rotulo="Excluir processo" variante="danger">
+      {({ aberto, fechar }) => (
+        <ConfirmDialog
+          aberto={aberto}
+          titulo="Excluir processo 2025/0481?"
+          descricao="Os anexos e o histórico do processo serão removidos permanentemente."
+          rotuloConfirmar="Excluir processo"
+          onClose={fechar}
+        />
+      )}
+    </ComGatilho>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Excluir processo' }));
+
+    const dialogo = canvasElement.querySelector('dialog')!;
+    const cancelar = within(dialogo).getByRole('button', { name: 'Cancelar' });
+    const confirmar = within(dialogo).getByRole('button', { name: 'Excluir processo' });
+
+    await waitFor(() => expect(cancelar).toHaveFocus());
+
+    await userEvent.tab();
+    await expect(confirmar).toHaveFocus();
+
+    // Tab a partir do último focável recicla para o primeiro, em vez de
+    // escapar para o `<body>`.
+    await userEvent.tab();
+    await expect(cancelar).toHaveFocus();
+
+    // Shift+Tab a partir do primeiro recicla para o último.
+    await userEvent.tab({ shift: true });
+    await expect(confirmar).toHaveFocus();
+  },
+};
+
 export const ConfirmacaoEmCurso: Story = {
   name: 'ConfirmDialog · confirmando',
   parameters: {

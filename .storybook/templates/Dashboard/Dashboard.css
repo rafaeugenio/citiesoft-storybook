@@ -25,9 +25,10 @@
 .citie-dashboard__titulo {
   margin: 0;
   font-family: var(--citie-font-display);
-  font-size: 24px;
-  font-weight: 600;
+  font-size: var(--citie-font-size-title-lg);
+  font-weight: var(--citie-font-weight-title);
   color: var(--citie-text-primary);
+  letter-spacing: -0.01em;
 }
 
 .citie-dashboard__descricao {
@@ -44,9 +45,10 @@
 
 /* ---------- Região 1: filtro global de período ---------- */
 
+/* Sob a barra de 52 do shell, o filtro gruda logo abaixo dela. */
 .citie-dashboard__filtro {
   position: sticky;
-  top: 0;
+  top: var(--citie-altura-da-barra);
   z-index: 1;
   padding: var(--citie-spacing-2) 0;
   background: var(--citie-background-default);
@@ -137,6 +139,16 @@
 
 /* ---------- Responsivo ---------- */
 
+/* ---------- Hub de atalhos (administração do Sismental) ---------- */
+
+/* Abas sublinhadas logo abaixo do subtítulo; a grade de cards de hub fica no painel. */
+.citie-dashboard__hub {
+  display: grid;
+  gap: var(--citie-spacing-4);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding-block-start: var(--citie-spacing-4);
+}
+
 /* 1366: quatro colunas de KPI ainda cabem, o grid de gráficos cai para duas. */
 @media (max-width: 1366px) {
   .citie-dashboard__grid[data-colunas='3'],
@@ -145,27 +157,43 @@
   }
 }
 
-/* 768: dois KPIs por linha e um gráfico por linha, sem célula larga. */
+/*
+ * 768: dois KPIs por linha e um gráfico por linha, sem célula larga.
+ *
+ * As regras levam `[data-colunas]` porque a grade sempre carrega o atributo, e
+ * a regra de coluna por atributo (`[data-colunas='2']`) vence a de classe
+ * pura. Sem o atributo aqui, a 375 o grid ficava em 2 colunas, o gráfico de
+ * rosca encolhia para 160px, a legenda de 180 vazava do cartão e o axe passava
+ * a ler o branco da página por baixo do texto no tema escuro.
+ */
 @media (max-width: 900px) {
   .citie-dashboard__linha[data-colunas='3'],
   .citie-dashboard__linha[data-colunas='4'] {
     --dash-colunas: 2;
   }
 
-  .citie-dashboard__grid {
+  .citie-dashboard__grid[data-colunas] {
     --dash-colunas: 1;
   }
 
   .citie-dashboard__celula--larga {
     grid-column: span 1;
   }
+
+  .citie-dashboard__hub {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 /* 375: coluna única em toda a tela; o filtro deixa de grudar no topo para não
    comer altura útil no telefone. */
 @media (max-width: 600px) {
-  .citie-dashboard__linha {
+  .citie-dashboard__linha[data-colunas] {
     --dash-colunas: 1;
+  }
+
+  .citie-dashboard__hub {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .citie-dashboard__filtro {

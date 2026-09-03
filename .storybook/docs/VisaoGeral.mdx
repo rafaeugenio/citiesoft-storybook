@@ -115,6 +115,23 @@ passou a ser extraído do código em vez de descrito de memória. **A regra que 
 aqui, e que vale para o resto do catálogo: afirmação sobre estrutura precisa ser
 executável.** Quando ela não é, ela envelhece em silêncio e ninguém percebe.
 
+### Quatro peças novas do kit, sem par anterior no catálogo
+
+O UI Kit Citiesoft no Figma tem componentes que este catálogo não tinha:
+`Command`, `Item`, `ToggleGroup` e `AlertDialog` (Lote 6a). Nenhum deles nasceu
+do zero, e a composição de cada um mostra a mesma cadeia em miniatura. A
+molécula **Item** reaproveita a caixa de ícone do hub do `Card` e os átomos
+`Avatar`/`AvatarGroup` já publicados, porque o kit não mede uma anatomia
+própria para ela. A molécula **Command** compõe o átomo `Kbd` para o
+atalho de teclado e a molécula `EmptyState` para o resultado vazio da busca,
+com item próprio de anatomia densa (ícone de 16 sem caixa, diferente do
+`Item`), e pode viver dentro do organismo `Dialog` como paleta modal
+disparada por `Ctrl+K`. A molécula **ToggleGroup** herda o
+raio de junção do `ButtonGroup` (Lote 1) aplicado à pele de seleção do kit.
+O organismo **AlertDialog** compõe o átomo `Button` no rodapé e o mapa de
+severidade (`tokens/severidade.css`) na caixa de ícone, ao lado do
+`ConfirmDialog` do `Overlay` (Lote 3), sem herdar o arquivo dele.
+
 ## Como ler cada componente
 
 Cada página de componente traz, quando se aplica:

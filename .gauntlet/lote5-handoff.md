@@ -37,4 +37,16 @@ text-primary / accent forte 11,81 (escuro 11,42); text-base / accent forte 7,99 
 3. A dica do gráfico é só de ponteiro; teclado e leitor de tela continuam pelo `<title>` e pela tabela alternativa, decisão declarada no CSS.
 4. A captura `table-em-cartao` saiu do build anterior à troca do Pagination para `variant="simples"` na story, então mostra o total duas vezes (o do Pagination à esquerda e o `resumo` à direita); a story atual usa `simples` e só o resumo fica, como no Sismental. Recapturar no próximo build.
 
+## Adendo de 03/09: fechamento do veredito do Gojo
+
+Veredito em `.gauntlet/vereditos/lote5-dados.yaml`: REPROVADO com quatro MAIOR e três MENOR, anti-slop PASSOU. O que mudou:
+
+1. **Véu sobre a seleção (MAIOR).** `SelecaoNaLinhaPar` de Table e TreeTable lê `--citie-veu-sobre-selecao` na célula selecionada e afirma alfa entre 0 e 1 e valor diferente de `--citie-accent`. Sabotagem (token apagado nos dois temas) reprova as duas stories no claro e no escuro.
+2. **Re-apontamento de text-secondary (MAIOR).** `SelecaoNaLinhaPar` da Table passou a usar o `Identificador` (CPF em text-secondary) e afirma a cor computada igual a `--citie-text-base` mais contraste WCAG ≥ 4,5:1 contra o fundo computado da linha, com a fórmula na story. Sabotagem (regra removida) reprova nos dois temas.
+3. **Item de 32 (MAIOR).** `box-sizing: border-box` em `.citie-tree__linha` e `.citie-listbox__opcao`; assert de 32 em toda linha da story Básico da Tree e em toda opção da Default do Listbox. OrderList e PickList também em `border-box`, com o comentário dizendo que 36 é mínimo e que rótulo mais detalhe passa dele. Sabotagem (border-box removido) reprova as duas stories.
+4. **Busca de 36 (MAIOR).** `Search.css` trocou 32 / 40 / 48 por `--citie-control-height-small / normal / large` e ganhou `border-box` (a borda de 1px inflava para 34 / 38 / 42); a story Tamanhos afirma 32 / 36 / 40 e a composição Em cartão afirma 36 na busca e no select. Sabotagem (md de volta a 40) reprova as duas.
+5. **MENOR:** as três negações paralelas reescritas em afirmação (Table.css e Listbox.css); título do cartão com prop `nivel` (2 a 4, padrão 2) em `CabecalhoDaTabela`; delta do Widget na Tag `md` (20 de altura, 12px), como a declaração; `table-em-cartao` recapturado do build novo (busca e select em 36, um resumo só).
+
+Sabotagens feitas em worktree privado (`~/dev/citiesoft-storybook-sab-lote5`, espelho da árvore por rsync e `node_modules` por hardlink), removido ao final. Testes isolados dos nove arquivos tocados: claro 102 / 102; escuro 101 / 102, a falha é `Search > Variante · autocomplete` (`mark` de sugestão), que já constava no baseline do escuro e não é deste lote. `tsc` reprova só em `ToggleGroup.stories.tsx`, do Lote 6a. A nota do handoff sobre ConsultaDeProcessos ficou datada: no commit 117533a a story já não falha, como o Gojo mediu.
+
 Anti-slop: rota produto B2G, auditado em código (zero hex fora de `tokens.css`, zero travessão e zero negação paralela nas linhas adicionadas, glifos de texto trocados por SVG) e em captura nos dois temas. Veredito do lote: **PASSOU**.

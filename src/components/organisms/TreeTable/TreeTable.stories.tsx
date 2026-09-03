@@ -473,6 +473,16 @@ export const SelecaoNaLinhaPar: Story = {
       const cores = new Set(selecionadas.map(fundo));
       await expect(cores.size).toBe(1);
       await expect(cores.has(zebrada)).toBe(false);
+
+      // O véu sobre a seleção existe e é translúcido: sem ele a linha
+      // selecionada deixaria de responder ao ponteiro (o `@property` cai em
+      // `transparent`), e opaco ele apagaria a seleção.
+      const celula = selecionadas[0].querySelector('td') as HTMLElement;
+      const veu = getComputedStyle(celula).getPropertyValue('--citie-veu-sobre-selecao').trim();
+      const alfa = Number(veu.match(/rgba?\([^)]*,\s*([\d.]+)\)$/)?.[1]);
+      await expect(alfa).toBeGreaterThan(0);
+      await expect(alfa).toBeLessThan(1);
+      await expect(veu).not.toBe(getComputedStyle(celula).getPropertyValue('--citie-accent').trim());
     });
   },
 };

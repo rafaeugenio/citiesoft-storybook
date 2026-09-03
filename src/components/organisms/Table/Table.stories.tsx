@@ -264,9 +264,30 @@ export const ComSelecao: Story = {
   },
 };
 
+/** As colunas padrão com o servidor em identificador de duas linhas: o CPF é metadado em text-secondary. */
+const COLUNAS_COM_IDENTIFICADOR: Coluna<Solicitacao>[] = COLUNAS.map((coluna) =>
+  coluna.chave === 'servidor'
+    ? { ...coluna, render: (linha) => <Identificador principal={linha.servidor} secundario={mascararCPF(linha.cpf)} /> }
+    : coluna,
+);
+
+/** Contraste WCAG entre duas cores computadas (`rgb(r, g, b)`). */
+function contraste(a: string, b: string) {
+  const lum = (cor: string) => {
+    const [r, g, bl] = (cor.match(/\d+/g) ?? []).slice(0, 3).map((c) => {
+      const v = Number(c) / 255;
+      return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * bl;
+  };
+  const [claro, escuro] = [lum(a), lum(b)].sort((x, y) => y - x);
+  return (claro + 0.05) / (escuro + 0.05);
+}
+
 export const SelecaoNaLinhaPar: Story = {
   name: 'Estado · seleção na linha par da zebra',
   args: { selecionavel: true },
+  render: (args) => <Table {...args} colunas={COLUNAS_COM_IDENTIFICADOR} />,
   parameters: {
     docs: {
       description: {
@@ -319,6 +340,21 @@ export const SelecaoNaLinhaPar: Story = {
     await expect(fundo(par)).toBe(paraRgb(token('--citie-accent-forte')));
     await expect(fundo(par)).not.toBe(paraRgb(token('--citie-accent')));
     await expect(getComputedStyle(celula).color).toBe(paraRgb(token('--citie-text-primary')));
+
+    // O véu sobre a seleção existe e é translúcido: sem o token a linha
+    // selecionada deixa de responder ao ponteiro (o `@property` cai em
+    // `transparent`), e opaco ele apagaria a seleção.
+    const veu = token('--citie-veu-sobre-selecao');
+    const alfa = Number(veu.match(/rgba?\([^)]*,\s*([\d.]+)\)$/)?.[1]);
+    await expect(alfa).toBeGreaterThan(0);
+    await expect(alfa).toBeLessThan(1);
+    await expect(veu).not.toBe(token('--citie-accent'));
+
+    // O metadado em text-secondary dentro da linha selecionada sobe para
+    // text-base: sobre o accent forte o text-secondary mede 3,57:1 e reprova.
+    const cpf = par.querySelector('.citie-table__identificador-secundario') as HTMLElement;
+    await expect(getComputedStyle(cpf).color).toBe(paraRgb(token('--citie-text-base')));
+    await expect(contraste(getComputedStyle(cpf).color, fundo(par))).toBeGreaterThanOrEqual(4.5);
   },
 };
 
@@ -528,6 +564,11 @@ export const EmCartao: Story = {
     const inativa = canvas.getByText('Marcos Aquino').closest('tr') as HTMLElement;
     await expect(inativa).toHaveClass('citie-table__linha--inativa');
     await expect(within(inativa).getByText('Inativo.')).toBeInTheDocument();
+
+    // Busca e select da linha de filtro na mesma altura de 36 do kit.
+    const busca = canvasElement.querySelector('.citie-table__filtros .citie-search') as HTMLElement;
+    await expect(busca.getBoundingClientRect().height).toBe(36);
+    await expect(canvas.getByRole('combobox', { name: 'Status' }).getBoundingClientRect().height).toBe(36);
 
     // Ação principal visível sem hover, em botão outline de 32.
     const editar = canvas.getByRole('button', { name: 'Editar Ana Neri' });

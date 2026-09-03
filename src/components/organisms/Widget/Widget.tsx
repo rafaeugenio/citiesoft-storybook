@@ -135,7 +135,7 @@ export function KpiWidget({
               <Tag
                 label={`${positiva ? '+' : ''}${variacao.percentual.toLocaleString('pt-BR')}%`}
                 severity={positiva ? 'success' : 'danger'}
-                size="sm"
+                size="md"
                 icon={<SetaDeTendencia paraCima={positiva} />}
               />
               <span className="citie-widget__tendencia-texto">

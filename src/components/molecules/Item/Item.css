@@ -1,0 +1,166 @@
+/**
+ * Item Citiesoft: linha de lista rica.
+ *
+ * Anatomia por variante, medida contra as peças que o Item reaproveita:
+ *   default : sem contorno próprio, para viver dentro de uma lista que já é
+ *             a moldura (listbox do Command, corpo de um Card).
+ *   outline : borda 1px raio 10, o `radius` do kit, para o Item ser a própria
+ *             moldura numa grade solta de itens.
+ *   muted   : fundo `background-subtle`, para recuar o Item do branco de um
+ *             cartão ao redor, a mesma leitura que o Card aninhado usa.
+ */
+
+.citie-item {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-3);
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--citie-spacing-2) var(--citie-spacing-3);
+  border-radius: var(--citie-radius-lg);
+  border: 1px solid transparent;
+  background: none;
+  font-family: var(--citie-font-ui);
+  text-align: start;
+  cursor: default;
+  transition: background-color var(--citie-motion-rapido) var(--citie-easing-padrao);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citie-item {
+    transition: none;
+  }
+}
+
+.citie-item--small {
+  padding: var(--citie-spacing-1-5) var(--citie-spacing-2);
+  gap: var(--citie-spacing-2);
+}
+
+.citie-item--outline {
+  border-color: var(--citie-border-default);
+}
+
+.citie-item--muted {
+  background-color: var(--citie-background-subtle);
+}
+
+/* ---------- Interação ---------- */
+
+.citie-item--interativo {
+  cursor: pointer;
+}
+
+.citie-item--interativo:hover:not(:disabled) {
+  background-color: var(--citie-state-hover-overlay);
+}
+
+.citie-item--interativo:focus-visible:not(:disabled) {
+  outline: none;
+  box-shadow: var(--citie-state-focus-ring);
+}
+
+/* Realce de teclado (Command): mesmo degrau do item de menu ativo, Lote 4. */
+.citie-item--realcado {
+  background-color: var(--citie-accent-forte);
+}
+
+.citie-item--realcado .citie-item__titulo {
+  color: var(--citie-text-primary);
+}
+
+.citie-item--desabilitado {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------- Mídia ---------- */
+
+.citie-item__icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  /* Mesma caixa do ícone de hub do Card: 36, raio 8, fundo accent (Lote 3). */
+  inline-size: var(--citie-hub-caixa-de-icone);
+  block-size: var(--citie-hub-caixa-de-icone);
+  border-radius: var(--citie-hub-raio-da-caixa);
+  background-color: var(--citie-accent);
+  color: var(--citie-brand-primary);
+}
+
+.citie-item--small .citie-item__icone {
+  inline-size: var(--citie-control-height-small);
+  block-size: var(--citie-control-height-small);
+  border-radius: var(--citie-radius-md);
+}
+
+.citie-item__icone svg {
+  inline-size: var(--citie-hub-icone);
+  block-size: var(--citie-hub-icone);
+}
+
+.citie-item--small .citie-item__icone svg {
+  inline-size: var(--citie-icone-de-linha);
+  block-size: var(--citie-icone-de-linha);
+}
+
+.citie-item__imagem {
+  flex: none;
+  inline-size: var(--citie-hub-caixa-de-icone);
+  block-size: var(--citie-hub-caixa-de-icone);
+  border-radius: var(--citie-radius-md);
+  object-fit: cover;
+}
+
+.citie-item--small .citie-item__imagem {
+  inline-size: var(--citie-control-height-small);
+  block-size: var(--citie-control-height-small);
+}
+
+/* ---------- Corpo ---------- */
+
+.citie-item__corpo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.citie-item__linha-titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--citie-spacing-2);
+  min-width: 0;
+}
+
+.citie-item__titulo {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--citie-font-size-body-md);
+  font-weight: var(--citie-font-weight-action);
+  color: var(--citie-text-primary);
+}
+
+.citie-item--small .citie-item__titulo {
+  font-size: var(--citie-font-size-body-sm);
+}
+
+.citie-item__descricao {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--citie-font-size-body-xs);
+  line-height: var(--citie-linha-mini);
+  color: var(--citie-text-secondary);
+}
+
+/* ---------- Ação ---------- */
+
+.citie-item__acao {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  margin-inline-start: auto;
+}

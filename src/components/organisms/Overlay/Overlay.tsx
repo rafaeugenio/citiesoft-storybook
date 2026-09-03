@@ -4,11 +4,25 @@ import './Overlay.css';
 
 /**
  * Dialog, ConfirmDialog e Drawer (modals-dialogs-drawers.md).
- * Os três usam o elemento `dialog` nativo em modo modal, o que entrega prisão de
- * foco, inerte no fundo e fechamento por Escape sem reimplementação.
+ * Os três usam o elemento `dialog` nativo em modo modal, o que entrega inerte
+ * no fundo, fechamento por Escape e devolução de foco ao gatilho sem
+ * reimplementação. A prisão de foco (Tab não escapar do conteúdo) o `dialog`
+ * nativo NÃO entrega sozinho: medido com Tab real em Chromium, o foco sai do
+ * último elemento focável direto para o `<body>`. `useDialogModal` fecha esse
+ * ciclo por conta própria, no keydown, para Dialog, ConfirmDialog, Drawer e
+ * qualquer outro consumidor do hook.
  */
 
-function useDialogModal(aberto: boolean, onClose?: () => void, obrigatorio = false) {
+/** Focáveis visíveis dentro do elemento, na ordem do DOM (ordem de Tab). */
+function elementosFocaveis(elemento: HTMLElement): HTMLElement[] {
+  const seletor =
+    'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+  return Array.from(elemento.querySelectorAll<HTMLElement>(seletor)).filter(
+    (candidato) => candidato.offsetParent !== null,
+  );
+}
+
+export function useDialogModal(aberto: boolean, onClose?: () => void, obrigatorio = false) {
   const ref = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -36,6 +50,37 @@ function useDialogModal(aberto: boolean, onClose?: () => void, obrigatorio = fal
     elemento.addEventListener('cancel', aoCancelar);
     return () => elemento.removeEventListener('cancel', aoCancelar);
   }, [onClose, obrigatorio]);
+
+  useEffect(() => {
+    const elemento = ref.current;
+    if (!elemento) return;
+
+    // Prisão de foco manual: Tab no último focável recicla para o primeiro, e
+    // Shift+Tab no primeiro recicla para o último. O `dialog` nativo já torna
+    // o fundo da página inerte, então os únicos focáveis alcançáveis por Tab
+    // são os de dentro do próprio elemento; sem este listener o navegador
+    // deixa o Tab do último sair para a barra de endereço/`<body>`.
+    const aoTeclar = (evento: KeyboardEvent) => {
+      if (evento.key !== 'Tab') return;
+
+      const focaveis = elementosFocaveis(elemento);
+      if (focaveis.length === 0) return;
+
+      const primeiro = focaveis[0];
+      const ultimo = focaveis[focaveis.length - 1];
+
+      if (evento.shiftKey && document.activeElement === primeiro) {
+        evento.preventDefault();
+        ultimo.focus();
+      } else if (!evento.shiftKey && document.activeElement === ultimo) {
+        evento.preventDefault();
+        primeiro.focus();
+      }
+    };
+
+    elemento.addEventListener('keydown', aoTeclar);
+    return () => elemento.removeEventListener('keydown', aoTeclar);
+  }, []);
 
   return ref;
 }

@@ -206,7 +206,7 @@
 .citie-sidebar--fixa {
   display: flex;
   flex-direction: column;
-  width: 257px;
+  width: var(--citie-largura-da-sidebar);
   padding-block: 0;
   background-color: var(--citie-sidebar);
   border-inline-end: 1px solid var(--citie-sidebar-border);

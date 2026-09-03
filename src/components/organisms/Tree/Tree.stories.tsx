@@ -129,6 +129,11 @@ export const Basico: Story = {
     const departamento = within(arvore).getByRole('treeitem', { name: 'Departamento de Regulação' });
     await expect(departamento).toHaveAttribute('aria-level', '2');
     await expect(departamento).toHaveAttribute('aria-expanded', 'false');
+
+    // Item de 32 do kit (padding 4 × 8 incluído): antes media 40 em content-box.
+    for (const linha of Array.from(canvasElement.querySelectorAll('.citie-tree__linha'))) {
+      await expect(linha.getBoundingClientRect().height).toBe(32);
+    }
   },
 };
 

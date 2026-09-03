@@ -752,6 +752,34 @@
       "familia": "Feedback",
       "arquivo": "Terminal/Terminal",
       "tituloAntigo": "Feedback/Terminal"
+    },
+    {
+      "nome": "Command",
+      "nivel": "molecula",
+      "familia": "Busca",
+      "arquivo": "Command/Command",
+      "tituloAntigo": null
+    },
+    {
+      "nome": "Item",
+      "nivel": "molecula",
+      "familia": "Contêineres",
+      "arquivo": "Item/Item",
+      "tituloAntigo": null
+    },
+    {
+      "nome": "ToggleGroup",
+      "nivel": "molecula",
+      "familia": "Escolha",
+      "arquivo": "ToggleGroup/ToggleGroup",
+      "tituloAntigo": null
+    },
+    {
+      "nome": "AlertDialog",
+      "nivel": "organismo",
+      "familia": "Overlay",
+      "arquivo": "AlertDialog/AlertDialog",
+      "tituloAntigo": null
     }
   ]
 }

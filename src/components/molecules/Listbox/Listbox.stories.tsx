@@ -50,6 +50,10 @@ export const Default: Story = {
     const lista = canvas.getByRole('listbox', { name: 'Especialidade' });
 
     await expect(lista).toBeVisible();
+    // Item de 32 do kit (padding 4 × 8 incluído): antes media 40 em content-box.
+    for (const opcao of canvas.getAllByRole('option')) {
+      await expect(opcao.getBoundingClientRect().height).toBe(32);
+    }
     await userEvent.click(canvas.getByRole('option', { name: 'Neurologia' }));
     await expect(canvas.getByRole('option', { name: 'Neurologia' })).toHaveAttribute(
       'aria-selected',

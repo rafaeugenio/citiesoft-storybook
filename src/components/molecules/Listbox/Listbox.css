@@ -13,9 +13,9 @@
 }
 
 /**
- * O contêiner segue o raio de campo (`Field`, 10 desde o Lote 2), e não o de
- * painel: a linhagem do Listbox é de controle de formulário, com borda de campo
- * e estado de inválido. Por dentro, o item de 32 fica em raio 6.
+ * O contêiner segue o raio de campo (`Field`, 10 desde o Lote 2): a linhagem
+ * do Listbox é de controle de formulário, com borda de campo e estado de
+ * inválido. Por dentro, o item de 32 fica em raio 6.
  */
 .citie-listbox {
   /* O líder da linha é o ícone de linha do kit, 16. */
@@ -113,6 +113,8 @@
   display: flex;
   align-items: center;
   gap: var(--citie-spacing-2);
+  /* `border-box`: o mínimo de 32 inclui o padding. Em `content-box` a caixa fechava em 40. */
+  box-sizing: border-box;
   min-height: var(--citie-control-height-small);
   padding: var(--citie-spacing-1) var(--citie-spacing-2);
   font-size: var(--citie-font-size-body-md);
