@@ -153,3 +153,13 @@ Reprovado com um BLOQUEADOR e dois MAIOR. Os três, fechados:
 
 `Dialog` e `Drawer` não regrediram: as duas suítes de story deles seguem
 100% depois da mudança no hook compartilhado.
+
+## Adendo 2: `tsc` reprovava em `ToggleGroup.stories.tsx`
+
+`ToggleGroupProps` é união discriminada sem ramo opcional cobrindo os dois
+tipos, e o `meta` do arquivo não declarava `args`: `tsc -b --force` reprovava
+com `Property 'args' is missing` em cada uma das seis stories, que usam
+`render` próprio e nunca leem `args`. Corrigido com um `args` padrão no
+`meta` (tipo `unica`, só para satisfazer `StoryObj<typeof meta>`). `tsc -b
+--force` verde; os 26 testes do lote (Item, Command, ToggleGroup,
+AlertDialog) passam nos dois temas.

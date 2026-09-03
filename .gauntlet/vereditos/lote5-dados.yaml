@@ -1,8 +1,8 @@
 lote: 5-dados
 revisor: gojo
-veredito: REPROVADO
+veredito: APROVADO
 veredito_anti_slop: PASSOU
-gate_tecnico: VERDE (isolado no lote, worktree limpo em 117533a); catálogo verde
+gate_tecnico: VERDE (rodada 1 em 117533a; rodada 2 nos nove arquivos tocados, worktree limpo sobre 117533a com o diff aplicado, e conferida em e69bc69)
 
 resumo: >
   Revisão cega do diff 79f898e..117533a nos 11 componentes e no bloco Lote 5
@@ -39,13 +39,19 @@ gates:
   texto: "zero travessão nas linhas adicionadas; três negações paralelas, ver MENOR"
 
 sabotagens:
-  a_apagar_veu_sobre_selecao: "PASSOU EM SILÊNCIO: Table e TreeTable 24 / 24 sem o token nos dois temas"
-  b_celula_48: "REPROVA como deve: Table Confortável, Table Em cartão e TreeTable Confortável falham (3 de 56); DataView e Widget seguem verdes porque não afirmam 44"
-  c_apagar_reapontamento_text_secondary: "PASSOU EM SILÊNCIO: Table 12 / 12 com o re-apontamento removido"
+  rodada_1:
+    a_apagar_veu_sobre_selecao: "PASSOU EM SILÊNCIO: Table e TreeTable 24 / 24 sem o token nos dois temas"
+    b_celula_48: "REPROVA como deve: Table Confortável, Table Em cartão e TreeTable Confortável falham (3 de 56)"
+    c_apagar_reapontamento_text_secondary: "PASSOU EM SILÊNCIO: Table 12 / 12 com o re-apontamento removido"
+  rodada_2:
+    a_apagar_veu_sobre_selecao: "REPROVA: SelecaoNaLinhaPar de Table e de TreeTable falham, 2 de 24, no claro e no escuro"
+    c_apagar_reapontamento_text_secondary: "REPROVA: SelecaoNaLinhaPar da Table falha, 1 de 12, no claro e no escuro"
+    d_remover_border_box_tree_listbox: "REPROVA: Tree Básico e Listbox Default falham, 2 de 31"
+    e_search_md_em_40: "REPROVA: Search Tamanhos e Table Em cartão falham, 2 de 22"
 
 achados:
   - severidade: MAIOR
-    status: ABERTO
+    status: FECHADO (rodada 2)
     local: "organisms/Table/Table.stories.tsx e TreeTable.stories.tsx; tokens.css --citie-veu-sobre-selecao"
     descricao: >
       Sabotagem a do briefing: apagar --citie-veu-sobre-selecao nos dois
@@ -61,7 +67,7 @@ achados:
       difere de --citie-accent. É a mesma técnica que fechou o MAIOR da
       Sidebar no Lote 4.
   - severidade: MAIOR
-    status: ABERTO
+    status: FECHADO (rodada 2)
     local: "organisms/Table/Table.css linhas 372 a 377; Table.stories.tsx"
     descricao: >
       Sabotagem c do briefing: remover o re-apontamento de --citie-text-secondary
@@ -78,7 +84,7 @@ achados:
       metadado igual a --citie-text-base resolvido; com isso o axe também
       passa a cobrir o caso por color-contrast.
   - severidade: MAIOR
-    status: ABERTO
+    status: FECHADO (rodada 2)
     local: "organisms/Tree/Tree.css .citie-tree__linha; molecules/Listbox/Listbox.css .citie-listbox__opcao"
     descricao: >
       O handoff declara item de 32 (kit: item de sidebar e de menu, padding
@@ -93,7 +99,7 @@ achados:
       e um assert de altura 32 na story Básico da Tree e na Default do
       Listbox, como a Table faz com conferirRegua.
   - severidade: MAIOR
-    status: ABERTO
+    status: FECHADO (rodada 2)
     escopo: "cruza lote: Search não foi repaginado em nenhum lote"
     local: "organisms/Table story Em cartão (.citie-table__filtros); organisms/DataView barra (.citie-dataview__busca); molecules/Search/Search.css"
     descricao: >
@@ -109,7 +115,7 @@ achados:
       lote, as duas stories podem usar size sm até lá, com o assert de 36
       no campo de busca da linha de filtro.
   - severidade: MENOR
-    status: ABERTO
+    status: FECHADO (rodada 2)
     local: "Table.css linhas 75 e 139; Listbox.css linha 16"
     descricao: >
       Três negações paralelas em linha adicionada: "é da tabela, e não do
@@ -117,7 +123,7 @@ achados:
       e não o de painel". O handoff afirma zero.
     correcao: "Dizer o que é: o fio é da tabela; o peso separa cabeçalho de dado; o raio é o de campo."
   - severidade: MENOR
-    status: ABERTO
+    status: FECHADO (rodada 2)
     local: "organisms/Table/Table.tsx cabeçalho do cartão"
     descricao: >
       O título do cartão é um h3 fixo. Numa página cujo título é h1 e o
@@ -125,7 +131,7 @@ achados:
       nivela com a seção pai.
     correcao: "Prop nivel (2 a 4) em CabecalhoDaTabela, com padrão 2."
   - severidade: MENOR
-    status: ABERTO
+    status: FECHADO (rodada 2)
     local: "organisms/Widget/Widget.tsx delta em Tag size sm"
     descricao: >
       Widget.css e o handoff declaram o delta em "badge tonal 20 de altura,
@@ -174,7 +180,21 @@ o_que_me_surpreendeu: >
   na célula. conferirRegua comparando a lista inteira de alturas faz a
   sabotagem b apontar a linha certa.
 
+rodada_2: >
+  Em worktree limpo (117533a mais o diff dos nove arquivos tocados, antes do
+  commit e69bc69) as quatro sabotagens reprovam e restauradas voltam ao
+  verde. Medido nos dois temas: linha da Tree 32 e opção do Listbox 32 em
+  toda linha; busca 36 e select 36 na linha de filtro do cartão e na barra
+  do DataView; título do cartão em h2 por padrão; Tag do delta em 20 com
+  12px e 600; item do OrderList em 51 com duas linhas de conteúdo, agora
+  documentado como mínimo. Zero travessão e zero negação paralela nas
+  linhas da rodada 2. Gate isolado dos nove arquivos: claro 102 / 102,
+  escuro 101 / 102, a falha é Search "Variante · autocomplete", que já
+  constava no baseline do escuro e não é do lote. Os sete achados abertos
+  passam a FECHADO; os três POLIMENTO ficam como observação (a captura
+  table-em-cartao foi refeita).
+
 o_que_faltou_para_surpreender: >
-  Escopo limpo. Duas das três sabotagens do briefing passam em silêncio, e
-  o item de 32 declarado para Tree e Listbox mede 40. Com esses três
-  fechados e a busca alinhada a 36, o lote está a uma rodada de APROVADO.
+  A rodada 1 saiu com duas sabotagens passando em silêncio e um valor
+  declarado (32) que media 40. As correções são certas e guardadas, mas o
+  critério de SURPREENDEU é o escopo limpo na primeira entrega.

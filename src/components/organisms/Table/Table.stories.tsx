@@ -1,6 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { Identificador, SemRegistro, Table, mascararCPF, resumoDePaginacao, type Coluna } from './Table';
+import {
+  Identificador,
+  SemRegistro,
+  Table,
+  mascararCPF,
+  resumoDePaginacao,
+  type Coluna,
+  type TableProps,
+} from './Table';
 import { StatusIndicator, type EstadoDeFluxo } from '../../atoms/Badge/Badge';
 import { Button } from '../../atoms/Button/Button';
 import { Switch } from '../../atoms/Choice/Choice';
@@ -287,7 +295,11 @@ function contraste(a: string, b: string) {
 export const SelecaoNaLinhaPar: Story = {
   name: 'Estado · seleção na linha par da zebra',
   args: { selecionavel: true },
-  render: (args) => <Table {...args} colunas={COLUNAS_COM_IDENTIFICADOR} />,
+  // O `args` do Storybook perde o genérico (`linhas: unknown[]`); o cast
+  // devolve o tipo que a tabela desta story consome.
+  render: (args) => (
+    <Table<Solicitacao> {...(args as TableProps<Solicitacao>)} colunas={COLUNAS_COM_IDENTIFICADOR} />
+  ),
   parameters: {
     docs: {
       description: {

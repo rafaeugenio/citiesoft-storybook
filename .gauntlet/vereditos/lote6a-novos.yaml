@@ -1,151 +1,147 @@
-veredito: REPROVADO
+veredito: SURPREENDEU
 veredito_anti_slop: PASSOU
 gate_tecnico: VERDE
+rodada: 3
+commit_revisado: e69bc69
 achados:
   - severidade: BLOQUEADOR
+    status: FECHADO
     componente: AlertDialog / ConfirmDialog (Overlay, Lote 3)
     descricao: >
-      O foco não fica preso dentro do AlertDialog. Medido no worktree próprio
-      com Tab real via userEvent em Chromium (o mesmo motor do gate): foco
-      inicial cai em Cancelar, um Tab move para o botão de confirmação,
-      corretamente, e o Tab seguinte escapa para <body> em vez de voltar
-      para Cancelar. O mesmo teste contra ConfirmDialog do Overlay (Lote 3),
-      cuja anatomia de rodapé o AlertDialog copia, reproduz o idêntico
-      escape de foco. O comentário do próprio AlertDialog.tsx e a story
-      DentroDeDialog do Command afirmam que "o dialog nativo já entrega
-      prisão de foco", e essa alegação não se sustenta na medição. Um
-      usuário de teclado que dá Tab duas vezes a partir de Cancelar perde o
-      indicador de foco visível enquanto o modal continua aberto na tela,
-      quebra o padrão de diálogo modal do ARIA Authoring Practices e fere a
-      recomendação de navegação por teclado sem armadilha e com foco
-      coerente do e-MAG (bloco 5.2) e o espírito de WCAG 2.4.3 e 2.4.7 para
-      contexto modal.
-    evidencia: >
-      Duas stories de sabotagem no worktree (AlertDialog e ConfirmDialog),
-      cada uma reproduzindo Cancelar → Tab → Confirmar → Tab → <body>. Erro
-      de asserção: "Expected element with focus: <button class=citie-button
-      ... Cancelar>. Received element with focus: <body>".
-    correcao: >
-      Implementar prisão de foco manual no efeito que abre o dialog (listener
-      de keydown para Tab e Shift+Tab que recicla entre o primeiro e o último
-      elemento focável do conteúdo, ou biblioteca equivalente sem
-      dependência nova), tanto no AlertDialog quanto no useDialogModal
-      compartilhado do Overlay. Não é um achado exclusivo do Lote 6a, mas o
-      AlertDialog reafirma a garantia sem prová-la, e por isso reprova aqui.
+      Rodada 1: o foco não ficava preso dentro do AlertDialog nem do
+      ConfirmDialog, Tab a partir do último botão escapava para <body>.
+    verificacao_rodada_2: >
+      Confirmado fechado. Refiz o Tab real em Chromium num worktree limpo no
+      commit e69bc69: AlertDialog e ConfirmDialog agora reciclam Cancelar →
+      Tab → Confirmar → Tab → Cancelar → Shift+Tab → Confirmar, exatamente o
+      ciclo pedido. Sabotei o listener de keydown em useDialogModal
+      (Overlay.tsx), comentando a linha addEventListener: as duas stories
+      CicloDeTab (AlertDialog e ConfirmDialog) reprovaram, 2 falhas em 8
+      testes dos dois arquivos. Restaurado o listener e reconfirmado 8/8
+      verde. Dialog e Drawer, que também consomem useDialogModal, seguem
+      100% depois da mudança: rodei os 4 arquivos do Overlay junto com os 4
+      do lote, 14/14 no total, sem regressão.
   - severidade: MAIOR
+    status: FECHADO
     componente: AlertDialog
     descricao: >
-      Duplica a lógica de dialog nativo do useDialogModal do Overlay (efeito
-      de open/close via showModal/close, listener do evento cancel com
-      preventDefault e onClose) em vez de compor sobre ele. O motivo dado no
-      código e no handoff, arquivo em edição pelo Lote 3 na mesma árvore, não
-      se sustenta mais: o HEAD do worktree já contém o commit "fechamento do
-      Lote 3", e useDialogModal está disponível e estável em Overlay.tsx.
-    evidencia: >
-      AlertDialog.tsx linhas 88 a 104 repetem, quase char por char,
-      useDialogModal (Overlay.tsx linhas 11 a 39): mesmos dois efeitos, mesma
-      forma de registrar e remover o listener de cancel.
-    correcao: >
-      Exportar useDialogModal de Overlay.tsx e importar em AlertDialog.tsx no
-      lugar dos dois efeitos duplicados. Resolve ao mesmo tempo o achado
-      acima: a prisão de foco corrigida no hook compartilhado vale para
-      Dialog, ConfirmDialog, Drawer e AlertDialog de uma vez.
+      Rodada 1: AlertDialog duplicava a lógica de useDialogModal em vez de
+      compor sobre ela.
+    verificacao_rodada_2: >
+      Confirmado fechado. AlertDialog.tsx importa useDialogModal de
+      ../Overlay/Overlay e chama const ref = useDialogModal(aberto, onClose)
+      no lugar dos dois efeitos duplicados; o comentário do componente
+      documenta a composição. useDialogModal agora está exportado em
+      Overlay.tsx.
   - severidade: MAIOR
+    status: FECHADO
     componente: Command
-    descricao: >
-      O campo de busca não responde a Home e End. O briefing desta revisão
-      pedia explicitamente "setas, Home/End, Enter, Escape" para o Command, e
-      o ToggleGroup do mesmo lote implementa Home/End corretamente. A função
-      aoTeclar do Command só trata ArrowDown, ArrowUp, Enter e Escape. Numa
-      paleta com muitos resultados, sem Home/End, alcançar o primeiro ou o
-      último item exige repetir a seta várias vezes, o que contraria o
-      padrão ARIA APG de combobox de lista persistente e o próprio critério
-      do lote.
-    evidencia: >
-      Command.tsx, função aoTeclar (linhas 88 a 111): branches para
-      ArrowDown, ArrowUp, Enter, Escape, nenhum para Home ou End. Nenhuma
-      story do arquivo testa Home/End.
-    correcao: >
-      Adicionar os branches Home (evento.preventDefault(); irPara(primeiro
-      habilitado)) e End (irPara(último habilitado)), no mesmo padrão já
-      usado no ToggleGroup, e cobrir com uma story de interação.
+    descricao: 'Rodada 1: Command não implementava Home/End.'
+    verificacao_rodada_2: >
+      Confirmado fechado. aoTeclar (Command.tsx) ganhou os branches Home
+      (vai para o primeiro item habilitado) e End (vai para o último), no
+      mesmo padrão do ToggleGroup. A story NavegacaoPorTeclado cobre os dois
+      dentro dos 35/35 que rodei isolado nos dois temas.
   - severidade: MENOR
+    status: FECHADO
     componente: AlertDialog / ConfirmDialog
     descricao: >
-      A alegação "o dialog nativo já entrega prisão de foco" está escrita
-      como fato em pelo menos dois lugares (comentário de Overlay.tsx linha
-      7 e story DentroDeDialog do Command), sem teste que a comprove. É a
-      raiz de por que o achado BLOQUEADOR passou pelos lotes anteriores sem
-      ser pego.
-    evidencia: 'Overlay.tsx:7, Command.stories.tsx:214.'
+      Rodada 1: a alegação de prisão de foco automática estava escrita como
+      fato sem teste que a provasse.
+    verificacao_rodada_2: >
+      Confirmado fechado. O comentário de Overlay.tsx agora separa o que o
+      dialog nativo entrega sozinho (inerte no fundo, Escape, devolução de
+      foco ao gatilho) do que o hook adiciona (o ciclo de Tab), e as stories
+      CicloDeTab provam a alegação em vez de descrevê-la.
+  - severidade: MAIOR
+    status: FECHADO na rodada 3
+    componente: ToggleGroup.stories.tsx
+    descricao: >
+      Rodada 2: tsc -b --force reprovava com 6 erros TS2322 "Property 'args'
+      is missing" em ToggleGroup.stories.tsx, medido isolado no meu
+      worktree do commit e69bc69.
+    verificacao_rodada_3: >
+      Rodada 3a: rodei tsc -b --force direto no repositório principal
+      (sem worktree, sem escrever nada), ainda no commit e69bc69: "Found 1
+      error", só o TS2322 alheio de Table.stories.tsx:290 (Lote 5, fora do
+      escopo deste lote). Zero erros em ToggleGroup.stories.tsx nesse
+      momento, o que apontou o achado da rodada 2 como drift do
+      node_modules copiado por hardlink no início daquela rodada, não um
+      erro real de tipo.
+      Rodada 3b: o produtor colocou um args default explícito no meta do
+      arquivo mesmo assim (ToggleGroupProps é união discriminada sem ramo
+      opcional comum, o args existe só para satisfazer StoryObj, com
+      comentário dizendo que nunca é lido de fato). Confirmei de novo, no
+      repositório principal, sem worktree: tsc -b --force segue com "Found
+      1 error" (o mesmo alheio de Table.stories.tsx), e os quatro arquivos
+      do lote (Command, Item, ToggleGroup, AlertDialog) dão 26/26 no claro
+      e 26/26 no escuro, batendo com os números do produtor.
+    evidencia: >
+      Rodada 2: "Found 7 errors" no worktree. Rodada 3a: "Found 1 error" no
+      repositório principal antes do args. Rodada 3b: "Found 1 error" no
+      repositório principal depois do args, 26/26 nos dois temas.
     correcao: >
-      Depois de corrigir a prisão de foco, adicionar ao menos uma story de
-      interação que dê Tab até o fim do conteúdo e confirme o retorno ao
-      primeiro elemento, nos três consumidores de useDialogModal e no
-      AlertDialog.
-sabotagens_confirmadas:
+      Aplicada e confirmada. Nota para o briefing de próximas rodadas:
+      revisor cego deve preferir tsc -b --force no repositório principal
+      (sem escrever nada) quando o worktree usar node_modules por hardlink,
+      ou refazer o hardlink logo antes de medir.
+sabotagens_confirmadas_rodada_1:
   - id: a
     descricao: >
       Removido --citie-alert-dialog-caixa-de-icone do bloco Lote 6a de
-      tokens.css. A story "Severidade · destrutiva" do AlertDialog reprovou
-      corretamente, "expected 20px to be ''" na medição da caixa de ícone.
-      Restaurado e reconfirmado verde.
+      tokens.css. Reprovou corretamente, restaurado.
   - id: b
     descricao: >
-      Trocado role="alertdialog" por role="dialog" no AlertDialog.tsx. A
-      mesma story reprovou corretamente por toHaveAttribute. Restaurado e
-      reconfirmado verde.
+      Trocado role="alertdialog" por role="dialog". Reprovou corretamente,
+      restaurado.
   - id: c
     descricao: >
-      Trocado o fundo ativo do ToggleGroup de --citie-accent-forte para
-      --citie-brand-primary. As seis stories do ToggleGroup reprovaram pelo
-      axe (parâmetro a11y test:'error' do preview global), contraste medido
-      2.99 contra o mínimo de 4.5:1, o mesmo valor que a conta manual deu
-      para #202020 sobre #1261e4. Restaurado e reconfirmado 6/6 verde.
-  - id: extra
+      Trocado o fundo ativo do ToggleGroup por --citie-brand-primary.
+      Reprovou pelo axe com contraste 2.99, restaurado.
+sabotagens_confirmadas_rodada_2:
+  - id: d
     descricao: >
-      Duas stories de sabotagem próprias (foco devolvido ao gatilho, foco
-      preso dentro do dialog) escritas no worktree para o AlertDialog e
-      reaplicadas ao ConfirmDialog. A primeira passou, o dialog nativo
-      devolve o foco ao gatilho ao fechar. A segunda reprovou nos dois
-      componentes, gerando o achado BLOQUEADOR acima.
-medicoes:
-  contraste:
-    - par: 'text-primary #202020 sobre accent-forte #d6dce4 (claro)'
-      resultado: '11.8:1, folgado acima de 4.5:1'
-    - par: 'text-primary #f5f5f6 sobre accent-forte #29344b (escuro)'
-      resultado: '11.4:1, folgado acima de 4.5:1'
-    - par: 'text-secondary #6b7177 sobre background-surface #ffffff (claro)'
-      resultado: '4.93:1, passa 4.5:1 com pouca folga, token já compartilhado por todo o catálogo'
-    - par: 'sabotagem (c) text-primary #202020 sobre brand-primary #1261e4'
-      resultado: '2.99:1, medido pelo axe, reprova 4.5:1 como esperado'
-  alvo_de_toque:
-    - componente: 'ToggleGroup tamanho mini'
-      resultado: '24px de altura, no piso de 24x24 do WCAG 2.5.8, largura maior por causa do padding, sem violação'
-  gates_isolados_no_worktree:
-    claro: '4 arquivos, 25/25'
-    escuro: '4 arquivos, 25/25'
-  gate_produtor_nao_reexecutado_integralmente: >
-    Não rodei a suíte inteira de 823 stories (achados do lote 5 em curso
-    poluiriam a contagem); confiei na tabela do handoff para a dívida
-    conhecida fora do escopo, e validei os quatro arquivos do lote de forma
-    isolada nos dois temas.
-o_que_me_surpreendeu: []
-o_que_faltou_para_surpreender:
+      Comentado addEventListener('keydown', aoTeclar) dentro de
+      useDialogModal (Overlay.tsx), no worktree limpo do commit e69bc69. As
+      stories CicloDeTab de AlertDialog e ConfirmDialog reprovaram, 2 de 8
+      testes falharam nos dois arquivos. Listener restaurado linha por
+      linha e reconfirmado 8/8, depois 14/14 com Dialog e Drawer juntos.
+medicoes_rodada_2:
+  ciclo_de_tab:
+    - componente: AlertDialog
+      resultado: 'Cancelar → Tab → Confirmar → Tab → Cancelar → Shift+Tab → Confirmar, medido'
+    - componente: ConfirmDialog
+      resultado: 'mesmo ciclo, medido'
+    - componente: 'Dialog e Drawer'
+      resultado: 'sem regressão, 100% nas duas suítes depois da mudança no hook compartilhado'
+  gates_isolados_no_worktree_e69bc69:
+    tsc: 'falso positivo por drift de ambiente, ver achado rebaixado acima'
+    claro_7_arquivos: '35/35 (4 do lote + Dialog, Drawer, ConfirmDialog)'
+    escuro_7_arquivos: '35/35'
+medicoes_rodada_3:
+  tsc_no_repositorio_principal: '1 erro, alheio (Table.stories.tsx:290, Lote 5), zero em ToggleGroup.stories.tsx'
+  testes_no_repositorio_principal_4_arquivos_do_lote:
+    claro: '26/26'
+    escuro: '26/26'
+o_que_me_surpreendeu:
   - >
-    O BLOQUEADOR de foco cancela a possibilidade de SURPREENDEU neste ciclo.
-    A anatomia medida bate com o kit em todos os pontos conferidos (Command,
-    Item, ToggleGroup, caixa de severidade do AlertDialog), a reutilização
-    de token é honesta (Item reaproveita hub do Card, ToggleGroup reaproveita
-    a junção do ButtonGroup), e as três sabotagens propostas pelo revisor
-    pegaram a falha esperada sem passar em silêncio. Para surpreender, faltou
-    provar a prisão de foco que o próprio código afirma, e evitar duplicar a
-    lógica do Overlay já disponível depois do fechamento do Lote 3.
+    A prisão de foco deixou de ser afirmada e passou a ser provada: um
+    hook, useDialogModal, ganhou o ciclo de Tab uma única vez e os quatro
+    consumidores (Dialog, ConfirmDialog, Drawer, AlertDialog) herdaram a
+    correção sem tocar em cada um, medido com Tab real e sabotagem própria
+    do listener nas duas pontas do ciclo (último elemento e primeiro
+    elemento).
+  - >
+    A duplicação de lógica do dialog nativo foi resolvida pela raiz: em vez
+    de copiar o efeito de showModal/close e o listener de cancel para o
+    AlertDialog, o componente passou a compor sobre o hook compartilhado,
+    o que também fechou o achado MENOR do comentário que afirmava sem
+    provar.
+o_que_faltou_para_surpreender: []
 enquadramento_cliente: >
-  Para o cliente, o gate de conformidade e-MAG 3.1 mais WCAG 2.2 AA deste
-  lote fica bloqueado por uma falha de navegação por teclado em diálogo
-  modal, que afeta AlertDialog e o ConfirmDialog do Overlay já publicado: o
-  foco escapa do diálogo aberto na tela sem indicador visível, o que fere a
-  recomendação de teclado do e-MAG e o padrão internacional de diálogo modal
-  do WCAG. Corrigido no hook compartilhado dos dois componentes, resolve nos
-  dois de uma vez.
+  O gate de conformidade e-MAG 3.1 mais WCAG 2.2 AA deste lote está
+  fechado. A falha de navegação por teclado em diálogo modal, que afetava
+  AlertDialog e também o ConfirmDialog já publicado, está corrigida e
+  provada por teste automatizado num único ponto compartilhado, que também
+  beneficia Dialog e Drawer. Command e ToggleGroup atendem teclado, ARIA e
+  contraste medidos nos dois temas. Aprovado para o handoff.

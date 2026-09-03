@@ -71,6 +71,17 @@ const meta = {
   title: 'Moléculas/Escolha/ToggleGroup',
   component: ToggleGroup,
   tags: ['autodocs'],
+  // `ToggleGroupProps` é união discriminada (`tipo="unica"` vs `"multipla"`),
+  // sem ramo opcional que cubra os dois: toda story abaixo usa `render` com
+  // estado próprio, então este `args` só existe para satisfazer o tipo de
+  // `StoryObj<typeof meta>`, nunca é lido de fato.
+  args: {
+    rotulo: 'Período do painel',
+    itens: ITENS_PERIODO,
+    tipo: 'unica',
+    valor: null,
+    onChange: () => {},
+  },
   parameters: {
     docs: {
       description: {
