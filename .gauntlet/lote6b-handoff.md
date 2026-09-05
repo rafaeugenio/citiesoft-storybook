@@ -36,4 +36,28 @@ Branch `revisao`, sem commit. Tocados: `.storybook/templates/AppShell`, `Listage
 5. `userEvent.hover` não produz `:hover`: hover do botão da barra, do seletor de contexto e de "Sair" provados por token e captura.
 6. Termos de uso e política de privacidade no Acesso apontam para destinos marcados como pendentes (STA-002, STA-003): texto jurídico é insumo.
 
-Anti-slop: rota produto B2G, tese acima. Auditado em código (zero hex fora de comentário de medição, zero travessão, zero negação paralela nos textos novos, `transition` só em `background-color` e `transform`), em captura nos dois temas em 1366 e 375, e por medição nas stories. Veredito do lote: **PASSOU**, com os seis itens acima registrados.
+## Adendo: fechamento do veredito do Lote 6b (rodada 2)
+
+Sobre f19003f, sem commit. Tocados: `Acesso.tsx`, `Acesso.css`, `Acesso.stories.tsx`, `Table.css`, `Table.stories.tsx`, `Listagem.stories.tsx`, `ConsultaDeProcessos.stories.tsx`, `Formulario.tsx`, `Formulario.stories.tsx`, `Field.tsx`, `KpiFaixa.stories.tsx`, `Sidebar.stories.tsx`.
+
+- **6B-01, marca por superfície.** `MarcaDoAcesso` entrega as duas versões oficiais no DOM e o CSS mostra a que tem contraste na superfície corrente, então o template segue sem saber qual tema está ativo e o nome "Citiesoft" aparece uma vez só na árvore de acessibilidade. Medido: versão 3 sobre `background-surface` claro 11,90:1 e sobre o escuro 1,46:1, que era o defeito; versão 2 sobre o escuro 14,70:1. Sobre o painel de marca a regra inverte junto com `brand-contrast`, porque o azul da casa clareia no tema escuro: versão 2 sobre `#1261e4` 4,61:1, versão 2 sobre `#4d8bfc` só 2,77:1, versão 3 sobre `#4d8bfc` 3,64:1. Story de guarda `Marca · versão por superfície`, que lê o tema ativo e cobra a versão, o contraste de 4,5:1 no formulário, o de 3:1 sobre o azul e o azul do painel por sonda de token. Sabotagens: mostrar a tinta escura no escuro reprovou em duas stories (`1 · Entrar` e a guarda); inverter só a regra do painel reprovou a guarda no escuro.
+- **6B-02, rolagem lateral da página a 375.** Corrigido na origem: `.citie-table-wrapper` ganhou `position: relative`, e o rótulo oculto da coluna de ações passou a resolver contra o cartão que rola. Medido na Listagem a 375: `documentElement.scrollWidth` 717px antes, 375px depois, com `clientWidth` 375 nos dois casos. Asserção nova em `Listagem · Responsivo 375`, `ConsultaDeProcessos · Responsivo celular 375` (as duas afirmam também que a rolagem existe dentro do cartão) e em `Table · Controle ações por linha`, esta com a caixa do rótulo presa à caixa do cartão, que vale em qualquer largura. Sabotagem: sem `relative`, a story da Listagem reprova com 717.
+- **6B-03**: o modificador `citie-field--rotulo-oculto` saiu do wrapper. O rótulo oculto continua resolvido no `<label>`, por `citie-visualmente-oculto`.
+- **6B-04**: as três negações paralelas foram afirmadas direto. Grep ampliado no diff do lote por "em vez de", "no lugar de", "e não", "e sim", "não é X, é Y" e "ao invés": o que sobra é texto de lotes anteriores, e "no lugar de" em `Listagem.tsx:42` é posicional.
+- **6B-05**: registrado como divergência com motivo. A coluna Situação usa o `StatusIndicator` do sistema, decidido em lote anterior e consumido por outras telas; a etiqueta preenchida carrega a tinta semântica a 5,79:1. Trocar a pele para outline é decisão do dono do StatusIndicator, e vale rotear.
+- **6B-06**: a causa era a story, `canvasElement.closest('[data-theme]')`. O contêiner de tema do decorador é filho de `canvasElement`, então o token vinha sempre do tema claro. `Sidebar · fixa (shell)` passa nos dois temas, e o escuro caiu de 35 para 34. Gêmeo latente do mesmo padrão em `Tabs.stories.tsx:54`, que hoje passa; fica sinalizado.
+- **6B-07**: o `main` do formulário longo recebeu `aria-labelledby` apontando para o próprio `h1` oculto.
+- **6B-08**: `KpiFaixa · indicadores que filtram` passou a receber `recorte` e afirma a região viva (`role="status"`, `aria-live`, `aria-atomic` e o texto antes e depois da troca) na story do componente.
+- **6B-09**: fora do meu alcance sem commit. O bloco de tokens do 6b segue dentro de e69bc69.
+
+| Gate (rodada 2) | Resultado |
+| --- | --- |
+| `oxlint` | 0 erros; zero aviso nos arquivos tocados |
+| `tsc -b --force` | limpo |
+| `storybook build` privado + `verificar-catalogo` | verde, 844 stories, 126 títulos, 104 componentes, todas as invariantes |
+| `test-storybook` claro | **844 / 844**, 125 arquivos |
+| `test-storybook:dark` | **34 falhas em 7 arquivos** (antes 35 em 8): TreeSelect 13, CascadeSelect 9, MultiSelect 7, AutoComplete 2, Search, Terminal e `fundacoes/Cores` com 1 cada. Sidebar zerou, zero falha nova |
+
+Anti-slop: rota produto B2G, tese acima. Auditado em código (zero hex fora de comentário de medição, zero travessão, `transition` só em `background-color` e `transform`), em captura nos dois temas em 1366 e 375, e por medição nas stories.
+
+Correção do que a rodada 1 afirmou. A auditoria de captura nos dois temas não pegou a marca do Acesso a 1,46:1 no escuro, e a de texto deixou passar três negações paralelas: o veredito da rodada 1 (**PASSOU**) foi otimista nos dois pontos, e a rodada 2 fecha os dois. As 44 capturas de `.gauntlet/capturas-lote6b/` foram refeitas sobre o build desta rodada, e `acesso-entrar--dark--1366.png` mostra a assinatura legível sobre o painel escuro. Veredito depois da rodada 2: **PASSOU**, com 6B-05 registrado como divergência com motivo, 6B-09 dependendo do commit do lote e o gêmeo do 6B-06 em `Tabs.stories.tsx` sinalizado.

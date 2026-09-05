@@ -302,11 +302,15 @@ export function Formulario({
   }
 
   if (comNavegacao) {
+    // O `h1` fica visualmente oculto no formulário longo, e o marco principal
+    // continua nomeado por ele, como na Listagem e no Acesso.
     return (
-      <main className="citie-tpl-formulario citie-tpl-formulario--longo">
+      <main className="citie-tpl-formulario citie-tpl-formulario--longo" aria-labelledby={`${idFormulario}-titulo`}>
         <header className="citie-tpl-formulario__cabecalho citie-visualmente-oculto">
           {trilha && trilha.length > 0 ? <Breadcrumb niveis={trilha} /> : null}
-          <h1 className="citie-tpl-formulario__titulo">{titulo}</h1>
+          <h1 className="citie-tpl-formulario__titulo" id={`${idFormulario}-titulo`}>
+            {titulo}
+          </h1>
           {subtitulo ? <p className="citie-tpl-formulario__subtitulo">{subtitulo}</p> : null}
         </header>
 

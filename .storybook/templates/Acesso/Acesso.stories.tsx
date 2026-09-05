@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { Button, Input, InputOtp, Link } from '../../../src';
-import { Acesso } from './Acesso';
+import { Acesso, MarcaDoAcesso } from './Acesso';
 
 /* ------------------------------------------------------------------ */
 /* Ícones do fluxo, no traço do sistema                                */
@@ -205,8 +205,9 @@ export const Entrar: Story = {
     sonda.remove();
     await expect(canvasElement.querySelectorAll('main')).toHaveLength(1);
 
-    // Marca no topo esquerdo, contraparte no topo direito.
-    const marca = canvas.getByAltText('Citiesoft');
+    // Marca no topo esquerdo, contraparte no topo direito. `getByRole` devolve
+    // só a versão visível: a outra sai da árvore por `display: none`.
+    const marca = canvas.getByRole('img', { name: 'Citiesoft' });
     const cadastro = canvas.getByRole('button', { name: 'Cadastre-se' });
     await expect(marca.getBoundingClientRect().right).toBeLessThan(cadastro.getBoundingClientRect().left);
 
@@ -363,6 +364,113 @@ export const NovaSenha: Story = {
     await expect(canvas.getByLabelText('Nova senha')).toHaveAttribute('type', 'password');
     await expect(canvas.getByLabelText('Confirme sua senha')).toHaveAttribute('type', 'password');
     await expect(canvas.getByRole('button', { name: 'Redefinir senha' })).toBeVisible();
+  },
+};
+
+/* ------------------------------------------------------------------ */
+/* Guarda da marca                                                     */
+/* ------------------------------------------------------------------ */
+
+/** Tinta de cada versão oficial, lida nos `fill` dos SVGs de `public/marca/`. */
+const TINTA_DA_MARCA = {
+  '/marca/LogoHorizontal3.svg': '#373737',
+  '/marca/LogoHorizontal2.svg': '#ececec',
+} as const;
+
+/** Contraste WCAG entre duas cores em `rgb(...)` ou `#rrggbb`. */
+function contraste(a: string, b: string) {
+  const canais = (cor: string) =>
+    cor.startsWith('#')
+      ? [cor.slice(1, 3), cor.slice(3, 5), cor.slice(5, 7)].map((par) => parseInt(par, 16))
+      : (cor.match(/\d+/g) ?? []).slice(0, 3).map(Number);
+
+  const lum = (cor: string) => {
+    const [r, g, bl] = canais(cor).map((c) => {
+      const v = c / 255;
+      return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * bl;
+  };
+
+  const [claro, escuro] = [lum(a), lum(b)].sort((x, y) => y - x);
+  return (claro + 0.05) / (escuro + 0.05);
+}
+
+/** Versão renderizada da marca dentro de um trecho, com o fundo que ela recebe. */
+function marcaVisivel(raiz: HTMLElement) {
+  const marca = within(raiz).getByRole('img', { name: 'Citiesoft' });
+  const arquivo = new URL((marca as HTMLImageElement).src).pathname as keyof typeof TINTA_DA_MARCA;
+  let no: HTMLElement | null = marca.parentElement;
+  let fundo = 'rgb(255, 255, 255)';
+  while (no) {
+    const cor = getComputedStyle(no).backgroundColor;
+    if (cor && cor !== 'rgba(0, 0, 0, 0)' && cor !== 'transparent') {
+      fundo = cor;
+      break;
+    }
+    no = no.parentElement;
+  }
+  return { arquivo, fundo, tinta: TINTA_DA_MARCA[arquivo] };
+}
+
+export const MarcaPorTema: Story = {
+  name: 'Marca · versão por superfície',
+  globals: { viewport: { value: 'desktop' } },
+  args: { ...Entrar.args, painelDeMarca: <MarcaDoAcesso /> },
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        story: [
+          'Guarda da regra de marca da casa: LogoHorizontal3 (tinta #373737) em fundo claro, LogoHorizontal2 (tinta #ECECEC) em fundo azul ou escuro.',
+          '',
+          'A tela tem duas superfícies e cada uma escolhe a sua versão. O painel do formulário é `background-surface` e acompanha o tema. O painel de marca é `brand-primary`, azul escuro no tema claro e azul claro no escuro, então a assinatura acompanha `brand-contrast` e inverte junto. A story lê o tema ativo do Storybook e cobra a versão correspondente, então as duas execuções da suíte fecham as quatro combinações.',
+        ].join('\n'),
+      },
+    },
+  },
+  render: (args) => (
+    <div style={{ blockSize: '520px', overflow: 'hidden' }}>
+      <Acesso {...args} />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    // O contêiner de tema do decorador é filho de `canvasElement`. Tema
+    // aninhado não existe neste sistema: os valores claros moram em `:root` e
+    // um `[data-theme='light']` dentro do escuro continua herdando o escuro.
+    const container =
+      canvasElement.querySelector('[data-theme]') ?? canvasElement.closest('[data-theme]');
+    const escuro = container?.getAttribute('data-theme') === 'dark';
+
+    const formulario = canvasElement.querySelector<HTMLElement>('.citie-tpl-acesso__topo')!;
+    const painelDeMarca = canvasElement.querySelector<HTMLElement>('.citie-tpl-acesso__marca-painel')!;
+
+    // Uma única assinatura por superfície na árvore de acessibilidade.
+    await expect(within(formulario).getAllByRole('img', { name: 'Citiesoft' })).toHaveLength(1);
+    await expect(within(painelDeMarca).getAllByRole('img', { name: 'Citiesoft' })).toHaveLength(1);
+
+    const noFormulario = marcaVisivel(formulario);
+    const noPainel = marcaVisivel(painelDeMarca);
+
+    // Sobre `background-surface`: versão 2 no escuro, versão 3 no claro.
+    await expect(noFormulario.arquivo).toBe(
+      escuro ? '/marca/LogoHorizontal2.svg' : '/marca/LogoHorizontal3.svg',
+    );
+    // Sobre o azul da marca a regra inverte junto com `brand-contrast`.
+    await expect(noPainel.arquivo).toBe(
+      escuro ? '/marca/LogoHorizontal3.svg' : '/marca/LogoHorizontal2.svg',
+    );
+
+    // Texto da assinatura passa 4,5:1 no formulário e 3:1 sobre o azul.
+    await expect(contraste(noFormulario.tinta, noFormulario.fundo)).toBeGreaterThanOrEqual(4.5);
+    await expect(contraste(noPainel.tinta, noPainel.fundo)).toBeGreaterThanOrEqual(3);
+
+    // E o painel continua sendo o azul da casa, sem cor nova.
+    const sonda = document.createElement('span');
+    sonda.style.color = 'var(--citie-brand-primary)';
+    painelDeMarca.appendChild(sonda);
+    await expect(noPainel.fundo).toBe(getComputedStyle(sonda).color);
+    sonda.remove();
   },
 };
 

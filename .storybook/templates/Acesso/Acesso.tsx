@@ -40,6 +40,8 @@ export interface AcessoProps {
   /**
    * Conteúdo do painel de marca. Vazio por padrão: o painel é a cor da casa,
    * sem claim inventado. Entra aqui uma marca institucional ou uma foto real.
+   * Para a assinatura Citiesoft, use `MarcaDoAcesso`, que já escolhe a versão
+   * com contraste sobre o azul de cada tema.
    */
   painelDeMarca?: ReactNode;
   /**
@@ -47,6 +49,34 @@ export interface AcessoProps {
    * template dá o lugar; o texto aprovado é insumo da página.
    */
   rodapeLegal?: ReactNode;
+}
+
+/**
+ * Assinatura Citiesoft que segue a superfície onde pousa, sem que o template
+ * precise saber qual tema está ativo. As duas versões oficiais entram no DOM e
+ * o CSS mostra a que tem contraste na superfície corrente: LogoHorizontal3
+ * (tinta #373737) sobre superfície clara e sobre o azul do tema escuro,
+ * LogoHorizontal2 (tinta #ECECEC) sobre superfície escura e sobre o azul do
+ * tema claro. A escondida sai da árvore de acessibilidade por `display: none`.
+ *
+ * Dentro de `painelDeMarca` a regra inverte sozinha, pela cascata: quem compõe
+ * o painel azul só precisa usar esta peça.
+ */
+export function MarcaDoAcesso() {
+  return (
+    <>
+      <img
+        className="citie-tpl-acesso__marca citie-tpl-acesso__marca--tinta-escura"
+        src="/marca/LogoHorizontal3.svg"
+        alt="Citiesoft"
+      />
+      <img
+        className="citie-tpl-acesso__marca citie-tpl-acesso__marca--tinta-clara"
+        src="/marca/LogoHorizontal2.svg"
+        alt="Citiesoft"
+      />
+    </>
+  );
 }
 
 export function Acesso({
@@ -68,7 +98,7 @@ export function Acesso({
       <div className="citie-tpl-acesso__cartao">
         <main className="citie-tpl-acesso__painel" aria-labelledby={tituloId}>
           <header className="citie-tpl-acesso__topo">
-            <img className="citie-tpl-acesso__marca" src="/marca/LogoHorizontal3.svg" alt="Citiesoft" />
+            <MarcaDoAcesso />
             {contraparte ? (
               <p className="citie-tpl-acesso__contraparte">
                 <span>{contraparte.pergunta}</span>

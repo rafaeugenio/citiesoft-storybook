@@ -48,6 +48,51 @@
   inline-size: auto;
 }
 
+/**
+ * Assinatura por superfície, a regra de marca da casa aplicada às duas
+ * superfícies desta tela. A versão 3 tem tinta #373737 (tinta escura) e a
+ * versão 2 tem tinta #ECECEC (tinta clara). As duas ficam no DOM e o CSS
+ * mostra uma de cada vez, então o template segue sem saber qual tema está
+ * ativo e o nome "Citiesoft" existe uma vez só na árvore de acessibilidade.
+ *
+ * Painel do formulário (`background-surface`, #ffffff no claro e #1a1a1d no
+ * escuro): tinta escura no claro (11,90:1) e tinta clara no escuro (14,70:1).
+ * A versão 3 sobre o escuro mediria 1,46:1, e era esse o defeito.
+ */
+.citie-tpl-acesso__marca--tinta-clara {
+  display: none;
+}
+
+[data-theme='dark'] .citie-tpl-acesso__marca--tinta-escura {
+  display: none;
+}
+
+[data-theme='dark'] .citie-tpl-acesso__marca--tinta-clara {
+  display: inline;
+}
+
+/**
+ * Painel de marca (`brand-primary`): o azul da casa é #1261e4 no tema claro e
+ * clareia para #4d8bfc no escuro, então a assinatura inverte junto com
+ * `brand-contrast`. Tinta clara sobre o azul do claro mede 4,61:1; sobre o
+ * azul do escuro ela cairia para 2,77:1, e a tinta escura mede 3,64:1.
+ */
+.citie-tpl-acesso__marca-painel .citie-tpl-acesso__marca--tinta-escura {
+  display: none;
+}
+
+.citie-tpl-acesso__marca-painel .citie-tpl-acesso__marca--tinta-clara {
+  display: inline;
+}
+
+[data-theme='dark'] .citie-tpl-acesso__marca-painel .citie-tpl-acesso__marca--tinta-escura {
+  display: inline;
+}
+
+[data-theme='dark'] .citie-tpl-acesso__marca-painel .citie-tpl-acesso__marca--tinta-clara {
+  display: none;
+}
+
 /* "Não tem uma conta?" em 13 muted, com a ação ao lado. */
 .citie-tpl-acesso__contraparte {
   display: flex;

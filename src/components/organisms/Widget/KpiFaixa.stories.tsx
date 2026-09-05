@@ -221,7 +221,7 @@ function FaixaDeFiltros({ titulo }: { titulo: string }) {
   const [filtro, setFiltro] = useState<string | null>(null);
 
   return (
-    <KpiFaixa titulo={titulo}>
+    <KpiFaixa titulo={titulo} recorte={filtro ? `Fila filtrada por ${filtro}` : 'Fila completa'}>
       {FILA.map((indicador) => (
         <KpiWidget
           key={indicador.rotulo}
@@ -266,9 +266,20 @@ export const FaixaComoFiltro: Story = {
     const emAnalise = canvas.getByRole('button', { name: /Em análise/ });
     const devolvidas = canvas.getByRole('button', { name: /Devolvidas/ });
 
+    // A região viva é do componente, e a story guarda isso aqui: sem esta
+    // asserção, remover o `role="status"` da faixa só reprovava na página que
+    // a consome.
+    const regiao = canvas.getByRole('status');
+    await expect(regiao).toHaveAttribute('aria-live', 'polite');
+    await expect(regiao).toHaveAttribute('aria-atomic', 'true');
+    await expect(regiao).toHaveTextContent('Fila completa');
+
     await expect(emAnalise).toHaveAttribute('aria-pressed', 'false');
     await userEvent.click(emAnalise);
     await expect(emAnalise).toHaveAttribute('aria-pressed', 'true');
+
+    // Trocado o recorte, a mesma região viva anuncia a atualização.
+    await expect(canvas.getByRole('status')).toHaveTextContent('Fila filtrada por Em análise');
 
     // Escolha única: marcar outro filtro desmarca o anterior.
     await userEvent.click(devolvidas);

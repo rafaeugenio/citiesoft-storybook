@@ -148,7 +148,13 @@ export const Fixa: Story = {
 
     // O item ativo precisa do FUNDO de `sidebar-accent`, não só do rótulo: sem
     // ele o estado ativo depende só da cor do texto, que reprova 1.4.1.
-    const tema = canvasElement.closest('[data-theme]') ?? document.documentElement;
+    // O contêiner de tema do decorador é filho de `canvasElement`, e não
+    // ancestral: procurado só para cima, o token vinha sempre do tema claro e
+    // a story reprovava no escuro contra o valor certo.
+    const tema =
+      canvasElement.querySelector('[data-theme]') ??
+      canvasElement.closest('[data-theme]') ??
+      document.documentElement;
     const token = (nome: string) => getComputedStyle(tema).getPropertyValue(nome).trim();
     const paraRgb = (hex: string) => {
       const [r, g, b] = [1, 3, 5].map((i) => Number.parseInt(hex.slice(i, i + 2), 16));

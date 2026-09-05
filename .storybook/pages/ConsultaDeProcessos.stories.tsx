@@ -324,7 +324,8 @@ export function ConsultaDeProcessos({
       acaoPrimaria={{ rotulo: 'Limpar filtros', onClick: limparTudo }}
     />
   ) : (
-    // Vazio de primeiro uso: nunca oferece "Limpar filtros", e sim a criação.
+    // Vazio de primeiro uso: a ação que resolve a tela é criar o primeiro
+    // registro, porque ainda não existe filtro aplicado para limpar.
     <EmptyState
       situacao="primeiro-uso"
       size="md"
@@ -743,7 +744,7 @@ export const ConteudoLongo: Story = {
     docs: {
       description: {
         story:
-          'Protocolo com sufixo, nome de paciente completo, unidade de origem longa e valor de cinco dígitos: a ordem das colunas se mantém e a tabela rola no eixo horizontal em vez de estourar a tela.',
+          'Protocolo com sufixo, nome de paciente completo, unidade de origem longa e valor de cinco dígitos: a ordem das colunas se mantém e a tabela rola no eixo horizontal, dentro do cartão.',
       },
     },
   },
@@ -756,8 +757,18 @@ export const Celular: Story = {
     docs: {
       description: {
         story:
-          'Em contêiner estreito a ação primária ocupa a linha inteira, o rodapé empilha e a tabela rola na horizontal preservando a ordem das colunas.',
+          'Em contêiner estreito a ação primária ocupa a linha inteira, o rodapé empilha e a tabela rola na horizontal preservando a ordem das colunas. A rolagem é do cartão, e a página segue na largura da tela.',
       },
     },
+  },
+  play: async ({ canvasElement }) => {
+    // A rolagem horizontal pertence ao cartão da tabela, e a página fica na
+    // largura da tela: 1032px de área de rolagem antes da correção do rótulo
+    // oculto da coluna de ações, 375px depois.
+    const pagina = document.documentElement;
+    await expect(pagina.scrollWidth).toBeLessThanOrEqual(pagina.clientWidth);
+
+    const wrapper = canvasElement.querySelector<HTMLElement>('.citie-table-wrapper')!;
+    await expect(wrapper.scrollWidth).toBeGreaterThan(wrapper.clientWidth);
   },
 };

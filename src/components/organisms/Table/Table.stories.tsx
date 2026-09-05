@@ -678,6 +678,19 @@ export const AcoesPorLinha: Story = {
     // único: a coluna improvisada foi substituída, não somada.
     await expect(canvas.getAllByText('Ações')).toHaveLength(1);
 
+    // E fica preso ao cartão que rola. Solto, ele é `position: absolute` sem
+    // ancestral posicionado, resolve contra o bloco inicial, pousa na posição
+    // estática dele dentro da tabela larga e empurra a largura do documento:
+    // a página inteira passava a rolar de lado para dentro de área vazia.
+    const cartao = canvasElement.querySelector<HTMLElement>('.citie-table-wrapper')!;
+    const rotulo = canvas.getByText('Ações').getBoundingClientRect();
+    const caixa = cartao.getBoundingClientRect();
+    await expect(rotulo.left).toBeGreaterThanOrEqual(caixa.left);
+    await expect(rotulo.right).toBeLessThanOrEqual(caixa.right);
+
+    const pagina = document.documentElement;
+    await expect(pagina.scrollWidth).toBeLessThanOrEqual(pagina.clientWidth);
+
     // Alcançável por teclado: as ações continuam na ordem de tabulação mesmo
     // enquanto estão transparentes, que é o que o :focus-within resolve.
     abrir.focus();

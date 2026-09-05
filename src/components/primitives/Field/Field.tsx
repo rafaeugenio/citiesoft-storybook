@@ -77,7 +77,10 @@ export function FieldWrapper({
   const proximoDoLimite = counter ? counter.current >= counter.limit * 0.9 : false;
 
   return (
-    <div className={`citie-field${rotuloOculto ? ' citie-field--rotulo-oculto' : ''}`}>
+    // O rótulo oculto é resolvido no próprio `<label>`, por
+    // `citie-visualmente-oculto`, e o wrapper segue com a mesma classe: um
+    // modificador sem regra de CSS promete um comportamento que não existe.
+    <div className="citie-field">
       <label
         className={`citie-field__label${rotuloOculto ? ' citie-visualmente-oculto' : ''}`}
         htmlFor={id}

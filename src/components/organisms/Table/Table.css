@@ -13,6 +13,17 @@
  * próprio token de controle.
  */
 .citie-table-wrapper {
+  /*
+   * O wrapper é o bloco de contenção de tudo que a tabela posiciona fora do
+   * fluxo. `.citie-visualmente-oculto` é `position: absolute`, e sem um
+   * ancestral posicionado ele resolve contra o bloco inicial: o rótulo "Ações"
+   * do cabeçalho pousava na posição estática dele dentro da tabela larga, a
+   * 716px numa listagem de 375, escapava do `overflow` e fazia a página inteira
+   * rolar de lado para dentro de área vazia. Com `relative`, o mesmo rótulo
+   * fica preso ao contêiner que rola e continua legível por leitor de tela.
+   * Medido a 375: 717px de área de rolagem antes, 375px depois.
+   */
+  position: relative;
   border: 1px solid var(--citie-border-default);
   border-radius: var(--citie-radius-lg);
   overflow: auto;

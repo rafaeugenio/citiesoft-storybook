@@ -191,7 +191,7 @@ export const PaginaCheia: Story = {
       { rotulo: 'Listagem', href: '#listagem' },
       { rotulo: 'Novo registro' },
     ],
-    subtitulo: 'Formulário extenso: rota própria em vez de drawer.',
+    subtitulo: 'Formulário extenso, em rota própria.',
   },
 };
 

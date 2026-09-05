@@ -351,4 +351,15 @@ export const Celular375: Story = {
       },
     },
   },
+  play: async ({ canvasElement }) => {
+    // A tabela rola dentro do cartão e a página não rola de lado. O rótulo
+    // oculto da coluna de ações era `position: absolute` sem ancestral
+    // posicionado e pousava a 716px, e a página inteira ganhava 342px de
+    // deslocamento horizontal para dentro de área vazia.
+    const pagina = document.documentElement;
+    await expect(pagina.scrollWidth).toBeLessThanOrEqual(pagina.clientWidth);
+
+    const wrapper = canvasElement.querySelector<HTMLElement>('.citie-table-wrapper')!;
+    await expect(wrapper.scrollWidth).toBeGreaterThan(wrapper.clientWidth);
+  },
 };
