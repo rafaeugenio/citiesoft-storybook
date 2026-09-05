@@ -22,7 +22,7 @@ const meta = {
         component: [
           'A elevação diz a que distância do fundo um elemento está, e essa distância tem',
           'significado: quanto mais alto, mais o elemento interrompe a leitura da página.',
-          'Escolha o degrau pelo papel do elemento na tela, e não pela sombra que parecer bonita.',
+          'Escolha o degrau pelo papel do elemento na tela.',
           '',
           '| Degrau | Papel |',
           '| --- | --- |',
@@ -41,8 +41,8 @@ const meta = {
           'de opacidade baixa, dá a distância. `raised` e `dialog` usam os valores de `shadow-sm`',
           'e `shadow-lg` do UI Kit Citiesoft, na escala do Tailwind: preto a 10% e spread',
           'negativo na segunda camada. Antes existiam apenas dois degraus, ambos de camada única,',
-          'com 3px e 12px de desfoque. Sombra de camada única recorta o elemento em vez de',
-          'fazê-lo flutuar, e o resultado era card e overlay praticamente indistinguíveis na tela.',
+          'com 3px e 12px de desfoque. Sombra de camada única recorta o elemento contra o',
+          'fundo, e o resultado era card e overlay praticamente indistinguíveis na tela.',
           '',
           '**O valor mostrado é lido do CSS em tempo de execução.** Troque o tema no controle da',
           'barra superior: no escuro as sombras ganham opacidade, porque sombra clara sobre fundo',
@@ -81,6 +81,21 @@ const ELEVACAO: TokenDocumentado[] = [
     nome: 'shadow-controle',
     uso: 'Âncora de controle apoiado na superfície: botão preenchido, campo, select e textarea em repouso. É o `shadow-xs` do UI Kit, e some no foco para o anel ficar sozinho.',
     evitar: 'confundir com elevação. O controle continua no plano da página; a sombra só diz que ele é um objeto.',
+  },
+  {
+    nome: 'shadow-poco',
+    uso: 'Depressão de 1px cavada na superfície para receber conteúdo: campo, textarea e select em repouso. É a sombra interna que separa "preencha-me" de "aperte-me" quando campo e botão dividem a mesma linha.',
+    evitar: 'aplicar em campo somente leitura. Superfície que não recebe conteúdo zera o poço.',
+  },
+  {
+    nome: 'sombra-do-contorno',
+    uso: 'Botão Outline do kit: anel neutro de 1px a 16% desenhado por `box-shadow`, mais a sombra curta de contato. O anel compõe 1,23:1 sobre o branco de propósito, porque quem carrega o botão Outline é o texto.',
+    evitar: 'trocar por uma borda em `border-strong`. O contorno do Outline fica abaixo dela, e subir o peso transforma o botão de apoio em botão de destaque.',
+  },
+  {
+    nome: 'sombra-da-tecla',
+    uso: 'Espessura da tecla do Kbd: 1px de borda forte projetado por baixo, sem desfoque. É a tecla física vista de cima.',
+    evitar: 'usar como elevação de superfície. Sem desfoque ela lê como espessura, e num card viraria uma borda dupla.',
   },
 ];
 
@@ -227,7 +242,7 @@ export const Foco: Story = {
           marca, acompanha a troca de tema e contorna o raio do controle.
         </li>
         <li>
-          <strong>O anel aparece em `:focus-visible`, e não em `:focus`.</strong> Com `:focus`, o
+          <strong>O anel aparece em `:focus-visible`.</strong> Com `:focus`, o
           anel pisca a cada clique de mouse em qualquer botão, e o desenvolvedor seguinte remove o
           foco inteiro para se livrar do ruído. `:focus-visible` deixa o navegador decidir: teclado
           mostra, ponteiro fica quieto.
@@ -244,7 +259,7 @@ export const Foco: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const estilo = getComputedStyle(canvasElement.ownerDocument.documentElement);
-    // Anel de 3px desenhado como sombra, e não como contorno do navegador.
+    // Anel de 3px desenhado como sombra, com o contorno do navegador zerado.
     await expect(estilo.getPropertyValue('--citie-state-focus-ring')).toContain('0 0 0 3px');
     await expect(canvas.getByText('--citie-state-focus-ring')).toBeVisible();
   },

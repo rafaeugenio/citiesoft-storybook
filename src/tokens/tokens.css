@@ -39,8 +39,8 @@
  *
  * O registro com `syntax` é o que torna a propriedade interpolável: propriedade
  * personalizada não registrada não transiciona, e o véu apareceria e sumiria de
- * golpe. Fica aqui, e não no componente, porque `@property` é declaração de
- * documento e precisa existir antes do primeiro uso.
+ * golpe. Fica no documento, e o componente só consome, porque `@property` é
+ * declaração de documento e precisa existir antes do primeiro uso.
  */
 @property --citie-veu-de-realce {
   syntax: '<color>';
@@ -206,6 +206,15 @@
    */
   --citie-state-selected: var(--citie-accent);
   --citie-state-hover-overlay: var(--citie-accent);
+  /**
+   * Véu de ponteiro sobre a linha selecionada. O hover comum pinta o accent
+   * sólido, e sólido por cima da seleção apagaria o accent forte justo quando
+   * o ponteiro passa pela linha escolhida. Sobre a seleção o véu volta a ser
+   * translúcido, na matiz da marca: compõe #c6d2e4 sobre #d6dce4, e o rótulo
+   * continua legível (text-primary 10,66:1, text-base 7,22:1, accent-foreground
+   * 6,68:1). Valor escuro no bloco `[data-theme='dark']`.
+   */
+  --citie-veu-sobre-selecao: rgba(18, 97, 228, 0.08);
 
   /**
    * Secondary: preenchimento do botão e do badge Secondary do kit. Superfície
@@ -214,11 +223,21 @@
    */
   --citie-secondary: #f4f5f7;
   --citie-secondary-foreground: #202020;
+  /**
+   * Degrau de ponteiro do Secondary. O kit desce do neutro 100 para o 50 no
+   * hover, que aqui seria clarear; a família de neutros da casa não tem degrau
+   * abaixo de `secondary` sem virar branco, então o hover sobe um degrau: o
+   * mesmo valor do neutro 200 (`border-default`), com nome próprio porque o
+   * papel é preenchimento. #202020 sobre #e8eaed mede **13,52:1**; no escuro
+   * #f5f5f6 sobre #34343a mede 11,35:1.
+   */
+  --citie-secondary-hover: #e8eaed;
 
   /**
    * Popover invertido: fundo do tooltip, na tinta oposta ao tema. Existe
    * separado de `background-surface` porque o tooltip do kit inverte o
-   * contraste da página em vez de se erguer dela. #ffffff sobre #202020 mede
+   * contraste da página, enquanto as demais superfícies se erguem dela.
+   * #ffffff sobre #202020 mede
    * **16,29:1**; no escuro #141414 sobre #f5f5f6 mede **16,91:1**.
    */
   --citie-popover: #202020;
@@ -251,8 +270,8 @@
    * e quem tem baixa visão perde a fronteira entre o campo e a página.
    *
    * `#8f8f8f` mede **3,23:1** sobre `#ffffff` e passa. A correção vale para os
-   * 14 componentes que consomem este token, e não só para os dois que herdam de
-   * `primitives/Field`.
+   * 14 componentes que consomem este token. Os que herdam de `primitives/Field`
+   * são apenas dois deles.
    */
   --citie-form-field-border: #8f8f8f;
   /**
@@ -319,6 +338,14 @@
    */
   --citie-radius-2xl: 16px;
   --citie-radius-full: 9999px;
+  /**
+   * Raio da caixa de ícone do card de hub: 8px, um degrau entre o item
+   * aninhado (`md`, 6) e o `radius` do kit (`lg`, 10). Tem nome próprio porque
+   * a caixa é um objeto dentro do card, e o raio dela precisa ficar menor que
+   * o do card que a abriga. As medidas da caixa estão em Dimensões de
+   * componente, como `--citie-hub-caixa-de-icone`.
+   */
+  --citie-hub-raio-da-caixa: 8px;
 
   /* Espaçamento */
   /**
@@ -428,7 +455,7 @@
    *
    * Sombra curtíssima que assenta um controle preenchido na superfície. Não é
    * elevação: o botão continua no plano da página, e a sombra existe só para o
-   * olho registrar que ele é um objeto, e não um retângulo pintado.
+   * olho registrar que ele é um objeto com volume sobre a página.
    *
    * O diagnóstico que a criou: o botão primário era preenchimento chapado com
    * a borda na mesma cor do fundo, ou seja, uma borda que não fazia nada. Ele
@@ -458,6 +485,21 @@
   --citie-shadow-poco: inset 0 1px 2px rgba(16, 24, 40, 0.06);
 
   /**
+   * Sombra do botão Outline do kit: anel neutro de 1px a 16% mais a sombra
+   * curta preta a 10%. O anel compõe #e7e8e9 sobre o branco (1,23:1), mais
+   * fraco que `border-strong` de propósito: o contorno é a moldura que quase
+   * some, e o texto é quem carrega o botão.
+   */
+  --citie-sombra-do-contorno:
+    0 0 0 1px rgba(107, 113, 119, 0.16),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+  /**
+   * Tecla física do Kbd: 1px de borda forte projetada por baixo, sem desfoque.
+   * É a espessura da tecla vista de cima.
+   */
+  --citie-sombra-da-tecla: 0 1px 0 0 var(--citie-border-strong);
+
+  /**
    * Deslocamento de pressão.
    *
    * O controle desce este tanto enquanto está pressionado e volta ao soltar. É
@@ -473,7 +515,7 @@
    * Opacidade da aresta de preenchimento.
    *
    * Um controle preenchido ganha definição quando a borda é a própria matiz um
-   * degrau mais escura, e não uma cor neutra por cima. Cada variante aponta a
+   * degrau mais escura. Cada variante aponta a
    * borda para o próprio token de hover, e este valor é a força do reforço
    * aplicado por dentro na aresta superior, que separa o topo do controle do
    * fundo claro atrás dele.
@@ -481,13 +523,24 @@
    * A primeira versão usava 12% e um revisor mediu: **1,24:1** contra o
    * preenchimento de marca, ou seja, invisível. Era código morto fingindo
    * trabalhar, exatamente o risco que a tese desta rodada nomeia. Os valores
-   * atuais foram escolhidos medindo, e não estimando:
+   * atuais saíram de medição:
    *   claro  28% sobre #1261E4 = 1,66:1
    *   escuro 40% sobre #4D8BFC = 1,61:1
    * Reforço de 1px não carrega informação e por isso não tem piso de WCAG; o
    * piso aqui é perceptual, e o critério foi aparecer na captura de tela.
    */
   --citie-aresta-preenchimento: rgba(255, 255, 255, 0.28);
+
+  /**
+   * Anel de 1px do controle preenchido: a matiz do preenchimento a 80%, com
+   * 20% de preto por `color-mix`. É o "anel brand-700 a 80%" do kit, derivado
+   * do próprio preenchimento para servir a todas as famílias de cor sem um
+   * token por variante. Medido no claro: primary #0e4eb6 mede 7,54:1 contra o
+   * branco e 1,39:1 contra o preenchimento; danger #b01e1e 6,88:1 e 1,43:1.
+   * No escuro primary #3e6fca mede 3,58:1 contra #1a1a1d. Reforço de 1px não
+   * carrega informação, o piso é perceptual.
+   */
+  --citie-anel-do-botao: 80%;
 
   /**
    * Aresta tonal.
@@ -499,7 +552,7 @@
    * da própria matiz, um degrau mais escura", aplicada à superfície de aviso,
    * que antes era um retângulo pastel sem contorno nenhum.
    *
-   * O valor foi medido, e não estimado, contra o fundo tonal de cada
+   * O valor foi medido contra o fundo tonal de cada
    * severidade nos dois temas:
    *   claro  30% → success 1,50:1 · info 1,54:1 · warn 1,51:1 · danger 1,67:1
    *   escuro 25% → success 1,79:1 · info 1,65:1 · warn 1,95:1 · danger 1,76:1
@@ -513,20 +566,31 @@
    * Entrelinha do corpo de texto.
    *
    * Existe para a anatomia de linha ser calculável: o líder (ícone de 20px)
-   * precisa se alinhar à PRIMEIRA linha do texto, e não ao centro do bloco,
-   * senão um corpo de três linhas empurra o ícone para o meio do parágrafo.
+   * precisa se alinhar à PRIMEIRA linha do texto. Centrado no bloco inteiro,
+   * um corpo de três linhas empurra o ícone para o meio do parágrafo.
    * Com a entrelinha em token, a caixa da primeira linha vira um valor
    * derivável (`font-size × entrelinha`) e o líder ocupa exatamente essa
    * altura, centrado nela. 14px × 1.45 = 20,3px, que abriga o ícone de 20px
    * com folga de menos de 1px.
    */
   --citie-entrelinha-corpo: 1.45;
+  /**
+   * Entrelinha do texto mini (12/16 do kit), em comprimento pelo mesmo motivo
+   * de `--citie-linha-da-celula`: o tooltip de duas linhas mede 32 inteiros.
+   */
+  --citie-linha-mini: 16px;
 
   /**
    * Largura do toast. Estava como literal `350px` repetido em dois seletores;
    * vira token porque a pilha e o toast precisam concordar entre si.
    */
   --citie-largura-toast: 350px;
+  /**
+   * Recuo de escala por profundidade na pilha de toasts: o toast atrás do mais
+   * novo encolhe este tanto, o seguinte o dobro. 3% por degrau é o passo do
+   * Sonner; acima disso o texto do toast de trás fica ilegível.
+   */
+  --citie-toast-recuo-de-escala: 0.03;
 
   /**
    * Motion. Não existia token nenhum, então cada componente repetia
@@ -582,7 +646,7 @@
    * era 320px numa e 360px na outra, sem motivo declarado. Duplicata de número é
    * divergência esperando acontecer, e a `TreeTable` herda quase tudo da `Table`.
    *
-   * `--citie-linha-da-celula` é comprimento, e não proporção, de propósito. Com
+   * `--citie-linha-da-celula` é comprimento, de propósito. Com
    * `line-height: 1.4` sobre corpo de 14px a caixa de linha mede 19,6px, e uma
    * célula de duas linhas caía em altura fracionária: medido, a linha de valor
    * com reembolso em densidade compacta tinha **41,39px**, contra 37,00px das
@@ -642,18 +706,25 @@
   --citie-touch-target-min: 24px;
   --citie-touch-target-comfortable: 44px;
 
-  /* Lote 3 */
+  /**
+   * DIMENSÕES DE COMPONENTE
+   *
+   * Medida que pertence a uma peça só e por isso fica fora das escalas gerais
+   * de altura de controle, de espaçamento e de ícone. Cada valor foi medido no
+   * UI Kit do Figma ou na composição do Sismental, e a medição está no
+   * comentário de papel de cada bloco. Todas são grandezas dimensionais, então
+   * valem igual nos dois temas e não aparecem em `[data-theme='dark']`.
+   */
+
   /**
    * Card de hub, medido no hub de administração do Sismental: cartão de 72px
    * de altura com ícone de 20 numa caixa de 36 com fundo accent, título 14
-   * Medium e subtítulo 12 muted. A caixa do ícone tem raio 8, um degrau entre
-   * o item aninhado (6) e o `radius` do kit (10), porque ela é um objeto
-   * dentro do card e o raio dela precisa ser menor que o do card.
+   * Medium e subtítulo 12 muted. O raio da caixa do ícone está na escala de
+   * raio, como `--citie-hub-raio-da-caixa`.
    */
   --citie-hub-altura: 72px;
   --citie-hub-caixa-de-icone: 36px;
   --citie-hub-icone: 20px;
-  --citie-hub-raio-da-caixa: 8px;
   /**
    * Botão de fechar de diálogo, 30px medido no kit e na barra superior do
    * Sismental. Fica acima do piso de 24 da WCAG 2.5.8; o drawer, que é alvo de
@@ -662,63 +733,6 @@
   --citie-botao-fechar: 30px;
   /** Largura do drawer lateral, 591px medida no drawer de cadastro do Sismental. */
   --citie-largura-drawer: 591px;
-  /**
-   * Entrelinha do texto mini (12/16 do kit), em comprimento pelo mesmo motivo
-   * de `--citie-linha-da-celula`: o tooltip de duas linhas mede 32 inteiros.
-   */
-  --citie-linha-mini: 16px;
-  /**
-   * Recuo de escala por profundidade na pilha de toasts: o toast atrás do mais
-   * novo encolhe este tanto, o seguinte o dobro. 3% por degrau é o passo do
-   * Sonner; acima disso o texto do toast de trás fica ilegível.
-   */
-  --citie-toast-recuo-de-escala: 0.03;
-
-  /* Lote 1 */
-  /**
-   * Degrau de ponteiro do Secondary. O kit desce do neutro 100 para o 50 no
-   * hover, que aqui seria clarear; a família de neutros da casa não tem degrau
-   * abaixo de `secondary` sem virar branco, então o hover sobe um degrau: o
-   * mesmo valor do neutro 200 (`border-default`), com nome próprio porque o
-   * papel é preenchimento e não borda. #202020 sobre #e8eaed mede **13,52:1**;
-   * no escuro #f5f5f6 sobre #34343a mede 11,35:1.
-   */
-  --citie-secondary-hover: #e8eaed;
-  /**
-   * Anel de 1px do controle preenchido: a matiz do preenchimento a 80%, com
-   * 20% de preto por `color-mix`. É o "anel brand-700 a 80%" do kit, derivado
-   * do próprio preenchimento para servir a todas as famílias de cor sem um
-   * token por variante. Medido no claro: primary #0e4eb6 mede 7,54:1 contra o
-   * branco e 1,39:1 contra o preenchimento; danger #b01e1e 6,88:1 e 1,43:1.
-   * No escuro primary #3e6fca mede 3,58:1 contra #1a1a1d. Reforço de 1px não
-   * carrega informação, o piso é perceptual.
-   */
-  --citie-anel-do-botao: 80%;
-  /**
-   * Sombra do botão Outline do kit: anel neutro de 1px a 16% mais a sombra
-   * curta preta a 10%. O anel compõe #e7e8e9 sobre o branco (1,23:1), mais
-   * fraco que `border-strong` de propósito: o contorno é a moldura que quase
-   * some, e o texto é quem carrega o botão.
-   */
-  --citie-sombra-do-contorno:
-    0 0 0 1px rgba(107, 113, 119, 0.16),
-    0 2px 4px rgba(0, 0, 0, 0.1);
-  /**
-   * Tecla física do Kbd: 1px de borda forte projetada por baixo, sem desfoque.
-   * É a espessura da tecla vista de cima.
-   */
-  --citie-sombra-da-tecla: 0 1px 0 0 var(--citie-border-strong);
-
-  /* Lote 5 */
-  /**
-   * Véu de ponteiro sobre a linha selecionada. O hover comum pinta o accent
-   * sólido, e sólido por cima da seleção apagaria o accent forte justo quando
-   * o ponteiro passa pela linha escolhida. Sobre a seleção o véu volta a ser
-   * translúcido, na matiz da marca: compõe #c6d2e4 sobre #d6dce4, e o rótulo
-   * continua legível (text-primary 10,66:1, text-base 7,22:1, accent-foreground
-   * 6,68:1). Valor escuro no bloco `[data-theme='dark']`.
-   */
-  --citie-veu-sobre-selecao: rgba(18, 97, 228, 0.08);
   /**
    * Ícone de linha: chevron de árvore e de TreeTable, seta de ordenação do
    * cabeçalho, ícone de item de Tree e Listbox. 16px medido no kit (Lucide em
@@ -740,24 +754,30 @@
    * de nenhuma outra escala de ícone.
    */
   --citie-marcador-da-linha-do-tempo: 12px;
-
-  /* Lote 6a */
   /**
-   * Caixa de severidade do AlertDialog: 40px com ícone de 20, medida do kit
-   * (briefing do lote). Um degrau acima da caixa de ícone do hub (36, Lote 3):
-   * o AlertDialog é a única superfície de primeiro nível cujo ícone precisa
-   * carregar a severidade sozinho, sem título de card ao lado para reforçar.
+   * Caixa de severidade do AlertDialog: 40px com ícone de 20, medida do kit.
+   * Um degrau acima da caixa de ícone do hub (36): o AlertDialog é a única
+   * superfície de primeiro nível cujo ícone precisa carregar a severidade
+   * sozinho, sem título de card ao lado para reforçar.
    */
   --citie-alert-dialog-caixa-de-icone: 40px;
   --citie-alert-dialog-icone: 20px;
   /**
-   * Largura do AlertDialog, 480px medida no briefing do lote: um degrau acima
-   * do ConfirmDialog (400px, Overlay.css), porque a caixa de ícone de 40 ao
-   * lado do título de 20 pede mais respiro lateral que o confirm sem ícone.
+   * Largura do AlertDialog, 480px medida no kit: um degrau acima do
+   * ConfirmDialog (400px, Overlay.css), porque a caixa de ícone de 40 ao lado
+   * do título de 20 pede mais respiro lateral que o confirm sem ícone.
    */
   --citie-largura-alert-dialog: 480px;
 
-  /* Lote 6b */
+  /**
+   * DIMENSÕES DE SHELL
+   *
+   * Medidas da moldura que envolve a tela inteira: barra superior, coluna de
+   * navegação, margem do cartão de conteúdo e colunas do formulário longo.
+   * Todas medidas na composição do Sismental. Dimensionais como as de
+   * componente, então também valem igual nos dois temas.
+   */
+
   /**
    * Barra superior do shell, 52px medida na listagem de prontuários e no
    * formulário de identificação do Sismental (logo à esquerda com o botão de
@@ -766,9 +786,9 @@
    */
   --citie-altura-da-barra: 52px;
   /**
-   * Largura da navegação fixa, 257px medida no Sismental (Lote 4 a gravou
-   * como literal em `Sidebar.css`; o shell precisa do mesmo número para a
-   * coluna e para o deslocamento do drawer, então vira token).
+   * Largura da navegação fixa, 257px medida no Sismental. A `Sidebar.css` a
+   * tinha como literal; o shell precisa do mesmo número para a coluna e para o
+   * deslocamento do drawer, então vira token.
    */
   --citie-largura-da-sidebar: 257px;
   /**
@@ -944,6 +964,10 @@
   --citie-accent: #202838;
   --citie-accent-foreground: #d2d3d6;
   --citie-accent-forte: #29344b;
+  /* Véu de ponteiro sobre a linha selecionada: marca a 14% sobre o accent
+     forte escuro compõe #2e4064, com text-primary a 9,48:1 e text-base a
+     6,90:1. */
+  --citie-veu-sobre-selecao: rgba(77, 139, 252, 0.14);
   /**
    * Redeclarados no bloco escuro porque `var()` é resolvido no elemento que
    * declara o token e o valor computado é o que se herda. O decorador de
@@ -959,6 +983,9 @@
 
   --citie-secondary: #232327;
   --citie-secondary-foreground: #f5f5f6;
+  /* Degrau de ponteiro do Secondary: neutro 700 da família, um degrau acima de
+     `secondary`, com 11,35:1 contra o rótulo. */
+  --citie-secondary-hover: #34343a;
 
   --citie-popover: #f5f5f6;
   --citie-popover-foreground: #141414;
@@ -1009,6 +1036,15 @@
      sobre um fundo que já é escuro. */
   --citie-shadow-poco: inset 0 1px 2px rgba(0, 0, 0, 0.35);
 
+  /* Sombra do botão Outline: anel a 24% e sombra a 45%, pela regra de toda
+     sombra do escuro. O anel compõe #39393d sobre #1a1a1d, 1,51:1. */
+  --citie-sombra-do-contorno:
+    0 0 0 1px rgba(154, 157, 163, 0.24),
+    0 2px 4px rgba(0, 0, 0, 0.45);
+  /* Tecla do Kbd redeclarada porque `var()` resolve no elemento que declara o
+     token, e a borda forte escura precisa entrar aqui. */
+  --citie-sombra-da-tecla: 0 1px 0 0 var(--citie-border-strong);
+
   /**
    * No escuro os fundos tonais são véus de 12 a 14% sobre a página, então a
    * mesma proporção de tinta rende uma aresta mais visível do que no claro.
@@ -1024,22 +1060,9 @@
    */
   --citie-aresta-preenchimento: rgba(255, 255, 255, 0.4);
 
-  /* Lote 1 */
-  /* Neutro 700 da família, um degrau acima de `secondary`: 11,35:1 com o rótulo. */
-  --citie-secondary-hover: #34343a;
-  /* Anel a 24% e sombra a 45%, pela regra de toda sombra do escuro. O anel
-     compõe #39393d sobre #1a1a1d, 1,51:1. */
-  --citie-sombra-do-contorno:
-    0 0 0 1px rgba(154, 157, 163, 0.24),
-    0 2px 4px rgba(0, 0, 0, 0.45);
-  /* Redeclarada porque `var()` resolve no elemento que declara o token. */
-  --citie-sombra-da-tecla: 0 1px 0 0 var(--citie-border-strong);
-
-  /* Lote 5 */
-  /* Marca a 14% sobre o accent forte escuro compõe #2e4064: text-primary
-     9,48:1, text-base 6,90:1. */
-  --citie-veu-sobre-selecao: rgba(77, 139, 252, 0.14);
-
-  /* Lote 6a: dimensional, mesmo valor nos dois temas. Sem redeclaração. */
-  /* Lote 6b: dimensional, mesmo valor nos dois temas. Sem redeclaração. */
+  /**
+   * Raio, espaçamento, tipografia, motion, dimensões de componente e de shell
+   * ficam de fora deste bloco: são grandezas dimensionais e valem igual nos
+   * dois temas. Só cor, sombra e proporção de mistura aparecem aqui.
+   */
 }

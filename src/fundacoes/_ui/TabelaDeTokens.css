@@ -51,7 +51,8 @@
   white-space: nowrap;
 }
 
-/* O valor é dado, e não identificador: fica em tinta de corpo. */
+/* O valor é dado, então fica em tinta de corpo. O identificador é o nome, na
+   coluna ao lado, e ali a tinta é a de código. */
 .citie-tabela-tokens td code {
   color: var(--citie-text-secondary);
   white-space: normal;

@@ -32,9 +32,10 @@ const meta = {
           'de uma linha de formulário, e alvo de toque governa se a pessoa consegue acertar o',
           'controle. A WCAG 2.2 exige 24 por 24 pixels CSS no critério 2.5.8, que é obrigação',
           'legal em sistema público, então os dois tokens de toque existem para essa conta',
-          'ficar explícita no CSS em vez de ficar na cabeça de quem escreveu a tela.',
+          'ficar explícita no CSS, ao alcance de quem escreveu a tela.',
           '',
-          '**O valor mostrado é lido do CSS em tempo de execução**, e não copiado para a tabela.',
+          '**O valor mostrado é lido do CSS em tempo de execução.** Nenhum número desta página',
+          'foi copiado para a tabela.',
         ].join('\n'),
       },
     },
@@ -75,6 +76,11 @@ const RAIO: TokenDocumentado[] = [
     nome: 'radius-full',
     uso: 'Forma pílula, onde o arredondamento total é a identidade do objeto: avatar, badge de contagem, chip de status, trilho e botão de switch, indicador de tendência, botão de fechar circular.',
   },
+  {
+    nome: 'hub-raio-da-caixa',
+    uso: 'Raio de 8px da caixa do ícone do card de hub: um degrau abaixo do card de 10, para a caixa se ler como objeto dentro dele. É o único degrau nomeado por componente nesta escala.',
+    evitar: 'usar fora da caixa do hub. Os degraus gerais da escala continuam sendo 4, 6, 10, 12 e 16.',
+  },
 ];
 
 const DIMENSAO: TokenDocumentado[] = [
@@ -109,40 +115,6 @@ const DIMENSAO: TokenDocumentado[] = [
     nome: 'touch-target-comfortable',
     uso: 'Alvo recomendado para dedo, em tela de cidadão e em uso móvel: item de navegação da barra lateral, botão de fechar do Drawer, e botão que recebe o modificador de toque confortável.',
   },
-  {
-    nome: 'botao-fechar',
-    uso: 'Botão de fechar do Dialog, 30px medido no kit e na barra superior do Sismental. Caixa quadrada com ícone de 16 no centro.',
-    evitar: 'usar no Drawer, que é alvo de dedo e fica no confortável de 44.',
-  },
-  {
-    nome: 'largura-drawer',
-    uso: 'Largura do Drawer lateral na posição `right-md`, 591px medida no drawer de cadastro do Sismental.',
-  },
-  {
-    nome: 'hub-altura',
-    uso: 'Altura do card de hub (`Card variante="hub"`), 72px medida no hub de administração do Sismental.',
-  },
-  {
-    nome: 'hub-caixa-de-icone',
-    uso: 'Caixa de 36px com fundo accent que abriga o ícone do card de hub.',
-  },
-  {
-    nome: 'hub-icone',
-    uso: 'Ícone de 20px dentro da caixa do card de hub.',
-  },
-  {
-    nome: 'hub-raio-da-caixa',
-    uso: 'Raio de 8px da caixa do ícone do hub: um degrau abaixo do card de 10, para a caixa se ler como objeto dentro dele.',
-    evitar: 'usar fora da caixa do hub. Os degraus da escala de raio continuam sendo 4, 6, 10, 12 e 16.',
-  },
-  {
-    nome: 'linha-mini',
-    uso: 'Entrelinha de 16px do texto mini (12/16 do kit), em comprimento: Tooltip e subtítulo do card de hub.',
-  },
-  {
-    nome: 'toast-recuo-de-escala',
-    uso: 'Recuo de escala por profundidade na pilha de toasts, 3% por degrau como no Sonner. O toast atrás do mais novo fica em 0,97 e o seguinte em 0,94.',
-  },
 ];
 
 export const Raio: Story = {
@@ -157,7 +129,7 @@ export const Raio: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    // Os valores vêm do CSS, então a tabela mostra a escala real e não um texto fixo.
+    // Os valores vêm do CSS, então a tabela mostra a escala real do tema ativo.
     await expect(canvas.getByText('4px')).toBeVisible();
     await expect(canvas.getByText('16px')).toBeVisible();
     await expect(canvas.getByText('9999px')).toBeVisible();
@@ -321,8 +293,8 @@ export const Dimensoes: Story = {
       <TabelaDeTokens tokens={DIMENSAO} especie="nenhuma" legenda="Tokens de dimensão" />
       <AchadoAberto>
         A WCAG 2.2 exige, no critério 2.5.8 Target Size (Minimum), que todo alvo de ponteiro meça
-        ao menos 24 por 24 pixels CSS, e a exigência vale para o alvo clicável inteiro e não para
-        o desenho visível. Dois pontos do catálogo ficam no limite dessa conta. Primeiro: a caixa
+        ao menos 24 por 24 pixels CSS, e a exigência vale para o alvo clicável inteiro, com o
+        desenho visível de fora da conta. Dois pontos do catálogo ficam no limite dessa conta. Primeiro: a caixa
         de checkbox e de radio mede 18 por 18 pixels, e o trilho de switch mede 35 por 21. Os três
         só alcançam os 24px porque o rótulo em volta carrega <code>min-height</code> de{' '}
         <code>touch-target-min</code> e é clicável junto. Quando o rótulo é visualmente oculto,
@@ -339,9 +311,10 @@ export const Dimensoes: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    // Os valores vêm do CSS, então a tabela mostra as dimensões reais.
-    // A tabela recebe tokens de outros lotes (hub, drawer, botão de fechar),
-    // então cada altura é conferida por presença, com contagem mínima.
+    // Os valores vêm do CSS, então a tabela mostra as dimensões reais. As
+    // medidas de peça e de shell ficam na página Dimensões; aqui sobram a
+    // escada de altura de controle e os dois alvos de toque, e um mesmo número
+    // aparece em mais de uma linha (44 é altura confortável e alvo de dedo).
     for (const altura of ['32px', '36px', '40px', '48px', '44px']) {
       await expect(canvas.getAllByText(altura).length).toBeGreaterThanOrEqual(1);
     }

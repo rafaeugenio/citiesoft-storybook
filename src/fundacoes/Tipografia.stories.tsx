@@ -23,7 +23,7 @@ const meta = {
           'Título de card, rótulo de campo, dado de célula e valor de indicador são quatro',
           'papéis distintos, e cada um tem um degrau próprio. A tabela por contexto responde',
           'direto a essa pergunta, e é o caminho mais curto para quem chega com uma situação',
-          'de tela na mão em vez de um nome de token.',
+          'de tela na mão, sem um nome de token para procurar.',
           '',
           '**Tamanho e peso andam juntos.** A divergência que originou estes tokens era de',
           'tamanho E de peso ao mesmo tempo: seis templates traziam quatro H1 diferentes',
@@ -31,8 +31,8 @@ const meta = {
           'Por isso o peso também é token, e escolher o degrau de título significa escolher',
           'o par tamanho + peso, nunca só o tamanho.',
           '',
-          '**O valor mostrado é lido do CSS em tempo de execução**, e não copiado para a',
-          'tabela. Valor copiado envelhece em silêncio: alguém ajusta o token e a documentação',
+          '**O valor mostrado é lido do CSS em tempo de execução.** Nenhum número desta',
+          'página foi copiado para a tabela. Valor copiado envelhece em silêncio: alguém ajusta o token e a documentação',
           'passa a mentir sem que nada acuse.',
         ].join('\n'),
       },
@@ -189,6 +189,23 @@ const PESOS: TokenDocumentado[] = [
   },
 ];
 
+/**
+ * Entrelinha. Os dois tokens medem a mesma grandeza em unidades diferentes de
+ * propósito, e o comentário de cada um em `tokens.css` explica por quê.
+ */
+const ENTRELINHA: TokenDocumentado[] = [
+  {
+    nome: 'entrelinha-corpo',
+    uso: 'Entrelinha do corpo de texto, em proporção. Torna a caixa da primeira linha derivável (`font-size × entrelinha`), e é assim que o líder de 20px se alinha à primeira linha de um parágrafo, sem escorregar para o meio dele.',
+  },
+  {
+    nome: 'linha-mini',
+    uso: 'Entrelinha do texto mini de 12px, em comprimento: Tooltip, subtítulo do card de hub e legenda de célula. Duas linhas medem 32 pixels inteiros.',
+    evitar:
+      'trocar por proporção. Em comprimento a soma de N linhas fecha em pixel inteiro, e uma altura fracionária desloca a base de tudo que vem abaixo.',
+  },
+];
+
 /* ------------------------------------------------------------------ */
 /* Stories.                                                            */
 /* ------------------------------------------------------------------ */
@@ -232,7 +249,7 @@ export const Familias: Story = {
       <AchadoAberto>
         A Inter é carregada nos pesos 400, 500 e 600, e o catálogo pede 700 em Badge, Tabs, Tree,
         TreeSelect e Timeline. O peso que falta é sintetizado pelo navegador, que engorda os
-        contornos por transformação em vez de usar o desenho da fonte. A correção é acrescentar{' '}
+        contornos por transformação, longe do desenho original da fonte. A correção é acrescentar{' '}
         <code>700</code> à lista de pesos da Inter na mesma URL.
       </AchadoAberto>
     </Bloco>
@@ -252,7 +269,7 @@ export const EscalaDeCorpo: Story = {
   render: () => (
     <Bloco
       titulo="Escala de corpo"
-      descricao="Cinco degraus em Inter, de 11px a 16px. A distância entre eles é curta de propósito: o que separa metadado de dado nesta escala é a combinação de tamanho com cor de texto, e não o tamanho sozinho."
+      descricao="Cinco degraus em Inter, de 11px a 16px. A distância entre eles é curta de propósito: o que separa metadado de dado nesta escala é a combinação de tamanho com cor de texto, sempre as duas juntas."
     >
       <Pilha>
         <LinhaDeAmostra etiqueta="body-lg · campo grande e apoio de estado vazio" familia="ui" tamanho="body-lg">
@@ -277,7 +294,7 @@ export const EscalaDeCorpo: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    // Confere que os degraus exibidos são os lidos do CSS, e não texto fixo.
+    // Confere que os degraus exibidos são os lidos do CSS em tempo de execução.
     await expect(canvas.getByText('11px')).toBeVisible();
     await expect(canvas.getByText('13px')).toBeVisible();
     await expect(canvas.getByText('16px')).toBeVisible();
@@ -289,7 +306,7 @@ export const EscalaDeTitulo: Story = {
   render: () => (
     <Bloco
       titulo="Escala de título"
-      descricao="Quatro degraus em Red Hat Display. Os valores são os que já predominavam no código, promovidos a token, e não uma escala nova imposta por cima do que existe."
+      descricao="Quatro degraus em Red Hat Display. Os valores são os que já predominavam no código, promovidos a token: a escala saiu do que o código já praticava."
     >
       <Pilha>
         <LinhaDeAmostra etiqueta="display · número principal do indicador" familia="display" tamanho="display" peso="display">
@@ -367,13 +384,39 @@ export const Pesos: Story = {
   },
 };
 
+export const Entrelinha: Story = {
+  name: 'Entrelinha',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Dois tokens para a mesma grandeza, em unidades diferentes. O corpo fica em proporção, porque a caixa da linha precisa acompanhar o tamanho da fonte para o líder se alinhar sozinho. O texto mini fica em comprimento, porque ali a soma de várias linhas precisa fechar em pixel inteiro.',
+      },
+    },
+  },
+  render: () => (
+    <Bloco
+      titulo="Entrelinha"
+      descricao="A entrelinha em token é o que torna a anatomia de uma linha calculável: com ela, a altura da primeira linha de texto vira um valor derivado do tamanho da fonte."
+    >
+      <TabelaDeTokens tokens={ENTRELINHA} especie="nenhuma" legenda="Tokens de entrelinha" />
+    </Bloco>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    // Os dois valores vêm do CSS: proporção para o corpo, comprimento para o mini.
+    await expect(canvas.getByText('1.45')).toBeVisible();
+    await expect(canvas.getByText('16px')).toBeVisible();
+  },
+};
+
 export const PorContexto: Story = {
   name: 'Por contexto de tela',
   parameters: {
     docs: {
       description: {
         story:
-          'A entrada aqui é a situação de tela, e não o nome do token. Cada linha foi medida no CSS do componente citado, com arquivo e linha, para a recomendação poder ser conferida em vez de acreditada.',
+          'A entrada aqui é a situação de tela. Cada linha foi medida no CSS do componente citado, com arquivo e linha, para a recomendação poder ser conferida no lugar onde ela nasceu.',
       },
     },
   },

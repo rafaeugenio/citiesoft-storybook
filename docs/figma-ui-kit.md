@@ -336,3 +336,36 @@ Splitter), Scroll Area (temos ScrollPanel), Sheet (temos Sidebar/drawer),
 Sonner (temos Toast em Feedback), Loading Button, Toggle e Toggle Group (temos
 SelectButton), Alert Dialog (temos ConfirmPopup e Overlay), Aspect Ratio.
 Candidatos a criar: Command, Item, Toggle Group, Alert Dialog.
+
+## Dívida aberta depois da varredura de fundações
+
+Registrada na varredura que consolidou os blocos de lote de `tokens.css`
+(`.gauntlet/varredura-fundacoes.md`). Cada item tem dono declarado, para
+nenhum deles ficar esperando que alguém se lembre.
+
+**Paleta de gráfico sem página de fundação.** Os dezesseis tokens
+`--citie-chart-cat-*`, `--citie-chart-alt-*`, `--citie-chart-grade` e
+`--citie-chart-meta` são os únicos do arquivo sem linha de tabela em
+`src/fundacoes/`. Quem escolhe cor de série hoje lê `src/tokens/paletas.ts`, que
+é código, ou copia do `Chart`. A ordem categórica, a alternativa para daltonismo
+e a regra de quando trocar de família precisam de página própria, com a mesma
+coluna de uso e de evitar das outras fundações. Trabalho de uma rodada de
+fundação de visualização de dados, fora do escopo de repaginada de componente.
+
+**`--citie-text-placeholder` reprova AA no tema escuro.** O valor escuro é
+`#6b7177` e mede **3,51:1** sobre `#1a1a1d`, abaixo dos 4,5:1 que a WCAG 1.4.3
+exige de texto normal. É a causa da falha de eixo escuro em
+`Fundações/Cores > Texto`, e ela é anterior a esta varredura. O comentário do
+token em `tokens.css` documenta apenas o achado do tema claro.
+Corrigir exige escolher um degrau mais claro da família de neutros, o que é
+decisão de token do DesignOps.
+
+**A verificação do catálogo passou a ter oito invariantes.** A oitava confere que
+todo arquivo de componente que escreve classe de folha compartilhada importa a
+folha (hoje `src/tokens/severidade.css`). O achado L3-08 mostrou que o runner do
+Storybook injeta o CSS de todas as stories no mesmo documento, então um
+componente sem o import continua pintado no teste e aparece sem pele quando
+montado sozinho. A checagem foi sabotada removendo o import de
+`src/components/atoms/Avatar/Avatar.tsx`, e ela reprovou com mensagem nomeando o
+arquivo. `scripts/verificar-catalogo.mjs` também aceita agora `CITIE_STATIC`, para
+apontar a checagem para um build construído em pasta privada.

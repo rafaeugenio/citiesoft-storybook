@@ -113,7 +113,7 @@ export const Escala: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    // Os valores vêm do CSS, então a tabela mostra a escala real e não um texto fixo.
+    // Os valores vêm do CSS, então a tabela mostra a escala real do tema ativo.
     await expect(canvas.getByText('2px')).toBeVisible();
     await expect(canvas.getByText('4px')).toBeVisible();
     await expect(canvas.getByText('6px')).toBeVisible();
@@ -129,7 +129,7 @@ export const PorContexto: Story = {
     docs: {
       description: {
         story:
-          'Entrada pela situação, para quem chega com uma tela na mão em vez de um token. Cada linha foi conferida contra o CSS do componente citado, e onde o código diverge da especificação a divergência está escrita na própria linha.',
+          'Entrada pela situação, para quem chega com uma tela na mão, sem um nome de token para procurar. Cada linha foi conferida contra o CSS do componente citado, e onde o código diverge da especificação a divergência está escrita na própria linha.',
       },
     },
   },

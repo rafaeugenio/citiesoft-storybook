@@ -18,7 +18,7 @@ const meta = {
       description: {
         component: [
           'A escala de motion é de intenção, e o autor escolhe pelo que o movimento significa na',
-          'tela. `motion-rapido` quer dizer "resposta ao ponteiro", e não "140ms". O número pode',
+          'tela. `motion-rapido` quer dizer "resposta ao ponteiro". O número pode',
           'ser recalibrado num lugar só, e as 38 telas que consomem aquele degrau acompanham.',
           '',
           'Antes não existia token nenhum de tempo, então cada componente repetia `120ms ease-out`',
@@ -69,6 +69,12 @@ const DURACAO: TokenDocumentado[] = [
     evitar:
       'usar em resposta a hover. Meio segundo de espera em cima de um botão faz a interface parecer travada.',
   },
+  {
+    nome: 'motion-ciclo-varredura',
+    uso: 'Ciclo da varredura de carregamento do Skeleton. Fica fora da escada acima porque mede a duração de uma espera contínua, e os quatro degraus medem uma mudança de estado.',
+    evitar:
+      'usar em transição de estado. Uma mudança que leva 1400ms passa de resposta a espera, e a pessoa deixa de associar o movimento ao próprio clique.',
+  },
 ];
 
 const CURVA: TokenDocumentado[] = [
@@ -93,7 +99,7 @@ export const Duracoes: Story = {
   render: () => (
     <Bloco
       titulo="Durações"
-      descricao="Quatro degraus, cada um amarrado a um tipo de acontecimento na tela. Escolha pelo acontecimento, e o número vem junto."
+      descricao="Quatro degraus de mudança de estado, cada um amarrado a um tipo de acontecimento na tela, mais o ciclo da espera contínua. Escolha pelo acontecimento, e o número vem junto."
     >
       <TabelaDeTokens
         tokens={DURACAO}
@@ -105,11 +111,12 @@ export const Duracoes: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    // O valor é lido do CSS, então a tabela mostra a duração real e não um texto fixo.
+    // O valor é lido do CSS, então a tabela mostra a duração real do tema ativo.
     await expect(canvas.getByText('80ms')).toBeVisible();
     await expect(canvas.getByText('140ms')).toBeVisible();
     await expect(canvas.getByText('220ms')).toBeVisible();
     await expect(canvas.getByText('320ms')).toBeVisible();
+    await expect(canvas.getByText('1400ms')).toBeVisible();
   },
 };
 
@@ -253,7 +260,7 @@ export const QuatroTemposLadoALado: Story = {
     docs: {
       description: {
         story:
-          'A mesma transição, disparada ao mesmo tempo nos quatro degraus, para você sentir a diferença lado a lado em vez de deduzi-la dos números. Use o botão para repetir. Com movimento reduzido ligado no sistema, os quatro marcadores saltam direto para a posição final, que é justamente o comportamento que o catálogo entrega.',
+          'A mesma transição, disparada ao mesmo tempo nos quatro degraus, para você sentir a diferença lado a lado, sem precisar deduzi-la dos números. Use o botão para repetir. Com movimento reduzido ligado no sistema, os quatro marcadores saltam direto para a posição final, que é justamente o comportamento que o catálogo entrega.',
       },
     },
   },

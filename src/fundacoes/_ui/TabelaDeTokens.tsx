@@ -12,7 +12,7 @@ import './TabelaDeTokens.css';
  * O valor é lido do CSS em tempo de execução, com `getComputedStyle`, e nunca
  * copiado para cá. Valor copiado envelhece em silêncio: alguém ajusta o token e
  * a documentação passa a mentir sem que nada acuse. Se o token deixar de
- * existir, a linha mostra ausente em vez de mostrar um valor inventado.
+ * existir, a linha declara a ausência, com a coluna de valor vazia.
  */
 
 export type EspecieDeAmostra =
@@ -49,7 +49,7 @@ interface TabelaDeTokensProps {
 const AUSENTE = '(não definido)';
 
 /**
- * Lê o token no próprio elemento da tabela, e não na raiz do documento. O
+ * Lê o token no próprio elemento da tabela, onde o tema já está resolvido. O
  * tema vive no container do decorador (`[data-theme]`), e a raiz nunca o
  * recebe: lida na raiz, a coluna Valor mostrava `#eff5ff` no tema escuro
  * enquanto a amostra ao lado pintava `#202838`. Propriedade personalizada é
@@ -133,7 +133,7 @@ export function TabelaDeTokens({ tokens, especie, tituloDaAmostra, legenda }: Ta
 
     const observador = new MutationObserver(ler);
     observador.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-    // O decorador de tema marca o container da story, e não a raiz do documento.
+    // O decorador de tema marca o container da story; a raiz segue no tema claro.
     document.querySelectorAll('[data-theme]').forEach((no) => {
       observador.observe(no, { attributes: true, attributeFilter: ['data-theme'] });
     });
@@ -187,8 +187,8 @@ export function TabelaDeTokens({ tokens, especie, tituloDaAmostra, legenda }: Ta
 
 /**
  * Bloco de recomendação por contexto, no formato da segunda tabela do design
- * system do TFD: o desenvolvedor chega com uma situação de tela, e não com um
- * token na mão, então a entrada da tabela precisa ser a situação.
+ * system do TFD: o desenvolvedor chega com uma situação de tela na mão,
+ * então a entrada da tabela precisa ser a situação.
  */
 export function TabelaDeContexto({
   linhas,
@@ -244,7 +244,7 @@ export function Bloco({
 
 /**
  * Aviso de achado aberto. Existe porque a documentação honesta precisa mostrar
- * também o que está errado ou incompleto, em vez de exibir só a parte pronta.
+ * também o que está errado ou incompleto, ao lado da parte pronta.
  */
 export function AchadoAberto({ children }: { children: ReactNode }) {
   return (

@@ -16,13 +16,13 @@ const meta = {
         component: [
           'Toda cor do produto vem daqui. Nenhum componente escreve hexadecimal.',
           '',
-          '**Como escolher.** Procure pela situação na coluna Uso, e não pela cor que você',
-          'quer ver. O nome do token descreve o papel (`text-secondary`, `danger-emphasis`),',
+          '**Como escolher.** Procure pela situação na coluna Uso. A cor aparece na',
+          'resposta. O nome do token descreve o papel (`text-secondary`, `danger-emphasis`),',
           'nunca a aparência (`cinza-medio`, `vermelho`). É isso que permite trocar a cor no',
           'tema escuro sem trocar uma linha de componente.',
           '',
-          '**O valor mostrado é lido do CSS em tempo de execução**, e não copiado para a',
-          'tabela. Valor copiado envelhece em silêncio: alguém ajusta o token e a documentação',
+          '**O valor mostrado é lido do CSS em tempo de execução.** Nenhum número desta',
+          'página foi copiado para a tabela. Valor copiado envelhece em silêncio: alguém ajusta o token e a documentação',
           'passa a mentir sem que nada acuse. Troque o tema no controle da barra superior e os',
           'valores mudam junto.',
           '',
@@ -85,6 +85,16 @@ const TEXTO: TokenDocumentado[] = [
     evitar: 'usar placeholder no lugar do rótulo. O texto some quando a pessoa digita, e o campo fica sem nome.',
     sobre: 'background-surface',
   },
+  {
+    nome: 'form-helper',
+    uso: 'Texto de ajuda abaixo do campo, com a instrução de formato ou o limite de caracteres. Mesma tinta de `text-secondary`, com nome próprio para o campo poder mudar de ideia sem arrastar todo metadado junto.',
+    sobre: 'background-surface',
+  },
+  {
+    nome: 'danger-foreground',
+    uso: 'Mensagem de validação abaixo do campo com erro. Tinta de leitura na matiz de perigo, separada de `danger-emphasis`, que é preenchimento.',
+    sobre: 'background-surface',
+  },
 ];
 
 const SUPERFICIE: TokenDocumentado[] = [
@@ -102,6 +112,12 @@ const BORDA: TokenDocumentado[] = [
   {
     nome: 'form-field-border',
     uso: 'Contorno do campo em repouso. Separado da borda comum porque a WCAG 1.4.11 exige 3:1 para elemento de interface, e divisor decorativo não tem essa exigência.',
+  },
+  {
+    nome: 'form-field-border-hover',
+    uso: 'Contorno do campo sob o ponteiro e do campo já preenchido. Degrau mais escuro da família no claro (4,94:1) e mais claro no escuro (5,37:1), para o campo ganhar fronteira ao ser apontado.',
+    evitar:
+      'apontar o hover do campo para `border-strong`. Aquele token mede 1,43:1 sobre o branco, e o campo apagaria a própria fronteira justo quando o ponteiro chega.',
   },
   { nome: 'border-danger', uso: 'Contorno do campo com erro de validação.' },
 ];
@@ -130,6 +146,18 @@ const ACCENT: TokenDocumentado[] = [
   },
   { nome: 'secondary-foreground', uso: 'Rótulo por cima de `secondary`.', sobre: 'secondary' },
   {
+    nome: 'secondary-hover',
+    uso: 'Ponteiro sobre o botão e o badge Secondary. Sobe um degrau na família de neutros, para o mesmo valor de `border-default`, e mantém o rótulo em 13,52:1 no claro e 11,35:1 no escuro.',
+    evitar:
+      'apontar a borda do controle para cá. O papel deste token é preenchimento; o contorno do Secondary continua em `border-default`.',
+  },
+  {
+    nome: 'veu-sobre-selecao',
+    uso: 'Ponteiro sobre a linha que já está selecionada. Véu translúcido na matiz da marca, que soma ao fundo de seleção e preserva o rótulo: 10,66:1 para text-primary sobre o composto claro, 9,48:1 no escuro.',
+    evitar:
+      'aplicar em linha comum. Fora da seleção o ponteiro pinta `accent` sólido, e um véu por cima do fundo da página quase some.',
+  },
+  {
     nome: 'popover',
     uso: 'Fundo do tooltip. Inverte a tinta da página, escuro no claro e claro no escuro, para a dica flutuar sem borda nem sombra pesada.',
     evitar: 'usar em menu, dropdown ou popover de confirmação. Esses continuam em `background-surface` com elevação; só o tooltip inverte.',
@@ -138,7 +166,7 @@ const ACCENT: TokenDocumentado[] = [
 ];
 
 const SIDEBAR: TokenDocumentado[] = [
-  { nome: 'sidebar', uso: 'Fundo da barra lateral de navegação. Mesmo degrau do fundo da página, para a sidebar ler como parte da moldura e não como card.' },
+  { nome: 'sidebar', uso: 'Fundo da barra lateral de navegação. Mesmo degrau do fundo da página, para a sidebar ler como parte da moldura da tela.' },
   { nome: 'sidebar-foreground', uso: 'Rótulo e ícone do item de sidebar em repouso.', sobre: 'sidebar' },
   { nome: 'sidebar-accent', uso: 'Fundo do item de sidebar sob o ponteiro e do item ativo. Aponta para `accent`.' },
   { nome: 'sidebar-accent-foreground', uso: 'Rótulo do item de sidebar ativo, por cima de `sidebar-accent`.', sobre: 'sidebar-accent' },
@@ -165,6 +193,16 @@ const ESTADO: TokenDocumentado[] = [
     sobre: 'state-disabled-background',
   },
   { nome: 'scrim', uso: 'Véu que escurece a página atrás de diálogo, drawer e bloqueio de área.' },
+  {
+    nome: 'veu-de-realce',
+    uso: 'Propriedade registrada com `@property`, que carrega o realce de ponteiro para dentro da linha. O registro com tipo `<color>` é o que a torna interpolável, então o realce entra e sai por transição.',
+    evitar:
+      'usar como cor de fundo direta. O valor inicial é transparente, e quem pinta a linha é `state-hover-overlay`; este token existe para o realce somar ao fundo de estado que já está lá.',
+  },
+  {
+    nome: 'loading-spinner',
+    uso: 'Tinta do indicador de carregamento: giro do botão em espera, do campo que busca no servidor e do bloqueio de área. Acompanha a marca nos dois temas.',
+  },
 ];
 
 const FEEDBACK: TokenDocumentado[] = [
@@ -180,6 +218,54 @@ const FEEDBACK: TokenDocumentado[] = [
   { nome: 'info-emphasis', uso: 'Preenchimento e ícone de informação neutra.' },
   { nome: 'info-text', uso: 'Texto de informação sobre superfície clara.' },
   { nome: 'info-background', uso: 'Fundo da mensagem informativa.' },
+];
+
+/**
+ * A rampa de preenchimento das três severidades, em tabela separada da paleta
+ * de feedback porque o critério de escolha é outro: aqui você escolhe o estado
+ * do mesmo controle, e ali você escolhe a severidade da mensagem.
+ */
+const RAMPA_DE_FEEDBACK: TokenDocumentado[] = [
+  { nome: 'success-hover', uso: 'Ponteiro sobre o controle de confirmação. No claro escurece (5,02:1 com rótulo branco), no escuro clareia (8,08:1 com rótulo escuro).' },
+  { nome: 'success-active', uso: 'Instante em que o controle de confirmação está pressionado. 7,13:1 no claro, 10,57:1 no escuro.' },
+  {
+    nome: 'success-contrast',
+    uso: 'Rótulo por cima de qualquer degrau da rampa de sucesso. Branco no claro, tinta escura no escuro.',
+    evitar: 'apontar o rótulo para `text-inverse`. Este token acompanha a rampa, e a rampa inverte a direção entre os temas.',
+    sobre: 'success-emphasis',
+  },
+  { nome: 'danger-hover', uso: 'Ponteiro sobre a ação destrutiva. Escurece nos dois temas, porque o rótulo é branco nos dois: 6,47:1.' },
+  { nome: 'danger-active', uso: 'Ação destrutiva pressionada. 8,31:1 com o rótulo branco.' },
+  { nome: 'danger-contrast', uso: 'Rótulo por cima da rampa de perigo. Branco nos dois temas.', sobre: 'danger-emphasis' },
+  { nome: 'warning-hover', uso: 'Ponteiro sobre o controle de aviso. 5,02:1 no claro, 8,58:1 no escuro.' },
+  { nome: 'warning-active', uso: 'Controle de aviso pressionado. 7,09:1 no claro, 12,78:1 no escuro.' },
+  { nome: 'warning-contrast', uso: 'Rótulo por cima da rampa de aviso.', sobre: 'warning-emphasis' },
+];
+
+/**
+ * Proporções de mistura, que a tabela mostra como valor puro porque a amostra
+ * de cor só faz sentido depois de aplicada sobre o preenchimento de destino.
+ */
+const PROPORCAO: TokenDocumentado[] = [
+  {
+    nome: 'anel-do-botao',
+    uso: 'Quanto do preenchimento sobra no anel de 1px do controle cheio, misturado com preto por `color-mix`. Serve a todas as famílias de cor a partir do próprio preenchimento, então o kit inteiro tem um valor só.',
+    evitar: 'criar um token de anel por variante. O anel se deriva do preenchimento que o botão já carrega.',
+  },
+  {
+    nome: 'aresta-preenchimento',
+    uso: 'Força do reforço branco na aresta superior do controle preenchido, por dentro. Medido em 1,66:1 sobre a marca no claro e 1,61:1 no escuro, que é a faixa em que a aresta aparece na captura sem virar moldura.',
+    evitar: 'subir o valor para a aresta "aparecer melhor". Acima dessa faixa o controle ganha um contorno que compete com a borda.',
+  },
+  {
+    nome: 'aresta-tonal',
+    uso: 'Quanto da tinta da severidade entra na borda de 1px da superfície tonal de Toast e Message. 30% no claro e 25% no escuro, medidos entre 1,50:1 e 1,95:1 nas quatro severidades.',
+  },
+  {
+    nome: 'pressao-deslocamento',
+    uso: 'Quanto o controle desce enquanto está pressionado, e volta ao soltar. 1px é o teto: acima disso o rótulo tremula na leitura.',
+    evitar: 'aplicar em elemento que não responde a clique. O deslocamento é resposta de pressão, e num bloco estático ele lê como defeito de layout.',
+  },
 ];
 
 export const Marca: Story = {
@@ -209,14 +295,16 @@ export const Texto: Story = {
   render: () => (
     <Bloco
       titulo="Texto"
-      descricao="Três tintas para três prioridades de leitura. A escolha entre elas é decisão de hierarquia, e não de estética: recuar a cor recua a prioridade do que está escrito."
+      descricao="Três tintas para três prioridades de leitura. A escolha entre elas é decisão de hierarquia: recuar a cor recua a prioridade do que está escrito."
     >
       <TabelaDeTokens tokens={TEXTO} especie="texto" tituloDaAmostra="Sobre a superfície" legenda="Tokens de texto" />
     </Bloco>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getAllByText('Texto de exemplo').length).toBe(5);
+    // Uma amostra de texto por linha documentada: a contagem sai da própria
+    // tabela, para uma linha nova não obrigar a corrigir um número solto aqui.
+    await expect(canvas.getAllByText('Texto de exemplo').length).toBe(TEXTO.length);
   },
 };
 
@@ -244,7 +332,7 @@ export const Bordas: Story = {
         A borda de campo media <code>1,21:1</code> sobre o branco e reprovava o mínimo de 3:1
         da WCAG 1.4.11. Corrigida para <code>3,23:1</code> no claro e <code>3,26:1</code> no
         escuro. A correção subiu para o token global, onde vale para os 14 componentes que o
-        consomem, em vez de ficar como exceção local em dois deles.
+        consomem, com os dois que a descobriram incluídos.
       </AchadoAberto>
     </Bloco>
   ),
@@ -430,6 +518,69 @@ export const Feedback: Story = {
       </AchadoAberto>
     </Bloco>
   ),
+};
+
+export const RampaDeFeedback: Story = {
+  name: 'Rampa de feedback',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Os estados do controle preenchido em cada severidade. A direção da rampa muda com o tema: no claro o estado escurece, e no escuro ele clareia, porque escurecer sobre #141414 aproximaria o controle do fundo até ele sumir. Success e warning trocam o rótulo por tinta escura no tema escuro, o que também conserta o contraste do repouso.',
+      },
+    },
+  },
+  render: () => (
+    <Bloco
+      titulo="Rampa de preenchimento"
+      descricao="Hover, pressionado e rótulo, para as três severidades. A família `*-strong` fica fora desta tabela: ela é tinta de texto, e usada como fundo daria 1,87:1 no escuro."
+    >
+      <TabelaDeTokens tokens={RAMPA_DE_FEEDBACK} especie="cor" legenda="Rampa de preenchimento de feedback" />
+    </Bloco>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const tema = containerDeTema(canvasElement);
+    const token = (nome: string) => getComputedStyle(tema).getPropertyValue(`--citie-${nome}`).trim();
+    // O rótulo de cada rampa passa AA sobre os três degraus da própria família,
+    // que é a conta que a decisão de arquitetura de tokens.css protege.
+    for (const familia of ['success', 'danger', 'warning']) {
+      for (const degrau of ['emphasis', 'hover', 'active']) {
+        const medido = contraste(token(`${familia}-contrast`), token(`${familia}-${degrau}`));
+        // O repouso de success e de warning no tema claro é o achado aberto do
+        // DS, com 3,30:1 e 3,19:1, então o piso conferido aqui é o do indicador.
+        await expect(medido).toBeGreaterThanOrEqual(degrau === 'emphasis' ? 3 : 4.5);
+      }
+    }
+    await expect(canvas.getByText(/--citie-warning-contrast/)).toBeVisible();
+  },
+};
+
+export const Proporcoes: Story = {
+  name: 'Proporções de mistura',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Quatro valores que não são cor e mesmo assim governam cor: quanto de tinta entra num anel, numa aresta ou numa borda calculada por `color-mix`, mais o deslocamento de pressão. Cada um tem faixa perceptual medida no comentário do token, porque reforço de 1px não carrega informação e por isso fica fora do piso da WCAG.',
+      },
+    },
+  },
+  render: () => (
+    <Bloco
+      titulo="Proporções"
+      descricao="A amostra fica vazia de propósito: uma proporção só ganha cor depois de misturada ao preenchimento de destino, que muda a cada variante."
+    >
+      <TabelaDeTokens tokens={PROPORCAO} especie="nenhuma" legenda="Proporções de mistura" />
+    </Bloco>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    // Cada linha prova que o token existe: a tabela escreve "(não definido)"
+    // quando o nome documentado não encontra declaração no CSS.
+    await expect(canvas.queryAllByText('(não definido)').length).toBe(0);
+    await expect(canvas.getByText(/--citie-aresta-tonal/)).toBeVisible();
+  },
 };
 
 export const NuncaFacaAssim: Story = {

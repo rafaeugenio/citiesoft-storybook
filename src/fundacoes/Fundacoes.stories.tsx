@@ -64,13 +64,24 @@ const meta = {
           'produz rótulo branco sobre verde claro no escuro, a 1,87:1. O motivo de as duas',
           'famílias existirem separadas está anotado no topo do arquivo de tokens.',
           '',
+          '## Como um token chega até aqui',
+          '',
+          'A repaginada acontece por lote de componentes, e um lote que descobre uma medida nova',
+          'grava o token em bloco próprio no fim de `tokens.css`, com o comentário de papel e a',
+          'medição ao lado. O bloco é temporário e serve para o lote seguir sem disputar as mesmas',
+          'linhas do arquivo com os outros lotes que rodam ao mesmo tempo. Depois, uma varredura',
+          'de consolidação move cada token para a seção temática dele, prova por medição que',
+          'nenhum valor mudou nos dois temas, e abre a linha correspondente na tabela desta',
+          'seção. Token que ainda esteja em bloco de lote é token que a varredura não alcançou,',
+          'e a tabela é o sinal de que ele já pertence ao design system.',
+          '',
           '## Onde procurar',
           '',
           'Cada página irmã traz a tabela `Token · Amostra · Valor · Uso` do seu tema. Procure',
-          'pela **situação** na coluna Uso, e não pelo valor que você quer ver.',
+          'pela **situação** na coluna Uso. O valor aparece na resposta, junto com o token.',
           '',
-          '**O valor mostrado é lido do CSS em tempo de execução**, e nunca copiado para a',
-          'documentação. Valor copiado envelhece em silêncio: alguém ajusta o token e a página',
+          '**O valor mostrado é lido do CSS em tempo de execução.** Nenhum número desta',
+          'documentação foi copiado à mão. Valor copiado envelhece em silêncio: alguém ajusta o token e a página',
           'passa a mentir sem que nada acuse. Troque o tema no controle da barra superior e os',
           'valores mudam junto.',
         ].join('\n'),
@@ -87,7 +98,7 @@ export const OndeProcurar: Story = {
   render: () => (
     <Bloco
       titulo="Índice das fundações"
-      descricao="Entre pela situação que você tem na mão, e não pelo nome do token."
+      descricao="Entre pela situação que você tem na mão; o nome do token vem na resposta."
     >
       <TabelaDeContexto
         legenda="Índice das fundações por situação"
@@ -97,6 +108,7 @@ export const OndeProcurar: Story = {
           { contexto: 'Que tamanho de texto', valor: 'Fundações · Tipografia', exemplo: 'Famílias, escala de corpo e de título, pesos, números tabulares' },
           { contexto: 'Quanto de respiro', valor: 'Fundações · Espaçamento', exemplo: 'Respiro interno, gap de grid, intervalo entre seções' },
           { contexto: 'Quanto de canto e que altura', valor: 'Fundações · Raio e dimensões', exemplo: 'Raio por camada, altura de controle, alvo de toque' },
+          { contexto: 'Que medida tem esta peça', valor: 'Fundações · Dimensões', exemplo: 'Caixa de ícone, largura de drawer e de overlay, linha de tabela, barra e sidebar do shell' },
           { contexto: 'Que sombra e como marcar o foco', valor: 'Fundações · Elevação e foco', exemplo: 'Quatro degraus de profundidade, anel de foco' },
           { contexto: 'Quanto tempo dura a transição', valor: 'Fundações · Motion', exemplo: 'Durações por intenção, curvas, movimento reduzido' },
           { contexto: 'Qual logo em qual fundo', valor: 'Fundações · Marca', exemplo: 'Versões da assinatura e regra de aplicação' },
