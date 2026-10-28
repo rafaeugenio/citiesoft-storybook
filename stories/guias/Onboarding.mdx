@@ -1,0 +1,115 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { EstadosVaziosDemo, DefaultComLegendaDemo } from '../_docs/padroes/Onboarding';
+import { Prontos } from '../_docs/padroes/Moldura';
+import { estadoVazioExemplo } from '../_docs/snippets/padrao-onboarding';
+
+<Meta title="Guias/Padrões/Onboarding" />
+
+<Pagina
+  titulo="Onboarding"
+  resumo="O primeiro contato com um módulo: estados vazios que ensinam, configuração guiada, divulgação progressiva, tour opcional e defaults. Reduz atrito sem infantilizar."
+>
+
+<Secao titulo="Quando usar">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Use quando', texto: 'O módulo abre vazio, é a primeira sessão do usuário, a função tem pré-requisitos (TFD exige paciente, médico e veículo cadastrados), há configuração inicial obrigatória ou a experiência mudou muito.' },
+  { titulo: 'Não use quando', texto: 'O usuário já tem dados (o estado vazio some com o primeiro registro), o fluxo é crítico e urgente, a função é autodescritiva ou o servidor é experiente: aí fica só a ajuda sob demanda.' },
+]} />
+</Secao>
+
+<Secao titulo="Anatomia">
+<Tabela colunas={['Parte', 'Conteúdo']} linhas={[
+  ['Estado vazio', 'Ícone temático, título do que está vazio, corpo com o porquê e o que fazer, e pelo menos uma ação primária.'],
+  ['Wizard', 'Só com 3 ou mais etapas obrigatórias e dependentes. Passos numerados com rótulo textual e revisão no último.'],
+  ['Divulgação progressiva', 'Opções avançadas colapsadas. Ajuda contextual em tooltip após o rótulo.'],
+  ['Tour', 'Overlay com card ancorado: título, instrução, `X de N passos`, `Próximo` e `Encerrar tour`.'],
+  ['Default', 'Valor vindo do perfil, com legenda quando o campo tem impacto financeiro ou legal.'],
+]} />
+</Secao>
+
+<Secao titulo="Regras">
+<Tabela colunas={['Nº', 'Regra']} larguraMinima={520} linhas={[
+  ['1', 'Estado vazio responde a duas perguntas: o que falta e como resolver agora. Ícone do domínio, nunca uma pasta genérica.'],
+  ['2', 'Se há pré-requisito externo, explique o bloqueio e leve ao módulo de configuração, não ao suporte.'],
+  ['3', 'Wizard salva rascunho ao avançar e mostra `Rascunho salvo às 14:23.`'],
+  ['4', '`Avançar` só habilita com os obrigatórios válidos. Quando desabilitado, aponte o que falta em mensagem inline.'],
+  ['5', 'Último passo é revisão completa, com `Editar` por seção. Em módulo crítico (folha, TFD, prestação), exige a caixa `Confirmo que os dados estão corretos`.'],
+  ['6', 'Campos avançados ficam colapsados. Seções raramente alteradas, como integrações, ficam em aba separada.'],
+  ['7', 'Ajuda contextual: ícone de ajuda após o rótulo, no mesmo lugar em todas as telas do módulo, com até 2 frases e exemplo quando houver formato.'],
+  ['8', 'Nunca esconda informação obrigatória em tooltip.'],
+  ['9', 'Tour é sempre opcional e iniciado pelo usuário. Exceção: primeiro acesso a um produto novo, em modal com `Pular tour` proeminente.'],
+  ['10', 'O tour não bloqueia a ação real. Servidor: até 5 passos. Cidadão: até 7 passos, com 20 palavras no máximo cada.'],
+  ['11', 'Conclusão do tour é salva por usuário e não reaparece.'],
+  ['12', 'Pré-preencha com o perfil: órgão, unidade, UF, ano fiscal. Período padrão é o mês corrente e status padrão é ativo ou vigente.'],
+  ['13', 'Default financeiro ou legal nunca é silencioso: `Pré-preenchido com base no perfil do órgão. Verifique antes de confirmar.`'],
+]} />
+</Secao>
+
+<Secao titulo="Estados e textos">
+<Tabela colunas={['Módulo', 'Título correto', 'Evite']} larguraMinima={560} linhas={[
+  ['Lista de servidores', '`Nenhum servidor cadastrado`', '`Vazio`, `Sem dados`'],
+  ['Histórico de diárias', '`Nenhuma diária registrada ainda`', '`Não há registros`'],
+  ['Processos de TFD', '`Nenhum processo aberto`', '`Você não tem processos`'],
+  ['Estoque', '`Nenhum item em estoque`', '`Lista vazia`'],
+  ['Integração', '`Integração não configurada`', '`Erro: sem integração`'],
+]} />
+<Tabela colunas={['Botão', 'Rótulo']} linhas={[
+  ['Ação do estado vazio', 'Verbo e objeto: `Cadastrar servidor`, `Criar processo`, `Configurar integração`. Evite `Começar` e `Clique aqui`.'],
+  ['Passo intermediário do wizard', '`Continuar`'],
+  ['Último passo', '`Confirmar e salvar` (criação) ou `Confirmar e enviar` (submissão)'],
+  ['Sair do tour', '`Pular tour`, não `Fechar`'],
+]} />
+<Callout>
+Estado vazio não é falha. Para servidor, linguagem técnica e direta. Para cidadão, simples e acolhedora, com `processo` virando `solicitação` e `lançamento` virando `registro`.
+</Callout>
+</Secao>
+
+<Secao titulo="Acessibilidade">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Estrutura semântica', texto: 'Contêiner principal, título do módulo e título do estado vazio. Ilustração decorativa é ignorada pelo leitor.' },
+  { titulo: 'Wizard anunciado', texto: '`Rascunho salvo` em região educada. Passo atual marcado e passos futuros desabilitados.' },
+  { titulo: 'Condicional anunciado', texto: '`Campos adicionais exibidos para o tipo de afastamento selecionado.`' },
+  { titulo: 'Tour', texto: 'Card com papel de diálogo e nome `Tour de apresentação, passo X de N`. Escape fecha sem perder estado.' },
+  { titulo: 'Alvos', texto: 'Estado vazio com 44 px para cidadão e 32 px para servidor. `Próximo`, `Voltar` e `Pular` com 44 px em qualquer perfil.' },
+  { titulo: 'Sem dado repetido', texto: 'Não peça de novo o CPF do perfil logado.' },
+]} />
+</Secao>
+
+<Secao titulo="Certo e errado">
+<CertoErrado itens={[
+  { certo: 'Ícone de documento, `Nenhum processo aberto`, corpo com contexto e `Novo processo`.', errado: 'Pasta genérica, `Sem dados`, `Não há registros para exibir.` e botão `Adicionar`.' },
+  { certo: 'Passo de tour do cidadão: `Esta é a tela inicial das suas solicitações de transporte. Aqui você cria novas solicitações e acompanha as que estão em andamento.`', errado: 'Frase cheia de sigla, jargão e referência normativa.' },
+  { certo: 'Órgão pré-preenchido com legenda de verificação.', errado: 'O mesmo campo pré-preenchido sem aviso.', motivo: 'O usuário pode seguir sem conferir.' },
+]} />
+</Secao>
+
+<Secao titulo="Exemplo composto" descricao="As três variantes de estado vazio e o default com legenda.">
+<EstadosVaziosDemo />
+<DefaultComLegendaDemo />
+<CodeTabs abas={estadoVazioExemplo} />
+</Secao>
+
+<Secao titulo="Onde ver pronto">
+<Prontos itens={[
+  { nome: 'Blocos/Estados', uso: 'EmptyState com ação primária e secundária.' },
+  { nome: 'Blocos/Stepper', uso: 'Indicador do wizard de configuração.' },
+  { nome: 'Templates/Sistemas/Wizard de nova solicitação', uso: 'Fluxo guiado com revisão.' },
+  { nome: 'Templates/Sistemas/Hub de configurações', uso: 'Configurações raras fora do fluxo diário.' },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Tabela colunas={['Tema', 'O que os documentos dizem']} linhas={[
+  ['Rótulos do wizard', 'Onboarding usa `Continuar` e `Confirmar e enviar`. Formulários complexos usa `Próximo` e `Enviar cadastro`.'],
+  ['Texto do estado vazio de lista', 'Onboarding usa `Nenhum servidor cadastrado`. CRUD usa `Nenhum [entidade] cadastrado ainda. Comece cadastrando o primeiro.` Telas densas usa `Nenhum registro encontrado`.'],
+  ['Movimento do wizard', 'Onboarding anima o deslocamento do passo em 300 ms. Formulários complexos usa 200 ms.'],
+]} />
+</Secao>
+
+<Callout>
+Fonte: padrão de Onboarding do Design System Citiesoft, com apoio de Formulários complexos e CRUD.
+</Callout>
+
+</Pagina>

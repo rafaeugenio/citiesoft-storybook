@@ -1,0 +1,115 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, Passos } from '../_docs/Conteudo';
+import { changelogCodigo } from '../_docs/snippets/governanca';
+
+<Meta title="Marca/Governança" />
+
+<Pagina
+  titulo="Governança"
+  resumo="Toda peça com a marca passa por revisão de identidade antes de sair. A aprovação cresce com a exposição da peça, o Brandbook muda por versão numerada e cada asset tem uma fonte única."
+>
+
+<Secao titulo="Níveis de aprovação" descricao="Classifique a peça antes de produzir. Brand Ops confirma ou reclassifica o nível em até 4 horas úteis.">
+<Tabela
+  colunas={['Nível', 'Categoria', 'Revisão', 'Aprovação final', 'Prazo']}
+  linhas={[
+    ['1', 'Comunicação interna: stickers, avisos', 'Autovalidação com checklist', 'Responsável de equipe', '1 dia útil'],
+    ['2', 'Produto digital: onboarding, empty state, release notes', 'Designer de produto e Brand Ops', 'Lead de produto', '2 dias úteis'],
+    ['3', 'Comercial: decks de licitação, propostas', 'Brand Ops e responsável comercial', 'Liderança comercial ou de marca', '3 dias úteis'],
+    ['4', 'Institucional crítico: governo estadual ou federal, imprensa, evento público', 'Brand Ops e Diretoria', 'Diretor responsável', '5 dias úteis'],
+  ]}
+  larguraMinima={680}
+/>
+<Passos itens={[
+  { titulo: 'Brand Request', texto: 'Tarefa no Azure Boards com objetivo, público, canal, prazo de uso, nível estimado e referências.' },
+  { titulo: 'Triagem', texto: 'Briefing incompleto volta ao solicitante. O prazo só conta depois do briefing completo.' },
+  { titulo: 'Produção', texto: 'Com templates e assets oficiais. Ao terminar, o item vai para Em Revisão com o arquivo anexado.' },
+  { titulo: 'Revisão de identidade', texto: 'Brand Ops aplica o checklist. Aprovado, aprovado com ajustes ou reprovado com justificativa e a diretriz violada.' },
+  { titulo: 'Aprovação de conteúdo', texto: 'O Lead de área valida o objetivo da peça, sem substituir a revisão de identidade.' },
+  { titulo: 'Aprovação final e entrega', texto: 'Níveis 3 e 4 têm aprovação formal. Só o status Aprovado libera publicação ou entrega.' },
+]} />
+<Cartoes colunas={2} itens={[
+  { titulo: 'Peça de agente de IA', texto: 'Segue o mesmo fluxo da peça humana. Geração automática não pula etapa nem a revisão humana.' },
+  { titulo: 'Asset fora do processo', texto: 'Exige validação retroativa antes de qualquer reuso.' },
+  { titulo: 'Ajuste na revisão', texto: 'Reinicia o prazo de revisão, não o prazo total do projeto.' },
+  { titulo: 'Novo asset', texto: 'Mesmo fluxo, com o tipo Novo Asset. Material experimental leva a tag `experimental` e não entra no repositório permanente.' },
+]} />
+</Secao>
+
+<Secao titulo="Revisão de peças" descricao="Cinco dimensões: identidade visual, tipografia, voz e linguagem, acessibilidade e consistência com o contexto.">
+<Tabela
+  colunas={['Severidade', 'Exemplo', 'Ação']}
+  linhas={[
+    ['Crítico', 'Logo distorcido, cor de outra marca', 'Bloqueia a publicação'],
+    ['Alto', 'Cor fora da paleta, fonte errada, mascote em contexto proibido, contraste insuficiente', 'Bloqueia, salvo exceção documentada pelo responsável de marca'],
+    ['Médio', 'Travessão no texto, gradiente excessivo, espaçamento fora do padrão', 'Corrigir antes de publicar. Em urgência, registrar e corrigir na próxima versão'],
+    ['Baixo', 'Alinhamento imperfeito, redundância', 'Corrigir se houver tempo e registrar para o template'],
+  ]}
+/>
+<Cartoes colunas={2} itens={[
+  { titulo: 'Checklist inteiro', texto: 'Reduzir o escopo exige justificativa registrada. Revise sempre contra a versão vigente do Brandbook.' },
+  { titulo: 'Evidência', texto: 'Cada achado leva captura de tela, trecho ou arquivo. A aprovação registra revisor, data e versão.' },
+  { titulo: 'Revisor distinto', texto: 'Quem revisa não é quem produziu. Autorrevisão só em comunicação interna de baixo risco.' },
+  { titulo: 'Peça B2G de alto impacto', texto: 'Dupla revisão independente, de design e de conteúdo, em licitação, secretaria e treinamento de servidor.' },
+]} />
+</Secao>
+
+<Secao titulo="Versionamento" descricao="O Brandbook segue MAJOR.MINOR.PATCH, começa em 1.0.0 e registra toda mudança no changelog.">
+<Tabela
+  colunas={['Nível', 'Quando', 'Quem aprova']}
+  linhas={[
+    ['MAJOR', 'Nova identidade, nova cor primária, troca de família tipográfica, novo tom de voz', 'Brand Lead, Diretoria e revisão de impacto em contratos ativos'],
+    ['MINOR', 'Nova seção, componente ou asset, expansão de paleta, diretriz que não invalida as anteriores', 'Brand Lead e um Product Designer ou Tech Lead'],
+    ['PATCH', 'Correção de erro, clarificação sem mudança de regra', 'Brand Lead'],
+  ]}
+  larguraMinima={640}
+/>
+<Cartoes colunas={2} itens={[
+  { titulo: 'Regra de ouro', texto: 'Se times precisam reavaliar material existente, é MINOR ou MAJOR. Correção de dado errado é PATCH.' },
+  { titulo: 'Status', texto: '`stable` vale em produção. `draft` não vale. `deprecated` indica a versão substituta.' },
+  { titulo: 'Depreciação', texto: 'Aviso de 30 dias no mínimo, prazo de migração declarado e permanência por dois ciclos de revisão. Agente de IA recusa gerar com elemento depreciado.' },
+  { titulo: 'Proposta de mudança', texto: 'Issue com tipo no título, revisão técnica, draft com CHANGELOG, aprovação, publicação e aviso no canal brand-updates.' },
+]} />
+<CodeTabs abas={changelogCodigo} />
+</Secao>
+
+<Secao titulo="Manutenção" descricao="Fonte única para cada asset e rotina fixa de revisão.">
+<Tabela
+  colunas={['Rotina', 'Frequência', 'Responsável']}
+  linhas={[
+    ['Revisão geral do Brandbook', 'Semestral, em janeiro e julho', 'Brand Lead'],
+    ['Correção pontual (PATCH)', 'Sob demanda', 'Brand Lead'],
+    ['Novas diretrizes (MINOR)', 'Trimestral ou sob demanda', 'Brand Lead e revisores'],
+    ['Revisão estratégica (MAJOR)', 'Anual ou por mudança de posicionamento', 'Diretoria e Brand Lead'],
+  ]}
+/>
+<Cartoes colunas={2} itens={[
+  { titulo: 'Fonte única', texto: 'O SharePoint guarda os binários. O Vault espelha e documenta. Repositório de código copia só o necessário e não edita.' },
+  { titulo: 'Atualizar versão', texto: 'Arquivo novo na pasta oficial, o antigo vai para o arquivo morto com a data no nome, e aviso no canal de marca.' },
+  { titulo: 'Quarentena', texto: 'Material de colaborador ou fornecedor fica em pasta de aprovação e nunca circula como oficial.' },
+  { titulo: 'Acesso', texto: 'Leitura para a equipe. Escrita só para Design Lead e Brand Owner. Fornecedor recebe link de leitura temporário.' },
+  { titulo: 'Auditoria semestral', texto: 'Busca cópias paralelas, confere versões nos repositórios, revê templates com mais de 6 meses e publica ou descarta drafts.' },
+  { titulo: 'Fontes tipográficas', texto: 'Em sistemas web, carregue por Google Fonts ou CDN aprovado, sem distribuir o binário ao usuário final.' },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte" descricao="Pontos em que os documentos de governança divergem entre si.">
+<Tabela
+  colunas={['Tema', 'O que diverge']}
+  linhas={[
+    ['Nível 3', 'As regras do fluxo chamam o nível 3 de institucional crítico. A tabela de níveis dá o 3 a comercial e proposta, e o 4 a institucional crítico.'],
+    ['Biblioteca de marca', '`Brand & Marketing` no SharePoint e OneDrive. `Brand / Citie Brand System` na gestão de assets.'],
+    ['Nome de arquivo', 'Tipo, descrição e versão num documento. Família, variante, tema e versão no outro.'],
+    ['Formato de versão', '`vMAJOR.MINOR` nos arquivos. Sufixo `-vX` e `-draft` nos templates. MAJOR.MINOR.PATCH no Brandbook.'],
+    ['Responsável', 'Brand Lead no versionamento, Responsável de Marca no fluxo de aprovação, Brand Owner na gestão de assets, Design Lead na escrita.'],
+  ]}
+  larguraMinima={640}
+/>
+</Secao>
+
+<Callout>
+Fonte: Brandbook Citiesoft, seção Governança da marca (fluxo de aprovação, revisão de peças, versionamento e gestão de assets).
+</Callout>
+
+</Pagina>

@@ -1,0 +1,185 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { Galeria, Respiro, Escala, Comparativo } from '../_docs/Logo';
+
+<Meta title="Marca/Uso do logo" />
+
+<Pagina
+  titulo="Uso do logo"
+  resumo="Respiro, tamanho mínimo, versão por fundo e o que nunca fazer. Vale para qualquer peça, interna ou externa, e para quem revisa material de terceiros."
+>
+
+<Secao titulo="Área de respiro" descricao="Ao redor do logo fica uma zona livre de texto, borda, ícone, foto e outro logo. A zona é invisível: restringe o layout e não vira caixa desenhada.">
+<Respiro src="marca/LogoHorizontal3.svg" legenda="Zona mínima: X em cima, embaixo, à esquerda e à direita (ilustração)" fundo="branco" altura={48} multiplo={1} />
+<Tabela colunas={['Versão', 'Unidade X']} linhas={[
+  ['Horizontal (`LogoHorizontal2.svg`, `LogoHorizontal3.svg`)', 'Altura do símbolo, sem contar o nome'],
+  ['Símbolo isolado (`LogoAzul.svg`, `LogoBranca.svg`)', 'Altura do símbolo'],
+  ['Wordmark (`LogoNome1.svg`, `LogoNome2.svg`)', 'Altura da letra C maiúscula do nome'],
+]} />
+<Cartoes colunas={3} itens={[
+  { titulo: 'Mínimo é X nos quatro lados', texto: 'Aplicar X em só um eixo não vale. Um símbolo de 48 px pede 48 px de respiro; um de 20 mm pede 20 mm.' },
+  { titulo: 'Recomendado é 1,5X', texto: 'Use 1,5X sempre que o layout permitir, em propostas, capas e peças de alta visibilidade.' },
+  { titulo: 'A borda da peça conta', texto: 'Papel, slide, tela ou banner não substituem a zona. A distância até a borda também é de pelo menos X.' },
+  { titulo: 'Sem exceção em tamanho reduzido', texto: 'Em assinatura de e-mail ou rodapé, a zona encolhe junto com o logo e continua valendo.' },
+  { titulo: 'Co-branding', texto: 'Ao lado de logo de prefeitura ou secretaria, cada logo tem a própria zona e elas não se sobrepõem.' },
+  { titulo: 'Padding de container', texto: 'Um card com padding menor que X invade a zona. Com X de 24 px, 4 px de padding não serve.' },
+]} />
+<Respiro src="marca/LogoHorizontal3.svg" legenda="Recomendado: 1,5X (ilustração)" fundo="cinza" altura={48} multiplo={1.5} />
+<Callout titulo="Pendente de confirmação">
+Os documentos da fonte divergem sobre X. Área de respiro, versões e construção definem X como a altura do símbolo. O documento do logotipo fala em altura da letra `c` do símbolo, o de usos incorretos em altura da letra C do nome, e o de símbolo isolado em 25% da altura do símbolo. Esta página segue o documento de área de respiro, que é o específico. A moldura acima assume X igual à altura do logo exibido.
+</Callout>
+</Secao>
+
+<Secao titulo="Tamanho mínimo" descricao="Os limites são sobre o tamanho percebido na peça. Em tela de alta densidade, exporte em 2x ou 3x, mas o layout segue os valores da tabela.">
+<Tabela colunas={['Versão', 'Recomendado', 'Absoluto', 'Observação']} larguraMinima={620} linhas={[
+  ['Horizontal (`LogoHorizontal3.svg`, `LogoHorizontal2.svg`)', '160 px', '120 px', 'Abaixo de 120 px o nome perde legibilidade'],
+  ['Símbolo (`LogoAzul.svg`, `LogoBranca.svg`)', '32 px', '24 px', 'Favicon, ícone de app, avatar'],
+  ['Wordmark (`LogoNome1.svg`, `LogoNome2.svg`)', '120 px', '90 px', 'Só quando símbolo e horizontal não couberem'],
+]} />
+<Escala src="marca/LogoHorizontal3.svg" larguras={[80, 120, 160, 240]} legenda="LogoHorizontal3.svg em quatro larguras. A de 80 px fica abaixo do mínimo e serve só de comparação." />
+<Tabela colunas={['Impresso (largura)', 'Recomendado', 'Absoluto', 'Contexto']} larguraMinima={620} linhas={[
+  ['Horizontal (`LogoHorizontal3.svg`, `LogoHorizontal2.svg`)', '45 mm', '32 mm', 'Proposta, relatório, pasta, crachá'],
+  ['Símbolo (`LogoAzul.svg`, `LogoBranca.svg`)', '10 mm', '8 mm', 'Rodapé, cabeçalho compacto, uniforme'],
+  ['Wordmark (`LogoNome1.svg`, `LogoNome2.svg`)', '35 mm', '24 mm', 'Papel timbrado, altura restrita'],
+]} />
+<Cartoes colunas={3} itens={[
+  { titulo: 'Abaixo do mínimo horizontal', texto: 'Troque pelo símbolo isolado. Abaixo do mínimo do símbolo, não aplique logo e use o nome em texto.' },
+  { titulo: 'Vetor sempre', texto: 'Redimensione a partir do SVG ou AI. PNG de 72 dpi esticado para 40 mm pixeliza. Em CMYK, 300 dpi; em uso interno em laser, 150 dpi.' },
+  { titulo: 'Prova impressa', texto: 'Imprima em tamanho real antes da tiragem e confira se o nome se lê a 30 cm de distância.' },
+]} />
+<Callout titulo="Pendente de confirmação">
+Os documentos de logotipo e de versões citam 30 mm como mínimo impresso da horizontal. O documento de tamanho mínimo, o específico, traz 32 mm absolutos e 45 mm recomendados, valores usados aqui.
+</Callout>
+</Secao>
+
+<Secao titulo="Regras por fundo" descricao="O fundo escolhe o arquivo. O logo nunca recebe cor, filtro ou opacidade para compensar.">
+<Galeria colunas={3} itens={[
+  { src: 'marca/LogoHorizontal3.svg', legenda: 'Branco, claros e cinzas 50 a 200', fundo: 'branco', altura: 40 },
+  { src: 'marca/LogoHorizontal2.svg', legenda: 'Citie Blue 400 a 950 e gradiente de marca', fundo: 'azul', altura: 40 },
+  { src: 'marca/LogoHorizontal2.svg', legenda: 'Preto, cinzas 700 a 900 e superfícies escuras', fundo: 'escuro', altura: 40 },
+]} />
+<Tabela colunas={['Fundo', 'Arquivo']} linhas={[
+  ['Claro ou branco (`#FAFAFA`, `#FFFFFF`)', '`LogoHorizontal3.svg`, símbolo `LogoAzul.svg`'],
+  ['Citie Blue ou escuro (escala 400 a 950, preto `#202020`)', '`LogoHorizontal2.svg`, símbolo `LogoBranca.svg`'],
+  ['Gradiente institucional (`#146BFA` a `#0B3C8F`) ou tecnológico (`#1261E4` a `#00B5F0`)', '`LogoHorizontal2.svg`'],
+  ['Foto com área clara', '`LogoHorizontal3.svg`'],
+  ['Foto com área escura', '`LogoHorizontal2.svg`'],
+  ['Foto de contraste misto', 'Overlay sólido antes de posicionar o logo, por exemplo `#146BFA` entre 70% e 100% de opacidade'],
+  ['Textura ou padrão que atrapalha a leitura', 'Recuo retangular sólido atrás do logo'],
+]} />
+<Cartoes colunas={3} itens={[
+  { titulo: 'Contraste mínimo', texto: '4,5:1 entre logo e fundo (WCAG AA). Em peça física de logo grande, acima de 18 pt equivalente, 3:1.' },
+  { titulo: 'Teste do preto e branco', texto: 'Se o logo não for legível em preto e branco sobre o fundo escolhido, o contraste não basta.' },
+  { titulo: 'Em B2G, folga de contraste', texto: 'Comissões analisam materiais impressos em qualidade variável. Prefira o contraste máximo, não só o mínimo.' },
+]} />
+<Tabela colunas={['Contexto de produto', 'Fundo típico', 'Arquivo']} larguraMinima={600} linhas={[
+  ['Header de sistema, modo claro', '`#FFFFFF` ou `#FAFAFA`', '`LogoHorizontal3.svg`'],
+  ['Header de sistema, modo escuro', '`#1A1A2E` ou Citie Blue 900', '`LogoHorizontal2.svg`'],
+  ['Sidebar escura', 'Citie Blue 800', '`LogoHorizontal2.svg`'],
+  ['Login com hero azul', 'Citie Blue 700 a 900', '`LogoHorizontal2.svg`'],
+  ['Card, modal e empty state claro', '`#FFFFFF` ou `#FAFAFA`', '`LogoHorizontal3.svg`'],
+  ['Splash e loading', 'Citie Blue 600', '`LogoHorizontal2.svg`'],
+]} />
+</Secao>
+
+<Secao titulo="Usos incorretos" descricao="Cada par mostra o arquivo certo e a mesma peça com o erro, aplicado só para ilustrar.">
+<Comparativo itens={[
+  {
+    titulo: 'Versão invertida por fundo',
+    certo: { src: 'marca/LogoHorizontal2.svg', fundo: 'azul', legenda: 'LogoHorizontal2.svg sobre Citie Blue.' },
+    errado: { src: 'marca/LogoHorizontal3.svg', fundo: 'azul', legenda: 'LogoHorizontal3.svg sobre Citie Blue: símbolo azul em fundo azul.' },
+  },
+  {
+    titulo: 'Versão clara sobre fundo claro',
+    certo: { src: 'marca/LogoHorizontal3.svg', fundo: 'branco', legenda: 'LogoHorizontal3.svg sobre branco.' },
+    errado: { src: 'marca/LogoHorizontal2.svg', fundo: 'branco', legenda: 'LogoHorizontal2.svg sobre branco: elementos claros somem.' },
+  },
+  {
+    titulo: 'Proporção',
+    certo: { src: 'marca/LogoHorizontal3.svg', fundo: 'branco', legenda: 'Escala proporcional.' },
+    errado: { src: 'marca/LogoHorizontal3.svg', fundo: 'branco', legenda: 'Esticado só na horizontal.', estilo: { height: 48, width: 360, maxHeight: 'none' } },
+  },
+  {
+    titulo: 'Rotação',
+    certo: { src: 'marca/LogoHorizontal3.svg', fundo: 'branco', legenda: 'Sempre na horizontal.' },
+    errado: { src: 'marca/LogoHorizontal3.svg', fundo: 'branco', legenda: 'Inclinado em 15 graus.', estilo: { transform: 'rotate(-15deg)' } },
+  },
+  {
+    titulo: 'Efeito',
+    certo: { src: 'marca/LogoHorizontal3.svg', fundo: 'branco', legenda: 'Logo plano, sem tratamento.' },
+    errado: { src: 'marca/LogoHorizontal3.svg', fundo: 'branco', legenda: 'Com sombra projetada.', estilo: { filter: 'drop-shadow(4px 6px 4px rgba(0,0,0,0.45))' } },
+  },
+  {
+    titulo: 'Recoloração',
+    certo: { src: 'marca/LogoHorizontal3.svg', fundo: 'branco', legenda: 'Cores do arquivo oficial.' },
+    errado: { src: 'marca/LogoHorizontal3.svg', fundo: 'branco', legenda: 'Matiz trocado por filtro para combinar com o tema.', estilo: { filter: 'hue-rotate(120deg)' } },
+  },
+]} />
+<CertoErrado itens={[
+  {
+    certo: 'Use o SVG oficial de cada versão e redimensione com a proporção travada.',
+    errado: 'Redimensionar arrastando um lado só, deixando o símbolo oval ou o nome espremido.',
+  },
+  {
+    certo: 'Mantenha o logo plano, como vem no arquivo.',
+    errado: 'Sombra, brilho, reflexo, relevo, contorno, textura, 3D ou opacidade reduzida.',
+    motivo: 'Efeitos pesam a peça e são lidos como erro de renderização em portais públicos.',
+  },
+  {
+    certo: 'Troque de arquivo quando o fundo mudar.',
+    errado: 'Recolorir por CSS, fill manual ou camada, ou usar cor de cliente ou de evento.',
+    motivo: 'Não existe versão verde, cinza ou de parceiro. A cor da marca é o Citie Blue (`#146BFA` e `#1261E4` nos arquivos).',
+  },
+  {
+    certo: 'Insira o SVG do wordmark como vem, com o símbolo ao lado.',
+    errado: 'Refazer o nome em Red Hat Display, Inter ou outra fonte por falta do arquivo.',
+    motivo: 'Espaçamento e peso das letras foram calibrados para o logo.',
+  },
+  {
+    certo: 'Mantenha símbolo e nome na posição e no espaçamento do arquivo.',
+    errado: 'Separar, empilhar onde a horizontal é obrigatória, ou mudar o símbolo de canto.',
+  },
+  {
+    certo: 'Use PDF vetorial ou SVG. Entregue o vetor ao fornecedor gráfico.',
+    errado: 'JPEG muito comprimido, PNG de baixa resolução para impressão, captura de tela ou SVG reprocessado com artefatos.',
+  },
+  {
+    certo: 'Em foto ou textura, coloque overlay sólido ou box de cor atrás do logo.',
+    errado: 'Logo direto sobre foto de contraste misto, textura ou gradiente que cobre a tela inteira.',
+    motivo: 'Fundo de página é sempre sólido. Gradiente fica para hero, capas e ilustrações.',
+  },
+  {
+    certo: 'Use a horizontal completa em cabeçalho de proposta, rodapé institucional, apresentação formal e relatório.',
+    errado: 'Usar só o símbolo ou só o nome onde o logo completo é exigido.',
+    motivo: 'O símbolo é reservado a favicon, ícone de app, marca d\'água e espaço reduzido.',
+  },
+  {
+    certo: 'Anime o logo só com aprovação da área de marca. Uma entrada pontual, como um fade in em splash, é aceitável.',
+    errado: 'Morphing, partículas, troca de cor, rotação do símbolo, glitch ou loop contínuo.',
+    motivo: 'Quadros intermediários podem mostrar o logo deformado, recolorido ou fragmentado.',
+  },
+  {
+    certo: 'Use o logo para representar a Citiesoft como empresa.',
+    errado: 'Padrão repetido de fundo, logo em contexto humorístico ou político-partidário, ou ao lado de marca de outra empresa sem aprovação de co-branding.',
+  },
+]} />
+<Callout titulo="Mascote">
+O Citiezinho nunca ocupa o espaço principal do logo em material institucional formal. Em produto digital pode aparecer em empty state e onboarding, com o logo mantido no cabeçalho.
+</Callout>
+</Secao>
+
+<Secao titulo="Checklist antes de entregar">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Arquivo', texto: 'SVG oficial, e a versão combina com o fundo.' },
+  { titulo: 'Forma', texto: 'Proporção travada, sem efeito, rotação ou recoloração.' },
+  { titulo: 'Espaço', texto: 'Respiro de pelo menos X livre e tamanho acima do mínimo.' },
+  { titulo: 'Leitura', texto: 'Contraste de 4,5:1 ou mais, com overlay sólido em foto ou textura.' },
+]} />
+</Secao>
+
+<Callout>
+Fonte: brandbook Citiesoft, seção Identidade visual (área de respiro, tamanho mínimo, logo por fundo e usos incorretos).
+</Callout>
+
+</Pagina>

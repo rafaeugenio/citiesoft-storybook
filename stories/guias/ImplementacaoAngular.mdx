@@ -1,0 +1,173 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, Passos } from '../_docs/Conteudo';
+import { Checklist } from '../_docs/Checklist';
+import { deteccaoDeGeracao, presetAngular, estadosPorClasse, contratoDeComponente, densidadeEMovimento, tabelaDeServidores } from '../_docs/snippets/implementacao-angular';
+
+<Meta title="Guias/Implementação Angular" />
+
+<Pagina
+  titulo="Implementação Angular"
+  resumo="Como levar o Design System para Angular com PrimeNG no contexto do sakai-ng. Vale para qualquer módulo Citiesoft: Administrativo, TFD, Estoque e os futuros."
+>
+
+<Secao titulo="Identifique a geração" descricao="Leia o package.json antes de escrever qualquer código. Cada geração tem convenções próprias.">
+<Tabela larguraMinima={620} colunas={['Sinal', 'Geração', 'PrimeNG', 'Tema']} linhas={[
+  ['`@primeng/themes`', 'A19', '19.x', 'Preset Lara via `usePreset()` e variáveis de CSS do preset'],
+  ['`@primeuix/themes`', 'A21', '20 ou mais', 'Preset unificado, mesmo padrão semântico'],
+  ['Só `primeflex`', 'A18', '17.x', 'CSS clássico, ajustes em `:root` e classes utilitárias'],
+]} />
+<CodeTabs abas={deteccaoDeGeracao} />
+<Callout>
+Não misture convenções de gerações no mesmo módulo. Se o módulo vem do sakai-ng A19 e importa CSS clássico de um fork A18, remova o import clássico e migre para o preset.
+</Callout>
+</Secao>
+
+<Secao titulo="Seis princípios">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Token primeiro', texto: 'Cor, espaço, fonte, sombra e raio vêm de token semântico. Hex e px soltos só em protótipo descartável.' },
+  { titulo: 'PrimeNG antes de componente próprio', texto: 'Se existe botão, campo, tabela, diálogo ou toast no PrimeNG, use-o com o preset. Crie componente só sem equivalente.' },
+  { titulo: 'Estado por classe', texto: 'Disabled, loading, erro e selecionado são classes ligadas a tokens. Nunca `[style.background]`.' },
+  { titulo: 'Tema por seletor', texto: 'Não escreva `prefers-color-scheme: dark` sozinho. Os tokens semânticos alternam com o seletor do tema.' },
+  { titulo: 'Contrato tipado', texto: '`@Input` e `@Output` explícitos, sem `any`.' },
+  { titulo: 'Zero estilo fixo', texto: 'PR com cor, espaço ou fonte literal é bloqueado no Design QA.' },
+]} />
+</Secao>
+
+<Secao titulo="Tokens como variáveis de CSS" descricao="Use sempre o nome semântico por variável. A tabela mostra os valores dos temas claro e escuro.">
+<Tabela larguraMinima={620} colunas={['Token', 'Valor claro', 'Valor escuro']} linhas={[
+  ['Fundo de página', '`#FAFAFA`', '`#141414`'],
+  ['Superfície', '`#FFFFFF`', '`#1A1A1D`'],
+  ['Fundo suave', '`#F4F5F7`', '`#232327`'],
+  ['Texto principal', '`#202020`', '`#F5F5F6`'],
+  ['Texto de corpo', '`#3C3C3C`', '`#D2D3D6`'],
+  ['Marca (ação)', '`#1261E4`', '`#4D8BFC`'],
+  ['Marca no hover', '`#0E4DB8`', '`#84AEFD`'],
+  ['Borda padrão', '`#E8EAED`', '`#34343A`'],
+  ['Estado desabilitado', 'Fundo `#E8EAED`, texto `#A8ACB3`', 'Fundo `#34343A`, texto `#45454C`'],
+  ['Anel de foco', '`0 0 0 3px rgba(18,97,228,.40)`', 'Igual'],
+]} />
+<Tabela larguraMinima={560} colunas={['Escala', 'Valores']} linhas={[
+  ['Fonte', 'Corpo 14 px, grande 16 px, pequeno 13 px, legenda 12 px, título médio 20 px, título grande 24 px, sobrelinha 11 px'],
+  ['Famílias', 'UI em Inter, títulos em Red Hat Display, dados em Red Hat Mono'],
+  ['Espaço', '4, 8, 12, 16, 24, 32 e 48 px'],
+  ['Raio', '4, 6, 8 e 12 px'],
+  ['Sombra', 'sm para campos, md para cards, lg para menus, xl para modal e drawer'],
+]} />
+</Secao>
+
+<Secao titulo="Preset do PrimeNG" descricao="O DesignOps mantém o preset. Falta um token? Abra uma solicitação de token com a tag token-request antes de improvisar.">
+<CodeTabs abas={presetAngular} />
+<Callout>
+Em A21 a API é equivalente e o import vem de `@primeuix/themes`. Em A18 o tema entra pelo array de estilos do `angular.json`, com ajustes em `styles.scss`, e não se usa `providePrimeNG`.
+</Callout>
+</Secao>
+
+<Secao titulo="Estados e tema escuro">
+<CodeTabs abas={estadosPorClasse} />
+<Cartoes colunas={2} itens={[
+  { titulo: 'Tema escuro', texto: 'Com tokens por variável o tema funciona sem bloco extra. Reserve `:host-context` para ajuste estrutural que o token não cobre.' },
+  { titulo: 'Loading', texto: 'Opacidade de 0,7 e cursor de espera. Comportamento fixo, sem token próprio.' },
+]} />
+</Secao>
+
+<Secao titulo="Componentes e override">
+<Tabela larguraMinima={620} colunas={['Contexto', 'PrimeNG']} linhas={[
+  ['Ação primária', '`p-button` com `severity="primary"`'],
+  ['Campo de texto', '`p-inputtext`'],
+  ['Município ou UF', '`p-select` (A19), `p-dropdown` (A18)'],
+  ['Servidores e processos', '`p-table` com `virtualScroll`'],
+  ['Cancelar processo', '`p-confirmdialog`'],
+  ['Feedback de ação', '`p-toast`'],
+  ['Menu lateral', '`p-panelmenu`'],
+  ['Prestação de contas', '`p-fileupload`'],
+  ['Datas', '`p-datepicker` (A19), `p-calendar` (A18)'],
+  ['Etapas do processo', '`p-stepper`'],
+  ['Situação do processo', '`p-tag`'],
+  ['Filtro de período', '`p-daterangepicker`'],
+]} />
+<Callout titulo="Regra de override">
+Customize pelo preset, nunca por CSS global. `::ng-deep` só dentro do `:host` do componente, com comentário explicando o motivo. Sobrescrita global de `.p-button` é proibida.
+</Callout>
+<CodeTabs abas={contratoDeComponente} />
+<Cartoes colunas={2} itens={[
+  { titulo: 'Contrato', texto: '`@Input({ required: true })` nas props obrigatórias. Tipos enumerados exportados junto do componente. `EventEmitter<T>` tipado.' },
+  { titulo: 'Detecção de mudança', texto: '`OnPush` e `standalone: true` em todo componente do Design System. Módulos só para legado A18 e integração de terceiros.' },
+]} />
+</Secao>
+
+<Secao titulo="Densidade e movimento" descricao="Módulo operacional usa densidade compacta. Portais de gestão e cidadão usam a confortável.">
+<CodeTabs abas={densidadeEMovimento} />
+</Secao>
+
+<Secao titulo="Acessibilidade no Angular">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Foco', texto: 'Anel global em `:focus-visible` com o token de foco. O preset já cobre os componentes nativos. Em componente próprio, aplique explicitamente.' },
+  { titulo: 'Botões', texto: '`type="button"` em todo botão que não é `p-button`, para não enviar o formulário.' },
+  { titulo: 'Ícones', texto: 'Decorativo com `aria-hidden="true"`. Funcional com `aria-label`.' },
+  { titulo: 'Formulários', texto: 'Reactive forms com `Validators` e erro ligado por `aria-describedby`. Asterisco de obrigatório com `aria-label` no próprio elemento.' },
+  { titulo: 'Diálogos', texto: 'Foco preso ao abrir e devolvido ao gatilho. Padrão do PrimeNG.' },
+  { titulo: 'Paginação e status', texto: '`p-paginator` com `aria-label` do estado: "Página 3 de 12, 47 resultados". `p-toast` já usa `aria-live`, não duplique.' },
+]} />
+<CodeTabs abas={tabelaDeServidores} />
+</Secao>
+
+<Secao titulo="Textos nos templates">
+<Tabela larguraMinima={600} colunas={['Situação', 'Texto']} linhas={[
+  ['Campo obrigatório vazio', '[Rótulo] é obrigatório.'],
+  ['CPF inválido', 'CPF inválido. Verifique os dígitos.'],
+  ['Data fora do período', 'Data fora do período permitido (jan/2024 a dez/2025).'],
+  ['Arquivo grande', 'Arquivo excede 10 MB. Reduza o tamanho e tente novamente.'],
+  ['Sem resultado no filtro', 'Nenhum servidor encontrado com os filtros aplicados. Ajuste os critérios de busca.'],
+  ['Falha de carga', 'Não foi possível carregar os dados. Tente novamente ou contate o suporte.'],
+  ['Salvou cadastro', 'Servidor cadastrado com sucesso.'],
+  ['Lançou diária', 'Diária lançada. Processo 2025/0481 atualizado.'],
+]} />
+<Callout>
+Rótulos curtos, sem dois-pontos. Placeholder só mostra formato, por exemplo "Ex.: 02/2025".
+</Callout>
+</Secao>
+
+<Secao titulo="Handoff">
+<Passos itens={[
+  { titulo: 'Designer anota o componente', texto: 'Na camada do Figma, o componente PrimeNG correspondente, como `p-button severity="primary"`.' },
+  { titulo: 'Designer anota a densidade', texto: 'Compacta em módulo operacional. Estados completos: padrão, hover, foco, desabilitado, erro e loading.' },
+  { titulo: 'Dev confere a geração', texto: 'Leia o package.json e instale ou atualize o preset antes de iniciar o módulo.' },
+  { titulo: 'Dev usa nomes, não hex', texto: 'Tokens pelo nome semântico em anotações e código. Sem equivalente PrimeNG, o contrato de `@Input` vai na anotação.' },
+]} />
+<Checklist grupos={[
+  {
+    titulo: 'Antes de abrir o PR',
+    itens: [
+      'Geração identificada pelo package.json (A18, A19 ou A21).',
+      'Preset atualizado e configurado no `app.config.ts`, ou no array de estilos em A18.',
+      'Nenhum hex, px avulso ou família de fonte literal no SCSS do componente.',
+      'Tema escuro testado alternando o seletor do tema.',
+      'Estados por classe, sem `[style]`.',
+      '`OnPush`, `@Input({ required: true })` e `EventEmitter<T>` tipado.',
+      'PrimeNG onde existir, com override pelo preset e sem `::ng-deep` global.',
+      'Foco visível, `aria-describedby` em erro, ícones com `aria-hidden` ou `aria-label`.',
+      'Movimento reduzido respeitado nas animações.',
+      'Densidade definida no elemento raiz do módulo.',
+      'Textos de erro, vazio e confirmação seguem o padrão.',
+    ],
+  },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Prefixo das variáveis', texto: 'O guia Angular usa `--cs-*`. O checklist de Design QA e o guia de marca usam `--citie-*` e `--p-*`. O tema deste Storybook expõe `--color-*`, `--motion-*` e `--ease-citie-*`.' },
+  { titulo: 'Seletor do tema escuro', texto: 'A fonte usa `.app-dark` no `html`, e um documento o coloca no `body`. Este Storybook usa `.dark`.' },
+  { titulo: 'Durações', texto: 'O exemplo de drawer anima 240 ms de entrada e 200 ms de saída, e a tabela de tokens da fonte lista 100, 200, 240 e 300 ms. Os tokens atuais são 120, 180, 240, 320 e 480 ms, com teto de 300 ms no produto.' },
+  { titulo: 'Texto secundário', texto: 'A fonte usa neutral-500 em `--cs-text-secondary`. O tema usa neutral-600 no tema claro por contraste.' },
+  { titulo: 'Zerar transições', texto: 'O guia Angular sugere `transition-duration: 0.01ms !important`. O guia de movimento prefere opt-in para não quebrar `transitionend` do PrimeNG.' },
+  { titulo: 'Versões', texto: 'O guia de marca cita Angular 21 com `@primeuix/themes` e Angular 19 com PrimeNG 19. A tabela de geração acima segue o guia Angular.' },
+]} />
+</Secao>
+
+<Callout>
+Fonte: guidelines de UX do Design System Citiesoft, diretrizes de implementação Angular (com apoio dos guias de marca e movimento).
+</Callout>
+
+</Pagina>

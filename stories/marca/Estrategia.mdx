@@ -1,0 +1,135 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+
+<Meta title="Marca/Estratégia" />
+
+<Pagina
+  titulo="Estratégia de marca"
+  resumo="A Citiesoft atua no setor público (B2G). Propósito, missão, visão, valores, posicionamento, arquétipo e personalidade formam o critério para revisar qualquer texto, tela ou peça."
+>
+
+<Secao titulo="Propósito, missão e visão" descricao="Três declarações distintas. Nenhuma substitui a outra. Em peça que usa as três, a ordem é propósito, missão, visão.">
+<Tabela
+  colunas={['Pilar', 'Declaração oficial', 'Forma curta', 'Onde aparece']}
+  linhas={[
+    ['Propósito', 'A Citiesoft existe para transformar a maneira como governos e suas equipes trabalham, eliminando gargalos, reduzindo desperdício e devolvendo tempo e capacidade operacional para quem entrega serviço público ao cidadão.', 'Tecnologia que devolve eficiência ao serviço público.', 'Abertura institucional, Sobre nós, relatório de impacto, cultura interna'],
+    ['Missão', 'Viabilizar operações públicas mais ágeis, inteligentes e integradas, promovendo eficiência e impacto real na gestão de governos, secretarias e órgãos públicos.', 'Operações públicas mais ágeis, inteligentes e integradas.', 'Proposta comercial, deck de licitação, onboarding, bio do perfil oficial'],
+    ['Visão', 'Ser o backbone tecnológico que impulsiona governos e empresas mais eficientes.', 'O backbone tecnológico da gestão pública eficiente.', 'Pitch a parceiros, planejamento estratégico, roadmap'],
+  ]}
+  larguraMinima={720}
+/>
+<Callout titulo="Regras">
+Preserve os termos âncora: gestão pública, eficiência, impacto real, backbone tecnológico. Visão não leva prazo, porque é direcional e não contratual. Nenhum dos três entra em manual técnico, release note ou documentação de API. A missão nunca aparece literal na interface do produto.
+</Callout>
+<CertoErrado itens={[
+  { certo: 'Nossa missão é viabilizar operações públicas mais ágeis, inteligentes e integradas, com impacto real na gestão da sua secretaria.', errado: 'Nossa missão é ser o melhor software público do Brasil.', motivo: 'Melhor é vago e não aponta resultado.' },
+  { certo: 'Ser o backbone tecnológico que impulsiona governos e empresas mais eficientes.', errado: 'Visão: tornar o setor público mais eficiente até 2030.', motivo: 'Prazo transforma a visão em promessa contratual.' },
+]} />
+</Secao>
+
+<Secao titulo="Valores" descricao="Nove critérios de decisão. Mostre o valor em ação e não use o nome dele como chamada de campanha. Em conflito, priorize confiança e responsabilidade pública no setor público, eficiência e impacto real em contexto operacional, e clareza sempre.">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Clareza', texto: 'Texto direto, sem jargão. Erro explica o problema e indica o próximo passo.' },
+  { titulo: 'Eficiência', texto: 'Menos atrito e retrabalho. Mede-se no tempo do servidor. Exemplo: de 14 para 3 etapas.' },
+  { titulo: 'Confiança', texto: 'Afirmação verificável e log de auditoria. Limitações comunicadas com antecedência.' },
+  { titulo: 'Parceria', texto: 'Extensão da equipe do cliente. Implantação assistida e suporte com SLA visível.' },
+  { titulo: 'Evolução contínua', texto: 'Changelog que explica o impacto. Exemplo: relatório de 8 s para 1,2 s.' },
+  { titulo: 'Responsabilidade pública', texto: 'Dados pertencem a cidadãos. LGPD no desenho, menor privilégio, incidente comunicado sem eufemismo.' },
+  { titulo: 'Tecnologia aplicada', texto: 'Benefício antes da stack. Funciona nos navegadores e redes dos órgãos.' },
+  { titulo: 'Segurança', texto: 'Evidência no lugar de declaração. Exemplo: TLS 1.3 em trânsito e AES-256 em repouso.' },
+  { titulo: 'Impacto real', texto: 'Resultado fora do sistema, mensurável. Exemplo: autorização de 72 h para 8 h.' },
+]} />
+<Tabela
+  colunas={['Contexto', 'Valores mais ativados']}
+  linhas={[
+    ['Tela, fluxo e modal', 'Clareza, segurança, eficiência'],
+    ['Pitch e apresentação', 'Confiança, impacto real, parceria'],
+    ['Proposta e licitação', 'Responsabilidade pública, confiança, tecnologia aplicada'],
+    ['Post em rede social', 'Clareza, impacto real, evolução contínua'],
+    ['Release note', 'Evolução contínua, impacto real, clareza'],
+    ['Incidente', 'Responsabilidade pública, confiança, segurança'],
+  ]}
+  larguraMinima={480}
+/>
+</Secao>
+
+<Secao titulo="Posicionamento">
+<Callout titulo="Frase de posicionamento">
+Citiesoft: o parceiro tecnológico que transforma a gestão pública em operação eficiente, integrada e confiável.
+</Callout>
+<Tabela
+  colunas={['Contexto', 'Versão aprovada']}
+  linhas={[
+    ['Capa de deck de licitação', 'Tecnologia que moderniza a gestão pública.'],
+    ['Subtítulo de proposta técnica', 'Plataformas integradas para operações públicas mais eficientes.'],
+    ['Tagline de apresentação', 'Modernizando a gestão pública com tecnologia confiável.'],
+    ['Post no LinkedIn', 'Eficiência real para quem opera o setor público.'],
+    ['Onboarding interno', 'Somos o parceiro que faz a gestão pública funcionar melhor.'],
+  ]}
+  larguraMinima={520}
+/>
+<Cartoes colunas={3} itens={[
+  { titulo: 'Especialização', texto: 'Software exclusivo para operações públicas, sem adaptação de ERP genérico.' },
+  { titulo: 'Integração', texto: 'Produtos que conversam entre si e com o ecossistema do cliente.' },
+  { titulo: 'Continuidade', texto: 'Acompanhamento pós-implantação e evolução do produto.' },
+  { titulo: 'Linguagem do setor', texto: 'Licitação, compliance, LGPD pública e fluxos de secretaria.' },
+  { titulo: 'Escala', texto: 'De municípios pequenos a secretarias estaduais.' },
+  { titulo: 'Time técnico dedicado', texto: 'O núcleo do produto não é terceirizado.' },
+]} />
+<Callout>
+Todo texto de posicionamento menciona gestão pública ou setor público e liga o benefício a um problema real do órgão. Inovação vaga, transformação digital sem contexto, disruptivo, líder de mercado sem evidência e superlativo sem prova ficam de fora. Concorrentes nunca são citados por nome em peça externa. O Citiezinho não aparece em posicionamento institucional.
+</Callout>
+</Secao>
+
+<Secao titulo="Arquétipo" descricao="Principal: o Sábio. Secundário: o Governante. Nenhum opera sozinho.">
+<Tabela
+  colunas={['Arquétipo', 'Desejo e medo', 'Linguagem', 'Usar em', 'Risco']}
+  linhas={[
+    ['Sábio', 'Clareza sobre o mundo. Teme desinformação.', 'Frases declarativas e precisas. Verbos: integrar, consolidar, mapear, estruturar, processar, entregar.', 'Apresentação técnica, documentação, onboarding, relatório', 'Soar hermético ou acadêmico'],
+    ['Governante', 'Ordem e estabilidade. Teme o caos e a falha sistêmica.', 'Autoridade sem arrogância, estrutura sem engessamento.', 'Contrato, proposta, deck de licitação, comunicação formal', 'Soar burocrático ou autoritário'],
+  ]}
+  larguraMinima={720}
+/>
+<Callout titulo="Apoio pontual">
+O Cuidador entra com parcimônia em comunicação interna e quando o sistema serve diretamente o cidadão, como no TFD. O Criador aparece em onboarding de produto e roadmap interno. Nenhum dos dois é protagonista da comunicação institucional.
+</Callout>
+<CertoErrado itens={[
+  { certo: 'O módulo de TFD centraliza os fluxos de solicitação, análise e transporte em uma plataforma auditável. Cada etapa é registrada e exportável para prestação de contas.', errado: 'Disrupting the public sector with cutting-edge AI-powered solutions!', motivo: 'Hype em inglês nega o Sábio e o Governante.' },
+  { certo: 'Gestão pública eficiente começa com dados organizados.', errado: 'Reimaginamos completamente o que significa ser governo.', motivo: 'Promessa sem evidência nem especificidade operacional.' },
+]} />
+</Secao>
+
+<Secao titulo="Personalidade" descricao="Oito atributos, cada um com um ponto de equilíbrio entre excesso e falta.">
+<Tabela
+  colunas={['Atributo', 'Excesso', 'Ponto Citiesoft', 'Falta']}
+  linhas={[
+    ['Clara', 'Simplista, rasa', 'Direta e precisa', 'Hermética, jargão'],
+    ['Técnica', 'Exibicionismo técnico', 'Competência visível sem ostentação', 'Vaga, superficial'],
+    ['Confiável', 'Engessada, burocrática', 'Sólida e consistente', 'Instável, imprecisa'],
+    ['Parceira', 'Bajuladora, sem posição', 'Próxima e comprometida', 'Distante, transacional'],
+    ['Institucional', 'Rígida, fria', 'Respeitável e coerente', 'Informal demais'],
+    ['Moderna', 'Futurista, fora do setor público', 'Atual e aplicável', 'Ultrapassada'],
+    ['Resolutiva', 'Apressada, ignora contexto', 'Solução com método', 'Contemplativa, lenta'],
+    ['Humana', 'Emocional demais', 'Empática sem perder seriedade', 'Mecânica, robotizada'],
+  ]}
+  larguraMinima={640}
+/>
+<CertoErrado itens={[
+  { certo: 'Não foi possível gerar o relatório: o período selecionado ultrapassa 12 meses. Selecione um intervalo de até 365 dias e tente novamente.', errado: 'Erro de validação 422', motivo: 'Expõe o erro técnico sem tradução funcional.' },
+  { certo: 'O módulo de ponto apresentou instabilidade entre 14h e 15h30. A causa foi identificada e a correção foi aplicada às 15h28. O sistema está estável.', errado: 'Estamos trabalhando no problema, em breve retornamos.', motivo: 'Omite causa e prazo em contexto de pressão pública.' },
+]} />
+<Callout>
+O Citiezinho pode aparecer em empty states e comunicação interna. Nunca em proposta de licitação.
+</Callout>
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Callout titulo="O que prevalece">
+A plataforma de marca consolidada difere dos documentos específicos: traz arquétipo secundário Cuidador, missão reescrita (plataformas digitais robustas e integradas), 7 valores, 5 traços de personalidade e 4 pilares de mensagem. Esta página segue os documentos específicos de cada tema, que são mais detalhados: Governante como secundário, missão oficial acima, 9 valores, 8 atributos e 5 pilares. A essência "Tecnologia que move a gestão pública para frente" aparece só na plataforma consolidada.
+</Callout>
+</Secao>
+
+<Callout>Fonte: Brandbook Citiesoft, Estratégia de marca.</Callout>
+
+</Pagina>

@@ -1,0 +1,114 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { ErroDeCampoDemo, PainelDeResumoDemo, FalhaDeOperacaoDemo, ErroDeSecaoDemo, PaginasDeErroDemo } from '../_docs/padroes/TratamentoDeErros';
+import { Prontos } from '../_docs/padroes/Moldura';
+import { erroDeOperacao } from '../_docs/snippets/padrao-tratamento-de-erros';
+
+<Meta title="Guias/Padrões/Tratamento de erros" />
+
+<Pagina
+  titulo="Tratamento de erros"
+  resumo="Do campo à página de falha: o erro aparece perto da origem, diz o que aconteceu e como resolver, e nunca apaga o trabalho do usuário."
+>
+
+<Secao titulo="Quando usar">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Use para', texto: 'Validação de campo, envio com campos inválidos, operação assíncrona que falhou, rota inexistente, recurso sem permissão e serviço indisponível.' },
+  { titulo: 'Não use para', texto: 'Progresso ou informação neutra (carregamento e feedback), aviso preventivo que não bloqueia e primeiro uso, que pede estado vazio orientativo.' },
+]} />
+</Secao>
+
+<Secao titulo="Anatomia" descricao="Quatro camadas, da mais próxima da origem à mais ampla. O erro escala só quando não há contexto mais granular.">
+<Tabela colunas={['Camada', 'Onde aparece', 'Recuperação']} larguraMinima={600} linhas={[
+  ['Campo', 'Abaixo do campo, com ícone à esquerda do texto.', 'Corrigir e sair do campo.'],
+  ['Formulário', 'Painel de resumo no topo, com 3 ou mais erros.', 'Itens que levam ao campo.'],
+  ['Operação', 'Toast para falha recuperável. Alerta de seção quando a seção não carrega.', '`Tentar novamente` ou instrução de negócio.'],
+  ['Página', 'Tela inteira para 404, acesso, falha de servidor e instabilidade.', '`Ir para o início`, `Tentar novamente`, `Solicitar acesso`.'],
+]} />
+</Secao>
+
+<Secao titulo="Regras">
+<Tabela colunas={['Nº', 'Regra']} larguraMinima={520} linhas={[
+  ['1', 'Mensagem é causa mais ação. `Campo inválido` é vedado.'],
+  ['2', 'Borda de erro no campo e estado de inválido. O rótulo não muda de cor e o anel de foco continua azul.'],
+  ['3', 'Valide ao sair do campo e no envio, nunca a cada tecla. Regra de negócio só no envio ou em verificação assíncrona explícita.'],
+  ['4', 'Corrigido e fora do campo, o erro sai na hora.'],
+  ['5', 'Mensagem de campo com até 120 caracteres, quebrando de linha e sem reticências.'],
+  ['6', 'Painel de resumo com `Corrija [N] erro(s) antes de continuar.` e itens no formato `[Rótulo]: [mensagem]`. Recebe o foco após o envio.'],
+  ['7', 'Toast de falha: 8 segundos, botão de fechar, resumo com a ação que falhou e detalhe em linguagem de negócio.'],
+  ['8', 'Nunca exiba pilha, nome de exceção, código de banco ou status bruto. Se o suporte precisa de referência, use `Referência: [código curto]`.'],
+  ['9', 'Erro que exige ação imediata (sessão expirada) usa toast fixo com botão, como `Fazer login novamente`.'],
+  ['10', 'Preserve dados em toda chamada assíncrona, em todas as etapas e nos arquivos já selecionados.'],
+  ['11', 'Página de erro mostra título, motivo e ação. O código de status não aparece.'],
+  ['12', 'Tom institucional, sem `Ops!`. Voz ativa e culpa zero.'],
+]} />
+<Tabela colunas={['Causa', 'Modelo']} linhas={[
+  ['Obrigatório vazio', '`[Rótulo] é obrigatório.`'],
+  ['Formato inválido', '`[Rótulo] deve estar no formato [formato].`'],
+  ['Fora do intervalo', '`[Rótulo] deve estar entre [mínimo] e [máximo].`'],
+  ['Regra de negócio', 'Frase afirmativa com a causa: `A competência 03/2025 está encerrada para lançamentos.`'],
+  ['Dependência de campo', 'Cite o outro campo: `Data de término deve ser posterior à data de início.`'],
+  ['Falha de rede', '`Não foi possível [ação]. Verifique sua conexão e tente novamente.`'],
+]} />
+</Secao>
+
+<Secao titulo="Estados" descricao="Páginas de erro padronizadas.">
+<Tabela colunas={['Página', 'Título', 'Ações']} larguraMinima={560} linhas={[
+  ['Não encontrada', '`Página não encontrada`', '`Ir para o início`, `Voltar`'],
+  ['Sem permissão', '`Acesso não autorizado`', '`Ir para o início`, `Solicitar acesso`'],
+  ['Erro de servidor', '`Algo deu errado`', '`Tentar novamente`, suporte, com referência curta'],
+  ['Indisponível', '`Serviço temporariamente indisponível`', '`Tentar novamente`, que pode habilitar após 30 segundos'],
+]} />
+</Secao>
+
+<Secao titulo="Acessibilidade">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Nunca só cor', texto: 'Ícone, texto e borda juntos. Perigo 600 sobre branco passa AA para texto e a borda passa AA para componente.' },
+  { titulo: 'Foco gerenciado', texto: 'Após o envio inválido, o foco vai ao painel de resumo ou ao primeiro campo com erro, e cabeçalho fixo não o cobre.' },
+  { titulo: 'Anúncio imediato', texto: 'Painel e toast anunciados em região assertiva.' },
+  { titulo: 'Sugestão obrigatória', texto: 'A mensagem inclui como corrigir: formato, valor válido ou ação.' },
+  { titulo: 'Prevenção', texto: 'Ação destrutiva confirma antes de executar, com dados revisáveis.' },
+  { titulo: 'Sem movimento', texto: 'Com redução de movimento, o conteúdo de erro aparece direto e completo.' },
+]} />
+</Secao>
+
+<Secao titulo="Certo e errado">
+<CertoErrado itens={[
+  { certo: '`Valor da diária é obrigatório. Informe o valor em reais (ex.: 150,00).`', errado: 'Só a borda vermelha com `Campo inválido`.', motivo: 'Sem ícone, sem instrução e sem associação, o leitor de tela fica sem contexto.' },
+  { certo: 'Toast `Não foi possível salvar o lançamento.` com a causa de negócio e `Referência: A3F9B21C`.', errado: 'Toast `Error` com nome de classe, arquivo e linha.', motivo: 'Expõe a arquitetura e não oferece recuperação.' },
+  { certo: 'Página `Algo deu errado` com referência curta e `Tentar novamente`.', errado: 'Rastreamento de pilha na tela.' },
+]} />
+</Secao>
+
+<Secao titulo="Exemplo composto" descricao="As camadas de erro montadas com Input, EmptyState e ErrorState.">
+<ErroDeCampoDemo />
+<PainelDeResumoDemo />
+<FalhaDeOperacaoDemo />
+<ErroDeSecaoDemo />
+<PaginasDeErroDemo />
+<CodeTabs abas={erroDeOperacao} />
+</Secao>
+
+<Secao titulo="Onde ver pronto">
+<Prontos itens={[
+  { nome: 'Blocos/Estados', uso: 'EmptyState, ErrorState e TableSkeleton.' },
+  { nome: 'Templates/Sistemas/Páginas de erro e estados', uso: 'Páginas 404, acesso negado e falha de servidor.' },
+  { nome: 'Blocos/Formulario', uso: 'Campos com erro dentro de seções.' },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Tabela colunas={['Tema', 'O que os documentos dizem']} linhas={[
+  ['Posição do toast em tela estreita', 'Tratamento de erros põe no centro inferior abaixo de 640 px. Comportamento responsivo e Padrões mobile põem no topo, em largura total.'],
+  ['Duração do toast de erro', 'Tratamento de erros pede 8 segundos. Padrões mobile pede 6 segundos. Permissões pede no mínimo 6 segundos.'],
+  ['Contraste do texto de erro', 'O valor de perigo 600 sobre branco aparece como 5,38:1, 5,74:1, 5,9:1 e 5,91:1 conforme o documento.'],
+  ['Quando validar', 'Formulários valida ao sair do campo. Tratamento de erros valida ao sair para campos opcionais e no envio para todos.'],
+]} />
+</Secao>
+
+<Callout>
+Fonte: padrão de Tratamento de erros do Design System Citiesoft, com apoio de Formulários e Permissões.
+</Callout>
+
+</Pagina>

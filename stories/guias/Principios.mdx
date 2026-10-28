@@ -1,0 +1,101 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, Passos } from '../_docs/Conteudo';
+import { principiosNaPratica } from '../_docs/snippets/principios';
+
+<Meta title="Guias/Princípios" />
+
+<Pagina
+  titulo="Princípios"
+  resumo="Os oito princípios que sustentam toda decisão de design do produto, o contexto B2G em que ele opera e as regras de governança e de versão do Design System."
+>
+
+<Secao titulo="Contexto B2G" descricao="O Design System documenta e estende o PrimeOne 4.0.0 para sistemas de gestão pública. Ele é o contrato entre Design, engenharia Angular e PrimeNG e agentes de IA.">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Densidade operacional', texto: 'O servidor usa o sistema até 8 horas por dia. Inconsistência visual vira carga cognitiva e erro de digitação.' },
+  { titulo: 'Acessibilidade legal', texto: 'LBI (Lei 13.146/2015, Art. 63), e-MAG 3.1 e WCAG 2.2 AA são obrigatórios. Um laudo de não conformidade pode invalidar contrato.' },
+  { titulo: 'Três perfis ao mesmo tempo', texto: 'Servidor operacional, gestor público e cidadão usam a mesma plataforma, com densidades e linguagens diferentes.' },
+  { titulo: 'Módulos que crescem', texto: 'Pessoas, Administrativo, Estoque e Sistema precisam de um manual operacional, não de tradição oral.' },
+]} />
+<Tabela colunas={['Escopo', 'Itens']} linhas={[
+  ['Dentro', 'Sistemas web administrativos, dashboards e relatórios, fluxos mobile do cidadão, autenticação com MFA, notificações, upload de documentos, empty states e error states'],
+  ['Fora', 'Landing pages institucionais, apresentações, material impresso e e-mail marketing. Seguem as diretrizes de marca'],
+]} />
+</Secao>
+
+<Secao titulo="Os oito princípios" descricao="Cada decisão pode ser auditada contra eles. Se a justificativa não se apoia em nenhum, revise a escolha.">
+<Tabela colunas={['Princípio', 'Regra', 'Verificação']} larguraMinima={680} linhas={[
+  ['1. UX antes de UI', 'A forma segue a tarefa. Pergunte se o sistema já sabe o dado e qual o custo de perdê-lo. Confirmação só para ação irreversível ou de alto impacto.', 'Ação principal identificável em menos de 3 segundos'],
+  ['2. Acessibilidade é lei', 'Contraste 4,5:1 em texto normal e 3:1 em texto grande e componentes. Foco visível, teclado completo, alvo de 24 px no mínimo e 44 px no cidadão. Cor nunca é o único canal.', 'Todo estado operável por teclado'],
+  ['3. Consistência com o produto real', 'Tudo precisa ser realizável em Angular 19 com PrimeNG 19 (preset Lara). Verifique o componente PrimeNG antes de especificar um novo. Dark mode por `.app-dark`.', 'Componente PrimeNG citado na especificação'],
+  ['4. Cidadão e servidor no centro', 'Declare o perfil dominante antes de abrir o Figma. Cada contexto tem sua camada de apresentação, mesmo com a mesma API.', 'Perfil primário declarado no artefato'],
+  ['5. Motion com função', 'Movimento comunica estado, guia atenção ou confirma ação. Máximo de 400 ms, sem piscar mais de 3 vezes por segundo, com fallback de movimento reduzido.', 'Todo movimento tem função declarada'],
+  ['6. Design conecta negócio, operação e tecnologia', 'Toda especificação traz regra de negócio, perfil, componente PrimeNG, token e critério de aceite. Valide restrições de API antes de fechar o fluxo.', 'Seção de handoff completa'],
+  ['7. Sem invenção de regra visual', 'Gap vira ticket de decisão com valor provisório do canon. Hex fora da escala, espaço fora da grade de 4 px e easing fora dos tokens exigem registro.', 'Nenhum valor avulso no CSS'],
+  ['8. Português impecável', 'Acentos e cedilha sempre. Datas dd/mm/aaaa, vírgula decimal, verbo no infinitivo nos botões, erro com causa e solução.', 'Zero ASCII puro na interface'],
+]} />
+<Callout titulo="Precedência em conflito">
+Acessibilidade, consistência com o produto real, UX, perfil de usuário, motion, handoff completo, integridade de tokens e qualidade de escrita, nessa ordem.
+</Callout>
+</Secao>
+
+<Secao titulo="Perfis de usuário" descricao="A densidade e a linguagem seguem o perfil dominante da tela.">
+<Tabela colunas={['Perfil', 'Contexto', 'O que prioriza']} larguraMinima={640} linhas={[
+  ['Servidor operacional', 'Desktop, uso intenso, alta repetição', 'Densidade compacta, Tab como navegação, validação inline, rascunho automático'],
+  ['Gestor público', 'Desktop ou tablet, sessões curtas', 'Densidade confortável, KPIs, drill-down, ação de decisão em destaque'],
+  ['Cidadão', 'Mobile, uso ocasional', 'Fonte mínima de 16 px, alvo de 44 px, linguagem simples, fluxo linear'],
+]} />
+<CodeTabs abas={principiosNaPratica} />
+</Secao>
+
+<Secao titulo="Governança" descricao="O Design System é um produto interno. Sem aprovação do DesignOps, nenhuma mudança é publicada.">
+<Tabela colunas={['Papel', 'Responsabilidade']} linhas={[
+  ['DesignOps', 'Dono do sistema: roadmap, releases, changelog, auditoria de drift, gate de rubricas'],
+  ['Especialista UI/UX', 'Decisor técnico: aprova tokens, componentes e padrões, com poder de veto'],
+  ['Workers', 'UI e Design System, Pesquisa, Motion, Acessibilidade B2G, UX Writing e Design QA atuam dentro do processo de contribuição'],
+]} />
+<Passos itens={[
+  { titulo: 'Sinalizar o gap', texto: 'Registro no gap log com produto, tela e proposta inicial.' },
+  { titulo: 'Triagem em até 3 dias úteis', texto: 'Bug de implementação, necessidade real de DS ou fora de escopo.' },
+  { titulo: 'Draft da proposta', texto: 'Contexto, solução, alternativas, impacto, mapeamento PrimeOne, acessibilidade e esforço.' },
+  { titulo: 'Revisão técnica em até 5 dias úteis', texto: 'Aprovado, aprovado com ajustes ou rejeitado.' },
+  { titulo: 'Implementação', texto: 'Figma, documentação e handoff Angular.' },
+  { titulo: 'Gate de rubricas', texto: 'Nota de 0 a 4 em sete critérios. Abaixo de 3 em qualquer um bloqueia a publicação.' },
+  { titulo: 'Publicação e pós-release', texto: 'Versão e changelog, depois auditoria da implementação em até 15 dias.' },
+]} />
+<Cartoes colunas={2} itens={[
+  { titulo: 'Critérios de rubrica', texto: 'Documentação, tokens, acessibilidade, consistência com PrimeOne, handoff Angular, UX writing e escrita em português.' },
+  { titulo: 'Auditoria de drift', texto: 'Compara Figma, documentação, PrimeOne e Angular. Gravidade crítica (contraste, foco, leitor de tela) abre change request imediato.' },
+]} />
+</Secao>
+
+<Secao titulo="Mudança de versão" descricao="O Design System segue versionamento semântico adaptado ao design.">
+<Tabela colunas={['Incremento', 'Quando', 'Exemplo']} larguraMinima={620} linhas={[
+  ['Major', 'Renomear ou remover token ou componente, ou quebrar implementações. Mudança em token semântico que afeta mais de 5 componentes', 'Renomear `color.brand.primary`'],
+  ['Minor', 'Novo token, componente, variante ou diretriz sem quebra', 'Componente `StatusBadge`'],
+  ['Patch', 'Correção de valor dentro da tolerância, de documentação ou de snippet', 'Corrigir um hex de neutro'],
+]} />
+<Cartoes colunas={3} itens={[
+  { titulo: 'Status do token', texto: '`stable`, `beta`, `deprecated` e `removed`. O token deprecado mantém o valor e aponta o substituto.' },
+  { titulo: 'Cadência', texto: 'Patch sob demanda, minor quinzenal e major semestral. Hotfix de acessibilidade pode sair fora da cadência.' },
+  { titulo: 'Deprecação', texto: 'Substituto estável antes. Prazo de migração de 30 dias corridos em minor e 60 em major.' },
+]} />
+<Callout titulo="Change request">
+Obrigatório ao alterar, remover ou renomear token ou componente `stable`, mudar comportamento que exige ajuste dos consumidores ou atualizar o PrimeOne com impacto em tokens derivados.
+</Callout>
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Contraste do azul institucional', texto: 'Os documentos registram `#146BFA` com 4,69:1 sobre branco e dizem que não serve ao texto de 14 px. Como 4,69:1 supera 4,5:1, a conclusão não fecha com o critério AA. Confirme o valor medido.' },
+  { titulo: 'Versão do Design System', texto: 'A visão geral fala em versão inaugural 1.0.0. O changelog registra a 2.0.0 em 13/07/2026, com a documentação de componentes em formato agnóstico de stack.' },
+  { titulo: 'Quem aprova', texto: 'A visão geral atribui a aprovação de fundações e tokens semânticos a um diretor. A governança atribui a DesignOps e ao Especialista UI/UX.' },
+  { titulo: 'Tokens de duração', texto: 'Os princípios usam `fast` 100 ms, `base` 200 ms, `slow` 300 ms. Outras fundações usam `quick` 180 ms, `standard` 240 ms e `expressive` 320 ms.' },
+]} />
+</Secao>
+
+<Callout>
+Fonte: Design System Citiesoft, Visão geral, Princípios de design e Governança.
+</Callout>
+
+</Pagina>

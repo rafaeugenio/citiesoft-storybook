@@ -1,8 +1,0 @@
-.citie-textarea {
-  height: auto;
-  padding: var(--citie-spacing-3) var(--citie-spacing-4);
-  line-height: 1.5;
-  /* A spec permite redimensionar só na vertical. */
-  resize: vertical;
-  min-height: calc(3lh + var(--citie-spacing-3) * 2);
-}

@@ -1,0 +1,57 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { ResumoDeTokens } from '../_docs/Cores';
+import { Camadas, MapaDoStorybook, Passos } from '../_docs/Introducao';
+import { camadasExemplo, nomesExemplo, fluxoUso, temaEscuro } from '../_docs/snippets/introducao';
+
+<Meta title="Fundação/Introdução" />
+
+<Pagina
+  titulo="Introdução"
+  resumo="O Design System Citiesoft entrega tokens e componentes para qualquer tecnologia. Os tokens definem cor, texto e medida. Os componentes mostram como aplicá-los."
+>
+
+<Secao titulo="Para quem é">
+<Callout>
+Designers, desenvolvedores e quem revisa interface nos sistemas Citiesoft. Os tokens servem a HTML, Angular, React, Tailwind, SCSS e apps nativos. React e Tailwind aparecem aqui como mais duas opções, sem prioridade.
+</Callout>
+<ResumoDeTokens />
+</Secao>
+
+<Secao titulo="Três camadas de token" descricao="Cada camada aponta para a anterior. Trocar um valor na base muda tudo o que depende dele.">
+<Camadas />
+<CodeTabs abas={camadasExemplo} />
+<Callout titulo="O que consumir">
+Use sempre a camada semântica. A primitiva é para quem mantém o sistema. A de componente existe para um bloco específico e acompanha o nome dele.
+</Callout>
+</Secao>
+
+<Secao titulo="Como os nomes funcionam" descricao="O nome diz o papel do token. Ele nunca descreve a aparência.">
+<CodeTabs abas={nomesExemplo} />
+</Secao>
+
+<Secao titulo="Tema escuro" descricao="Os tokens semânticos têm um valor para cada tema. O código continua o mesmo. Só a classe muda.">
+<CodeTabs abas={temaEscuro} />
+<Callout>
+Os arquivos aceitam a classe `.dark` ou o atributo `data-theme="dark"` no elemento `html`. A página Cores mostra o valor de cada token nos dois temas.
+</Callout>
+</Secao>
+
+<Secao titulo="Mapa do Storybook">
+<MapaDoStorybook />
+</Secao>
+
+<Secao titulo="Fluxo de uso" descricao="Quatro passos, na mesma ordem em qualquer stack.">
+<Passos />
+<CodeTabs abas={fluxoUso} />
+</Secao>
+
+<Secao titulo="Contribuição">
+<Callout titulo="Faltou um token?">
+Peça ao Design. Não crie um valor local nem cole um hex no código. Informe o papel que o elemento cumpre e onde ele aparece. O Design adiciona o token e os arquivos são gerados de novo.
+
+Antes de pedir, confira em Cores e Tipografia se algum token existente já cobre o papel.
+</Callout>
+</Secao>
+
+</Pagina>

@@ -1,0 +1,106 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { blocosDocumentoCodigo } from '../_docs/snippets/layouts-institucionais';
+
+<Meta title="Marca/Layouts institucionais" />
+
+<Pagina
+  titulo="Layouts institucionais"
+  resumo="Sequências canônicas para decks, documentos formais e landing pages. Adapte o conteúdo e mantenha a estrutura: a sequência completa é obrigatória."
+>
+
+<Secao titulo="Regras comuns">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Tipografia', texto: 'Red Hat Display em título e display, Inter em corpo, rótulo e lista, Red Hat Mono em token, dado técnico e código.' },
+  { titulo: 'Fundo sólido', texto: 'Sem gradiente em página ou slide inteiro. Gradiente só em faixa, bloco de capa ou ilustração de destaque.' },
+  { titulo: 'Dois azuis', texto: '`#146BFA` em apresentação e capa. `#1261E4` em elemento clicável de landing e interface.' },
+  { titulo: 'Logo por fundo', texto: '`LogoHorizontal3.svg` em fundo claro e `LogoHorizontal2.svg` em fundo azul ou escuro.' },
+  { titulo: 'Três camadas', texto: 'Fundo, elemento de destaque e conteúdo. Camada extra é ruído.' },
+  { titulo: 'Respiro mínimo', texto: '48 px nas laterais de slide, 40 px em A4 e 80 px em container de landing.' },
+  { titulo: 'Card de dados', texto: 'Fundo `#FAFAFA`, borda de 1 px em `#B3CEFE` ou sombra `0 2px 8px rgba(20,107,250,0.08)`. Nunca fundo saturado em área de dado.' },
+  { titulo: 'Ícones', texto: 'Lineares ou flat, na paleta da marca. Sem ícone 3D, sombra excessiva ou cartoon.' },
+  { titulo: 'Mascote', texto: 'Proibido em capa de licitação, proposta técnica e documento formal.' },
+]} />
+</Secao>
+
+<Secao titulo="Deck de apresentação" descricao="Cinco tipos de slide, nesta sequência: capa, seção, conteúdo, dados, encerramento.">
+<Tabela colunas={['Slide', 'Fundo', 'Composição']} larguraMinima={720} linhas={[
+  ['Capa', '`#146BFA` sólido, ou gradiente 135° de `#146BFA` a `#0B3C8F`', 'Logo `LogoHorizontal2.svg` no topo esquerdo, 160 a 180 px. Título Red Hat Display 700 de 48 a 56 px em `#FAFAFA`. Subtítulo Inter 400 de 20 a 22 px. Linha ciano `#00B5F0` de 3 por 60 px. Rodapé com cliente, data e versão. Sem foto, padrão de pontos ou mock de tela. Proposta comercial aceita imagem de contexto com overlay de `#0B3C8F` entre 30% e 40%'],
+  ['Seção', '`#0A2F6E` ou `#0B3C8F`, sempre sólido', 'Coluna esquerda de 50% com número em Red Hat Mono de 80 px (`#4D8BFC`), título de 36 a 42 px e descrição em Inter 16 px (`#B3CEFE`). Direita com ícone de 80 a 96 px ou ilustração linear, nunca foto. `LogoBranca.svg` de 32 px no rodapé'],
+  ['Conteúdo', '`#FAFAFA`', 'Título Red Hat Display 600 de 28 a 32 px, linha de 2 px e 48 px em `#146BFA` abaixo. Variante de 3 ou 4 cards (ícone de 32 a 40 px, subtítulo 16 px, corpo Inter 14 px) ou split 55/45 com screenshot e raio de 8 px. Nunca foto de banco sem relação com o produto'],
+  ['Dados', '`#FAFAFA` ou `#EFF5FF`', '3 ou 4 blocos com número em Red Hat Display 800 de 48 a 56 px em `#146BFA`, rótulo Inter 13 px e borda inferior de 3 px. Séries: `#146BFA`, `#4D8BFC`, `#00B5F0`, `#0B3C8F`. Fonte do dado obrigatória no rodapé. Pizza com no máximo 4 fatias'],
+  ['Encerramento', '`#146BFA` sólido ou gradiente 135°', 'Logo `LogoHorizontal2.svg` centralizado de 200 px, título de 36 a 40 px, CTA em Inter 18 px (`#B3CEFE`), bloco de contato em branco a 10% de opacidade e tagline no rodapé'],
+]} />
+<Callout>
+Cor semântica mantém o significado: nunca vermelho ou amarelo em dado positivo. Amarelo (`#F59E0B`) é alerta e não serve de fundo de CTA.
+</Callout>
+</Secao>
+
+<Secao titulo="Documento formal" descricao="Proposta técnica, relatório de entrega, plano de implantação e especificação: capa, divisória por capítulo e miolo.">
+<Tabela colunas={['Página', 'Composição']} larguraMinima={620} linhas={[
+  ['Capa', 'Logo `LogoHorizontal3.svg` de 140 px, faixa lateral esquerda de 8 px em `#146BFA`, tipo do documento em Inter 600 13 px azul, título Red Hat Display 700 de 32 a 36 px em `#202020`. Bloco de metadados em `#EFF5FF` com borda `#B3CEFE`: versão e data em Red Hat Mono, autor e destinatário em Inter 13 px. Rodapé com classificação do documento'],
+  ['Divisória', 'Página inteira em `#0B3C8F`. Número da seção em Red Hat Mono de 72 px branco a 15%, título de 28 a 32 px, descrição em `#84AEFD`, `LogoBranca.svg` de 28 px no topo direito'],
+  ['Miolo', 'Margens de 25 mm no topo, 20 mm na base, 25 mm à esquerda e 20 mm à direita. Cabeçalho com título do documento e símbolo de 16 px. Rodapé com "Citiesoft, Confidencial" e página. Corpo Inter 400 de 14 px em `#3C3C3C`, line-height 1,7'],
+]} />
+<Tabela colunas={['Elemento', 'Especificação']} larguraMinima={620} linhas={[
+  ['H1, H2, H3', 'Red Hat Display 700 de 22 px (`#202020`, só título de capítulo), Red Hat Display 600 de 17 px (`#146BFA`), Inter 700 de 14 px (`#202020`)'],
+  ['Legenda', 'Inter 400 de 12 px em `#6B7280`. Figura com borda de 1 px em `#B3CEFE`, raio de 4 px e legenda centralizada'],
+  ['Código ou token', 'Red Hat Mono 13 px, fundo `#EFF5FF`, padding de 2 por 6 px'],
+  ['Tabela', 'Cabeçalho `#146BFA` com texto `#FAFAFA` em Inter 600 de 13 px. Linhas ímpares `#FAFAFA` e pares `#EFF5FF`. Borda de 1 px em `#DBE8FF`'],
+  ['Destaque, alerta, perigo, sucesso', 'Borda esquerda de 4 px. Fundo `#EFF5FF` com `#146BFA`, `#FFFBEB` com `#D97706`, `#FEF2F2` com `#DC2626`, `#F0FDF4` com `#16A34A`'],
+]} />
+<CodeTabs abas={blocosDocumentoCodigo} />
+</Secao>
+
+<Secao titulo="Landing page institucional" descricao="Produto (TFD, Administrativo), portal ou campanha. Ordem recomendada: hero, funcionalidades, prova social, dados, CTA final, footer.">
+<Tabela colunas={['Bloco', 'Composição']} larguraMinima={620} linhas={[
+  ['Hero', 'Navbar branca com `LogoHorizontal3.svg` de 140 px e CTA sólido `#1261E4`. Altura mínima de 600 px, fundo `#FAFAFA` ou faixa lateral de gradiente com no máximo 40% da largura. Coluna esquerda de 55%: tag, H1 Red Hat Display 800 de 48 a 56 px, subtítulo Inter 20 px, dois CTAs (sólido e outline) e logos de órgãos de 32 px em escala de cinza. Direita de 45%: screenshot ou mockup com raio de 12 px'],
+  ['Funcionalidades', 'Fundo `#FAFAFA` ou `#EFF5FF` alternado, padding vertical de 80 px. Eyebrow, H2 de 36 px, subtítulo de até 600 px. Três cards com ícone linear de 40 px em `#146BFA`, borda `#B3CEFE`, raio de 8 px e padding de 32 px'],
+  ['Prova social', 'Fundo `#0B3C8F`, padding de 80 px. Cards em branco a 8% com borda em branco a 12%, depoimento em Inter 16 px e logos de clientes em branco a 60%'],
+  ['Dados', 'Fundo `#EFF5FF`, padding de 64 px, 4 colunas com número Red Hat Display 800 de 56 px em `#146BFA` e rótulo Inter 15 px'],
+  ['CTA final', 'Gradiente 135° de `#146BFA` a `#0B3C8F`, padding de 96 px, título de 40 px, CTA primário em branco com texto azul e secundário em outline branco'],
+  ['Footer', 'Fundo `#202020`, grade de 4 colunas: `LogoHorizontal2.svg` de 160 px com tagline, e links em Inter 14 px (`#9CA3AF`). Rodapé legal em 12 px com separador de 1 px'],
+]} />
+<Tabela colunas={['Contexto', 'Layouts obrigatórios']} larguraMinima={560} linhas={[
+  ['Deck de pitch, licitação ou demo', 'Capa, seção, conteúdo, dados, encerramento. Demo pode ter screenshot em split 50/50'],
+  ['Proposta técnica e relatório de entrega', 'Capa, divisória, miolo. Cada capítulo abre com divisória'],
+  ['Landing de produto', 'Hero, funcionalidades, prova social, dados, CTA final, footer'],
+  ['Portal institucional', 'Hero, funcionalidades, dados, CTA final, footer. Menos depoimento, mais autoridade'],
+  ['Material interno de treinamento', 'Conteúdo e dados, com capa simplificada sem gradiente'],
+]} />
+<CertoErrado itens={[
+  {
+    certo: 'Capa de licitação em `#146BFA` sólido, só logo, título, subtítulo e linha ciano. Sem foto e sem mascote.',
+    errado: 'Capa com gradiente de tela inteira em roxo ou verde, ou com Citiezinho.',
+    motivo: 'Fora da paleta e fora do tom de licitação.',
+  },
+  {
+    certo: 'Hero com gradiente em faixa lateral de até 40% da largura.',
+    errado: 'Hero com gradiente cobrindo a página toda.',
+  },
+  {
+    certo: 'Tabela com cabeçalho `#146BFA` e linhas alternadas, em peça institucional.',
+    errado: 'Cabeçalho cinza neutro, que perde a âncora cromática Citie Blue.',
+  },
+  {
+    certo: 'Título em Red Hat Display e dado técnico em Red Hat Mono.',
+    errado: 'Título em JetBrains Mono. A mono da marca é a Red Hat Mono.',
+  },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Tabela colunas={['Tema', 'O que a fonte diz', 'Adotado aqui']} larguraMinima={680} linhas={[
+  ['Cabeçalho de tabela', 'Layouts institucionais: fundo `#146BFA` com texto branco. Princípios de layout: cinza 50 ou azul 50. Hierarquia: fundo azul 50. Grid: cabeçalho em Citie Blue 600 na tela de listagem.', 'Peças institucionais (deck, documento): `#146BFA`. Interface de produto: cabeçalho claro, conforme o design system.'],
+  ['Margens do miolo A4', 'Layouts institucionais: 25 mm no topo, 20 mm na base, 25 mm à esquerda e 20 mm à direita. Margens e área segura: 20 mm no topo, com os demais lados iguais.', 'Margens e área segura (ver Layout e composição).'],
+  ['Line-height do corpo', 'Layouts institucionais: 1,7 no documento. Espaçamento e hierarquia: de 1,5 a 1,6.', 'Documento formal 1,7. Demais peças de 1,5 a 1,6.'],
+  ['Tipo de ilustração', 'Slide de seção cita ilustração linear plana, ícones sem 3D. O documento de ilustração fixa o 3D acrílico.', 'Ver Ícones, ilustração e fotografia.'],
+]} />
+</Secao>
+
+<Callout>
+Fonte: Brandbook Citiesoft, Layout e composição.
+</Callout>
+
+</Pagina>

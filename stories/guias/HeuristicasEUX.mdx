@@ -1,0 +1,109 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado, Passos } from '../_docs/Conteudo';
+import { erroInline } from '../_docs/snippets/heuristicas-e-ux';
+
+<Meta title="Guias/Heurísticas e UX" />
+
+<Pagina
+  titulo="Heurísticas e UX"
+  resumo="As 10 heurísticas de Nielsen, as leis de UX e os princípios de Gestalt traduzidos em regras com número para sistemas de gestão pública. Servem para desenhar, revisar e escrever critérios de aceite."
+>
+
+<Secao titulo="Escala de severidade" descricao="Todo achado de avaliação heurística recebe uma nota de 0 a 4, que decide a fila de correção.">
+<Tabela colunas={['Nível', 'Rótulo', 'O que fazer']} linhas={[
+  ['0', 'Sem problema', 'Preferência pessoal, sem impacto. Descarte.'],
+  ['1', 'Cosmético', 'Corrigir se sobrar tempo de sprint.'],
+  ['2', 'Pequeno', 'Backlog regular, com tag `heuristic`.'],
+  ['3', 'Grande', 'Entra no sprint corrente.'],
+  ['4', 'Catastrófico', 'Bloqueia a entrega. Vira bug imediato.'],
+]} />
+</Secao>
+
+<Secao titulo="As 10 heurísticas em regras" descricao="Cada linha traz a regra de maior impacto e o tipo de falha que costuma aparecer.">
+<Tabela larguraMinima={680} colunas={['Heurística', 'Regra', 'Falha típica']} linhas={[
+  ['H1 Status do sistema', 'Feedback antes de 1 s. Indicador acima de 400 ms. Acima de 3 s, progresso com etapas nomeadas. Toast de conclusão cita o registro.', 'Tela congelada e envio duplicado (4)'],
+  ['H2 Mundo real', 'Vocabulário do serviço público: Matrícula, Lotação, Processo SEI. Datas em DD/MM/AAAA e moeda em R$ 1.234,56.', 'Nome técnico de campo exportado no CSV (3)'],
+  ['H3 Controle e liberdade', 'Cancelar e fechar pedem confirmação se há dados não salvos. Exclusão cita o objeto. Desfazer por 5 s em ações reversíveis.', 'Fechar o drawer descarta 15 campos (4)'],
+  ['H4 Consistência', 'Salvar é o CTA de cadastro, Confirmar é confirmação, Aplicar é filtro. Um botão primário por área. Cores de status canônicas.', 'Gravar em um módulo, Salvar em outro (3)'],
+  ['H5 Prevenção de erros', 'Máscara em CPF, CNPJ, data e CEP. Datas inválidas bloqueadas no calendário. CPF validado ao sair do campo. Importação aponta linha e coluna.', 'CPF 000.000.000-00 aceito (4)'],
+  ['H6 Reconhecimento', 'Autocomplete de servidor mostra matrícula, lotação e cargo. Filtros ativos viram chips. Lista com mais de 10 itens ganha busca.', 'Beneficiário em texto livre (3)'],
+  ['H7 Eficiência', 'Atalhos documentados: Ctrl+S salvar, Ctrl+N novo, Esc fechar. Reutilizar como base. Filtros salvos. Seleção múltipla.', '12 campos refeitos a cada diária (2)'],
+  ['H8 Minimalismo', 'Até 8 colunas na tabela padrão. Até 4 KPIs no painel. Alertas expiram em 7 dias. Cor de status só no badge, nunca na linha.', '14 colunas e status fora da tela (3)'],
+  ['H9 Recuperação de erros', 'Erro inline sob o campo. Sumário com links quando há vários. Nunca código HTTP ou stack trace. Sessão expirada preserva o rascunho.', 'Alerta genérico "Erro de validação" (3)'],
+  ['H10 Ajuda', 'Regra de negócio não óbvia ganha tooltip de até 2 linhas. Empty state explica a próxima ação. Tour dispensável e lembrado.', 'Código de despesa consultado em outro sistema (2)'],
+]} />
+</Secao>
+
+<Secao titulo="Leis de UX" descricao="Cada lei vira um limite que a revisão consegue conferir.">
+<Tabela larguraMinima={640} colunas={['Lei', 'Regra no produto']} linhas={[
+  ['Hick', 'Formulário com mais de 8 campos obrigatórios vira etapas ou seções. Select com mais de 7 opções ganha busca. Menu de linha com no máximo 5 ações, o resto em Mais ações. Máximo de 7 itens no primeiro nível do menu.'],
+  ['Fitts', 'Alvo mínimo de 24×24 px (WCAG 2.5.8), 32×32 px em desktop operacional e 44×44 px no mobile. Ação primária no maior botão do grupo, à direita. Ícone sem rótulo ganha área de 44×44 px. Espaço de 8 px entre alvos.'],
+  ['Miller', 'Campos em blocos de 3 a 5. Tabela com 15 linhas por página. Wizard com no máximo 7 etapas. Documentos com máscara e separadores. Badge de contagem vai até 99+.'],
+  ['Jakob', 'Seguir gov.br DS e convenções web. Desvio exige justificativa e teste com pelo menos 5 pessoas. Os 10 ícones de ação mais usados seguem o mapa oficial. PrimeNG mantém o comportamento nativo.'],
+  ['Tesler', 'O sistema calcula o que já sabe: totais, vigências, sobreposição de períodos, autopreenchimento por matrícula ou CPF. Erro do back-end vira texto acionável em português.'],
+  ['Von Restorff', 'Um elemento de ação primária por grupo. Status crítico usa cor e ícone. Bloco de impacto alto ganha fundo e borda de atenção.'],
+  ['Postel', 'CPF e CNPJ aceitos com ou sem pontuação. Data digitada ou escolhida no calendário. Busca ignora acento e caixa. Nenhum campo bloqueia colar.'],
+  ['Posição serial', 'Módulos mais usados no topo do menu e administração no fim. Validação de elegibilidade no primeiro passo do wizard. Resumo completo no último.'],
+]} />
+</Secao>
+
+<Secao titulo="Gestalt" descricao="Os princípios guiam agrupamento e leitura. A tabela traz a medida que vale no produto.">
+<Tabela larguraMinima={600} colunas={['Princípio', 'Regra']} linhas={[
+  ['Proximidade', 'O espaço dentro do grupo é a metade do espaço entre grupos. Campos do mesmo bloco a 16 px, blocos a 32 px.'],
+  ['Similaridade', 'Mesma função, mesmo tratamento: botões secundários iguais, badges em pílula, ícones de 16 px em tabela e 20 px em cabeçalho de seção.'],
+  ['Continuidade', 'Grade de 12 colunas. Rótulo sempre acima do campo, alinhado à esquerda.'],
+  ['Figura e fundo', 'Overlay de modal e drawer em `rgba(0,0,0,0.48)`. Linha selecionada com o token de seleção. Contraste de 3:1 no elemento em foco.'],
+]} />
+</Secao>
+
+<Secao titulo="Carga cognitiva">
+<Cartoes colunas={3} itens={[
+  { rotulo: 'Intrínseca', titulo: 'Vem da lei', texto: 'Regras vindas da lei não mudam. Apresente uma de cada vez.' },
+  { rotulo: 'Extrínseca', titulo: 'Vem da interface', texto: 'Rótulo confuso, passo a mais, feedback ausente. Achado em revisão é tratado como bug de design.' },
+  { rotulo: 'Germânica', titulo: 'Vem da repetição', texto: 'Layout estável permite aprender. Reorganizar telas principais exige avaliar o impacto antes.' },
+]} />
+</Secao>
+
+<Secao titulo="Na prática">
+<CertoErrado itens={[
+  {
+    certo: 'Mostrar o erro sob o campo: "Data de retorno deve ser igual ou posterior à data de saída (17/06/2025)." e levar o foco até ele.',
+    errado: 'Alerta no topo da página com "Erro de validação", sem apontar o campo.',
+    motivo: 'H9, severidade 3.',
+  },
+  {
+    certo: 'Mostrar o item completo no autocomplete: "Carlos Moura Silva, Mat. 0047, SEAD, Analista de TI".',
+    errado: 'Pedir que a pessoa digite a matrícula de memória em um campo livre.',
+    motivo: 'H6, severidade 3.',
+  },
+]} />
+<CodeTabs abas={erroInline} />
+</Secao>
+
+<Secao titulo="Como conduzir a avaliação">
+<Passos itens={[
+  { titulo: 'Escopo', texto: 'Defina o fluxo, por exemplo da concessão de diária ao despacho do gestor.' },
+  { titulo: 'Avaliadores', texto: 'Pelo menos 3, de forma independente: Design System, UX e Product Designer do módulo. Acima de 5 o retorno cai.' },
+  { titulo: 'Percurso', texto: 'Cada pessoa percorre o fluxo sozinha e anota achados por heurística com severidade.' },
+  { titulo: 'Consolidação', texto: 'Junte as notas, elimine duplicatas e use a média quando houver divergência.' },
+]} />
+<Callout titulo="Gate de publicação">
+Nenhum achado de severidade 3 ou 4 aberto em produção. Achados de severidade 2 têm PBI criado antes do deploy. Quem registrou o achado de severidade 3 ou 4 valida a correção.
+</Callout>
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Paginação', texto: 'As leis de UX fixam 15 linhas por página. O documento de arquitetura da informação fixa 50 para o servidor operacional e 20 para o gestor. A página Arquitetura da informação segue o segundo.' },
+    { titulo: 'Cor de erro', texto: 'Os documentos usam `#EF4444` e `#DC2626` para erro. Use sempre o token de erro do tema, sem hex.' },
+  { titulo: 'Texto secundário', texto: 'A fonte cita neutral-500. O tema deste Storybook usa neutral-600 no tema claro por contraste, desvio documentado em Fundação/Cores.' },
+  { titulo: 'Durações', texto: 'Os tokens da fonte (100, 200, 300 ms) divergem dos tokens de movimento do tema (120, 180, 320 ms). Vale o tema, descrito em Movimento de produto.' },
+]} />
+</Secao>
+
+<Callout>
+Fonte: guidelines de UX do Design System Citiesoft (heurísticas de Nielsen aplicadas a B2G, leis de UX e Gestalt).
+</Callout>
+
+</Pagina>

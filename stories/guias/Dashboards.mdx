@@ -1,0 +1,108 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { IndicadoresDemo } from '../_docs/padroes/Dashboards';
+import { Prontos } from '../_docs/padroes/Moldura';
+import { indicadorExemplo } from '../_docs/snippets/padrao-dashboards';
+
+<Meta title="Guias/Padrões/Dashboards" />
+
+<Pagina
+  titulo="Dashboards"
+  resumo="Superfície em que o gestor lê o estado do sistema de um olhar e decide a próxima ação. Cada widget responde a uma pergunta."
+>
+
+<Secao titulo="Quando usar">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Use quando', texto: 'O usuário é gestor com poder de decisão, a pergunta é de estado agregado, há métricas interdependentes ou comparação no tempo, e ler linha a linha seria inviável.' },
+  { titulo: 'Não use quando', texto: 'A tarefa é operar registros (tabela), acompanhar um processo (detalhe), o usuário é servidor que executa ação, ou o dado muda em menos de 5 minutos e a decisão depende do tempo real.' },
+]} />
+</Secao>
+
+<Secao titulo="Anatomia">
+<Tabela colunas={['Zona', 'Conteúdo e largura (grade de 12 colunas)']} linhas={[
+  ['Topo', 'Números e alertas. Cada número ocupa 3 colunas, até 4 por linha.'],
+  ['Meio', 'Tendência e distribuição. Gráficos de linha ou barra com 6 a 8 colunas.'],
+  ['Base', 'Tabelas de detalhe e rankings com 12 colunas.'],
+  ['Filtro de período', 'Global, fixo no topo, abaixo do cabeçalho. Nunca por widget.'],
+  ['Drawer de detalhe', '40% da largura no desktop, mínimo de 480 px, com trilha, tabela paginada, busca, exportação e `Ver completo`.'],
+]} />
+</Secao>
+
+<Secao titulo="Regras">
+<Tabela colunas={['Nº', 'Regra']} larguraMinima={520} linhas={[
+  ['1', 'Antes de pôr um número na tela, escreva a pergunta que ele responde. Sem pergunta, o widget não entra.'],
+  ['2', 'Rótulo preciso, com até 40 caracteres: `Solicitações aguardando parecer médico`, não `Solicitações`.'],
+  ['3', 'Todo número leva período de referência visível (`Nov 2025`, `Exercício 2025`) e variação com texto.'],
+  ['4', 'Cor do delta depende do indicador: alta pode ser melhora ou piora. O produto define, o componente não.'],
+  ['5', 'Com meta, barra de progresso: cor de marca abaixo de 80%, aviso de 80% a 99%, perigo a partir de 100%.'],
+  ['6', 'Atalhos de período primeiro (`Este mês`, `Mês anterior`, `Últimos 30 dias`, `Este trimestre`, `Este exercício`), depois intervalo personalizado. No máximo 3 filtros secundários visíveis.'],
+  ['7', 'Mudou o período, todos os widgets atualizam juntos.'],
+  ['8', 'Linha para tendência com 5 pontos ou mais. Barra vertical até 10 categorias. Barra horizontal com rótulo longo ou mais de 6 categorias. Rosca só para 2 a 5 categorias.'],
+  ['9', 'Proibido: gráfico 3D, área empilhada com mais de 4 séries, velocímetro sem escala textual e mais de 6 séries.'],
+  ['10', 'Acionar um número ou gráfico abre o drawer. Nunca redirecione automaticamente.'],
+  ['11', 'Exportar o dashboard (PDF, CSV, XLSX) respeita o período e leva no rodapé do PDF usuário, data com hora e período.'],
+  ['12', 'Dado desatualizado (padrão acima de 15 minutos) mostra `Atualizado há 18 min` e botão de atualizar.'],
+  ['13', 'Dashboard com dado pessoal tem botão para ocultar valores sensíveis, persistido na sessão.'],
+]} />
+</Secao>
+
+<Secao titulo="Estados">
+<Tabela colunas={['Estado', 'Comportamento']} linhas={[
+  ['Carregando', 'Esqueleto com largura fixa para número e rótulo. O layout não pula.'],
+  ['Sem dados', '`Nenhum dado para o período selecionado`, com sugestão de ampliar o período.'],
+  ['Erro', 'Banner dentro do card, `Não foi possível carregar este dado` e `Tentar novamente`, sem recarregar a página.'],
+  ['Desatualizado', 'Chip com o tempo e atualização manual.'],
+]} />
+<Tabela colunas={['Situação do delta', 'Texto']} linhas={[
+  ['Alta, com melhora', '`12% acima do mês anterior`, seta para cima em sucesso'],
+  ['Alta, com piora', '`23% acima do mês anterior`, seta para cima em perigo'],
+  ['Sem variação', '`Igual ao mês anterior`'],
+  ['Sem comparação', '`Sem dado anterior disponível`'],
+]} />
+</Secao>
+
+<Secao titulo="Acessibilidade">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Gráfico com alternativa', texto: 'Papel de imagem com nome descritivo e tabela colapsável com os mesmos dados, acionável por teclado.' },
+  { titulo: 'Série sem depender de cor', texto: 'Cor, forma do ponto e traçado diferem entre séries.' },
+  { titulo: 'Delta falado', texto: 'Em vez de `+12%`, o nome acessível diz `12% acima do mês anterior`.' },
+  { titulo: 'Texto de alerta', texto: 'Aviso em 12 px usa a variação mais escura, porque a base não passa AA em texto pequeno.' },
+  { titulo: 'Drawer', texto: 'O foco vai ao título, fica preso enquanto aberto e volta ao elemento de origem.' },
+  { titulo: 'Sem contador animado', texto: 'Atualização por filtro faz fade cruzado. Gráficos não animam a entrada em produção operacional.' },
+]} />
+</Secao>
+
+<Secao titulo="Certo e errado">
+<CertoErrado itens={[
+  { certo: '`Aguardando parecer médico`, 127, `Nov 2025`, `23% acima do mês anterior` em perigo.', errado: 'Três números soltos: `Total: 647`, `Aprovados: 482`, `Pendentes: 127`.', motivo: 'Sem período, variação nem detalhamento, ninguém sabe se 127 é bom.' },
+  { certo: 'Barra horizontal com tabela alternativa para 8 tipos de procedimento.', errado: 'Pizza com 8 fatias.', motivo: 'Fatias minúsculas e percentuais sobrepostos.' },
+]} />
+</Secao>
+
+<Secao titulo="Exemplo composto" descricao="Zona superior do painel de gestão de TFD. Acione o primeiro número para abrir o detalhamento.">
+<IndicadoresDemo />
+<CodeTabs abas={indicadorExemplo} />
+</Secao>
+
+<Secao titulo="Onde ver pronto">
+<Prontos itens={[
+  { nome: 'Blocos/StatCards', uso: 'Cartões de indicador.' },
+  { nome: 'Blocos/Drawer', uso: 'Painel lateral de detalhamento.' },
+  { nome: 'Templates/Sistemas/Painel TFD', uso: 'Painel de gestão completo.' },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Tabela colunas={['Tema', 'O que os documentos dizem']} linhas={[
+  ['Grade em tablet', 'Dashboards manda colapsar para 6 colunas entre 768 e 1024 px. Comportamento responsivo define 4 colunas em 768 px.'],
+  ['Layout de indicadores', 'Dashboards descreve 4 números por linha. Comportamento responsivo descreve 2 colunas em 768 px e 1 em 375 px, com 4 apenas de 1366 px para cima.'],
+  ['Contraste do texto secundário', 'O mesmo cinza sobre branco aparece como 4,73:1, 5,02:1, 4,54:1 e 5,9:1 conforme o documento.'],
+]} />
+</Secao>
+
+<Callout>
+Fonte: padrão de Dashboards do Design System Citiesoft, com apoio de Comportamento responsivo.
+</Callout>
+
+</Pagina>

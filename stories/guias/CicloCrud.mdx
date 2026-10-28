@@ -1,0 +1,118 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { ExclusaoDemo } from '../_docs/padroes/CicloCrud';
+import { Prontos } from '../_docs/padroes/Moldura';
+import { exclusaoExemplo } from '../_docs/snippets/padrao-ciclo-crud';
+
+<Meta title="Guias/Padrões/Ciclo CRUD" />
+
+<Pagina
+  titulo="Ciclo CRUD"
+  resumo="Listagem, cadastro, edição e exclusão com a mesma anatomia em toda entidade. Quem aprendeu a cadastrar um cargo sabe cadastrar um fornecedor."
+>
+
+<Secao titulo="Quando usar">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Use para', texto: 'Toda entidade persistida com leitura, criação, atualização e exclusão: servidores, cargos, diárias, fornecedores, produtos, usuários e perfis.' },
+  { titulo: 'Não use para', texto: 'Aprovação em várias etapas (fluxo com passos), relatório somente leitura e configuração com salvamento automático.' },
+]} />
+</Secao>
+
+<Secao titulo="Anatomia" descricao="A listagem é a tela raiz. Dela saem três caminhos, e a exclusão nunca tem tela própria.">
+<Tabela colunas={['Tela', 'Zonas e comportamento']} linhas={[
+  ['Listagem', 'Cabeçalho com título e `Novo [Entidade]`, barra de filtros, tabela com paginação e ordenação, coluna de ações e rodapé com intervalo e total.'],
+  ['Cadastro', 'Tela cheia com rota própria, nunca em modal acima de 8 campos. Modal só para entidade auxiliar simples. Rodapé fixo com `Cancelar` à esquerda e `Salvar` à direita.'],
+  ['Edição', 'Igual ao cadastro, com título `Editar [Entidade]`, dados carregados e área de auditoria real.'],
+  ['Exclusão', 'Diálogo a partir da linha, com o identificador do registro.'],
+]} />
+</Secao>
+
+<Secao titulo="Regras">
+<Tabela colunas={['Nº', 'Regra']} larguraMinima={520} linhas={[
+  ['1', 'Botão de criação no canto superior direito, com rótulo específico: `Novo Servidor`, `Nova Diária`.'],
+  ['2', 'Ações de linha na coluna fixa à direita: Editar, depois Excluir. Acima de 3 ações, as extras vão para um menu.'],
+  ['3', 'Busca com espera de 300 ms. Cada filtro aplicado vira chip removível, e `Limpar filtros` remove todos.'],
+  ['4', 'Paginação padrão de 25 itens para servidor operacional e 10 para gestão e aprovação. Mostre `Mostrando 26 a 50 de 347 registros`.'],
+  ['5', 'Ordem do formulário: do mais identificador ao mais opcional. Seções nomeadas acima de 12 campos.'],
+  ['6', 'Seletor com mais de 50 opções usa busca sob demanda. Data em `dd/mm/aaaa`.'],
+  ['7', 'Cancelar sem alteração volta direto. Com alteração, pergunta `Deseja descartar as alterações?`'],
+  ['8', 'Campos imutáveis (CPF, matrícula, CNPJ) ficam somente leitura na edição.'],
+  ['9', 'Auditoria (criado por, última atualização) fica somente leitura no rodapé do formulário.'],
+  ['10', 'Exclusão: foco inicial em Cancelar, botão com texto explícito, nunca só ícone, e texto próprio para cada entidade.'],
+  ['11', 'Toda exclusão registra usuário, data com hora e identificador na auditoria.'],
+]} />
+</Secao>
+
+<Secao titulo="Estados">
+<Tabela colunas={['Contexto', 'Comportamento']} linhas={[
+  ['Listagem carregando', 'Esqueleto nas linhas no primeiro acesso. Com filtro, indicador sobre a tabela sem bloquear a página.'],
+  ['Listagem vazia', '`Nenhum [entidade] cadastrado ainda. Comece cadastrando o primeiro.` com botão de criação.'],
+  ['Sem resultado de filtro', '`Nenhum resultado para os filtros aplicados.` com `Limpar filtros`.'],
+  ['Erro de carregamento', '`Não foi possível carregar os dados. Tente novamente.` com `Tentar novamente`.'],
+  ['Envio', 'Botão com `Salvando...` e desabilitado. Erro do sistema mantém os dados preenchidos.'],
+  ['Conflito', 'Erro inline no campo, como `Este CPF já está cadastrado no sistema.`, mais toast.'],
+  ['Exclusão', 'Processando, sucesso (linha some em 100 ms e toast de 3 segundos) ou erro (diálogo permanece aberto).'],
+]} />
+</Secao>
+
+<Secao titulo="Feedback">
+<Tabela colunas={['Ação', 'Mensagem']} linhas={[
+  ['Cadastro', '`[Entidade] cadastrado com sucesso.`'],
+  ['Edição', '`Alterações salvas com sucesso.`'],
+  ['Exclusão', '`[Entidade] excluído com sucesso.` ou `12 registros excluídos com sucesso.`'],
+  ['Sessão expirada', '`Sua sessão expirou. Faça login novamente.`'],
+]} />
+<Callout>
+Toast de sucesso no canto superior direito por 4 segundos, e por 3 segundos em exclusões. Some sozinho.
+</Callout>
+</Secao>
+
+<Secao titulo="Acessibilidade">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Tabela nomeada', texto: 'Nome acessível, escopo de cabeçalho e ordenação anunciada. Ações com nome completo: `Editar servidor Ana Paula Ribeiro`.' },
+  { titulo: 'Diálogo de alerta', texto: 'Papel de alerta, foco preso, Escape cancela. O foco volta ao botão de origem ou à linha seguinte.' },
+  { titulo: 'Foco depois da ação', texto: 'Após salvar, excluir ou cancelar, o foco nunca se perde: vai ao topo da listagem ou à confirmação.' },
+  { titulo: 'Filtros anunciados', texto: '`Filtros aplicados: Status Ativo. 47 registros encontrados.` em região educada.' },
+  { titulo: 'Erro no envio', texto: '`Formulário com erros. Corrija os campos destacados.` e foco no primeiro inválido.' },
+  { titulo: 'Gate de aceite', texto: 'Fluxo inteiro por teclado, contraste verificado e animações desligadas com redução de movimento.' },
+]} />
+</Secao>
+
+<Secao titulo="Certo e errado">
+<CertoErrado itens={[
+  { certo: 'Diálogo `Excluir diária?` que cita servidor e período, com foco em Cancelar e dois botões.', errado: 'Diálogo `Confirmar` com `Deseja excluir?` e botões `Não` e `Sim`, foco na ação destrutiva.', motivo: 'Não identifica o registro e deixa o foco na ação perigosa.' },
+  { certo: 'Botões `Novo Servidor`, `Salvar Alterações` e `Excluir`.', errado: '`Criar`, `OK`, `Del` ou ícone sem texto.' },
+  { certo: 'Título `Diárias` com filtros contextuais, paginação e colunas com nome acessível.', errado: 'Título longo e genérico, colunas abreviadas e sem paginação visível.' },
+]} />
+</Secao>
+
+<Secao titulo="Exemplo composto" descricao="Os três diálogos de exclusão do ciclo: simples, com vínculos e em massa.">
+<ExclusaoDemo />
+<CodeTabs abas={exclusaoExemplo} />
+</Secao>
+
+<Secao titulo="Onde ver pronto">
+<Prontos itens={[
+  { nome: 'Blocos/DataListing', uso: 'Tabela da listagem com ordenação, seleção, ações de linha, paginação e estados.' },
+  { nome: 'Blocos/FilterBar', uso: 'Busca e filtros com chips.' },
+  { nome: 'Blocos/Dialog', uso: 'ConfirmDialog usado na exclusão.' },
+  { nome: 'Blocos/Estados', uso: 'Vazio, erro e esqueleto da listagem.' },
+  { nome: 'Templates/Sistemas/Listagem de solicitações TFD', uso: 'Listagem completa montada com os blocos.' },
+  { nome: 'Templates/Sistemas/Formulário de cadastro', uso: 'Cadastro com rodapé de ações.' },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Tabela colunas={['Tema', 'O que os documentos dizem']} linhas={[
+  ['Itens por página', 'CRUD lista 10, 25, 50 e 100. Telas densas lista 20, 50 e 100.'],
+  ['Descartar alterações', 'A regra do cadastro pede a pergunta `Deseja descartar as alterações?` A edição pede `Alterações não salvas`, com `Voltar e salvar` e `Descartar e sair`. A página mostra as duas.'],
+  ['Texto de campo vazio', 'CRUD usa `Informe o [campo].` O padrão de Tratamento de erros usa `[Rótulo] é obrigatório.`'],
+]} />
+</Secao>
+
+<Callout>
+Fonte: padrão CRUD do Design System Citiesoft, com apoio de Formulários e Auditabilidade.
+</Callout>
+
+</Pagina>

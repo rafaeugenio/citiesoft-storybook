@@ -1,0 +1,65 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Easings, TokensDeMovimento } from '../_docs/Medidas';
+import { movimentoUso, movimentoInterrompivel, movimentoReduzido, movimentoBotao } from '../_docs/snippets/movimento';
+
+<Meta title="Fundação/Movimento" />
+
+<Pagina
+  titulo="Movimento"
+  resumo="O movimento confirma uma ação ou explica uma mudança de estado. Dura pouco, usa poucas curvas e some quando a pessoa pede menos animação."
+>
+
+<Secao titulo="Curvas" descricao="Três curvas cobrem a interface. Entrada usa ease-out, saída usa ease-in e mudança de estado no mesmo lugar usa ease-in-out.">
+<Easings />
+</Secao>
+
+<Secao titulo="Tokens" descricao="Valores que o sistema já define. Clique no nome para copiar.">
+<TokensDeMovimento />
+</Secao>
+
+<Secao titulo="Durações em uso" descricao="Valores lidos dos componentes. Escolha o mais curto que ainda deixa a mudança legível.">
+<div className="overflow-x-auto rounded-2xl border border-border-button-default">
+<table className="w-full min-w-[520px] border-collapse text-body-regular">
+<thead>
+<tr className="border-b border-border-button-default bg-background-secondary-default text-caption-1-semibold text-text-secondary">
+<th scope="col" className="px-3 py-2 text-start font-semibold">Duração</th>
+<th scope="col" className="px-3 py-2 text-start font-semibold">Uso</th>
+</tr>
+</thead>
+<tbody>
+<tr className="border-b border-border-button-default"><td className="px-3 py-2 font-mono text-caption-1-semibold">100ms</td><td className="px-3 py-2">Feedback mínimo de controles pequenos.</td></tr>
+<tr className="border-b border-border-button-default"><td className="px-3 py-2 font-mono text-caption-1-semibold">150ms</td><td className="px-3 py-2">Cor, borda e sombra no hover e no foco. É o padrão de `transition-colors` e de `--button-transition-ms`.</td></tr>
+<tr className="border-b border-border-button-default"><td className="px-3 py-2 font-mono text-caption-1-semibold">200ms</td><td className="px-3 py-2">Entrada e saída de elementos pequenos, como tooltips e menus.</td></tr>
+<tr className="border-b border-border-button-default"><td className="px-3 py-2 font-mono text-caption-1-semibold">300ms</td><td className="px-3 py-2">Painéis, abas e indicadores que se deslocam.</td></tr>
+<tr><td className="px-3 py-2 font-mono text-caption-1-semibold">500ms</td><td className="px-3 py-2">Revelação em sequência (`.t-stagger`), com 40ms entre linhas. A saída é um fade de 200ms.</td></tr>
+</tbody>
+</table>
+</div>
+</Secao>
+
+<Secao titulo="Como usar" descricao="O mesmo padrão em cada tecnologia: 150ms para cor, 200ms para entrada e saída.">
+<CodeTabs abas={movimentoUso} />
+</Secao>
+
+<Secao titulo="Botão com resposta física" descricao="O utilitário `button-press-motion` separa o tempo da cor (150ms) do tempo do movimento (420ms ao soltar, 220ms ao pressionar, escala 0,98).">
+<CodeTabs abas={movimentoBotao} />
+</Secao>
+
+<Secao titulo="Sutil e interrompível">
+<Callout>
+Mova pouco: opacidade e deslocamentos de poucos pixels. Evite animar largura, altura e posição de layout. Quem clica de novo no meio da animação deve ver a interface responder na hora, partindo do ponto em que ela está.
+
+Prefira `transition` a keyframes quando o estado alterna, porque a transição reaponta do valor atual. Nenhuma informação pode existir só no movimento.
+</Callout>
+<CodeTabs abas={movimentoInterrompivel} />
+</Secao>
+
+<Secao titulo="Movimento reduzido" descricao="Quando o sistema operacional pede menos animação, remova deslocamentos e escalas. Uma troca instantânea de estado continua válida.">
+<CodeTabs abas={movimentoReduzido} />
+<Callout titulo="Obrigatório">
+`prefers-reduced-motion: reduce` faz parte dos critérios de acessibilidade do e-MAG e do WCAG 2.2 (2.3.3 e 2.2.2). Animações com mais de 5 segundos precisam de controle de pausa.
+</Callout>
+</Secao>
+
+</Pagina>

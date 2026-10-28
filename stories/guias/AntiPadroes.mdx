@@ -1,0 +1,111 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes } from '../_docs/Conteudo';
+import { Checklist } from '../_docs/Checklist';
+import { semGradienteNoProduto } from '../_docs/snippets/anti-padroes';
+
+<Meta title="Guias/Anti-padrões" />
+
+<Pagina
+  titulo="Anti-padrões"
+  resumo="Padrões visuais e de texto que denunciam uma entrega gerada por IA sem revisão de designer. Cada um vem com a regra Citiesoft que o substitui. Percorra a lista antes de publicar tela, site ou documento."
+>
+
+<Secao titulo="Antes de entregar" descricao="Se qualquer item for verdadeiro, volte à categoria correspondente.">
+<Checklist grupos={[
+  {
+    titulo: 'Sinais de entrega sem revisão',
+    itens: [
+      'A cor de destaque é um gradiente roxo, azul-roxo ou índigo sem justificativa de marca.',
+      'Todo o texto usa uma família só, normalmente Inter, sem contraste entre título e corpo.',
+      'A tela abre com hero centralizado, título com gradiente e três cards de features.',
+      'Algum card tem borda lateral colorida de 3 a 4 px sem significado de erro ou sucesso.',
+      'Há travessão no texto corrido.',
+      'Alguma frase nega uma ideia só para afirmar a seguinte.',
+      'Um emoji ocupa o lugar de ícone em título, menu ou lista.',
+      'Os elementos entram em cascata com o mesmo fade-in-up, sem relação com a ordem de leitura.',
+      'O texto usa hedging como "pode ajudar" ou "potencialmente" no lugar de um dado.',
+    ],
+  },
+]} />
+</Secao>
+
+<Secao titulo="Cor e gradientes">
+<Tabela larguraMinima={620} colunas={['Padrão', 'Regra Citiesoft']} linhas={[
+  ['Gradiente roxo-índigo padrão', 'Destaque vem da escala Citie Blue. O azul de ação do produto é `citie-blue-600`. O `citie-blue-500` fica para marca institucional. Gradiente só com token documentado.'],
+  ['Glassmorfismo genérico', 'Transparência só para separar camadas, como modal sobre o fundo. Contraste de 4,5:1 mantido.'],
+  ['Dark mode permanente com neon', 'Todo produto oferece tema claro e escuro com contraste AA. Brilho só em uma ação crítica isolada, com justificativa.'],
+  ['Bege seguro', 'Neutros vêm da escala neutral-0 a neutral-950, cada nível com uso documentado.'],
+]} />
+<CodeTabs abas={semGradienteNoProduto} />
+</Secao>
+
+<Secao titulo="Tipografia">
+<Tabela larguraMinima={620} colunas={['Padrão', 'Regra Citiesoft']} linhas={[
+  ['Inter em tudo', 'Três famílias com papéis fixos: Red Hat Display em títulos, Inter em corpo e UI, Red Hat Mono em código e referências.'],
+  ['Hierarquia plana', 'Escala com razão de 1,4 ou mais entre níveis. Dois níveis vizinhos não competem por atenção.'],
+  ['Itálico decorativo', 'Ênfase por peso ou cor semântica. Itálico só para citação ou termo estrangeiro.'],
+  ['Pares de fonte da moda', 'A combinação da casa é a única válida. Fonte nova exige registro de decisão.'],
+  ['Letter-spacing esmagado', 'Entre 0 e 0,05em no corpo e entre 0,02em e 0,08em em títulos, testado no tamanho real.'],
+]} />
+</Secao>
+
+<Secao titulo="Layout e estrutura">
+<Tabela larguraMinima={620} colunas={['Padrão', 'Regra Citiesoft']} linhas={[
+  ['Hero com badge e três cards', 'Cada tela segue a anatomia do template do seu tipo, derivada da tarefa.'],
+  ['Espaçamento uniforme', 'Grade de 4 px com valor por papel. `spacing.4` em botão, campo e card, `spacing.6` em fieldset e diálogo, `spacing.8` ou `spacing.10` entre blocos. Raios variam: 6 px em controles, 8 px em cards, 12 px em modais.'],
+  ['Cards com altura forçada', 'Altura automática. Alinhamento fixo só onde o template exige, como o grid de KPI.'],
+  ['Seções sempre na mesma ordem', 'A ordem das zonas vem do template e da jornada da tela.'],
+  ['Card dentro de card', 'Hierarquia por tipografia, cor e espaço. Segundo nível de agrupamento usa divisor, não outra sombra.'],
+  ['Imagem de banco genérica', 'Capturas reais, dados plausíveis do domínio ou ilustração própria. Nada de blobs 3D decorativos.'],
+]} />
+</Secao>
+
+<Secao titulo="Componentes e efeitos">
+<Tabela larguraMinima={620} colunas={['Padrão', 'Regra Citiesoft']} linhas={[
+  ['Borda lateral colorida', 'Só para estado semântico. Fora disso, separe pelo nível de sombra.'],
+  ['Ícone em círculo colorido', 'Ícone da biblioteca ao lado do título ou em badge funcional.'],
+  ['Hover elástico', 'Hover usa cor, sombra ou elevação de 2 px. Se houver escala, entre 1,02 e 1,05, sem bounce.'],
+  ['Fade-in em cascata', 'Entrada animada só quando carrega significado, como linha salva ou upload concluído.'],
+  ['Animar largura ou altura', 'Anime `transform` e `opacity`.'],
+  ['Emoji como ícone', 'SVG da biblioteca de ícones, em menu, título e status.'],
+  ['Mesma sombra em tudo', 'Quatro níveis: campo, card, menu e modal. Repetir o valor em duas camadas é erro.'],
+]} />
+</Secao>
+
+<Secao titulo="Texto e microtexto">
+<Tabela larguraMinima={620} colunas={['Padrão', 'Regra Citiesoft']} linhas={[
+  ['Travessão', 'Zero, em qualquer texto entregue. Reescreva com vírgula, ponto ou duas frases.'],
+  ['Frase inflada', 'Descreva o comportamento e o resultado: "acompanhe o processo 2025/0481 do protocolo até o pagamento".'],
+  ['Hedging', 'Afirme o que o sistema sabe ou remova a frase. "O lançamento pode ter sido salvo" não vale.'],
+  ['Palavras de marketing', 'Seguir a lista de termos permitidos e vedados do guia de conteúdo.'],
+  ['Negação para afirmar', 'Escreva a afirmação direta.'],
+  ['Título em gerúndio', 'Imperativo para ação, como Cadastrar colaborador, ou nome específico, como Processo 2025/0481. Gerúndio só para estado real, como Salvando.'],
+]} />
+</Secao>
+
+<Secao titulo="Código e documentos">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Gradiente do Tailwind', texto: 'Cor sólida de token semântico. Gradiente só se estiver documentado com propósito.' },
+  { titulo: 'Biblioteca sem tema', texto: 'Componentes consomem os tokens da casa, nunca os valores de fábrica do template ou do preset isolado.' },
+  { titulo: 'Sem fonte de verdade', texto: 'Agente de IA carrega tokens e o template da tela antes de gerar. Protótipo que ignora os tokens fica fora da regra.' },
+  { titulo: 'Transição universal', texto: 'Nada de uma duração e curva únicas em tudo. Use a tabela de tokens de movimento.' },
+  { titulo: 'Next.js sem cuidado', texto: 'Imagem com o componente do framework, carga dinâmica de componente pesado e `memo` em itens de lista estáveis. Valide Core Web Vitals.' },
+  { titulo: 'Documento e slide', texto: 'Prosa antes de tabela, tabela só com até 5 linhas e 4 colunas. Zero emoji. Numeração só com ordem real. No máximo 3 bullets por slide.' },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Glass e volumetria', texto: 'O guia de linguagem visual aceita glass e ícones 3D acrílicos em hero e empty state. O guia de cor condena glassmorfismo genérico. Aqui vale a regra mais restritiva até haver decisão.' },
+  { titulo: 'Gradiente em produto', texto: 'O guia de cores proíbe gradiente em superfícies de produto. O de linguagem visual admite um card de KPI com gradiente por tela.' },
+  { titulo: 'Inter em título', texto: 'A tipografia diz que Inter nunca aparece em título de página. O exemplo de tela operacional no guia de marca usa Inter 600 no título.' },
+  { titulo: 'Durações', texto: 'A seção cita motion de 100 a 400 ms com nomes antigos. O tema usa os tokens de Movimento de produto.' },
+]} />
+</Secao>
+
+<Callout>
+Fonte: seção de anti-padrões do Design System Citiesoft (cor, tipografia, layout, componentes, texto, código e documentos).
+</Callout>
+
+</Pagina>

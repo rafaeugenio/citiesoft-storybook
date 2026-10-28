@@ -1,0 +1,164 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { densidadeELayout } from '../_docs/snippets/densidade-e-layout';
+
+<Meta title="Guias/Densidade e layout" />
+
+<Pagina
+  titulo="Densidade e layout"
+  resumo="Como escolher a densidade por perfil, montar a grade e o shell, aplicar o espaçamento por contexto e decidir raio, borda e elevação de cada superfície. Os valores dos tokens ficam nas páginas de Fundação."
+>
+
+<Secao titulo="Densidade" descricao="A densidade muda gutter e padding interno, não o número de colunas. Defina no container pai da tela e deixe os componentes herdarem.">
+<Tabela colunas={['Propriedade', 'Confortável', 'Compacta']} larguraMinima={560} linhas={[
+  ['Perfil', 'Gestor e cidadão', 'Servidor operacional'],
+  ['Padding do campo (vertical e horizontal)', '12 e 16 px', '8 e 12 px'],
+  ['Gap entre campos do grupo', '16 px', '12 px'],
+  ['Gap entre grupos', '24 px', '16 px'],
+  ['Gap entre seções', '40 px', '32 px'],
+  ['Padding de card', '24 px', '16 px'],
+  ['Altura de linha de tabela', 'Cerca de 52 px', 'Cerca de 36 px'],
+  ['Células de tabela (vertical e horizontal)', '12 e 16 px', '8 e 12 px'],
+]} />
+<Cartoes colunas={3} itens={[
+  { titulo: 'Uma densidade por tela', texto: 'Nunca misture densidades na mesma tabela. Aplique a classe no container pai e no `p-table`.' },
+  { titulo: 'Sem classe, sem densidade', texto: 'Um container sem classe herda o padrão do PrimeNG, com linhas de cerca de 52 px e 8 a 10 linhas visíveis.' },
+  { titulo: 'Rótulos ao usuário', texto: 'Se a interface expõe a escolha, use Confortável e Compacto. Nada de Espaçoso, Denso ou Normal.' },
+]} />
+<Callout titulo="Modo administrativo">
+Existe um terceiro perfil para backoffice de alto volume (campo de 4 e 8 px, card de 12 px, linha de cerca de 28 px). Só desktop, nunca em tela de cidadão, e o alvo interativo continua com 24 por 24 px no mínimo. Se exposto, o nome é Máximo.
+</Callout>
+</Secao>
+
+<Secao titulo="Grade e breakpoints" descricao="Projete primeiro em 1366 px, a resolução mais comum nas secretarias, e depois escale.">
+<Tabela colunas={['Faixa', 'Colunas', 'Gutter (confortável e compacto)', 'Margem lateral']} larguraMinima={640} linhas={[
+  ['Abaixo de 768 px', '4', '16 e 12 px', '16 px'],
+  ['768 px (md)', '12', '20 e 16 px', '24 px'],
+  ['1024 px (lg)', '12', '24 e 16 px', '32 px'],
+  ['1366 px (xl)', '12', '24 e 16 px', '40 px'],
+  ['1920 px (2xl)', '12', '32 e 24 px', '80 px'],
+]} />
+<Tabela colunas={['Layout', 'Largura máxima']} linhas={[
+  ['Dashboard executivo', '1600 px'],
+  ['Detalhe ou processo', '1280 px'],
+  ['Formulário extenso', '960 px'],
+  ['Portal do cidadão', '1024 px'],
+  ['Master-detail', 'Sem limite'],
+]} />
+</Secao>
+
+<Secao titulo="Shell e layouts nomeados">
+<Tabela colunas={['Zona', 'Medida e comportamento']} larguraMinima={600} linhas={[
+  ['Topbar', '56 px (48 px na compacta), borda inferior, sempre fixa'],
+  ['Sidebar expandida', '240 px a partir de lg'],
+  ['Sidebar colapsada', '64 px, só ícones. Padrão sugerido para o servidor operacional'],
+  ['Sidebar em drawer', '280 px sobre overlay abaixo de lg. Fecha com Esc, clique fora ou escolha de item'],
+]} />
+<Tabela colunas={['Layout', 'Estrutura', 'No mobile']} larguraMinima={700} linhas={[
+  ['Lista', 'Título e botão Novo, filtros, tabela em 12 colunas, paginação', 'Tabela vira cards empilhados'],
+  ['Detalhe', 'Painel principal em 8 colunas e lateral em 4', 'Lateral desce no md. Seções viram accordion'],
+  ['Formulário', 'Até 960 px, seções com campos em 4, 6 ou 12 colunas', 'Tudo em coluna única'],
+  ['Wizard', 'Steps no topo, etapa em 8 colunas centradas no xl', 'Etapa em largura total'],
+  ['Dashboard', 'KPIs em 3 colunas, gráfico em 8 e ranking em 4', 'KPIs primeiro, gráfico depois, tabela por último'],
+  ['Master-detail', 'Lista de 320 px (280 px no lg) e detalhe flexível', 'Empilha, ou o detalhe substitui a lista'],
+]} />
+<CodeTabs abas={densidadeELayout} />
+</Secao>
+
+<Secao titulo="Espaçamento por contexto" descricao="Tudo em múltiplos de 4 px. O espaço é gramática: quanto mais próximo, mais relacionado.">
+<Tabela colunas={['Relação', 'Distância']} linhas={[
+  ['Rótulo e campo', '4 px, invariante. Nunca mais que 8 px'],
+  ['Campo e texto auxiliar ou erro', '4 px, com espaço reservado para o erro não empurrar o layout'],
+  ['Campos do mesmo grupo', '12 px (compacta) ou 16 px (confortável)'],
+  ['Título do grupo e primeiro campo', '16 px'],
+  ['Grupos distintos', '16 px (compacta) ou 24 px (confortável)'],
+  ['Seções da página', '32 px (compacta) ou 40 px (confortável)'],
+  ['Campo de busca e cabeçalho da tabela', '16 px (compacta) ou 24 px (confortável)'],
+  ['Último campo e ações do formulário', '24 px, ações à direita'],
+  ['Estado vazio', 'Padding vertical de 64 px ou mais'],
+]} />
+<CertoErrado itens={[
+  { certo: 'Cada nível pelo menos o dobro do anterior: 4, 12 a 16, 16 a 24, 32 a 40.', errado: 'Gap uniforme de 16 px entre tudo.', motivo: 'O título da seção parece mais um rótulo de campo e o operador demora a achar o campo.' },
+  { certo: 'Tokens da escala em todo padding e margin.', errado: 'Valores como 10 px, 14 px, 15 px ou 7 px.' },
+  { certo: 'Componente cuida do espaço interno e o layout cuida do espaço entre componentes.', errado: 'Margem externa dentro do componente.' },
+]} />
+<Cartoes colunas={2} itens={[
+  { titulo: 'Linha divisória', texto: 'Complementa o espaço e não o substitui. Recomendada em seção com mais de 8 campos.' },
+  { titulo: 'Grupo crítico', texto: 'Use `fieldset` e `legend` além do espaço, como no endereço do beneficiário. Espaço sozinho não é pista para leitor de tela.' },
+]} />
+</Secao>
+
+<Secao titulo="Raio por contexto" descricao="No máximo dois valores de raio por tela, por exemplo 6 px nos campos e 8 px nos cards.">
+<Tabela colunas={['Raio', 'Quando usar']} larguraMinima={600} linhas={[
+  ['6 px (`md`), padrão', 'Input, select, textarea, botão, checkbox customizado, toggle, datepicker, chip de filtro'],
+  ['8 px (`lg`)', 'Card de conteúdo, painel de dropdown, popover, tooltip, menu de contexto, fieldset, toast, dropzone'],
+  ['12 px (`xl`)', 'Modal, drawer (só no lado exposto), card de KPI ou de destaque, banner dentro da página'],
+  ['Pill (`full`)', 'Tag de status, badge de contagem, avatar. Nunca em botão de ação primária'],
+  ['4 px (`sm`)', 'Checkbox nativo, item ativo de breadcrumb, célula de calendário'],
+  ['2 px (`xs`)', 'Barra de progresso, código inline, micro-etiqueta'],
+  ['0 (`none`)', 'Sidebar fixa, banner sticky, linha de tabela. Cantos externos da tabela usam 8 px'],
+]} />
+<Cartoes colunas={2} itens={[
+  { titulo: 'Raio concêntrico', texto: 'Raio do filho igual ao raio do pai menos o padding entre eles. Card de 12 px com padding de 8 px abriga filho de 8 px ou 6 px.' },
+  { titulo: 'Campo e botão lado a lado', texto: 'Raio só nos cantos externos do grupo, como na linha de busca.' },
+]} />
+</Secao>
+
+<Secao titulo="Borda por contexto">
+<Tabela colunas={['Contexto', 'Regra']} larguraMinima={600} linhas={[
+  ['Largura e estilo', '1 px sólida. Tracejada só em dropzone. Pontilhada é proibida. Os 2 px são do anel de foco, que usa outline ou sombra'],
+  ['Campo e divisor', '`color.border.default`. Use `color.border.strong` quando precisar de mais definição'],
+  ['Tabela', 'Borda inferior por linha, sem borda lateral. Em alta densidade, linhas alternadas em `color.background.subtle`'],
+  ['Erro', 'Borda `danger-600` mais anel de foco de erro. Mensagem abaixo do campo'],
+  ['Desabilitado', 'Borda neutra, sem anel de foco, fundo `neutral-100`'],
+  ['Separar seções', 'Não duplique borda quando uma superfície `color.background.subtle` já separa'],
+]} />
+<Callout titulo="Contraste da borda de campo">
+A borda padrão `neutral-200` tem 1,6:1 sobre branco, abaixo dos 3:1 de WCAG 1.4.11. Em campo de formulário, use `color.border.strong` ou diferencie o fundo do campo do fundo da página.
+</Callout>
+</Secao>
+
+<Secao titulo="Elevação por contexto" descricao="Cada tier representa uma camada real do fluxo. Sombra nunca decora.">
+<Tabela colunas={['Tier', 'Superfície', 'z-index']} larguraMinima={600} linhas={[
+  ['Nenhuma', 'Fundo, tabela, linha em hover (o hover vem de `color.state.hover`), topbar e breadcrumb fixos (separados por borda)', '0'],
+  ['`sm`', 'Campos de entrada, chips, badges', 'auto'],
+  ['`md`', 'Cards, painéis, filtros agrupados, sticky header', 'auto, 1020 no sticky'],
+  ['`lg`', 'Dropdown, menu de ações, tooltip rico, popover, autocomplete', '1000, popover 1250'],
+  ['`xl`', 'Modal de decisão, confirmação destrutiva, drawer lateral', 'Drawer 1100, modal 1200'],
+]} />
+<Cartoes colunas={3} itens={[
+  { titulo: 'Sem empilhar', texto: 'Card com `md` não tem filho com `md`. Campos usam `sm` e sub-painéis usam borda sem sombra.' },
+  { titulo: 'Z-index pede sombra', texto: 'Toda superfície acima de 0 tem sombra maior que nenhuma. O toast fica em 1300, acima do modal.' },
+  { titulo: 'Backdrop', texto: 'Modal sempre com overlay: 40% de preto no claro e 60% no escuro. Drawer pode dispensar.' },
+  { titulo: 'Um overlay por vez', texto: 'Feche o menu aberto antes de abrir o próximo e feche o menu ao abrir o drawer.' },
+  { titulo: 'Modo escuro', texto: 'A separação vem da variação de fundo (`#141414`, `#1A1A1D`, `#232327`). As sombras ficam 1,5 a 2 vezes mais opacas.' },
+  { titulo: 'Alto contraste', texto: 'Sob `prefers-contrast: more`, troque a sombra por borda de 1,5 px em `color.border.strong`.' },
+]} />
+</Secao>
+
+<Secao titulo="Acessibilidade do layout">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Foco sob o topbar', texto: 'Aplique `scroll-padding-top` de 64 px (56 px do topbar mais 8 px) para o foco nunca ficar escondido.' },
+  { titulo: 'Landmarks', texto: '`header`, `nav` com rótulo, `main` e `footer`. A ordem do DOM segue a ordem visual.' },
+  { titulo: 'Drawer', texto: '`role="dialog"`, foco no primeiro item ao abrir, retorno ao botão ao fechar e foco preso enquanto aberto.' },
+  { titulo: 'Alvo de toque', texto: '44 por 44 px no mobile, em cards e no link Ver detalhes. 24 por 24 px no mínimo em qualquer contexto.' },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Número de densidades', texto: 'Grid e layout falam em dois modos, confortável e compacto. Espaçamento define três, com o administrativo.' },
+  { titulo: 'Colunas na entrega Figma', texto: 'Grid e layout usam 12 colunas. A entrega de espaçamento para designers cita 8 colunas no desktop, gutter de 24 px e margem de 40 px.' },
+  { titulo: 'Padding lateral da página', texto: 'A escala de espaçamento cita 40 px no md e 64 px no lg. A grade define margem de 24 px no md e 32 px no lg.' },
+  { titulo: 'Sombra do toast', texto: 'Bordas e radius indicam `xl` para o toast. Elevação indica `lg` com z-index 1300.' },
+  { titulo: 'Sombra do card', texto: 'Bordas e radius pedem `lg` no card de KPI. Elevação define cards com `md`.' },
+  { titulo: 'Tokens de movimento', texto: 'O colapso da sidebar usa `standard` 240 ms, enquanto o espaçamento chama os 240 ms de `moderate`.' },
+]} />
+</Secao>
+
+<Callout>
+Fonte: Design System Citiesoft, Grid e layout, Espaçamento, Bordas e radius, Elevação e sombras.
+</Callout>
+
+</Pagina>

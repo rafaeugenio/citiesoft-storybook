@@ -1,0 +1,36 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { ComparacaoDeTemas, RegrasDeTema } from '../_docs/ModoEscuro';
+import { escuroAtivar, escuroAlternar, escuroRegras } from '../_docs/snippets/modo-escuro';
+
+<Meta title="Fundação/Modo escuro" />
+
+<Pagina
+  titulo="Modo escuro"
+  resumo="Os tokens semânticos trocam de valor quando o tema escuro está ativo. O componente continua igual e só o token muda."
+>
+
+<Secao titulo="Como funciona" descricao="O tema é escolhido no elemento raiz. Todo o CSS exportado responde à classe `.dark` e ao atributo `data-theme='dark'`.">
+<CodeTabs abas={escuroAtivar} />
+<Callout>
+Defina também `color-scheme` em `html`, para que barras de rolagem e controles nativos acompanhem o tema.
+</Callout>
+</Secao>
+
+<Secao titulo="Lado a lado" descricao="As mesmas classes e os mesmos tokens, em cada tema.">
+<ComparacaoDeTemas />
+</Secao>
+
+<Secao titulo="Alternar entre temas" descricao="Respeite a escolha salva. Sem escolha, siga `prefers-color-scheme`.">
+<CodeTabs abas={escuroAlternar} />
+</Secao>
+
+<Secao titulo="Regras">
+<RegrasDeTema />
+<CodeTabs abas={escuroRegras} />
+<Callout>
+Se o contraste falhar no escuro, o ajuste é no valor do token, em um só lugar. Corrigir no componente quebra a consistência dos outros.
+</Callout>
+</Secao>
+
+</Pagina>

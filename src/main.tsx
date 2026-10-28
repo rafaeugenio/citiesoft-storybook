@@ -1,8 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import './tokens/tokens.css';
-import './index.css';
-import { Button } from './components/atoms/Button/Button';
+import '@/styles/globals.css';
+import { Button } from '@/components/base/buttons/button';
 
 /**
  * Este projeto é um workshop de componentes. A vitrine real é o Storybook
@@ -10,12 +9,12 @@ import { Button } from './components/atoms/Button/Button';
  */
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <main>
-      <h1>Design System Citiesoft</h1>
-      <p>A documentação executável dos componentes vive no Storybook.</p>
-      <Button onClick={() => window.open('http://localhost:6006', '_blank')}>
-        Abrir o Storybook
-      </Button>
+    <main className="mx-auto flex max-w-xl flex-col items-start gap-4 p-12">
+      <h1 className="text-title-2-medium text-text-primary">Design System Citiesoft</h1>
+      <p className="text-body-medium text-text-secondary">
+        A documentação executável dos componentes vive no Storybook.
+      </p>
+      <Button onClick={() => window.open('http://localhost:6006', '_blank')}>Abrir o Storybook</Button>
     </main>
   </StrictMode>,
 );

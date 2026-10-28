@@ -2,15 +2,9 @@ import type { StorybookConfig } from '@storybook/react-vite';
 
 const config: StorybookConfig = {
   stories: [
-    // Páginas escritas à mão (Visão geral, Fundações, guias de composição).
-    '../.storybook/docs/**/*.mdx',
-    // Templates e páginas de demonstração: vivem fora de `src` porque não fazem
-    // parte da biblioteca distribuída, seguindo a recomendação do Brad Frost.
-    '../.storybook/templates/**/*.stories.@(ts|tsx)',
-    '../.storybook/pages/**/*.stories.@(ts|tsx)',
-    // Átomos, moléculas e organismos: a story mora junto do componente.
-    '../src/**/*.mdx',
-    '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+    // Mesma ordem de camadas da documentação do Citiesoft: Fundação, Base, Blocos, Templates.
+    '../stories/**/*.mdx',
+    '../stories/**/*.stories.@(ts|tsx)',
   ],
   addons: [
     '@chromatic-com/storybook',

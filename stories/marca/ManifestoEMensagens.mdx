@@ -1,0 +1,108 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+
+<Meta title="Marca/Manifesto e mensagens" />
+
+<Pagina
+  titulo="Manifesto e mensagens"
+  resumo="O manifesto abre as peças institucionais. Os cinco pilares organizam o que a marca diz e como prova. O público define a linguagem."
+>
+
+<Secao titulo="Manifesto" descricao="Usar em abertura de deck institucional, Sobre nós, licitação e posicionamento. Cada frase precisa ser defensável com uma entrega concreta.">
+<Callout titulo="Texto base">
+A gestão pública não falha por falta de dedicação. Falha por falta de ferramentas. Processos manuais acumulam erros. Planilhas viram gargalos. Sistemas legados travam decisões que precisam ser tomadas hoje.
+
+A Citiesoft existe para resolver isso. Desenvolvemos software, plataformas e aplicações digitais para governos, secretarias e órgãos públicos que precisam operar com mais agilidade, menos retrabalho e mais controle. Cada produto nasce do entendimento real de como a gestão pública funciona: seus fluxos, suas obrigações legais, seus usuários, suas limitações.
+
+Confiança é o sistema que funcionou na virada do mês. É o relatório que saiu no prazo. É a equipe do cliente que aprendeu a usar a ferramenta sem suporte toda semana. É o gestor que decidiu com dado confiável na mão.
+
+Esse é o padrão que defendemos. Somos o backbone tecnológico de quem governa com responsabilidade.
+</Callout>
+<Tabela
+  colunas={['Formato', 'Texto', 'Uso']}
+  linhas={[
+    ['Tagline-manifesto', 'Tecnologia para quem governa com responsabilidade.', 'Assinatura de e-mail, rodapé de apresentação, bio institucional'],
+    ['Versão descritiva', 'Plataformas digitais para gestão pública mais ágil, integrada e confiável.', 'Materiais de apoio'],
+  ]}
+  larguraMinima={560}
+/>
+<Callout>
+Não inclua ecossistema, jornada, inovação disruptiva ou transformação digital sem contexto concreto. Não cite concorrentes. Fora do manifesto: e-mail de suporte, release note, material técnico e contrato. Para o cidadão, reescreva em linguagem acessível mantendo responsabilidade e clareza.
+</Callout>
+</Secao>
+
+<Secao titulo="Cinco pilares de mensagem" descricao="Toda peça parte de um pilar dominante. Propostas e decks combinam pilares em seções diferentes, nunca os cinco no mesmo parágrafo. Cada argumento leva uma prova.">
+<Tabela
+  colunas={['Pilar', 'Mensagem-chave', 'Provas', 'Onde usar']}
+  linhas={[
+    ['1. Tecnologia para simplificar a gestão pública', 'Processos complexos viram fluxos digitais claros, acessíveis e eficientes.', 'Digitalização de fluxos físicos; menos etapas manuais; interface para servidor sem perfil técnico; implantação incremental', 'Proposta, abertura de apresentação, landing, posts de awareness'],
+    ['2. Dados integrados para decisões melhores', 'Fontes dispersas conectadas dão ao gestor visibilidade real.', 'Painéis multissecretaria; histórico auditável; relatórios configuráveis; indicadores em tempo real', 'Órgãos com várias áreas, secretários, cases'],
+    ['3. Rastreabilidade e segurança operacional', 'Cada operação registrada, cada acesso documentado, cada dado protegido.', 'Log por operação sem edição retroativa; acesso por perfil; LGPD; autenticação segura (Keycloak na Gen-2); backup documentado', 'Editais com exigência de compliance, material para TI, incidentes'],
+    ['4. Eficiência para equipes públicas', 'Servidores entregam mais com menos retrabalho em sistemas pensados para conexão instável, treinamento limitado e margem de erro baixa.', 'Fluxos guiados; validação antes do envio; alertas; operação com baixa conectividade; histórico acessível', 'Secretarias operacionais, demos, treinamento, releases'],
+    ['5. Experiências digitais mais claras para todos', 'Clara para quem opera, compreensível para quem monitora, transparente para o cidadão.', 'Design System Citie; linguagem simples; WCAG AA; portais para baixo letramento digital; feedback de estado', 'Saúde, assistência, educação, portais ao cidadão'],
+  ]}
+  larguraMinima={820}
+/>
+<CertoErrado itens={[
+  { certo: 'O TFD integra agendamento, autorização, transporte e acompanhamento do paciente. Cada etapa fica registrada com responsável e carimbo de tempo.', errado: 'A Citiesoft oferece soluções inovadoras e tecnológicas para transformar a gestão pública com excelência e qualidade.', motivo: 'Sem pilar, sem prova e sem contexto operacional.' },
+  { certo: 'Com o processo registrado no sistema, a rotatividade de servidores não paralisa a operação. Histórico acessível, fluxos guiados e validações automáticas dão continuidade.', errado: 'Nossa plataforma aumenta a produtividade das equipes com uma interface intuitiva e colaborativa.', motivo: 'Serviria a qualquer SaaS. Falta o contexto público.' },
+]} />
+<Callout>
+Vocabulário por interlocutor: gestor estratégico (impacto, decisão, resultado), servidor (fluxo, passo, alerta), TI (arquitetura, integração, segurança).
+</Callout>
+</Secao>
+
+<Secao titulo="Públicos" descricao="Identifique o público primário antes de cada peça. Gestor recebe impacto mensurável. Servidor recebe instrução direta. Cidadão recebe linguagem simples.">
+<Tabela
+  colunas={['Público', 'Dor central', 'Como falar', 'Canais']}
+  linhas={[
+    ['Governo e órgão público', 'Sistema legado, fornecedor que some após a implantação, risco de auditoria', 'Institucional, técnico, parceiro. Resultados e conformidade em vez de features. Cita normas quando cabe.', 'Proposta, licitação, portais de compras, relatório de implantação'],
+    ['Secretarias', 'Sistema genérico, implantação longa, suporte sem conhecer a operação', 'Técnico e próximo. Domínio do processo da vertical: TFD na Saúde, folha na Administração.', 'Demo, documentação, treinamento, WhatsApp institucional'],
+    ['Gestores públicos', 'Pressão por resultado, responsabilidade perante TCE, TCU e CGU, dados dispersos', 'Estratégico. ROI, tempo economizado, risco reduzido, cases com número.', 'Deck executivo, relatório, eventos do setor, LinkedIn'],
+    ['Equipes operacionais', 'Sistema lento, interface complexa, sem feedback após a ação', 'Direto e respeitoso, sem condescendência. Linguagem de ação. Erro que ensina e não culpa.', 'Interface, ajuda contextual, vídeo curto, chat'],
+    ['Cidadãos', 'Não saber o status do pedido, burocracia, falta de retorno', 'Simples, acolhedor, transparente. Sem sigla nem jargão burocrático.', 'Portais, SMS, e-mail, push, totem'],
+    ['Parceiros', 'Documentação desatualizada, roadmap incerto, falta de canal dedicado', 'Técnico e colaborativo, com documentação impecável.', 'Portal de parceiros, API docs, reuniões de alinhamento'],
+  ]}
+  larguraMinima={840}
+/>
+<Callout titulo="Cidadão e Citiezinho">
+O Citiezinho pode aparecer em portais do cidadão para reduzir a intimidação, exceto em contexto sensível, como resultado negativo de regulação ou negativa de benefício. A comunicação ao cidadão foca no serviço, e a marca Citiesoft fica nos bastidores.
+</Callout>
+</Secao>
+
+<Secao titulo="Slogans por contexto" descricao="Cada slogan tem contexto indicado. Fora dele, passa por revisão da equipe de marca.">
+<Tabela
+  colunas={['Slogan', 'Contexto']}
+  linhas={[
+    ['Tecnologia que opera junto com a gestão pública.', 'Apresentação institucional, proposta, licitação. Variação curta: Opera junto.'],
+    ['Plataformas para governos que precisam de resultado.', 'Deck de vendas, homepage, pitch a gestores'],
+    ['A gestão pública mais ágil começa com a tecnologia certa.', 'Lançamento de módulo, post institucional'],
+    ['O sistema que conecta secretarias, dados e decisões.', 'Gestores de alto escalão, governos estaduais'],
+    ['Eficiência pública. Impacto real.', 'Rodapé, assinatura de e-mail, capa de proposta. Evitar em contexto muito comercial.'],
+    ['Software feito para a complexidade da gestão pública.', 'Prospecção e páginas de produto'],
+  ]}
+  larguraMinima={560}
+/>
+</Secao>
+
+<Secao titulo="CTAs por contexto">
+<Cartoes colunas={3} itens={[
+  { rotulo: 'Proposta e licitação', titulo: 'Demonstração técnica', texto: 'Solicite uma demonstração técnica com a equipe Citiesoft. Solicite o memorial descritivo do sistema para análise técnica.' },
+  { rotulo: 'Site institucional', titulo: 'Fale com o time', texto: 'Fale com nosso time de implantação. Veja como o módulo funciona no fluxo da sua secretaria.' },
+  { rotulo: 'E-mail de prospecção', titulo: 'Pergunta direta', texto: 'Posso enviar uma apresentação técnica para análise da equipe? Quando podemos agendar 30 minutos?' },
+  { rotulo: 'Produto', titulo: 'Próximo passo claro', texto: 'Configure o primeiro cadastro para começar a operar. Importe os dados do órgão para iniciar o monitoramento.' },
+  { rotulo: 'LinkedIn', titulo: 'Ação indicada', texto: 'Leia o caso de uso completo. Fale com nosso time.' },
+  { rotulo: 'Deck', titulo: 'Fechamento', texto: 'Próximos passos: agendamento de demonstração técnica. Solicite a proposta formal.' },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Callout titulo="O que prevalece">
+O manifesto original traz duas construções de negação seguida de afirmação, que a própria regra de escrita da marca proíbe. Elas foram omitidas aqui. A plataforma consolidada lista 4 pilares (Confiança Institucional, Capacidade Técnica, Parceria Operacional, Impacto Real), enquanto o documento de pilares define 5. Vale o documento de pilares. As taglines também variam entre documentos (Tecnologia que move a gestão pública, Tecnologia para quem governa com responsabilidade). Use cada uma no contexto indicado nas tabelas acima.
+</Callout>
+</Secao>
+
+<Callout>Fonte: Brandbook Citiesoft, Estratégia de marca e Identidade verbal.</Callout>
+
+</Pagina>

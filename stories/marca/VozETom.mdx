@@ -1,0 +1,172 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { microcopyProduto } from '../_docs/snippets/vozetom';
+
+<Meta title="Marca/Voz e tom" />
+
+<Pagina
+  titulo="Voz e tom"
+  resumo="A Citiesoft escreve com clareza, profissionalismo e proximidade. Os valores ficam fixos e o nível de formalidade muda com o contexto."
+>
+
+<Secao titulo="Sete atributos" descricao="Permanentes em qualquer canal. O que varia é a intensidade.">
+<Tabela
+  colunas={['Atributo', 'Definição', 'Evitar']}
+  linhas={[
+    ['Claro', 'Ideias em ordem lógica, vocabulário direto, zero ambiguidade', 'Jargão sem necessidade, subordinadas em cascata'],
+    ['Profissional', 'Registro cuidado, gramática impecável, argumento embasado', 'Gíria, informalismo, erro ortográfico'],
+    ['Confiável', 'Afirmação verificável, promessa dentro da capacidade real', 'Hipérbole, superlativo sem base'],
+    ['Próximo', 'Linguagem humana, reconhece o contexto do interlocutor', 'Frieza corporativa, texto robótico'],
+    ['Institucional', 'Respeita o protocolo do setor público', 'Leveza em contexto formal, tom de startup consumer'],
+    ['Tecnológico', 'Capacidade técnica sem soar inacessível', 'Tecnicismo para gestor, simplificação ingênua para TI'],
+    ['Parceiro', 'Aliado operacional que reconhece os desafios do cliente', 'Tom de vendedor, promessa unilateral'],
+  ]}
+  larguraMinima={600}
+/>
+</Secao>
+
+<Secao titulo="Quatro níveis de formalidade" descricao="O contexto define o nível. A preferência de quem escreve não entra.">
+<Tabela
+  colunas={['Nível', 'Contextos', 'Características', 'Exemplo']}
+  linhas={[
+    ['1. Institucional formal', 'Edital, contrato, aditivo, nota técnica, ofício', 'Protocolo máximo, referência normativa, sem recurso emocional', 'A Citiesoft Tecnologia declara que os sistemas ofertados atendem aos requisitos de segurança da informação da Lei n.º 13.709/2018 (LGPD), conforme o Anexo Técnico III.'],
+    ['2. Profissional executivo', 'Proposta consultiva, apresentação a secretário, relatório de projeto', 'Resultado, dado concreto, assertivo sem arrogância', 'O TFD centraliza as solicitações em uma plataforma e reduz o tempo médio de resposta ao cidadão de 5 dias para menos de 24 horas.'],
+    ['3. Técnico colaborativo', 'Manual, tutorial, treinamento, suporte, conversa com TI do cliente', 'Precisão sem hermetismo, passo a passo numerado, paciente sem condescendência', 'Acesse `Sistema > Usuários > Perfis` e selecione Fiscal Externo. Marque as permissões de leitura em Contratos e Relatórios.'],
+    ['4. Próximo operacional', 'Comunicação interna, onboarding, empty state, tooltip', 'Humano e direto, celebra a conclusão sem exagero', 'Nenhuma solicitação encontrada neste período. Ajuste o filtro de datas ou verifique se o cadastro do paciente está ativo.'],
+  ]}
+  larguraMinima={780}
+/>
+</Secao>
+
+<Secao titulo="Princípios de escrita">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Afirme direto', texto: 'Diga o que a Citiesoft é e faz. Frase que nega algo para afirmar outra coisa é proibida em todo canal.' },
+  { titulo: 'Promessa com âncora', texto: 'Robusto, poderoso e inovador só entram com evidência.' },
+  { titulo: 'Sem jargão de startup', texto: 'Modernizamos a gestão pública com tecnologia aplicada, em vez de disruptamos.' },
+  { titulo: 'Precisão por público', texto: 'O dado é o mesmo. A linguagem muda entre gestor e TI.' },
+  { titulo: 'Português impecável', texto: 'Acento, cedilha e concordância corretos, inclusive em Azure Boards e Jira de cliente. Travessão é proibido: use vírgula, ponto e vírgula ou ponto.' },
+  { titulo: 'Frase curta para agir', texto: 'Instrução com uma ação por frase. Argumentação em proposta aceita frases mais elaboradas.' },
+]} />
+<CertoErrado itens={[
+  { certo: 'O sistema foi desenhado para servidores sem formação técnica em TI.', errado: 'Frase que nega a complexidade para depois afirmar a intuitividade.', motivo: 'Negação seguida de afirmação soa defensiva.' },
+  { certo: 'Plataforma integrada para controle de contratos, licitações e folha, com rastreabilidade por usuário e exportação para o SICOM.', errado: 'Plataforma robusta e inovadora para a gestão pública.', motivo: 'Adjetivo sem evidência.' },
+  { certo: 'Sem permissão para acessar esta área. Solicite acesso ao administrador do sistema.', errado: 'Erro 403: permissão negada. Contate o administrador do sistema.', motivo: 'Código cru em tela de servidor.' },
+]} />
+</Secao>
+
+<Secao titulo="Vocabulário recomendado" descricao="O mesmo termo vale em sistema, proposta, deck e e-mail. Quando o glossário define um termo, nenhum sinônimo entra sem justificativa registrada.">
+<Tabela
+  colunas={['Use', 'Em vez de', 'Observação']}
+  linhas={[
+    ['plataforma', 'solução', 'Sistema só para um módulo específico'],
+    ['módulo', 'feature, funcionalidade', 'Funcionalidade é aceitável em UX'],
+    ['painel', 'dashboard', 'Dashboard é aceitável em produto'],
+    ['integração', 'link, conexão, bridge', ''],
+    ['perfil de acesso', 'role, grupo de usuário', ''],
+    ['auditoria', 'log', 'Log é aceitável em documentação técnica'],
+    ['servidor', 'usuário', 'Em contexto B2G formal'],
+    ['cidadão', 'usuário final', 'Em comunicação pública'],
+    ['implantação', 'deploy', 'Com cliente público'],
+    ['capacitação', 'treinamento', 'Em B2G formal'],
+    ['integração inicial', 'onboarding', 'Onboarding é aceitável em comunicação de produto'],
+    ['backbone tecnológico', '', 'Reservado a pitch e manifesto, nunca em texto curto'],
+  ]}
+  larguraMinima={560}
+/>
+<Callout titulo="Termos do domínio">
+Órgão (sempre com determinante), secretaria (sem abreviar em documento formal), gestor, processo (nunca para bug ou tarefa interna), expediente, protocolo, empenho (só em módulo financeiro) e homologação (em vez de aprovar ou validar na implantação).
+</Callout>
+</Secao>
+
+<Secao titulo="Jargão e palavras proibidas">
+<Tabela
+  colunas={['Evitar', 'Substituto']}
+  linhas={[
+    ['solução, ecossistema', 'plataforma, módulo, conjunto integrado de módulos'],
+    ['inovação, transformação digital', 'Descreva o que muda na operação do órgão'],
+    ['alavancar, potencializar, entregar valor', 'ampliar; reduzir o tempo de; reduzir retrabalho'],
+    ['stakeholder, deliverable, roadmap, sprint, pivot', 'secretaria ou órgão; entregável; plano de evolução; ciclo ou etapa; ajuste de escopo'],
+    ['end-to-end, seamless, real-time', 'do registro ao encerramento do processo; sem interrupção; em tempo real'],
+    ['escalar', 'Especifique: expandir para novos municípios, aumentar a capacidade de processamento'],
+  ]}
+  larguraMinima={520}
+/>
+<Callout titulo="Proibido em canal externo">
+Revolucionar, incrível, melhor do mercado, líder de mercado, única no mercado, garantimos resultados, muda tudo, simples assim, AI-powered e powered by em português, travessão e a construção que nega para afirmar. Superlativo só com dado e fonte.
+</Callout>
+</Secao>
+
+<Secao titulo="Copy institucional">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Verbos concretos', texto: 'Viabilizamos e entregamos, em vez de transformamos e revolucionamos. Uma ideia por frase em contexto formal.' },
+  { titulo: 'Dado no lugar de adjetivo', texto: 'Mais de 40 municípios atendidos supera vasta experiência. Sem evidência, retire o superlativo.' },
+  { titulo: 'Tratamento', texto: 'Ofício e proposta técnica abrem com Vossa Senhoria ou V.Sa. No corpo, use você ou omita o pronome.' },
+  { titulo: 'Contexto B2G explícito', texto: 'Cite gestão pública, órgão, secretaria ou servidor quando o público não for óbvio.' },
+]} />
+<CertoErrado itens={[
+  { certo: 'A Citiesoft desenvolve software, aplicativos e plataformas digitais para o setor público. Atende secretarias, municípios e órgãos estaduais com sistemas que reduzem retrabalho e aumentam a rastreabilidade das operações.', errado: 'Somos apaixonados por tecnologia e acreditamos no poder da inovação para o bem comum.', motivo: 'Publicidade vaga sem âncora no B2G.' },
+  { certo: 'A plataforma Citiesoft TFD está em produção em N municípios e processa X solicitações por mês.', errado: 'A melhor plataforma de TFD do mercado.', motivo: 'Em proposta, o superlativo sem prova pode ser impugnado.' },
+]} />
+</Secao>
+
+<Secao titulo="Copy de produto" descricao="Impessoal no status, direto na ação. O sistema informa, sem pedir desculpa nem celebrar. Leitura e entendimento em até três segundos.">
+<Tabela
+  colunas={['Elemento', 'Regra']}
+  linhas={[
+    ['Botão', 'Verbo no infinitivo, 1 a 3 palavras. Confirmação destrutiva repete a ação (Excluir lançamento) e o cancelamento é neutro (Cancelar).'],
+    ['Rótulo de campo', 'Substantivo específico: Data de início da viagem, CPF do titular. Placeholder nunca substitui o rótulo.'],
+    ['Erro', 'Causa mais ação corretiva. Nunca apenas Erro.'],
+    ['Sucesso', 'Resultado concreto, sem elogio. Sem Ótimo ou Parabéns.'],
+    ['Carregamento', 'Status real do processo sempre que possível.'],
+    ['Estado vazio', 'Contexto mais próxima ação, com botão.'],
+    ['Capitalização', 'Primeira letra maiúscula e o resto minúsculo, exceto siglas e nomes próprios.'],
+    ['Negativa', 'Prefira a afirmação: Campo obrigatório.'],
+  ]}
+  larguraMinima={520}
+/>
+<Tabela
+  colunas={['Texto curto', 'Limite']}
+  linhas={[
+    ['Rótulo de botão', '1 a 3 palavras'],
+    ['Toast ou snackbar', 'até 80 caracteres'],
+    ['Placeholder', 'até 60 caracteres'],
+    ['Título de modal de confirmação', 'até 50 caracteres'],
+    ['Estado vazio', 'até 120 caracteres'],
+  ]}
+  larguraMinima={360}
+/>
+<CodeTabs abas={microcopyProduto} />
+<CertoErrado itens={[
+  { certo: 'Enviar para aprovação', errado: 'Enviar, Prosseguir ou Avançar', motivo: 'O botão repete a ação real.' },
+  { certo: 'Diária lançada com sucesso.', errado: 'Ótimo! Lançamento salvo com sucesso!', motivo: 'Emoção inadequada ao contexto institucional.' },
+  { certo: 'Operação não concluída.', errado: 'Ops! Algo deu errado por aqui.', motivo: 'Informalidade incompatível com gestão pública.' },
+]} />
+</Secao>
+
+<Secao titulo="Redes sociais" descricao="Fato concreto, impacto real ou posicionamento técnico. Todo post termina com uma direção clara.">
+<Tabela
+  colunas={['Parte', 'Regra']}
+  linhas={[
+    ['Abertura', '1 a 2 linhas com fato, dado, pergunta pontual ou posicionamento. Sem clickbait.'],
+    ['Desenvolvimento', '2 a 5 linhas com o contexto que justifica a abertura.'],
+    ['Fechamento', '1 a 2 linhas com consequência, impacto ou convite à reflexão.'],
+    ['CTA', 'Opcional, 1 linha, diz o que acontece ao agir: Leia o artigo. Assista à demonstração.'],
+    ['Hashtags', 'LinkedIn de 3 a 6, Instagram até 10. Em português, ligadas ao post.'],
+  ]}
+  larguraMinima={520}
+/>
+<Callout titulo="Hashtags da marca">
+`#Citiesoft` `#GestãoPública` `#TecnologiaPública` `#B2G` `#GovTech`. Por setor: `#SaúdePública` `#TFD` `#FrotaMunicipal` `#RH` `#SIGEP` `#Licitação` `#Transparência`. Sem `#Inovação` ou `#Tech` isoladas. Evite CTA genérico como Clique aqui, emoji em excesso e mistura de idiomas.
+</Callout>
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Callout titulo="O que prevalece">
+Tratamento: o nível 4 e a copy institucional aceitam você, mas a copy de produto pede texto impessoal e o Design System proíbe segunda pessoa do singular em interface. Em interface vale o impessoal ou o imperativo sem pronome. Números: a base cita 30 municípios em alguns exemplos e mais de 40 em outros. Confirme o número vigente antes de publicar. Hashtag: o documento de redes sociais recomenda `#TransformaçãoDigital`, que o vocabulário manda evitar. Prevalece o vocabulário, e a hashtag só entra com contexto B2G concreto. Exemplos: um post de posicionamento e um slide do relatório usam construção de negação e o termo sprint, que a própria base proíbe. Siga as regras, não esses exemplos. Onboarding consta como termo recomendado e como a evitar. Vale integração inicial em proposta formal e onboarding em produto.
+</Callout>
+</Secao>
+
+<Callout>Fonte: Brandbook Citiesoft, Identidade verbal.</Callout>
+
+</Pagina>

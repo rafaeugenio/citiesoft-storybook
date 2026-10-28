@@ -1,0 +1,29 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao } from '../_docs/Layout';
+import { Tabela } from '../_docs/Conteudo';
+
+<Meta title="Blocos/Visão geral" />
+
+<Pagina
+  titulo="Blocos"
+  resumo="Composições maiores feitas de componentes Base. Cada bloco aceita configuração por props e traz os estados de carregando, vazio e erro quando fazem sentido."
+>
+
+<Secao titulo="Blocos de sistema" descricao="Estrutura e fluxos recorrentes dos sistemas Citiesoft, em português.">
+<Tabela
+  colunas={['Grupo', 'Blocos']}
+  linhas={[
+    ['Moldura e navegação', '`AppFrame`, `SettingsLayout`, `DockBar`, `PageHeader`'],
+    ['Listagem', '`FilterBar`, `DataListing`, `SelectionBar`, `EmptyState`, `ErrorState`, `TableSkeleton`'],
+    ['Sobreposições', '`Drawer`, `Dialog`, `ConfirmDialog`, `ActionMenu`'],
+    ['Formulários e fluxos', '`FormSection`, `FormGrid`, `FormActions`, `Stepper`, `LoginSimples`'],
+    ['Detalhe', '`DetailHeader`, `KeyValueList`, `Timeline`'],
+  ]}
+/>
+</Secao>
+
+<Secao titulo="Blocos de aplicação" descricao="Composições de uso geral: barra lateral, tabela de dados, calendário, centro de notificações, composer e blocos de agente.">
+Agent Creator, Agent Limits, Agent Progress, Agent Thinking, Auth Card, Calendar, Composer, Composer Attachments, Composer Loader, Composer Panel, Data Grid, Data Table, Notification Center, Questionnaire, Settings Modal, Sidebar, Stat Cards, Task List e Web Search.
+</Secao>
+
+</Pagina>

@@ -1,0 +1,126 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, Passos } from '../_docs/Conteudo';
+import { Checklist } from '../_docs/Checklist';
+import { registroDeAchado } from '../_docs/snippets/design-qa';
+
+<Meta title="Guias/Design QA e critérios de aceite" />
+
+<Pagina
+  titulo="Design QA e critérios de aceite"
+  resumo="Protocolo para achar desvio entre Figma, tokens e a tela implementada, e régua objetiva para dizer se uma tela está pronta. Use em todo PBI com interface."
+>
+
+<Secao titulo="Severidade" descricao="Todo achado recebe um grau de S0 a S4. Nenhum PBI fecha com S0 ou S1 aberto.">
+<Tabela larguraMinima={620} colunas={['Grau', 'Nome', 'Exemplo', 'Prazo']} linhas={[
+  ['S0', 'Bloqueador de acessibilidade', 'Contraste abaixo de 4,5:1 em texto, foco invisível, campo sem rótulo', 'Antes de qualquer merge'],
+  ['S1', 'Token errado', 'Cor, espaçamento ou fonte fixos no código, logo errado para o fundo', 'Antes do merge'],
+  ['S2', 'Estado faltando', 'Hover, foco, disabled, vazio, erro ou loading ausente', 'Antes da demo'],
+  ['S3', 'Drift menor', 'Raio, sombra, movimento ou ícone fora do token, texto fora do padrão', 'No mesmo sprint, com tag `DS-drift`'],
+  ['S4', 'Observação', 'Sugestão sem violação de regra', 'Backlog do Design System'],
+]} />
+</Secao>
+
+<Secao titulo="Checklist de Design QA" descricao="Marque conforme revisa. As marcações valem só nesta visita à página e não são salvas.">
+<Checklist grupos={[
+  {
+    titulo: 'Antes do handoff (Figma)',
+    descricao: 'Aplicado pelo designer antes de marcar o frame como pronto.',
+    itens: [
+      { texto: 'Texto de corpo com contraste de pelo menos 4,5:1, texto grande com 3:1.', severidade: 'S0' },
+      { texto: 'Bordas de campo, ícones ativos e indicadores com contraste de 3:1 contra o fundo.', severidade: 'S0' },
+      { texto: 'Par texto secundário sobre fundo suave verificado, pois fica no limite.', severidade: 'S0' },
+      { texto: 'Títulos em Red Hat Display, corpo e rótulos em Inter 14 px, código em Red Hat Mono.', severidade: 'S1' },
+      { texto: 'Todas as cores vêm de variáveis do Figma, sem hex solto.', severidade: 'S1' },
+      { texto: 'Espaçamento em múltiplos de 4 px. Gap entre campos de 16 ou 24 px.', severidade: 'S1' },
+      { texto: 'Raio de 6 px em campos e botões, 12 px em cards e modais.', severidade: 'S3' },
+      { texto: 'Sombras só dos quatro níveis: campo, card, menu e modal.', severidade: 'S3' },
+      { texto: 'Cinco estados desenhados: padrão, hover, foco, ativo e desabilitado. Campos têm também erro.', severidade: 'S2' },
+      { texto: 'Estados vazio e carregando desenhados em toda listagem.', severidade: 'S2' },
+      { texto: 'Logo conferido pelo fundo: claro com a versão para fundo branco, azul ou escuro com a versão para fundo escuro.', severidade: 'S1' },
+      { texto: 'Movimento de componente customizado anotado no frame.', severidade: 'S3' },
+      { texto: 'Rótulos são substantivos, placeholder só mostra formato, botões usam verbo, confirmação destrutiva cita o objeto.', severidade: 'S3' },
+    ],
+  },
+  {
+    titulo: 'Depois da implementação (Angular)',
+    descricao: 'Aplicado por dev e Design QA antes de mover o card para pronto para aceite.',
+    itens: [
+      { texto: 'Nenhuma cor, espaçamento ou fonte fixos no SCSS. Tudo por variável de token.', severidade: 'S1' },
+      { texto: 'Tema escuro conferido alternando a classe do tema no DevTools.', severidade: 'S1' },
+      { texto: 'Estilos do PrimeNG ajustados no preset central, nunca em estilo isolado.', severidade: 'S1' },
+      { texto: 'axe DevTools ou Lighthouse de acessibilidade com nota de 95 ou mais.', severidade: 'S0' },
+      { texto: 'Tab percorre tudo na ordem visual, sem armadilha de foco.', severidade: 'S0' },
+      { texto: 'Anel de foco visível em todo interativo e sem `outline: none` sem substituto.', severidade: 'S0' },
+      { texto: 'Modal e drawer prendem o foco e devolvem ao gatilho. Menus fecham com Esc.', severidade: 'S0' },
+      { texto: 'Campo com rótulo associado, `aria-invalid` e `aria-describedby` no erro, `aria-live` em validação assíncrona.', severidade: 'S0' },
+      { texto: 'Tabela com `th scope` e legenda. Ícone decorativo com `aria-hidden`. Toggle com `aria-expanded`.', severidade: 'S0' },
+      { texto: 'Alvos de 24×24 px ou mais, 44×44 px no mobile.', severidade: 'S0' },
+      { texto: 'Senha permite colar. Nenhum dado já informado é pedido de novo. `autocomplete` correto.', severidade: 'S0' },
+      { texto: 'Animação customizada respeita `prefers-reduced-motion`. Nada pisca mais de 3 vezes por segundo.', severidade: 'S2' },
+      { texto: 'Espaçamento, tipografia, fundo, botão primário, campos, raio e sombra batem com o Figma.', severidade: 'S1' },
+      { texto: 'Logo correto por fundo em runtime.', severidade: 'S1' },
+      { texto: 'Telas públicas com símbolo de acessibilidade e skip link visível ao focar.', severidade: 'S0' },
+    ],
+  },
+]} />
+</Secao>
+
+<Secao titulo="Critérios de aceite" descricao="Cada critério precisa ser testável, sem espaço para interpretação.">
+<Cartoes colunas={3} itens={[
+  { rotulo: 'Dado', titulo: 'O contexto', texto: 'Perfil exato, permissão e dados de partida. Por exemplo, Operador RH na tela Novo Servidor.' },
+  { rotulo: 'Quando', titulo: 'A ação', texto: 'Um verbo do usuário ou um evento do sistema, como a requisição retorna 422.' },
+  { rotulo: 'Então', titulo: 'O resultado', texto: 'O que se vê, muda ou é anunciado: mensagem exata, local, foco e o que o sistema preserva.' },
+]} />
+<Tabela larguraMinima={560} colunas={['Regra', 'Detalhe']} linhas={[
+  ['Cinco estados', 'Vazio, carregando, sucesso, erro e parcial (permissão restrita ou dados incompletos). O que não se aplica traz o motivo.'],
+  ['Acessibilidade', 'Todo componente interativo cobre teclado, foco visível, contraste e anúncio em leitor de tela, citando o critério WCAG.'],
+  ['Responsividade', 'Desktop a partir de 1280 px e mobile até 768 px, com reflow testado a 400% de zoom.'],
+  ['Regra de negócio', 'Cálculo, vencimento e prazo com valores de exemplo e casos de borda.'],
+  ['Erro', 'Mensagem exata, local (campo, toast ou banner) e dados preservados.'],
+  ['Movimento', 'Duração, curva e comportamento com movimento reduzido.'],
+  ['Bug', 'Cole o critério original violado no bug, com o esperado e o atual.'],
+]} />
+<Tabela larguraMinima={560} colunas={['Situação', 'Texto modelo']} linhas={[
+  ['Salvo', 'Lançamento salvo com sucesso.'],
+  ['Campo obrigatório', '[Rótulo] é obrigatório.'],
+  ['Erro de servidor', 'Não foi possível concluir a operação. Tente novamente ou contate o suporte.'],
+  ['Exclusão', 'Deseja excluir [identificador]? Esta ação não pode ser desfeita.'],
+  ['Lista vazia', 'Nenhum [item] encontrado para os filtros aplicados.'],
+  ['Sessão', 'Sua sessão expirou. Faça login novamente para continuar.'],
+  ['Sem permissão', 'Você não tem permissão para acessar este recurso.'],
+]} />
+<Callout titulo="Escrita dos textos">
+Frases curtas, com ponto final e sem culpar a pessoa. Erro inline abaixo do campo com ícone e `aria-describedby`. Toast de sucesso até 5 segundos, toast de erro até ser fechado. Carregando usa skeleton com `aria-busy`.
+</Callout>
+</Secao>
+
+<Secao titulo="Registro de achados" descricao="Todo S0 a S2 vira comentário no Figma ou item no Azure Boards. Nunca fica só na memória.">
+<CodeTabs abas={registroDeAchado} />
+</Secao>
+
+<Secao titulo="Gate de merge">
+<Passos itens={[
+  { titulo: 'S0 e S1', texto: 'Zero abertos para o card ir a pronto para aceite.' },
+  { titulo: 'S2', texto: 'Corrigidos antes da demo ou da homologação.' },
+  { titulo: 'S3', texto: 'No Azure Boards com a tag, resolvidos no sprint.' },
+  { titulo: 'Aprovação', texto: 'Campo Design QA marcado como Aprovado, com data e revisor. Resumo de achados por categoria na retrospectiva.' },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Variáveis de CSS', texto: 'O checklist cita `--citie-*` e `--p-*`. O guia Angular cita `--cs-*`. Confirme o prefixo real do projeto antes de auditar.' },
+  { titulo: 'Seletor do tema escuro', texto: 'A fonte usa `.app-dark`. O tema deste Storybook usa `.dark`.' },
+  { titulo: 'Contraste do placeholder', texto: 'O exemplo S0 dá 4,27:1 para neutral-500 e 2,93:1 para neutral-400. O documento de arquitetura dá 4,61:1 para neutral-500. O tema usa neutral-600 para texto secundário.' },
+  { titulo: 'Durações', texto: 'Modal em 300 ms e drawer em 240 ms na fonte. O tema define 120, 180, 240, 320 e 480 ms.' },
+  { titulo: 'Fallback de movimento', texto: 'O checklist manda zerar a duração de tudo com `!important`. O guia de movimento desaconselha no produto e adota o modelo opt-in, mostrado no trecho acima.' },
+  { titulo: 'Nota do axe', texto: 'A nota mínima de 95 aparece só no checklist, sem equivalente nos critérios de aceite.' },
+]} />
+</Secao>
+
+<Callout>
+Fonte: guidelines de UX do Design System Citiesoft, checklist de Design QA e critérios de aceite.
+</Callout>
+
+</Pagina>

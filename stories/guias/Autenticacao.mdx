@@ -1,0 +1,113 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { LoginDemo, ForcaDaSenhaDemo } from '../_docs/padroes/Autenticacao';
+import { Prontos } from '../_docs/padroes/Moldura';
+import { loginExemplo } from '../_docs/snippets/padrao-autenticacao';
+
+<Meta title="Guias/Padrões/Autenticação" />
+
+<Pagina
+  titulo="Autenticação"
+  resumo="Login, recuperação de senha, segundo fator e sessão. Segurança e acessibilidade pesam igual, porque os sistemas guardam dado de servidor, processo e cidadão."
+>
+
+<Secao titulo="Quando usar">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Use para', texto: 'Qualquer tela de entrada que identifique o usuário, recuperação de credenciais, segundo fator, integração com gov.br ou SSO e renovação de sessão.' },
+  { titulo: 'Não use para', texto: 'Consulta pública sem identificação, como o número público de um processo, e painel interno sem dado pessoal protegido por rede privada.' },
+]} />
+</Secao>
+
+<Secao titulo="Anatomia">
+<Tabela colunas={['Parte', 'Regra']} linhas={[
+  ['Título', 'Um único título principal, com o nome do sistema ou `Entrar`.'],
+  ['Campos', 'E-mail ou CPF com autocompletar de usuário. Senha com autocompletar de senha atual.'],
+  ['Ação', 'Botão que responde à tecla Enter. `Esqueci minha senha` fica abaixo, em texto, nunca só ícone.'],
+  ['Acesso externo', 'Botão `Entrar com gov.br` com logo e texto, abaixo do formulário local ou no lugar dele.'],
+  ['Card', 'Até 400 px no desktop e 480 px no tablet. No mobile ocupa a largura total, sem card visual.'],
+  ['Logo', '`LogoHorizontal3.svg` em fundo claro e `LogoHorizontal2.svg` em fundo azul escuro. Nunca o símbolo isolado.'],
+]} />
+</Secao>
+
+<Secao titulo="Regras">
+<Tabela colunas={['Nº', 'Regra']} larguraMinima={520} linhas={[
+  ['1', 'Nunca desative autocompletar nem bloqueie colar em campo de credencial.'],
+  ['2', 'Credencial inválida diz `E-mail ou senha incorretos.` sem indicar qual campo errou.'],
+  ['3', 'Na terceira falha, avise a política: `Após cinco tentativas, o acesso será bloqueado por 15 minutos.` Sem captcha de imagem nem desafio cognitivo.'],
+  ['4', 'Após o bloqueio, oriente e ofereça link direto para a recuperação.'],
+  ['5', 'Login bem-sucedido volta à última rota autenticada do mesmo domínio.'],
+  ['6', 'Recuperação em no máximo 3 etapas: identificar, verificar código, nova senha.'],
+  ['7', 'A resposta de recuperação é sempre a mesma: `Se existe uma conta com este e-mail, você receberá as instruções em breve.`'],
+  ['8', 'Código expira em até 15 minutos, com contador em região educada. Campo único que aceita colar.'],
+  ['9', 'Força da senha em cor, texto e ícone, anunciada após 500 ms de pausa.'],
+  ['10', 'Redefinida a senha, invalide todas as sessões e mostre a confirmação no topo do login, não em toast.'],
+  ['11', 'Segundo fator por política em módulos sigilosos (prontuário, folha, configuração). Métodos: aplicativo autenticador, e-mail, SMS. Nenhum usa imagem ou pergunta de segurança.'],
+  ['12', 'Reenvio de código só após 60 segundos, com contagem visível. Após 5 códigos incorretos, bloqueie e peça nova autenticação.'],
+  ['13', 'Sessão inativa por perfil: servidor 4 h, gestor 2 h, cidadão 30 min (ajustável). Cinco minutos antes, modal com `Permanecer conectado` e `Sair agora`.'],
+  ['14', 'Sessão expirada em segundo plano mostra reautenticação sobreposta e preserva o estado em memória.'],
+  ['15', 'Sair limpa tokens, invalida a sessão no servidor e mostra `Você saiu com segurança.` Várias abas compartilham a sessão.'],
+]} />
+</Secao>
+
+<Secao titulo="Estados">
+<Tabela colunas={['Situação', 'Mensagem']} linhas={[
+  ['Campo vazio', '`Informe o [rótulo do campo].`'],
+  ['E-mail inválido', '`Informe um e-mail válido, por exemplo: nome@orgao.gov.br`'],
+  ['Senhas diferentes', '`As senhas não são iguais. Verifique e tente novamente.`'],
+  ['Código incorreto', '`Código incorreto. Tente novamente ou solicite um novo código.`'],
+  ['Código expirado', '`O código expirou. Solicite um novo código.`'],
+  ['Conta bloqueada', '`Sua conta foi bloqueada por 15 minutos após cinco tentativas incorretas. Redefina sua senha ou aguarde.`'],
+  ['Sessão expirada', '`Sua sessão expirou por inatividade. Entre novamente para continuar.`'],
+]} />
+</Secao>
+
+<Secao titulo="Acessibilidade">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Autenticação acessível', texto: 'Sem captcha de imagem, padrão visual, transcrição ou tarefa cognitiva. Valem código por e-mail ou SMS e aplicativo autenticador.' },
+  { titulo: 'Entrada não redundante', texto: 'O e-mail informado aparece pré-preenchido e mascarado na etapa seguinte.' },
+  { titulo: 'Alvos de 44 px', texto: 'Botões com 44 px e caixa `Lembrar dispositivo` com área de 44 por 44 px.' },
+  { titulo: 'Foco no modal', texto: 'O modal de renovação recebe o foco, tem papel de alerta e devolve o foco ao fechar.' },
+  { titulo: 'Contador discreto', texto: 'Atualização a cada segundo em região educada, sem animar o número.' },
+  { titulo: 'Idioma e ajuda', texto: '`pt-BR` declarado e link de suporte sempre na mesma posição. Telas públicas levam o símbolo de acessibilidade e funcionam sem script.' },
+]} />
+</Secao>
+
+<Secao titulo="Certo e errado">
+<CertoErrado itens={[
+  { certo: '`E-mail ou senha incorretos.`', errado: '`Senha incorreta para este e-mail.`', motivo: 'Confirma que a conta existe.' },
+  { certo: 'Campo único de código que aceita colar e preenche tudo.', errado: 'Seis campos separados sem colagem automática.' },
+  { certo: 'Indicador `Senha fraca` com ícone e texto.', errado: 'Barra colorida sem texto nem ícone.' },
+  { certo: 'Autocompletar e colar liberados.', errado: 'Autocompletar desativado ou colagem bloqueada.' },
+]} />
+</Secao>
+
+<Secao titulo="Exemplo composto" descricao="Login com o bloco LoginSimples. Envie o formulário três vezes para ver o aviso de bloqueio.">
+<LoginDemo />
+<ForcaDaSenhaDemo />
+<CodeTabs abas={loginExemplo} />
+</Secao>
+
+<Secao titulo="Onde ver pronto">
+<Prontos itens={[
+  { nome: 'Blocos/LoginSimples', uso: 'Login por e-mail, CPF ou usuário, em card ou dividido.' },
+  { nome: 'Templates/Sistemas/Login', uso: 'Tela de login completa.' },
+  { nome: 'Templates/Sistemas/Esqueci a senha', uso: 'Primeira etapa da recuperação.' },
+  { nome: 'Templates/Sistemas/Redefinir senha', uso: 'Nova senha com indicador de força.' },
+  { nome: 'Templates/Sistemas/Verificação em duas etapas', uso: 'Segundo fator com reenvio.' },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Tabela colunas={['Tema', 'O que os documentos dizem']} linhas={[
+  ['Fundo da página', 'Autenticação usa `#F9FAFB` para o fundo padrão. Os demais padrões usam `#FAFAFA`.'],
+  ['Lembrar dispositivo', 'A tabela de acessibilidade cita a caixa `Lembrar dispositivo`, mas nenhuma regra descreve o comportamento dela.'],
+  ['Mensagem de campo vazio', 'Autenticação usa `Informe o [rótulo].` Tratamento de erros usa `[Rótulo] é obrigatório.`'],
+]} />
+</Secao>
+
+<Callout>
+Fonte: padrão de Autenticação do Design System Citiesoft, com apoio de Formulários e Padrões mobile.
+</Callout>
+
+</Pagina>

@@ -1,0 +1,114 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { TelaMobileDemo } from '../_docs/padroes/PadroesMobile';
+import { Prontos } from '../_docs/padroes/Moldura';
+import { mobileExemplo } from '../_docs/snippets/padrao-mobile';
+
+<Meta title="Guias/Padrões/Padrões mobile" />
+
+<Pagina
+  titulo="Padrões mobile"
+  resumo="Experiência do cidadão no celular: estresse, conexão instável e familiaridade variável. A acessibilidade é exigência legal, não diferencial."
+>
+
+<Secao titulo="Quando usar">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Use para', texto: 'Qualquer tela do cidadão em navegador ou app, fluxos públicos do TFD (solicitação, envio de documento, acompanhamento), portais de autoatendimento e telas de servidor em campo.' },
+  { titulo: 'Não use para', texto: 'Módulo interno de desktop com teclado físico (Formulários) e dashboard com tabela de alta densidade (Telas densas e Comportamento responsivo).' },
+]} />
+</Secao>
+
+<Secao titulo="Anatomia">
+<Tabela colunas={['Parte', 'Regra']} linhas={[
+  ['Navegação inferior', '2 a 5 destinos, altura de 56 px, item de 44 por 44 px, rótulo sempre visível e item atual marcado.'],
+  ['Ação flutuante', 'Só para a ação mais frequente. Canto inferior direito, 16 px acima da barra, sem cobrir o último item da lista.'],
+  ['Progresso do formulário', 'No topo: `Etapa 2 de 4: Dados do paciente`.'],
+  ['Ação principal', 'Fixa no fundo e acima do teclado quando o formulário é longo.'],
+  ['Banner offline', 'No topo, não bloqueante, fundo de aviso.'],
+  ['Folha inferior', 'Alternativa mobile a drawer e menu.'],
+]} />
+</Secao>
+
+<Secao titulo="Regras">
+<Tabela colunas={['Nº', 'Regra']} larguraMinima={520} linhas={[
+  ['1', 'Nunca use menu recolhido como navegação primária no app do cidadão. O botão Voltar do sistema funciona e nunca fecha o app.'],
+  ['2', 'Todo gesto de arrastar tem alternativa por toque (excluir, reordenar, trocar de aba, puxar para atualizar).'],
+  ['3', 'O zoom por pinça nunca é bloqueado.'],
+  ['4', 'Alvo mínimo de 44 por 44 px para todo elemento interativo, com 8 px entre alvos adjacentes. Ícone pequeno amplia a área com padding.'],
+  ['5', 'Link inline com sublinhado visível, não só por cor.'],
+  ['6', 'Teclado certo: numérico para CPF, CNPJ, CEP e telefone, e-mail para e-mail, decimal para valores com centavos. Senha com alternância de visibilidade de 44 px.'],
+  ['7', 'Autocompletar sempre ativo e colar sempre permitido.'],
+  ['8', 'Rótulo acima do campo. Placeholder só dá exemplo (`Ex.: 111.444.777-35`), nunca instrução (`Digite seu CPF`).'],
+  ['9', 'Valide após o primeiro desfoque, nunca a cada tecla. O teclado virtual não cobre o campo em foco.'],
+  ['10', 'Formulário multietapa salva rascunho antes de avançar.'],
+  ['11', 'Upload oferece `Tirar foto`, `Escolher da galeria` e `Escolher arquivo`, com os formatos e o limite sempre visíveis (`Aceito: JPG, PNG, PDF. Máx. 10 MB.`).'],
+  ['12', 'Preview com nome, tamanho e `Remover`. Progresso real (`Enviando... 45%`). Arquivo grande é avisado antes de começar.'],
+  ['13', 'Offline é detectado e informado de imediato. Rascunho local sincroniza ao reconectar. Telas recentes ficam disponíveis com a hora da última sincronização.'],
+  ['14', 'Envio e upload tentam de novo sozinhos até 3 vezes em intervalos crescentes, depois oferecem `Tentar novamente`.'],
+  ['15', 'Erro de rede, de servidor e tempo esgotado têm mensagens diferentes.'],
+]} />
+</Secao>
+
+<Secao titulo="Estados e textos">
+<Tabela colunas={['Situação', 'Texto']} larguraMinima={560} linhas={[
+  ['Sem conexão', '`Você está sem conexão. Suas alterações serão salvas e enviadas quando a internet voltar.`'],
+  ['Reconexão', '`Conexão restaurada. Sincronizando...` e depois `Tudo atualizado.`'],
+  ['Erro de servidor', '`Não foi possível enviar agora. Tente em instantes.` com `Tentar novamente`'],
+  ['Conexão lenta', '`A conexão está lenta. Aguarde ou tente novamente.`'],
+  ['Arquivo grande', '`Arquivo muito grande (18 MB). O limite é 10 MB. Comprima ou escolha outro arquivo.`'],
+  ['Formato inválido', '`Formato não aceito. Envie JPG, PNG ou PDF.`'],
+  ['Primeira visita', '`Você ainda não tem solicitações.` com `Fazer minha primeira solicitação`'],
+]} />
+<Callout>
+Rótulos da navegação: curtos, substantivos, sem verbo (`Início`, `Solicitações`, `Documentos`, `Perfil`). Toast de 4 segundos para informação e 6 para erro, pausando ao foco.
+</Callout>
+</Secao>
+
+<Secao titulo="Acessibilidade">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Texto', texto: 'Mínimo de 14 px, 16 px em campo para evitar o zoom do iOS. Redimensionável até 200% sem perda.' },
+  { titulo: 'Nomes específicos', texto: 'Botão flutuante `Nova solicitação de TFD`, nunca `Adicionar`. Contador anunciado: `Solicitações, 3 notificações, 2 de 4`.' },
+  { titulo: 'Upload anunciado', texto: 'Nome `Enviar documento: RG frente`, progresso em região educada e conclusão anunciada.' },
+  { titulo: 'Folha inferior', texto: 'Prende o foco, tem papel de diálogo, fecha por Escape ou botão e devolve o foco à origem.' },
+  { titulo: 'Sem cognição extra', texto: 'Nada de memorizar, transcrever ou calcular. Não peça dado já informado na sessão.' },
+  { titulo: 'Movimento', texto: 'Com redução de movimento, tudo vira fade de 100 ms. Nada pisca mais de 3 vezes por segundo.' },
+]} />
+</Secao>
+
+<Secao titulo="Certo e errado">
+<CertoErrado itens={[
+  { certo: 'CPF com teclado numérico, rótulo visível, colar liberado e texto auxiliar.', errado: 'Campo numérico com setas, vírgula decimal e placeholder `Digite seu CPF` como único rótulo.' },
+  { certo: 'Upload com preview, progresso, sucesso e erro que preservam o arquivo e o formulário.', errado: 'Seletor de arquivo cru, sem progresso nem mensagem final.' },
+  { certo: 'Quatro destinos com rótulo, item atual marcado e contador acessível.', errado: 'Ícones sem rótulo e menu recolhido como navegação primária.' },
+]} />
+</Secao>
+
+<Secao titulo="Exemplo composto" descricao="Tela em 375 px com banner offline, upload com preview e navegação inferior. Alterne a conexão.">
+<TelaMobileDemo />
+<CodeTabs abas={mobileExemplo} />
+</Secao>
+
+<Secao titulo="Onde ver pronto">
+<Prontos itens={[
+  { nome: 'Blocos/AppFrame', uso: 'Estrutura de aplicação com navegação.' },
+  { nome: 'Blocos/Drawer', uso: 'Painel lateral que vira tela cheia no mobile.' },
+  { nome: 'Blocos/Estados', uso: 'Estados vazio, erro e offline sem cache.' },
+  { nome: 'Templates/Sistemas/Wizard de nova solicitação', uso: 'Solicitação em etapas.' },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Tabela colunas={['Tema', 'O que os documentos dizem']} linhas={[
+  ['Toast em tela estreita', 'Padrões mobile e Comportamento responsivo põem no topo, em largura total. Tratamento de erros põe no centro inferior abaixo de 640 px.'],
+  ['Duração do toast de erro', 'Padrões mobile usa 6 segundos. Tratamento de erros usa 8 segundos.'],
+  ['Contraste do rótulo secundário', 'Padrões mobile lista 4,54:1 para o cinza secundário sobre branco, e Comportamento responsivo lista 4,68:1.'],
+  ['Alvo mínimo', 'Padrões mobile adota 44 px para tudo. Comportamento responsivo aceita 32 px em 1366 px e 1920 px.'],
+]} />
+</Secao>
+
+<Callout>
+Fonte: padrão Mobile do Design System Citiesoft, com apoio de Comportamento responsivo e Formulários.
+</Callout>
+
+</Pagina>

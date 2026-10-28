@@ -1,0 +1,144 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { glassCodigo, padroesCodigo } from '../_docs/snippets/sistema-grafico';
+
+<Meta title="Marca/Sistema gráfico" />
+
+<Pagina
+  titulo="Sistema gráfico"
+  resumo="Formas, grafismos, superfícies e elementos 3D da Citiesoft. A linguagem é geométrica, ortogonal e fica sempre em segundo plano: se o grafismo chamar mais atenção que o título, está errado."
+>
+
+<Secao titulo="Princípios" descricao="Valem para qualquer grafismo, em qualquer suporte.">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Paleta restrita', texto: 'Só Citie Blue (50 a 950), ciano de acento (300 a 500) e neutros. Nenhuma cor fora da paleta, nem para parecer moderno.' },
+  { titulo: 'Opacidade baixa', texto: 'Em fundo claro, de 4% a 12%. Em fundo escuro (Citie Blue 800 a 950), de 8% a 18%. O olho percebe a textura sem identificar o elemento.' },
+  { titulo: 'Na periferia', texto: 'Cantos, bordas ou atrás do conteúdo. Nunca centralizado sobre texto, gráfico ou tabela.' },
+  { titulo: 'Um motivo por peça', texto: 'No máximo duas cores de grafismo, e um só tipo: grade, pontos, linhas ou blocos. Uma família de peças repete o mesmo motivo.' },
+  { titulo: 'Gradiente só em capa', texto: 'Gradiente de marca é de hero, capa e banner. Página interna, slide de conteúdo e documento usam cor sólida.' },
+  { titulo: 'Vetor na produção', texto: 'SVG ou PDF vetorial. Raster só para destino exclusivo de web ou app, em PNG ou WebP de alta resolução.' },
+]} />
+</Secao>
+
+<Secao titulo="Vocabulário de formas" descricao="Cada forma tem função e vem da cidade e dos dados: integração, estrutura, malha urbana.">
+<Tabela colunas={['Forma', 'Regra']} larguraMinima={620} linhas={[
+  ['Colchete estrutural', 'Glifo central da marca. Traço de 2 a 4 pt. Em ângulos, bordas de card e fundos de apresentação. Só em contexto técnico e institucional, nunca em comunicação com o cidadão leigo.'],
+  ['Módulo retangular', 'Raio de 4 a 8 px no produto e sem arredondamento em impresso. Base dos cards e dos diagramas.'],
+  ['Linha de conexão', 'Horizontal, vertical ou diagonal a 45°. De 1 a 2 pt no fundo e de 2 a 4 pt quando destacada. Nunca curva orgânica.'],
+  ['Grade urbana', 'Malha regular em hero, capa e slide de abertura. Opacidade de 5% a 12%, Citie Blue 200 em fundo claro ou Citie Blue 700 em fundo escuro.'],
+  ['Nó de integração', 'Círculo de 6 a 16 px na interseção das linhas. Citie Blue 500 ou Cyan 400.'],
+  ['Dot matrix', 'Pontos de 2 px a cada 16 px, opacidade de 8% a 15%. Textura de seção de impacto, nunca sob texto ou dado.'],
+  ['Arco de integração', 'Quarto de círculo de 90° em traço de 2 a 3 pt. Transição entre módulos em diagramas e onboarding.'],
+  ['Divisor com acento', 'Linha de 1 px em neutro 200 com ponto central de 4 por 4 px em Citie Blue 400. Impresso e apresentação.'],
+  ['Barra de progresso', 'Altura de 4 px, raio de 2 px, Citie Blue 500 sobre Citie Blue 100. Sem gradiente.'],
+  ['Ornamento de código', 'Os símbolos de chaves, colchetes angulares e barras só em contexto tecnológico. Legendas de diagrama em Red Hat Mono.'],
+]} />
+<CodeTabs abas={padroesCodigo} />
+</Secao>
+
+<Secao titulo="Grafismos de fundo" descricao="Cinco motivos, cada um com contexto próprio.">
+<Tabela colunas={['Motivo', 'Onde usar', 'Cor e opacidade']} larguraMinima={620} linhas={[
+  ['Grade e malha urbana', 'Capa de proposta, slide de abertura. Variação isométrica a 30° para onboarding e capa de relatório técnico.', 'Citie Blue 100 ou 200, de 6% a 10%'],
+  ['Linhas de fluxo', 'Slides de como funciona, banners de produto. Nunca cruzam texto.', 'Ciano 300 (`#5FD2FF`) ou Citie Blue 300 (`#84AEFD`), de 8% a 14%'],
+  ['Pontos e nós', 'Seção de produto, capa de case, onboarding. Espaço mínimo de 24 px entre pontos em 1920 por 1080.', 'Citie Blue 200 ou cinza 200, de 8% a 12%'],
+  ['Blocos e módulos', 'Capa, moldura lateral, separador. Retângulos com raio 0, 4 ou 8 px.', 'Citie Blue 50 ou 100, sólido'],
+  ['Diagonais a 45° ou 135°', 'Só peça técnica: proposta de solução, arquitetura, licitação técnica.', 'Citie Blue 100, de 5% a 8%'],
+]} />
+<Tabela colunas={['Peça', 'Grafismo']} linhas={[
+  ['Capa de proposta, slide de abertura, capa de documento', 'Permitido'],
+  ['Slide divisor de seção', 'Um motivo, opacidade mínima'],
+  ['Slide ou página de conteúdo, tabela, preços', 'Nenhum, fundo sólido'],
+  ['Contrato, edital, termo legal', 'Nenhum'],
+  ['Tela operacional do produto', 'Nenhum, fundo `#FAFAFA` ou branco'],
+  ['Onboarding, empty state, carregamento', 'Pontual, discreto'],
+  ['Comunicação interna', 'Até 15%, pontos e grade juntos se equilibrados'],
+]} />
+</Secao>
+
+<Secao titulo="Superfícies e cards" descricao="Hierarquia de uso: sólido, sólido semântico e, só em caso específico, glass.">
+<Tabela colunas={['Card', 'Especificação']} larguraMinima={620} linhas={[
+  ['Padrão', 'Fundo `#FAFAFA`, borda de 1 px em Citie Blue 100 ou neutro 200, raio de 8 px (4 px em impresso), padding de 16 px no mobile e 24 px no desktop.'],
+  ['Destaque', 'Borda esquerda de 4 px em Citie Blue 500, sem sombra extra. Para dado, métrica e citação.'],
+  ['Contexto técnico', 'Fundo `#F8FAFC`, borda de 1 px em neutro 200, conteúdo em Red Hat Mono.'],
+  ['Status', 'Borda superior de 3 px na cor semântica, fundo na variante 50. Nunca cor semântica plena como fundo.'],
+]} />
+<Cartoes colunas={3} itens={[
+  { titulo: 'Glass só em overlay', texto: 'Modal e drawer sobre imagem ou gradiente, tooltip sobre fundo colorido, card flutuante em hero. Tabela, lista, formulário e relatório são sólidos.' },
+  { titulo: 'Dois tratamentos no máximo', texto: 'Glass mais sombra grande mais borda colorida no mesmo elemento é poluição. Sombra limitada a `0 8px 32px` com opacidade até 20%.' },
+  { titulo: 'Raio máximo', texto: '8 px no produto, 4 px em impresso e 12 px em modal ou overlay. Raio de 24 px infantiliza a comunicação.' },
+]} />
+<CodeTabs abas={glassCodigo} />
+</Secao>
+
+<Secao titulo="Elementos 3D" descricao="Acrílico translúcido azul, recurso de destaque usado com parcimônia. Nunca substitui foto, tipografia ou diagrama.">
+<Tabela colunas={['Parâmetro', 'Valor']} linhas={[
+  ['Material', 'Acrílico translúcido com 60% a 70% de opacidade, de Citie Blue 300 (`#84AEFD`) a 500 (`#146BFA`). Faces em sombra em 700 a 800.'],
+  ['Luz', 'Direcional e fria, de canto superior esquerdo ou direito. Sombra discreta e desfocada. Reflexo branco ou ciano (`#5FD2FF`) de baixa opacidade.'],
+  ['Perspectiva', 'Isométrica ou fixa entre 30° e 45°, a mesma em toda a peça.'],
+  ['Fundo', 'Sólido: `#FAFAFA`, Citie Blue 900 (`#0A2F6E`), 950 (`#061D45`) ou `#202020`. Gradiente institucional só em hero e capa.'],
+  ['Composição', 'De 3 a 5 objetos, com espaço entre eles. Até 60% da área visual em peça com texto. Contraste mínimo de 3:1 com o fundo.'],
+  ['Acessórios', 'Permitidos: partículas, linhas finas, pontos de luz e grade isométrica leve, em azul ou ciano de baixa opacidade.'],
+]} />
+<Tabela colunas={['Contexto', 'Uso do 3D']} linhas={[
+  ['Hero de landing, capa de deck e proposta, banner de evento', 'Sim'],
+  ['Apresentação', 'Até 3 slides por deck: capa, missão, número de impacto, módulo, encerramento'],
+  ['Splash, loading, empty state de módulo premium', 'Sim, pontual'],
+  ['Redes sociais', 'Cover, thumbnail e lançamento, legível em 60 px de altura'],
+  ['Logo, botão, campo, tabela, badge, fundo de tela, alerta', 'Nunca'],
+  ['Ata, contrato, relatório operacional', 'Nunca. Capa de white paper e relatório anual pode'],
+]} />
+<CertoErrado itens={[
+  {
+    certo: 'Acrílico azul, luz fria, cena de 3 a 5 objetos sobre fundo sólido.',
+    errado: 'Neon, glitch, holograma, arco-íris, reflexo dourado, bokeh e ruído granulado pesado.',
+    motivo: 'Dourado e verde neon puxam a marca para a estética de entretenimento e fogem da paleta.',
+  },
+  {
+    certo: 'Uma só linguagem por peça: 3D, foto ou flat.',
+    errado: 'Elemento 3D sobre foto de gestor, ou 3D com ilustração flat e ícones de linha juntos.',
+  },
+]} />
+</Secao>
+
+<Secao titulo="Erros de grafismo">
+<CertoErrado itens={[
+  {
+    certo: 'Grade fina em Citie Blue 100 a 8% na área branca de um post.',
+    errado: 'Grade em Citie Blue 500 a 40% sobre fundo branco.',
+    motivo: 'O grafismo passa a dominar e prejudica a leitura do título.',
+  },
+  {
+    certo: 'Pontos ou linhas retas, blocos retangulares.',
+    errado: 'Ondas, gotas, elipses abstratas e curvas decorativas.',
+    motivo: 'São linguagem de startup de consumo, fora do vocabulário B2G.',
+  },
+  {
+    certo: 'Fundo sólido em dashboard e slide de conteúdo.',
+    errado: 'Gradiente de tela inteira ou textura sob tabela e gráfico.',
+  },
+  {
+    certo: 'Logo com contraste suficiente sobre a área de grafismo.',
+    errado: 'LogoHorizontal3.svg sobre grade Citie Blue 300 a 30% de opacidade.',
+  },
+  {
+    certo: 'Grafismo como suporte subordinado, sem significado próprio.',
+    errado: 'Preencher espaço vazio com grafismo, ou sobrepor padrão a foto ou ao mascote.',
+    motivo: 'Linhas de um diagrama de arquitetura são conteúdo. Fundo é suporte.',
+  },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Tabela colunas={['Tema', 'O que a fonte diz', 'Adotado aqui']} larguraMinima={680} linhas={[
+  ['Opacidade de grafismo', 'Grafismos: 4% a 12% em claro e 8% a 18% em escuro. Linguagem gráfica: grade de 5% a 12%, dot matrix de 8% a 15%.', 'Faixas por motivo na tabela de grafismos, dentro do teto geral de 12% (claro) e 18% (escuro).'],
+  ['Linhas de fluxo', 'O documento de grafismos descreve linhas curvas ou segmentadas. A linguagem gráfica exige ortogonal ou 45° e proíbe curva orgânica, e o próprio documento de grafismos proíbe curva decorativa.', 'Ortogonal ou 45°.'],
+  ['Espaçamento e gutter', 'A linguagem gráfica cita 12 colunas com gutter de 16 px e margem de 40 px em slides. O documento de layout usa gutter de 24 px e margem de 80 px.', 'Layout e composição prevalece.'],
+]} />
+</Secao>
+
+<Callout>
+Fonte: Brandbook Citiesoft, Sistema gráfico.
+</Callout>
+
+</Pagina>

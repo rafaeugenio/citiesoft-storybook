@@ -1,0 +1,62 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Breakpoints, Containers } from '../_docs/Medidas';
+import { TabelaUso } from '../_docs/TabelaUso';
+import { breakpointsUso, conteineresUso, molduraUso, gridUso, rtlUso } from '../_docs/snippets/layout-e-grid';
+
+<Meta title="Fundação/Layout e grid" />
+
+<Pagina
+  titulo="Layout e grid"
+  resumo="Cinco breakpoints, contêineres de leitura, uma moldura de página fixa e suporte a escrita da direita para a esquerda."
+>
+
+<Secao titulo="Breakpoints" descricao="Abordagem mobile primeiro: o estilo base vale para telas pequenas e cada breakpoint acrescenta regras a partir daquela largura.">
+<Breakpoints />
+<CodeTabs abas={breakpointsUso} />
+<Callout>
+Media queries em CSS e SCSS não aceitam `var()`. Escreva o valor do breakpoint ou use a variável SCSS `$breakpoint-*`.
+</Callout>
+</Secao>
+
+<Secao titulo="Contêineres" descricao="Larguras máximas para limitar linhas de texto e formulários.">
+<Containers />
+<CodeTabs abas={conteineresUso} />
+</Secao>
+
+<Secao titulo="Moldura de página" descricao="Todo template segue a mesma estrutura: barra lateral à esquerda e conteúdo centralizado numa coluna.">
+<TabelaUso
+  colunas={['Parte', 'Medida', 'Observação']}
+  linhas={[
+    ['Padding da página', '12px', 'Em volta de toda a moldura.'],
+    ['Gap entre barra e conteúdo', '16px', ''],
+    ['Barra lateral', '260px (60px recolhida)', 'Visível a partir de `lg`. Abaixo disso vira uma gaveta sobre o conteúdo.'],
+    ['Coluna de conteúdo', 'até 1300px', 'Centralizada, com gap vertical de 10px entre cabeçalho e corpo.'],
+  ]}
+/>
+<CodeTabs abas={molduraUso} />
+</Secao>
+
+<Secao titulo="Grid responsivo" descricao="Grades usam gap de 16px. Indicadores seguem 2 colunas no celular e 4 a partir de lg.">
+<CodeTabs abas={gridUso} />
+</Secao>
+
+<Secao titulo="Direção RTL" descricao="O layout espelha sozinho quando o documento declara dir=&quot;rtl&quot;, desde que o CSS use propriedades lógicas.">
+<TabelaUso
+  colunas={['Tailwind', 'CSS puro']}
+  linhas={[
+    ['`ms-*`, `me-*`', '`margin-inline-start`, `margin-inline-end`'],
+    ['`ps-*`, `pe-*`', '`padding-inline-start`, `padding-inline-end`'],
+    ['`start-*`, `end-*`', '`inset-inline-start`, `inset-inline-end`'],
+    ['`text-start`, `text-end`', '`text-align: start`, `text-align: end`'],
+    ['`rounded-s-*`, `rounded-e-*`', '`border-start-start-radius` e `border-end-start-radius` (e os equivalentes de end)'],
+    ['`rtl:*`', 'seletor `[dir=\'rtl\']`'],
+  ]}
+/>
+<CodeTabs abas={rtlUso} />
+<Callout titulo="Regras">
+Troque `left` e `right`, `margin-left` e `padding-right` por equivalentes lógicos. Espelhe setas de navegação e a animação de gavetas. Mantenha coordenadas físicas em gráficos e canvas. Isole e-mails, URLs, códigos e números de OTP em LTR. No React, o `DirectionProvider` também alinha a navegação por teclado e os menus em portal.
+</Callout>
+</Secao>
+
+</Pagina>

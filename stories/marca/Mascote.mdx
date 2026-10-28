@@ -1,0 +1,70 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+
+<Meta title="Marca/Mascote Citiezinho" />
+
+<Pagina
+  titulo="Mascote Citiezinho"
+  resumo="O Citiezinho cria conexão emocional em pontos específicos do produto e da cultura interna. Nunca é o centro da marca institucional. Na dúvida, não inclua: a ausência nunca prejudica a comunicação."
+>
+
+<Secao titulo="Onde usar" descricao="Classifique o contexto na tabela. Contexto que não consta é tratado como institucional formal, sem mascote.">
+<Tabela colunas={['Contexto', 'Nível', 'Observação']} larguraMinima={620} linhas={[
+  ['Produto, empty state', 'Pontual, recomendado', 'Versão neutra ou amigável. No máximo 20% da área visível'],
+  ['Produto, onboarding', 'Pontual, recomendado', 'Guia o primeiro acesso'],
+  ['Produto, erro ou aviso', 'Opcional, com cuidado', 'Só se o tom permitir. Nunca em erro crítico'],
+  ['Comunicação interna', 'Livre na paleta', 'E-mail, Slack, avisos, RH. Pode ser expressivo'],
+  ['Sticker e cultura interna', 'Expressivo', 'Pose e expressão mais livres, paleta oficial'],
+  ['Campanha externa', 'Controlado', 'Alinhado à mensagem, com aprovação da marca. Apoio, nunca protagonista'],
+  ['Apresentação comercial e proposta', 'Mínimo ou ausente', 'Rodapé ou capa descontraída. Nunca em slide de proposta, preço ou escopo'],
+  ['Licitação, contrato, edital, ofício', 'Ausente', 'Qualquer documento com valor jurídico ou protocolar'],
+  ['Relatório e documento técnico', 'Ausente', 'Guias internos e tutoriais de equipe podem usar'],
+  ['Autenticação, alerta de segurança, erro crítico', 'Ausente', 'Inclusive material de crise e comunicação sensível'],
+  ['Assinatura de e-mail, brandbook, release, credenciais', 'Ausente', ''],
+]} />
+</Secao>
+
+<Secao titulo="Regras de aplicação">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Proporção do arquivo-fonte', texto: 'Sem distorcer, comprimir ou espelhar sem intenção. Altura mínima de 32 px em interface.' },
+  { titulo: 'Paleta oficial', texto: 'Citie Blue 500 (`#146BFA`), 600 (`#1261E4`), neutros e `#FAFAFA`. Nunca recolorir para combinar com cliente.' },
+  { titulo: 'Fundo com contraste', texto: 'Branco `#FAFAFA`, azul escuro 800 a 950 ou cinza claro. Sem gradiente de tela inteira, foto de baixo contraste ou textura sobre a silhueta.' },
+  { titulo: 'Respiro de 1/4 da altura', texto: 'Em todas as direções, sem outro elemento invadindo.' },
+  { titulo: 'Texto ao redor', texto: 'Red Hat Display nos títulos e Inter no corpo. Sem fonte display informal ou manuscrita.' },
+  { titulo: 'Pose e acessório', texto: 'Neutra ou amigável em produto. Expressiva só em sticker, cultura e campanha descontraída. Acessório temático só em campanha ou interna.' },
+  { titulo: 'Versão monocromática', texto: 'Existe uma versão aprovada para impressão em uma cor. Não improvise a partir do colorido.' },
+  { titulo: 'Sem efeito', texto: 'Sombra pesada, brilho 3D, neon, emboss e filtro de foto nunca. Estilo vetorial limpo.' },
+  { titulo: 'Apoio ao conteúdo', texto: 'Sempre em nível abaixo do conteúdo funcional, nunca competindo com título, KPI ou CTA principal.' },
+]} />
+</Secao>
+
+<Secao titulo="Exemplos">
+<CertoErrado itens={[
+  {
+    certo: 'Empty state de Pessoas: mascote neutro ao lado de "Nenhum colaborador cadastrado. Comece adicionando o primeiro registro." em Inter, e botão primário em Citie Blue 600.',
+    errado: 'Mascote gigante ocupando 60% da tela de login.',
+  },
+  {
+    certo: 'Onboarding: mascote amigável com título em Red Hat Display 600 e orientação em Inter 400, sobre `#FAFAFA`.',
+    errado: 'Expressão de susto ou choro em tela de erro crítico de sistema de saúde.',
+  },
+  {
+    certo: 'Aviso interno: mascote com tablet e frase objetiva sobre a nova versão para homologação.',
+    errado: 'Mascote na capa de proposta de licitação, no lugar do logo.',
+  },
+  {
+    certo: 'Banner de evento com fundo Citie Blue 900, logo para fundo escuro e mascote como apoio.',
+    errado: 'Cores alteradas para combinar com o cliente, sombra e 3D em apresentação para prefeito, ou associação a partido e governo específico.',
+  },
+]} />
+<Callout titulo="Humanização em B2G">
+Em material formal, a humanização vem de linguagem clara, design acessível e conteúdo útil. O mascote entra só como camada extra em pontos específicos.
+</Callout>
+</Secao>
+
+<Callout>
+Fonte: Brandbook Citiesoft, Sistema gráfico.
+</Callout>
+
+</Pagina>

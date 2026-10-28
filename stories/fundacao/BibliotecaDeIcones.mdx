@@ -1,0 +1,30 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { CatalogoDeIcones } from '../_docs/CatalogoDeIcones';
+import { bibliotecaUsoPorStack } from '../_docs/snippets/biblioteca-de-icones';
+
+<Meta title="Fundação/Biblioteca de ícones" />
+
+<Pagina
+  titulo="Biblioteca de ícones"
+  resumo="Os 3.229 ícones do Remix Icon, com busca, filtros e código pronto para copiar."
+>
+
+<Secao titulo="Catálogo" descricao="Busque pelo nome em inglês e clique em um ícone para ver os tamanhos e copiar o código.">
+<CatalogoDeIcones />
+</Secao>
+
+<Secao titulo="Como usar em cada stack" descricao="Os arquivos de webfont, SVG e sprite ficam em `public/icons`. Atualize com `npm run gerar-icones`.">
+<CodeTabs abas={bibliotecaUsoPorStack} />
+<Callout titulo="Acessibilidade">
+Ícone ao lado de texto é decorativo: use `aria-hidden="true"`. Ícone sozinho no botão exige `aria-label` no botão.
+</Callout>
+</Secao>
+
+<Secao titulo="Licença e versão">
+<Callout>
+Remix Icon 4.9.1, licença Apache-2.0. Fonte: remixicon.com. O catálogo é gerado a partir de `node_modules/remixicon` e conferido contra `@remixicon/react`.
+</Callout>
+</Secao>
+
+</Pagina>

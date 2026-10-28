@@ -1,0 +1,48 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Passos } from '../_docs/Conteudo';
+import { instalarMcp, testarMcp } from '../_docs/snippets/mcp-do-design-system';
+
+<Meta title="Guias/MCP do Design System" />
+
+<Pagina
+  titulo="MCP do Design System"
+  resumo="Conecta a IA de trabalho ao Design System Citiesoft. A IA consulta componentes, páginas de Marca, Fundação e Guias direto da fonte, em vez de depender de memória ou de cópias."
+>
+
+<Secao titulo="O que a IA ganha" descricao="O servidor expõe a documentação publicada deste Storybook por três ferramentas.">
+<Tabela
+  colunas={['Ferramenta', 'Para que serve']}
+  linhas={[
+    ['`docs-list`', 'Lista os componentes e as páginas de documentação, com os identificadores usados pelas outras ferramentas.'],
+    ['`docs-show`', 'Traz a documentação de um componente ou página, com as primeiras stories.'],
+    ['`docs-show-story`', 'Traz o detalhe de uma story específica, com o código de uso.'],
+  ]}
+/>
+</Secao>
+
+<Secao titulo="Acesso por token" descricao="O endereço responde para qualquer pessoa, mas só entrega conteúdo com um token válido. Sem token a resposta é 401.">
+<Passos itens={[
+  { titulo: 'Peça o seu token', texto: 'Cada pessoa recebe um token individual, com validade e identificação. Solicite à gestão do Design System.' },
+  { titulo: 'Guarde em variável de ambiente', texto: 'Use `CITIESOFT_DESIGN_SYSTEM_MCP_TOKEN`. Nunca coloque o token em repositório, chat ou documento.' },
+  { titulo: 'Configure a sua ferramenta', texto: 'Escolha a aba abaixo. Todas apontam para o mesmo endereço.' },
+  { titulo: 'Teste', texto: 'Peça à IA para listar os componentes. Se responder, está conectado.' },
+]} />
+<Callout titulo="Revogação e validade">
+O token expira na data combinada e pode ser revogado a qualquer momento pela gestão. Perdeu ou compartilhou sem querer? Avise para revogar e gerar outro. Cada acesso registra o identificador da chave, o dono, o método e o horário. A aplicação não guarda o conteúdo consultado nem o IP.
+</Callout>
+</Secao>
+
+<Secao titulo="Instalar" descricao="Troque `<SEU_TOKEN>` pelo seu token. Claude Code e Codex seguem o procedimento validado pela equipe. Cursor, VS Code e Claude Desktop usam o formato de configuração de cada ferramenta, que pode mudar entre versões.">
+<CodeTabs abas={instalarMcp} />
+</Secao>
+
+<Secao titulo="Testar">
+<CodeTabs abas={testarMcp} />
+</Secao>
+
+<Secao titulo="Atualização do conteúdo" descricao="O conteúdo do servidor é um retrato da documentação no momento da publicação. Quando o Storybook muda, a gestão gera os manifests de novo e publica o servidor, sem ação sua.">
+Para ver a versão que a IA está lendo, peça `docs-list` e compare com o Storybook publicado.
+</Secao>
+
+</Pagina>

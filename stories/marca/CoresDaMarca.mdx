@@ -1,0 +1,264 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado, Paleta } from '../_docs/Conteudo';
+import { Gradientes } from '../_docs/Gradientes';
+import { linhasContraste } from '../_docs/dadosMarca';
+import { gradientesCodigo, azuisCodigo } from '../_docs/snippets/cores-da-marca';
+
+<Meta title="Marca/Cores da marca" />
+
+<Pagina
+  titulo="Cores da marca"
+  resumo="Citie Blue é a única cor de destaque. Neutros fazem a estrutura, semânticas informam estado e o ciano aparece só como acento. Duas regras sustentam o resto: dois azuis com papéis distintos, e contraste medido antes de publicar."
+>
+
+<Secao titulo="Dois azuis, dois papéis" descricao="A marca tem um azul para identidade e outro para ação. Eles ficam a poucos passos de distância e não são intercambiáveis.">
+<Paleta cores={[
+  { nome: 'Citie Blue 500, institucional', hex: '#146BFA', uso: 'Logo, capa, slide-título, hero, header de documento formal, comunicação externa.' },
+  { nome: 'Citie Blue 600, ação de produto', hex: '#1261E4', uso: 'Botão primário, link, aba e menu ativos, foco, indicador de progresso.' },
+  { nome: 'Citie Blue 700, hover', hex: '#0E4DB8', uso: 'Hover e pressed do botão primário.' },
+]} />
+<Tabela
+  colunas={['', '`#146BFA` (500)', '`#1261E4` (600)']}
+  linhas={[
+    ['Papel', 'Identidade e apresentação', 'Interação no produto digital'],
+    ['Onde vive', 'Apresentações, slides, propostas, redes sociais, hero', 'Botões, links, estados ativos, anel de foco, informação semântica'],
+    ['Branco sobre ele', '4,46:1 sobre `#FAFAFA` e 4,65:1 sobre `#FFFFFF`', '5,22:1 sobre `#FAFAFA` e 5,45:1 sobre `#FFFFFF`'],
+    ['Como texto sobre claro', 'Só texto grande (18 pt ou mais, ou 14 pt em negrito) e UI grande', 'Texto normal, links, rótulos'],
+    ['Nunca', 'Botão primário com rótulo em corpo normal', 'Capa, logo e slide institucional no lugar do 500'],
+  ]}
+/>
+<CertoErrado itens={[
+  { certo: 'Botão primário do produto em `#1261E4`, com hover em `#0E4DB8` e texto `#FAFAFA`.', errado: 'Botão primário em `#146BFA`.', motivo: 'O 500 é institucional. Com texto branco normal sobre `#FAFAFA` ele mede 4,46:1 e fica abaixo de 4,5:1.' },
+  { certo: 'Capa de proposta e slide-título em `#146BFA` ou no gradiente institucional.', errado: 'Trocar o 500 pelo 600 nos materiais institucionais.', motivo: 'A diferença de luminosidade é perceptível e o 500 é o azul associado à marca.' },
+  { certo: 'Link inline em `#1261E4` com sublinhado.', errado: 'Link em `#00B5F0` ou `#84AEFD`.', motivo: 'Medem 2,27:1 e 2,13:1 sobre `#FAFAFA`.' },
+]} />
+<CodeTabs abas={azuisCodigo} />
+</Secao>
+
+<Secao titulo="Paleta primária" descricao="Escala Citie Blue de 50 a 950. Clique em um passo para copiar o hex.">
+<Paleta cores={[
+  { nome: 'Blue 50', hex: '#EFF5FF', uso: 'Fundo de card informativo, hover suave, cabeçalho de tabela.' },
+  { nome: 'Blue 100', hex: '#DBE8FF', uso: 'Tag, badge, barra secundária, texto sobre fundo escuro.' },
+  { nome: 'Blue 200', hex: '#B3CEFE', uso: 'Borda de foco leve, borda de card ativo.' },
+  { nome: 'Blue 300', hex: '#84AEFD', uso: 'Ilustração, gráfico secundário, ornamento.' },
+  { nome: 'Blue 400', hex: '#4D8BFC', uso: 'Só visual: destaque em gráfico, ícone grande, título sobre fundo escuro.' },
+  { nome: 'Blue 500', hex: '#146BFA', uso: 'Institucional.' },
+  { nome: 'Blue 600', hex: '#1261E4', uso: 'Produto e interação.' },
+  { nome: 'Blue 700', hex: '#0E4DB8', uso: 'Hover do botão primário, texto de link sobre claro.' },
+  { nome: 'Blue 800', hex: '#0B3C8F', uso: 'Final do gradiente institucional, sidebar escura.' },
+  { nome: 'Blue 900', hex: '#0A2F6E', uso: 'Título em contexto de marca, fundo de capa, rodapé.' },
+  { nome: 'Blue 950', hex: '#061D45', uso: 'Fundo escuro profundo, navbar escura, rodapé institucional.' },
+]} />
+<Cartoes colunas={2} itens={[
+  { titulo: 'Passos 50 a 200', texto: 'Fundos e superfícies: card, tag, badge, banner informativo, input desabilitado.' },
+  { titulo: 'Passos 300 e 400', texto: 'Ilustração, gráfico e ornamento. Nunca texto sobre fundo claro nem ícone sobre branco em sistema público.' },
+  { titulo: 'Passos 700 a 950', texto: 'Texto, ícone, borda ativa, hover, pressed e fundos escuros.' },
+  { titulo: 'Texto sobre fundo azul', texto: 'Sobre 600 ou mais escuro, sempre `#FAFAFA`. No 500 vale a regra do texto grande.' },
+  { titulo: 'Combinação', texto: 'No máximo dois passos de Citie Blue por componente, salvo hierarquia justificada.' },
+  { titulo: 'Tokens', texto: 'Implemente pelo token da página Fundação/Cores, não pelo hex.' },
+]} />
+<Callout titulo="Acento ciano">
+Ciano é acento tecnológico, nunca cor de ação. Ocupa menos de 15% da composição e fica ausente de propostas e decks institucionais formais. Não serve como texto, botão, link ou estado ativo.
+</Callout>
+<Paleta cores={[
+  { nome: 'Cyan 300', hex: '#5FD2FF', uso: 'Ornamento e hero em fundo escuro, brilho em mockup.' },
+  { nome: 'Cyan 400', hex: '#00B5F0', uso: 'Ícone de inovação, linha de gráfico, final do gradiente tecnológico.' },
+  { nome: 'Cyan 500', hex: '#0097CC', uso: 'Acento mais escuro, contraste sobre fundo escuro.' },
+]} />
+</Secao>
+
+<Secao titulo="Paleta secundária" descricao="Cores de apoio para gráficos e materiais institucionais. Toda cor extra precisa de uma função. Se Citie Blue e neutros resolvem, as secundárias não entram.">
+<Paleta cores={[
+  { nome: '1. Citie Blue', hex: '#146BFA', uso: 'Série principal. Modo escuro: #4D8BFC.' },
+  { nome: '2. Cyan Tec', hex: '#00B5F0', uso: 'Série tecnológica. Modo escuro: #5FD2FF.' },
+  { nome: '3. Verde operacional', hex: '#16A34A', uso: 'Positivo, meta atingida. Modo escuro: #22C55E.' },
+  { nome: '4. Âmbar atenção', hex: '#D97706', uso: 'Alerta, prazo, desvio. Modo escuro: #F59E0B.' },
+  { nome: '5. Violeta categórico', hex: '#7C3AED', uso: 'Quinta série. Modo escuro: #A78BFA.' },
+  { nome: '6. Coral complementar', hex: '#E11D48', uso: 'Sexta série, só se indispensável. Modo escuro: #FB7185.' },
+]} />
+<Cartoes colunas={2} itens={[
+  { titulo: 'Ordem fixa', texto: 'Use as séries na sequência da tabela antes de inventar variações. Máximo de quatro cores simultâneas.' },
+  { titulo: 'Duas séries', texto: 'Citie Blue 500 e Citie Blue 200 (`#B3CEFE`).' },
+  { titulo: 'Uma barra em destaque', texto: 'Citie Blue 500 na barra principal e Citie Blue 100 (`#DBE8FF`) nas demais.' },
+  { titulo: 'Citie Blue lidera', texto: 'Em qualquer composição o azul domina em área. Cor de cliente ou parceiro aparece como contexto, nunca no lugar do Citie Blue.' },
+  { titulo: 'Tons -50', texto: 'Só fundo de card, chip e badge. Nunca texto nem borda de destaque.' },
+  { titulo: 'Modo escuro', texto: 'Use as variantes mais claras de cada matiz sobre `#202020` ou Blue 900 e 950, e meça de novo.' },
+]} />
+</Secao>
+
+<Secao titulo="Paleta neutra" descricao="Estrutura de toda peça: fundo, superfície, borda e texto. Branco da marca é `#FAFAFA`, preto é `#202020` e o texto base é `#3C3C3C`.">
+<Paleta cores={[
+  { nome: 'Neutral 0', hex: '#FFFFFF', uso: 'Modal e cartão sobre fundo claro, ícone sobre azul.' },
+  { nome: 'Neutral 50, branco da marca', hex: '#FAFAFA', uso: 'Fundo de página, app shell, slide, documento.' },
+  { nome: 'Neutral 100', hex: '#F4F4F5', uso: 'Seção alternada, sidebar inativa, input desabilitado.' },
+  { nome: 'Neutral 200', hex: '#E4E4E7', uso: 'Borda de card, divisor, borda de input.' },
+  { nome: 'Neutral 300', hex: '#D1D1D6', uso: 'Borda de tabela, separador interno.' },
+  { nome: 'Neutral 400', hex: '#A1A1AA', uso: 'Placeholder, ícone inativo, rótulo desabilitado.' },
+  { nome: 'Neutral 500', hex: '#71717A', uso: 'Texto secundário, legenda, metadado.' },
+  { nome: 'Neutral 600', hex: '#52525B', uso: 'Rótulo de campo, breadcrumb, texto de suporte.' },
+  { nome: 'Neutral 700', hex: '#3F3F46', uso: 'Valor de dado importante.' },
+  { nome: 'Neutral 800', hex: '#27272A', uso: 'Título de card, heading secundário.' },
+  { nome: 'Neutral 900, preto da marca', hex: '#202020', uso: 'Heading primário, título de apresentação.' },
+  { nome: 'Neutral 950', hex: '#18181B', uso: 'Fundo do modo escuro. Nunca em documento impresso.' },
+]} />
+<Tabela
+  colunas={['Token de texto', 'Hex', 'Medido sobre `#FAFAFA`', 'Uso']}
+  linhas={[
+    ['`text-base`', '`#3C3C3C`', '10,57:1', 'Parágrafo, corpo de e-mail, descrição de campo.'],
+    ['`text-secondary`', '`#71717A`', '4,63:1', 'Legenda, metadado, nota de rodapé.'],
+    ['`text-disabled`', '`#A1A1AA`', '2,46:1', 'Conteúdo inativo. Nunca para texto que se lê.'],
+    ['`text-inverse`', '`#FAFAFA`', 'sobre azul ou escuro', 'Texto sobre fundo azul ou escuro.'],
+  ]}
+/>
+<Cartoes colunas={2} itens={[
+  { titulo: 'Fundo de página', texto: 'Sempre `#FAFAFA`. `#FFFFFF` só em cartão, modal, impressão offset ou template externo.' },
+  { titulo: 'Sem preto puro', texto: 'Texto de interface nunca em `#000000`. Use `#202020` ou `#3C3C3C`.' },
+  { titulo: 'Escala fechada', texto: 'Nada de `#888`, `#999`, `#CCC` ou cinza de outra biblioteca. Se falta um tom, revise a hierarquia antes.' },
+  { titulo: 'Camadas de superfície', texto: 'Página 50, cartão 0, seção alternada 100, sidebar 100 a 200. Não pule mais de dois níveis entre vizinhas.' },
+  { titulo: 'Separar hierarquia', texto: 'Use peso tipográfico ou espaçamento. Mais de dois cinzas adjacentes para separar níveis é excesso.' },
+  { titulo: 'Ícones', texto: 'Inativo em Neutral 400. Ativo em Citie Blue 600, nunca cinza escuro.' },
+]} />
+</Secao>
+
+<Secao titulo="Cores semânticas" descricao="Comunicam estado ou feedback e mais nada. Cada categoria tem um token de destaque, um mais claro para fundo escuro e um fundo -50.">
+<Paleta cores={[
+  { nome: 'Success 600', hex: '#16A34A', uso: 'Ícone, badge, borda e texto de estado.' },
+  { nome: 'Success 500', hex: '#22C55E', uso: 'Destaque em fundo escuro, progress bar.' },
+  { nome: 'Success 50', hex: '#F0FDF4', uso: 'Fundo de banner, toast, card.' },
+  { nome: 'Warning 600', hex: '#D97706', uso: 'Ícone, badge, borda e texto de estado.' },
+  { nome: 'Warning 500', hex: '#F59E0B', uso: 'Destaque em fundo escuro, indicador secundário.' },
+  { nome: 'Warning 50', hex: '#FFFBEB', uso: 'Fundo de banner, toast, card.' },
+  { nome: 'Danger 600', hex: '#DC2626', uso: 'Ícone, badge, borda, texto de erro.' },
+  { nome: 'Danger 500', hex: '#EF4444', uso: 'Destaque em fundo escuro.' },
+  { nome: 'Danger 50', hex: '#FEF2F2', uso: 'Fundo de banner, toast, card.' },
+  { nome: 'Info 600', hex: '#1261E4', uso: 'Mesmo token do Blue 600. Ícone, badge e borda informativos.' },
+  { nome: 'Info 50', hex: '#EFF5FF', uso: 'Fundo de banner, tooltip expandido, nota.' },
+]} />
+<Tabela
+  colunas={['Estado', 'Significado', 'Ícone', 'Rótulos']}
+  linhas={[
+    ['Success', 'Ação concluída, estado esperado', '`check-circle`', 'Concluído, Salvo, Enviado, Aprovado'],
+    ['Warning', 'Atenção antes de prosseguir', '`alert-triangle` ou `exclamation-circle`', 'Atenção, Pendente, Prazo próximo, Dado incompleto'],
+    ['Danger', 'Falha ou ação irreversível', '`x-circle` (erro) ou `alert-octagon` (destrutiva)', 'Erro, Falhou, Esta ação é irreversível'],
+    ['Info', 'Orientação sem urgência', '`info-circle`', 'Informação, Nota, Dica, Atualizado em'],
+  ]}
+/>
+<Cartoes colunas={2} itens={[
+  { titulo: 'Cor, ícone e rótulo', texto: 'Os três juntos, sempre. A cor sozinha não basta para daltonismo nem para impressão em preto e branco.' },
+  { titulo: 'Texto sobre fundo -50', texto: 'Use o token de destaque da mesma categoria, nunca o mais claro. Veja a medição na tabela de contraste.' },
+  { titulo: 'Sem mistura', texto: 'Sucesso com ressalva é Warning com texto explicativo, não verde com amarelo.' },
+  { titulo: 'Severidade', texto: 'info, success, warning, danger. Com vários alertas, destaque o de maior severidade.' },
+  { titulo: 'Só em feedback', texto: 'Toast, banner, badge de status, campo com erro. Em título de seção, cabeçalho de tabela, ícone de navegação ou item institucional, nunca.' },
+  { titulo: 'Info e botão', texto: 'Info usa o mesmo azul da ação. Em banner informativo, acompanhe de ícone ou rótulo para não parecer botão.' },
+]} />
+<Tabela
+  colunas={['Estado neutro', 'Hex', 'Uso']}
+  linhas={[
+    ['Neutral 500', '`#6B7280`', 'Texto desabilitado, ícone inativo, estado pendente.'],
+    ['Neutral 200', '`#E5E7EB`', 'Fundo de elemento desabilitado, separador sutil.'],
+    ['Neutral 100', '`#F3F4F6`', 'Fundo de área inativa, placeholder de card.'],
+  ]}
+/>
+<Callout>
+Esses três neutros de estado vêm da escala de cinza antiga. Veja a divergência registrada no fim da página.
+</Callout>
+</Secao>
+
+<Secao titulo="Gradientes" descricao="Recurso de impacto pontual, sempre a 135° e a 100% de opacidade. Existem dois, nada além deles.">
+<Gradientes itens={[
+  { nome: 'Institucional', de: '#146BFA', para: '#0B3C8F', uso: 'Capa de proposta, hero de site, capa de relatório, faixa de e-mail, crachá. Comunica solidez.' },
+  { nome: 'Tecnológico', de: '#1261E4', para: '#00B5F0', uso: 'Slide de produto, banner de lançamento, ilustração técnica, ícone de módulo. Comunica agilidade.' },
+]} />
+<Tabela
+  colunas={['Pode', 'Não pode']}
+  linhas={[
+    ['Hero de site, capa de apresentação (primeiro slide), capa de proposta, faixa de destaque, ícone ou ilustração, um elemento de fundo em seção específica', 'Fundo de página, de tela de sistema ou de slide corrido'],
+    ['Overlay sobre foto, até 70% de opacidade e só o institucional', 'Texto, botão, tabela, card de conteúdo'],
+    ['No máximo uma superfície com gradiente por peça. Em deck longo, volta a cada cinco slides ou mais', 'Misturar os dois na mesma peça, salvo infográfico que separe categorias'],
+    ['Texto branco `#FAFAFA` ou `#FFFFFF`', 'Gradiente semitransparente, ângulo diferente de 135°, documento .docx'],
+  ]}
+/>
+<CodeTabs abas={gradientesCodigo} />
+<Callout titulo="Tecnológico e texto branco">
+No fim da rampa tecnológica o branco mede 2,27:1 sobre `#00B5F0`. A regra pede branco sobre gradiente, mas também pede 4,5:1 nos dois extremos, e o tecnológico não cumpre. Mantenha o texto na metade azul da rampa ou use o institucional quando houver texto longo.
+</Callout>
+</Secao>
+
+<Secao titulo="Regras de uso" descricao="Muito neutro, azul como destaque. Cada decisão de cor precisa reforçar a confiança de um gestor público.">
+<Tabela
+  colunas={['Contexto', 'Neutros', 'Citie Blue', 'Acento (ciano, semântica, gradiente)']}
+  linhas={[
+    ['Regra geral', '70%', '20%', '10%'],
+    ['Produto digital', '80%', '15%', '5%'],
+    ['Apresentação institucional', 'Fundo sólido', 'Até 30% na capa ou seção, em azul escuro com texto branco', 'Pontual'],
+  ]}
+/>
+<Tabela
+  colunas={['Situação', 'Cor']}
+  linhas={[
+    ['Botão de ação primária', 'Blue 600 `#1261E4`, hover Blue 700 `#0E4DB8`'],
+    ['Fundo de página de sistema', '`#FAFAFA`'],
+    ['Link e aba ativa', 'Blue 600, aba com borda inferior'],
+    ['Badge de status', 'Texto no token 600 da categoria sobre fundo -50, com ícone'],
+    ['Campo com erro', 'Borda e texto `#DC2626` sobre `#FEF2F2`, com ícone e mensagem'],
+    ['Linha alternada de tabela', 'Neutral 100'],
+    ['Cabeçalho de tabela em documento', 'Fundo `#EFF5FF` e texto `#0E4DB8`'],
+    ['Título de slide de capa', 'Branco sobre Blue 900 sólido ou gradiente institucional'],
+    ['Título de slide de conteúdo', '`#146BFA` ou `#202020` sobre `#FAFAFA`'],
+    ['Série de gráfico', 'Ordem da paleta secundária'],
+    ['Logo sobre branco ou sobre azul', 'Versão do arquivo certo para o fundo, sem recolorir'],
+  ]}
+/>
+<CertoErrado itens={[
+  { certo: 'Status "Aprovado" com ícone de check, rótulo e texto `#16A34A` sobre `#F0FDF4`.', errado: 'Verde `#22C55E` como cor de categoria no menu lateral.', motivo: 'Semântica comunica estado, não navegação.' },
+  { certo: 'Fundo de tela de sistema em `#FAFAFA` sólido.', errado: 'Gradiente na tela inteira de um sistema de gestão.', motivo: 'Interfere na leitura de conteúdo dinâmico e cansa quem passa horas na tela.' },
+  { certo: 'Ciano `#00B5F0` como linha de gráfico ou ícone de inovação em slide escuro.', errado: 'Ciano em botão de ação.', motivo: 'Usuário treinado em azul confunde com link ou botão alternativo.' },
+  { certo: 'Card com no máximo três papéis de cor.', errado: 'Card com azul, verde, amarelo e ciano ao mesmo tempo.', motivo: 'O usuário não sabe onde focar.' },
+  { certo: 'Texto de corpo em `#3C3C3C` sobre `#FAFAFA`.', errado: 'Parágrafo em `#9CA3AF` sobre `#FAFAFA`.', motivo: 'Medido em cerca de 2,4:1, falha em texto de corpo.' },
+  { certo: 'Erro e sucesso nas semânticas.', errado: 'Tons de Citie Blue para sinalizar erro ou sucesso.', motivo: 'O usuário perde o sinal.' },
+]} />
+<Callout titulo="Fora do sistema">
+Nenhum material usa roxo, vermelho decorativo ou amarelo vivo fora dos papéis acima. Violeta e coral existem apenas como quinta e sexta série de gráfico. Paleta nova só passa por revisão do Design.
+</Callout>
+</Secao>
+
+<Secao titulo="Contraste medido" descricao="Mínimos: 4,5:1 para texto normal e 3:1 para texto grande (18 pt ou mais, 14 pt em negrito) e para componentes de interface. Os valores abaixo foram recalculados com a fórmula de luminância relativa do WCAG 2.1. A última coluna traz o que o brandbook afirma.">
+<Tabela
+  colunas={['Par', 'Medido', 'Texto normal', 'Texto grande e UI', 'Brandbook diz']}
+  linhas={linhasContraste}
+  larguraMinima={720}
+/>
+<Cartoes colunas={2} itens={[
+  { titulo: 'Anel de foco', texto: 'Pelo menos 3:1 contra o fundo, mais mudança de forma, como outline de 2 px com offset. O anel `#84AEFD` citado na fonte mede 2,13:1 sobre `#FAFAFA`; o `#1261E4` mede 5,22:1.' },
+  { titulo: 'Sem depender de cor', texto: 'Erro, estado e link levam ícone, rótulo ou sublinhado. Campo inválido precisa de `aria-invalid`, ícone e mensagem visível.' },
+  { titulo: 'Gradiente', texto: 'Meça nos dois extremos da rampa e use o ponto mais claro como referência.' },
+  { titulo: 'Texto sobre foto', texto: 'Overlay que garanta 4,5:1 no ponto mais claro da imagem.' },
+  { titulo: 'Tema escuro', texto: 'Retestar todos os pares. Aprovado no claro não significa aprovado no escuro.' },
+  { titulo: 'Material impresso', texto: 'Some 0,5 de margem ao mínimo e teste no material final.' },
+]} />
+<Callout titulo="Como ler a tabela">
+Texto semântico em verde, âmbar e vermelho sobre o fundo -50 da mesma categoria não atinge 4,5:1 em verde e âmbar, e fica por pouco abaixo no vermelho. Para texto normal nesses casos, sempre combine com ícone na cor e rótulo em `#3C3C3C`, e leve o caso ao Design antes de publicar novos badges.
+</Callout>
+</Secao>
+
+<Secao titulo="Divergências entre os documentos" descricao="Os oito documentos de cor não concordam em alguns pontos. A coluna final diz o que vale nesta página.">
+<Tabela
+  colunas={['Tema', 'O que diverge', 'Vale']}
+  linhas={[
+    ['Escala de cinza', 'Três escalas: Tailwind gray (`#F9FAFB` a `#111827`, no sistema de cores, no acessibilidade e nos estados neutros), zinc (`#F4F4F5` a `#18181B`, na paleta neutra) e slate (`#F8FAFC` a `#334155`, nas regras de uso).', 'Zinc, do documento dedicado à paleta neutra. `#FAFAFA`, `#3C3C3C` e `#202020` são iguais em todos.'],
+    ['Razões de contraste', 'Cada documento traz valores diferentes para o mesmo par. Blue 700 aparece como 7,03, 7,12 e 7,45:1. Success 600 aparece como 5,08:1 e mede 3,16:1.', 'A medição desta página.'],
+    ['Blue 500 como texto', 'A tabela do acessibilidade diz reprovado para texto normal. A paleta primária e a legibilidade o marcam como aprovado em texto normal e grande.', 'Só texto grande. Mede 4,46:1 sobre `#FAFAFA` e 4,65:1 sobre `#FFFFFF`.'],
+    ['Borda de input em foco', 'Regras de uso pedem Blue 500. O sistema de cores pede borda `#84AEFD` com anel `#1261E4`. O acessibilidade pede anel `#1261E4`.', '`#1261E4`, que é o azul de ação e passa 3:1.'],
+    ['Violeta e coral', 'A paleta secundária os traz como quinta e sexta série. As regras de uso listam roxo como fora do sistema.', 'Permitidos só em gráfico, como último recurso.'],
+    ['Branco puro', 'O padrão é `#FAFAFA`, mas exemplos de cartão, texto de botão e título usam `#FFFFFF`.', '`#FAFAFA` como padrão. `#FFFFFF` em cartão, modal, impressão e template externo.'],
+  ]}
+  larguraMinima={720}
+/>
+</Secao>
+
+<Callout>
+Fonte: Brandbook Citiesoft, seção Cores (sistema, paletas primária, secundária e neutra, semânticas, gradientes, regras de uso e acessibilidade). Contraste recalculado para esta página.
+</Callout>
+
+</Pagina>
