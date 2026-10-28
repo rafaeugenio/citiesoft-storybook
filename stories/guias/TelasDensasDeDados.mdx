@@ -1,0 +1,114 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { ListagemDensaDemo } from '../_docs/padroes/TelasDensas';
+import { Prontos } from '../_docs/padroes/Moldura';
+import { tabelaDensa } from '../_docs/snippets/padrao-telas-densas';
+
+<Meta title="Guias/Padrões/Telas densas de dados" />
+
+<Pagina
+  titulo="Telas densas de dados"
+  resumo="Listas, tabelas, filtros e lançamentos para o servidor que passa o dia na mesma tela. Eficiência e precisão guiam cada decisão."
+>
+
+<Secao titulo="Quando usar">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Use quando', texto: 'A coleção tem mais de 5 atributos relevantes, passa de 50 registros, pede ações em lote frequentes e o usuário volta todo dia ao mesmo fluxo.' },
+  { titulo: 'Não use quando', texto: 'O objetivo é um cadastro único (formulário), os dados são visuais (dashboard), o usuário é cidadão ocasional (lista simples) ou a tabela teria 1 ou 2 colunas.' },
+]} />
+</Secao>
+
+<Secao titulo="Anatomia" descricao="Hierarquia fixa, de cima para baixo.">
+<Tabela colunas={['Zona', 'Conteúdo']} linhas={[
+  ['Cabeçalho da página', 'Título com 24 px, trilha quando aninhado e ações primárias à direita.'],
+  ['Barra de controle', 'Busca com pelo menos 280 px, até 4 filtros em linha, densidade e seletor de colunas. Altura mínima de 48 px. Na seleção, ela dá lugar à barra de ações em massa.'],
+  ['Tabela', 'Cabeçalho fixo, coluna de seleção de 40 px à esquerda e coluna de ações de 80 a 120 px à direita.'],
+  ['Rodapé', 'Contagem (`142 registros` ou `38 de 142 registros`) e paginação.'],
+]} />
+<Tabela colunas={['Densidade', 'Altura da linha', 'Padding vertical', 'Perfil inicial']} linhas={[
+  ['Compacta', '36 px', '8 px', 'Servidor operacional'],
+  ['Confortável', '48 px', '12 px', 'Gestor'],
+  ['Espaçosa', '56 px', 'Sem valor na fonte', 'Gestor'],
+]} />
+</Secao>
+
+<Secao titulo="Regras">
+<Tabela colunas={['Nº', 'Regra']} larguraMinima={520} linhas={[
+  ['1', 'Filtros de alta frequência ficam expostos. Cada filtro ativo vira chip, e `Limpar todos` aparece com dois ou mais.'],
+  ['2', 'Filtros, busca e ordenação vão para a rota, para compartilhar a visão.'],
+  ['3', 'Número e data alinham à direita, texto à esquerda e status ao centro.'],
+  ['4', 'Separador de coluna só no cabeçalho. Zebra é opcional por produto.'],
+  ['5', 'Ordenação em três cliques: crescente, decrescente, sem ordem. Uma coluna por vez.'],
+  ['6', 'Ações frequentes visíveis como ícone. Destrutivas ou raras em menu. Ações secundárias aparecem no hover em 100 ms.'],
+  ['7', 'Seleção em massa troca a barra de controle pela barra de ações, com a contagem (`3 registros selecionados`).'],
+  ['8', 'Ação destrutiva em massa confirma com o número no botão: `Excluir 3 registros`.'],
+  ['9', 'Paginação por cursor acima de 10.000 registros. Virtualize ao chegar a centenas de linhas no mesmo bloco.'],
+  ['10', 'Esqueleto nas primeiras 10 linhas durante busca, filtro e troca de página. Nunca um indicador modal na tela inteira.'],
+  ['11', 'Colunas configuráveis, com visibilidade e ordem salvas no perfil. Número do processo e situação são obrigatórias. Abaixo de 1024 px, colunas de menor prioridade colapsam.'],
+  ['12', 'Edição inline para campos simples e frequentes: situação, valor e data. Erro aparece abaixo da célula, não em toast.'],
+  ['13', 'Modal completo só para cadastro novo ou edição complexa.'],
+]} />
+</Secao>
+
+<Secao titulo="Estados">
+<Tabela colunas={['Contexto', 'Título', 'Ação']} larguraMinima={560} linhas={[
+  ['Sem registros', '`Nenhum registro encontrado`', '`Novo cadastro`'],
+  ['Filtro sem resultado', '`Nenhum resultado para os filtros aplicados`', '`Limpar filtros`'],
+  ['Erro de carregamento', '`Não foi possível carregar os dados`', '`Tentar novamente`'],
+  ['Sem permissão', '`Acesso restrito`', 'Sem ação primária'],
+]} />
+<Tabela colunas={['Resultado da ação em massa', 'Mensagem']} linhas={[
+  ['Sucesso', '`3 processos aprovados com sucesso.`'],
+  ['Parcial', '`2 processos aprovados. 1 não pôde ser processado: verifique o processo 2025/0481.`'],
+  ['Falha total', '`Não foi possível executar a ação. Tente novamente.`'],
+]} />
+</Secao>
+
+<Secao titulo="Acessibilidade">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Tabela descrita', texto: 'Nome com contagem e ordenação, como `Tabela de processos TFD. 142 registros. Ordenada por data de cadastro, crescente.` Cabeçalhos com escopo.' },
+  { titulo: 'Teclado completo', texto: 'Espaço marca a linha, Enter abre, setas navegam, Escape cancela edição, overlay e seleção. O foco nunca fica preso.' },
+  { titulo: 'Reordenar sem arrastar', texto: 'Colunas arrastáveis têm alternativa por teclado na lista do seletor.' },
+  { titulo: 'Seleção anunciada', texto: 'Caixa do cabeçalho com estado misto. A barra de ações é uma barra de ferramentas e anuncia a contagem.' },
+  { titulo: 'Alvos', texto: 'Seleção com 24 px no mínimo e 44 px no modo confortável. Ações de linha com 32 px no compacto.' },
+  { titulo: 'Foco visível', texto: 'Cabeçalho fixo não encobre o foco: reserve margem de rolagem.' },
+]} />
+</Secao>
+
+<Secao titulo="Certo e errado">
+<CertoErrado itens={[
+  { certo: 'Filtros expostos, chips ativos e contagem `38 de 142 registros`.', errado: 'Um botão `Filtros avançados` num drawer, sem chips nem contagem.', motivo: 'O usuário não sabe se há filtro ativo, o que prejudica auditoria e supervisão.' },
+  { certo: 'Duplo clique na célula de situação, escolher a transição e confirmar.', errado: 'Abrir um modal de 12 campos para trocar a situação.', motivo: 'Com 80 processos por dia, o esforço se multiplica sem necessidade.' },
+  { certo: 'Marcar 20 processos, aprovar em lote e receber `20 processos aprovados.` em três cliques.', errado: 'Aprovar um a um, abrindo cada registro.' },
+]} />
+</Secao>
+
+<Secao titulo="Exemplo composto" descricao="A listagem de solicitações de TFD em densidade compacta. Busque, filtre, ordene, marque linhas e troque a densidade.">
+<ListagemDensaDemo />
+<CodeTabs abas={tabelaDensa} />
+</Secao>
+
+<Secao titulo="Onde ver pronto">
+<Prontos itens={[
+  { nome: 'Blocos/DataListing', uso: 'Tabela com densidade, seleção, ordenação, paginação, ações de linha e estados.' },
+  { nome: 'Blocos/FilterBar', uso: 'Busca, filtros e condições com chips.' },
+  { nome: 'Blocos/SelectionBar', uso: 'Barra de ações em massa.' },
+  { nome: 'Blocos/PageHeader', uso: 'Cabeçalho com trilha, metadados e ações.' },
+  { nome: 'Templates/Sistemas/Listagem de solicitações TFD', uso: 'A tela montada ponta a ponta.' },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Tabela colunas={['Tema', 'O que os documentos dizem']} linhas={[
+  ['Tamanhos de página', 'Telas densas lista 20, 50 e 100. CRUD lista 10, 25, 50 e 100, com 25 como padrão operacional.'],
+  ['Atalhos', 'A tabela de atalhos descreve as ações sem informar as teclas, exceto Escape, Espaço, setas e Tabulação. Não há combinação definida para selecionar todos, ir à busca ou exportar.'],
+  ['Altura espaçosa', 'A densidade de 56 px não tem padding vertical definido.'],
+]} />
+</Secao>
+
+<Callout>
+Fonte: padrão de Telas densas de dados do Design System Citiesoft, com apoio de CRUD e Comportamento responsivo.
+</Callout>
+
+</Pagina>

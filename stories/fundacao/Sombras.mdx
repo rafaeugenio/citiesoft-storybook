@@ -1,0 +1,46 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Sombras } from '../_docs/Medidas';
+import { TabelaUso } from '../_docs/TabelaUso';
+import { sombrasUso, sombrasEscuro } from '../_docs/snippets/sombras';
+
+<Meta title="Fundação/Sombras" />
+
+<Pagina
+  titulo="Sombras"
+  resumo="Elevações discretas, com versão própria para o tema escuro. Quanto mais alto o elemento, maior e mais difusa a sombra."
+>
+
+<Secao titulo="Elevações" descricao="Claro e escuro lado a lado. Clique em uma sombra para copiar o token.">
+<Sombras />
+</Secao>
+
+<Secao titulo="Quando usar cada uma">
+<TabelaUso
+  colunas={['Token', 'Uso']}
+  linhas={[
+    ['`--shadow-2xs`, `--shadow-xs`', 'Contato leve: botões, checkbox, controle segmentado.'],
+    ['`--shadow-card`', 'Cartão branco sobre fundo secundário e balão de mensagem.'],
+    ['`--shadow-sm`, `--shadow-md`', 'Painéis e elementos que se destacam levemente do fundo.'],
+    ['`--shadow-dropdown`', 'Menus suspensos e tooltips.'],
+    ['`--shadow-lg`, `--shadow-xl`, `--shadow-2xl`', 'Camadas altas: diálogos e painéis flutuantes.'],
+    ['`--shadow-sidebar`', 'Barra lateral flutuante.'],
+    ['`--shadow-nav-selected`', 'Item de navegação selecionado.'],
+    ['`--shadow-checkbox-selected`', 'Checkbox marcado ou indeterminado.'],
+    ['`--shadow-waitlist`', 'Superfície flutuante de cadastro, com camadas ambientes amplas.'],
+  ]}
+/>
+</Secao>
+
+<Secao titulo="Como usar">
+<CodeTabs abas={sombrasUso} />
+</Secao>
+
+<Secao titulo="Tema escuro" descricao="A geometria da sombra se mantém. Só a opacidade do preto sobe.">
+<Callout>
+Superfícies escuras absorvem sombras fracas. Por isso cada elevação tem um valor próprio no tema escuro, com opacidade maior. Por exemplo, `--shadow-md` usa 0.06 e 0.10 no claro e 0.12 e 0.18 no escuro. `--shadow-2xl`, `--shadow-nav-selected` e `--shadow-checkbox-selected` têm o mesmo valor nos dois temas.
+</Callout>
+<CodeTabs abas={sombrasEscuro} />
+</Secao>
+
+</Pagina>

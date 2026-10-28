@@ -1,0 +1,151 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { campoComErro, feedbackEConfirmacao } from '../_docs/snippets/conteudo-ux-writing';
+
+<Meta title="Guias/Conteúdo e UX writing" />
+
+<Pagina
+  titulo="Conteúdo e UX writing"
+  resumo="Regras de linguagem para rótulos, erros, estados vazios, botões, confirmações e notificações. Valem para texto escrito por pessoas, por código ou por IA."
+>
+
+<Secao titulo="Voz e tom" descricao="A Citiesoft tem uma voz: técnica e acessível, de parceira da gestão pública, direta e sem rodeios. O tom muda conforme o perfil.">
+<Tabela colunas={['Perfil', 'Tom', 'Exemplo certo', 'Exemplo errado']} larguraMinima={720} linhas={[
+  ['Servidor operacional', 'Objetivo e denso. Só o necessário', '`Data de início da viagem`', '`Quando a viagem começa?`'],
+  ['Gestor público', 'Dados primeiro. A ação diz a consequência', '`Aprovar solicitação de João Mendes`', '`Aprovar`'],
+  ['Cidadão', 'Acolhedor e simples. Sem sigla nem código', '`Sua solicitação está em análise pela Secretaria de Saúde.`', '`Status: EM_ANALISE_SAUDE`'],
+]} />
+<Cartoes colunas={3} itens={[
+  { titulo: 'Claro antes de completo', texto: 'Ação ou status na primeira palavra. Se a instrução passa de duas linhas, o fluxo precisa de redesign.' },
+  { titulo: 'Parceiro, não julgador', texto: 'O sujeito da frase é o campo, o sistema ou a regra. Nunca culpe o usuário e preserve o que ele digitou.' },
+  { titulo: 'Um termo, um objeto', texto: 'Termo de produto é contrato. Use o glossário abaixo e não varie entre menu, rótulo e mensagem.' },
+]} />
+</Secao>
+
+<Secao titulo="Erros" descricao="Fórmula: o que aconteceu, mais como resolver. No máximo duas linhas em 1280 px.">
+<Tabela colunas={['Tipo', 'Estrutura', 'Exemplo']} larguraMinima={680} linhas={[
+  ['Validação de campo', 'Campo inválido. Regra e correção', '`CPF inválido. Verifique os dígitos e tente novamente.`'],
+  ['Valor acima do limite', 'Limite e saída', '`Valor superior ao saldo disponível (R$ 12.450,00). Reduza o valor ou solicite suplementação.`'],
+  ['Sistema ou rede', 'O que não foi feito. Tente de novo ou alternativa', '`Não foi possível salvar o lançamento. Verifique sua conexão e tente novamente.`'],
+  ['Permissão', 'Ação indisponível para o perfil. Como pedir acesso', '`Exclusão de servidor não disponível para o seu perfil. Solicite ao administrador do sistema se necessário.`'],
+]} />
+<CertoErrado itens={[
+  { certo: 'Texto neutro, específico e com a solução na mesma mensagem.', errado: '`Ops! Parece que as datas estão invertidas. Tente novamente!`', motivo: 'Sem exclamação, sem Ops e sem "Erro de validação" isolado.' },
+  { certo: 'Mensagem traduzida e acionável. O detalhe técnico vai para o log.', errado: '`Erro 503: Service Unavailable`' },
+]} />
+<CodeTabs abas={campoComErro} />
+<Callout titulo="Cor do erro">
+O erro inline usa `danger-600` (`#DC2626`), com 5,08:1 sobre branco.
+</Callout>
+</Secao>
+
+<Secao titulo="Rótulos, placeholder e texto auxiliar">
+<Tabela colunas={['Elemento', 'Regra', 'Certo', 'Errado']} larguraMinima={720} linhas={[
+  ['Rótulo', 'Sempre acima do campo, substantivo claro, sem verbo e sem rótulo flutuante', '`Data de nascimento`', '`Informe a data de nascimento`'],
+  ['Obrigatório', 'Asterisco após o rótulo e nota "* campos obrigatórios" no topo', '`CPF *`', '`CPF (obrigatório)`'],
+  ['Opcional', 'Sinalize só quando a maioria do grupo é obrigatória', '`Justificativa (opcional)`', '`Justificativa`'],
+  ['Placeholder', 'Exemplo de formato, nunca instrução. Não repete o rótulo', '`Ex.: 000.000.000-00`', '`Digite o CPF`'],
+  ['Texto auxiliar', 'Só para regra não óbvia, aviso preventivo ou dado de integração. Um por campo, no máximo', '`Saldo disponível: R$ 23.780,00. Valor superior será bloqueado.`', '`Selecione uma opção`'],
+]} />
+</Secao>
+
+<Secao titulo="Estados vazios" descricao="A área nunca fica em branco. Estrutura: o que está vazio, por quê (se preciso) e a próxima ação.">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Sem dados cadastrados', texto: '`Nenhum servidor cadastrado ainda.` Botão `Cadastrar servidor`.' },
+  { titulo: 'Filtro sem resultado', texto: '`Nenhum resultado para "João Men". Verifique a grafia ou ajuste os filtros.` Botão `Limpar filtros`.' },
+  { titulo: 'Sem pendência', texto: '`Nenhuma solicitação de TFD pendente no momento. Novas solicitações aparecerão aqui.`' },
+  { titulo: 'Sem histórico', texto: '`Nenhuma movimentação registrada para este período. Ajuste o intervalo de datas.`' },
+]} />
+<Callout>
+O botão do estado vazio repete o botão que apareceria no cabeçalho da lista. Em fluxo operacional, ícone leve e texto bastam.
+</Callout>
+</Secao>
+
+<Secao titulo="Botões e confirmações">
+<Tabela colunas={['Contexto', 'Certo', 'Errado']} linhas={[
+  ['Salvar cadastro', '`Salvar colaborador`', '`Salvar` ou `OK`'],
+  ['Enviar para análise', '`Enviar solicitação`', '`Confirmar`'],
+  ['Excluir', '`Excluir benefício`', '`Sim, excluir` ou `Prosseguir`'],
+  ['Exportar', '`Exportar relatório`', '`Download`'],
+  ['Cancelar', '`Cancelar`', '`Não` ou `Não quero`'],
+]} />
+<Cartoes colunas={2} itens={[
+  { titulo: 'Botão', texto: 'Verbo no infinitivo mais objeto, de 1 a 4 palavras. Primeira letra maiúscula. Botão destrutivo usa a variante danger e nomeia a ação. "Fechar" fica para modal de leitura.' },
+  { titulo: 'Confirmação destrutiva', texto: 'Título com verbo e objeto nomeado. Corpo com a consequência concreta. Botão com o mesmo verbo do título. Sem checkbox de ciência e sem digitar palavra, salvo impacto catastrófico.' },
+]} />
+<CodeTabs abas={feedbackEConfirmacao} />
+</Secao>
+
+<Secao titulo="Notificações e toasts">
+<Tabela colunas={['Tipo', 'Estrutura', 'Exemplo', 'Papel ARIA']} larguraMinima={700} linhas={[
+  ['Sucesso', 'Objeto e ação concluída', '`Lançamento salvo com sucesso.`', '`status`'],
+  ['Informação', 'O que mudou', '`Sincronização com SIAFEM concluída.`', '`status`'],
+  ['Aviso', 'O que pode acontecer e a recomendação', '`Saldo de empenho abaixo de 10%. Solicite suplementação em breve.`', '`status`'],
+  ['Erro', 'O que não foi feito e como resolver', '`Não foi possível enviar a solicitação. Verifique sua conexão.`', '`alert`'],
+]} />
+<Cartoes colunas={3} itens={[
+  { titulo: 'Duração', texto: 'Sucesso e informação ficam 5 segundos. Erro fica até ser dispensado.' },
+  { titulo: 'Fila', texto: 'Um toast por vez. No desktop, canto superior direito. No mobile, topo centralizado.' },
+  { titulo: 'Ação crítica', texto: 'Nunca dentro de toast que some. Use banner persistente ou modal.' },
+]} />
+</Secao>
+
+<Secao titulo="Português do Brasil na interface">
+<Tabela colunas={['Item', 'Regra']} linhas={[
+  ['Acentuação', 'Sempre, inclusive em mensagem gerada pelo backend. Nunca `nao` ou `solicitacao`'],
+  ['Números e datas', '`R$ 1.250,00`, `dd/mm/aaaa`, `14:30` em 24 horas e `73%` sem espaço'],
+  ['Pontuação', 'Ponto final em frase completa. Sem ponto em título, rótulo e botão'],
+  ['Maiúsculas', 'Título de tela e item de menu só com a inicial maiúscula. Siglas em maiúsculas: CPF, CNPJ, TFD, NFS-e'],
+  ['Tratamento', 'Imperativo sem pronome, como em `Selecione o período`. Sem segunda pessoa informal'],
+  ['Texto proibido', 'Travessão e negação paralela do tipo "não é X, é Y". Afirme direto'],
+]} />
+</Secao>
+
+<Secao titulo="Glossário de produto" descricao="Termo oficial na primeira coluna. Variação é proibida.">
+<Tabela colunas={['Use', 'Evite']} linhas={[
+  ['Colaborador', 'Funcionário, empregado (Citiesoft-Administrativo)'],
+  ['Servidor', 'Funcionário público, agente (TFD e órgãos públicos)'],
+  ['Solicitação', 'Pedido, requisição'],
+  ['Lançamento', 'Registro, entrada, inclusão (financeiro e diárias)'],
+  ['Competência', 'Mês de referência, data base'],
+  ['Afastamento', 'Licença, quando o módulo distingue os dois'],
+  ['Empenho', 'Reserva, bloqueio, dotação'],
+  ['Perfil de acesso', 'Papel, role, nível'],
+  ['Excluir', 'Deletar, remover, apagar'],
+  ['Arquivar', 'Inativar, desativar (o objeto vai para o histórico)'],
+  ['Processo', 'Protocolo, chamado, ticket'],
+]} />
+<Tabela colunas={['Status', 'Em badge', 'Em frase']} linhas={[
+  ['Aguardando análise', '`Aguardando análise`', 'A solicitação está aguardando análise.'],
+  ['Em análise', '`Em análise`', 'A solicitação está em análise.'],
+  ['Aprovado', '`Aprovado`', 'A solicitação foi aprovada.'],
+  ['Reprovado', '`Reprovado`', 'A solicitação foi reprovada.'],
+  ['Cancelado', '`Cancelado`', 'A solicitação foi cancelada.'],
+  ['Rascunho', '`Rascunho`', 'Este lançamento ainda não foi enviado.'],
+]} />
+</Secao>
+
+<Secao titulo="Acessibilidade do texto">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Campos', texto: 'Todo campo tem rótulo associado, `aria-required` quando obrigatório e `aria-describedby` apontando para o erro. Em erro, o campo recebe `aria-invalid`.' },
+  { titulo: 'Idioma e siglas', texto: '`lang="pt-BR"` no documento. Na primeira ocorrência por página, sigla em `abbr` com o significado.' },
+  { titulo: 'Instruções', texto: 'Nomeie o botão. Não use cor, posição ou forma como pista única.' },
+  { titulo: 'Movimento reduzido', texto: 'Toast e erro inline aparecem sem deslocamento, com opacidade de no máximo 150 ms.' },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Cor do placeholder', texto: 'O texto cita `color.text.secondary` como neutral-400 (`#A8ACB3`, 3,12:1). A tabela de tokens do mesmo documento define o token como neutral-500 (`#6B7177`).' },
+  { titulo: 'Duração do toast', texto: 'Este documento fixa 5 segundos. Os princípios falam em 4 a 5 segundos.' },
+  { titulo: 'Tokens de movimento', texto: 'Aqui `expressive` 320 ms e `quick` 180 ms. Nos princípios, `slow` 300 ms e `fast` 100 ms.' },
+  { titulo: 'Botão de cancelar', texto: 'A regra exige `Cancelar` em modal de ação. O exemplo de solicitação de TFD usa `Manter solicitação`.' },
+]} />
+</Secao>
+
+<Callout>
+Fonte: Design System Citiesoft, Conteúdo e UX writing.
+</Callout>
+
+</Pagina>

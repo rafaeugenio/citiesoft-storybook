@@ -1,0 +1,101 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { FormularioEmEtapas } from '../_docs/padroes/FormularioEmEtapas';
+import { Prontos } from '../_docs/padroes/Moldura';
+import { etapasExemplo } from '../_docs/snippets/padrao-formularios-em-etapas';
+
+<Meta title="Guias/Padrões/Formulários em etapas" />
+
+<Pagina
+  titulo="Formulários em etapas"
+  resumo="Como dividir, navegar e validar fluxos que não cabem em uma tela: cadastro extenso, prestação de contas, habilitação e solicitação de TFD."
+>
+
+<Secao titulo="Quando usar">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Use quando', texto: 'Há mais de 7 a 9 campos lógicos, ramificações condicionais, erro de consequência grave, possibilidade de retomar depois ou revisão obrigatória antes do envio.' },
+  { titulo: 'Não use quando', texto: 'O formulário tem até 5 ou 6 campos lineares (use seções colapsáveis), é busca ou filtro, é edição pontual ou dividir quebraria uma comparação em tempo real.' },
+]} />
+</Secao>
+
+<Secao titulo="Anatomia">
+<Tabela colunas={['Parte', 'Regra']} linhas={[
+  ['Indicador de passos', 'Estado (pendente, ativo, concluído, erro), rótulo de até 20 caracteres e número. Concluídos são clicáveis.'],
+  ['Etapa', 'Uma responsabilidade por etapa, com no máximo 4 seções com legenda.'],
+  ['Banner de rascunho', 'Aparece ao abrir se houver rascunho, com data e expiração (padrão de 30 dias).'],
+  ['Navegação', '`Anterior` e `Próximo`. O rótulo do envio final é específico, como `Enviar cadastro`.'],
+  ['Resumo', 'Penúltima tela, com todos os valores por etapa e link `Editar` em cada seção.'],
+  ['Confirmação', 'Tela com protocolo, data com hora e próximos passos.'],
+]} />
+</Secao>
+
+<Secao titulo="Regras">
+<Tabela colunas={['Nº', 'Regra']} larguraMinima={520} linhas={[
+  ['1', 'Passos horizontais para 3 a 6 etapas no desktop. Em mobile ou com 7 ou mais etapas, passos verticais ou indicador compacto `x de y`.'],
+  ['2', '`Próximo` valida só a etapa atual e leva o foco ao primeiro erro. `Anterior` nunca valida nem apaga dados.'],
+  ['3', 'Valide campo a campo ao sair do campo. Nunca deixe todos os erros para o envio final.'],
+  ['4', 'A rota reflete a etapa atual, para compartilhar e retomar.'],
+  ['5', 'Em fluxos com mais de 3 etapas ou com upload, salve o rascunho a cada transição e, quando possível, a cada 30 segundos. Mostre o toast `Rascunho salvo.`'],
+  ['6', 'Senhas e tokens nunca entram no rascunho.'],
+  ['7', 'A condição de um campo condicional vem declarada no handoff, como `exibe se vínculo é celetista`.'],
+  ['8', 'Campo que some deixa de ser enviado. Seção condicional usa acordeão ou inserção de bloco, nunca troca de aba.'],
+  ['9', 'Campos obrigatórios vazios impedem chegar ao resumo. Opcional vazio mostra `Não informado`.'],
+  ['10', 'Envio irreversível pede modal com o resumo da ação e botões `Confirmar envio` e `Voltar e revisar`. Nunca `Sim` e `Não`.'],
+  ['11', 'Depois do envio, mostre protocolo e próximos passos. Nunca redirecione em silêncio para a home.'],
+]} />
+</Secao>
+
+<Secao titulo="Estados">
+<Tabela colunas={['Elemento', 'Estado e comportamento']} linhas={[
+  ['Passo', 'Pendente, ativo, concluído ou com erro. Futuro não clicável fica desabilitado e fora do foco.'],
+  ['Campo condicional', 'Entra com altura e opacidade em 240 ms e sai em 100 ms. Sem redução de movimento, é instantâneo.'],
+  ['Rascunho', 'Salvo de forma otimista: a transição não espera o toast, que chega em até 2 segundos.'],
+  ['Sessão expirada', '`Sua sessão expirou. Faça login novamente. Seus dados foram salvos como rascunho.`'],
+]} />
+</Secao>
+
+<Secao titulo="Acessibilidade">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Passos nomeados', texto: 'Navegação nomeada em lista ordenada, com o passo atual marcado. Nome do passo: `Etapa 2: Dados funcionais (concluída)`.' },
+  { titulo: 'Foco no título', texto: 'Ao trocar de etapa, o foco vai ao título da nova etapa, não ao topo da página.' },
+  { titulo: 'Condicional anunciado', texto: 'Ao inserir uma seção, o foco vai ao primeiro campo dela. Ao remover, limpe o erro e tire do fluxo de foco.' },
+  { titulo: 'Sem repetir dado', texto: 'CPF que veio do login entra pré-preenchido e somente leitura.' },
+  { titulo: 'Alvo de toque', texto: 'Botões de navegação com 40 px no mínimo e 44 px recomendados.' },
+  { titulo: 'Contador', texto: 'Contador de caracteres anunciado a cada 10 caracteres, em região educada.' },
+]} />
+</Secao>
+
+<Secao titulo="Certo e errado">
+<CertoErrado itens={[
+  { certo: 'Cadastro de 35 campos em 5 etapas, com rascunho, resumo editável e protocolo no fim.', errado: 'Página única com 35 campos, validação só no final e 12 erros dispersos.' },
+  { certo: '`Anterior` preserva o que foi digitado na etapa atual.', errado: '`Anterior` apaga os dados da etapa atual.' },
+  { certo: 'Rótulos de etapa curtos e sem verbo: `Destino e datas`.', errado: '`Informações sobre a viagem` ou `Preencha seus dados pessoais`.' },
+]} />
+</Secao>
+
+<Secao titulo="Exemplo composto" descricao="Stepper, banner de rascunho, campo condicional e revisão com Editar. Escolha Celetista na etapa 2.">
+<FormularioEmEtapas />
+<CodeTabs abas={etapasExemplo} />
+</Secao>
+
+<Secao titulo="Onde ver pronto">
+<Prontos itens={[
+  { nome: 'Blocos/Stepper', uso: 'Indicador horizontal e vertical, com clique em etapas concluídas.' },
+  { nome: 'Templates/Sistemas/Wizard de nova solicitação', uso: 'Fluxo completo de solicitação de TFD em etapas.' },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Tabela colunas={['Tema', 'O que os documentos dizem']} linhas={[
+  ['Rótulos de navegação', 'Formulários complexos usa `Próximo` e `Anterior`. Onboarding usa `Continuar` nas etapas intermediárias.'],
+  ['Envio final', 'Formulários complexos pede `Enviar cadastro`. Onboarding pede `Confirmar e salvar` ou `Confirmar e enviar`. O exemplo segue Formulários complexos.'],
+  ['Campo vazio', 'Formulários complexos usa `Informe o nome completo do servidor.`, o padrão de Formulários usa `... para continuar.`'],
+]} />
+</Secao>
+
+<Callout>
+Fonte: padrão de Formulários complexos do Design System Citiesoft, com apoio de Formulários e Onboarding.
+</Callout>
+
+</Pagina>

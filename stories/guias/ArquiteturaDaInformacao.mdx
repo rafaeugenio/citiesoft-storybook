@@ -1,0 +1,125 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { navegacaoAcessivel } from '../_docs/snippets/arquitetura-da-informacao';
+
+<Meta title="Guias/Arquitetura da informação" />
+
+<Pagina
+  titulo="Arquitetura da informação"
+  resumo="Como estruturar, nomear e conectar telas nos produtos Citiesoft, que atendem três perfis com densidade e frequência de uso opostas dentro da mesma casca de navegação."
+>
+
+<Secao titulo="Três perfis, três densidades" descricao="Projetar para o denominador comum piora o sistema para todos. Cada perfil recebe a própria configuração.">
+<Tabela larguraMinima={700} colunas={['', 'Servidor operacional', 'Gestor', 'Cidadão']} linhas={[
+  ['Uso', 'Dia inteiro, todo dia', 'Algumas vezes por dia, para decidir', 'Esporádico, muitas vezes no celular'],
+  ['Profundidade máxima', '4 níveis', '3 níveis', '2 níveis'],
+  ['Densidade', 'Compacta. Linha de tabela de 36 px, sidebar recolhida abaixo de 1280 px', 'Confortável. Linha de 44 px, card com 16 px de respiro', 'Ampla. Alvo de 44×44 px, coluna única, 16 a 24 px entre campos'],
+  ['Entrada', 'Listagem com filtros persistentes e breadcrumb', 'Painel com indicadores e drill-down até a lista filtrada', 'Fluxo linear com stepper e rótulos por extenso'],
+  ['Padrões iniciais', 'Filtro de lotação da sessão e mês corrente', 'Visão consolidada da unidade', 'Campos em branco, sem valores presumidos'],
+  ['Paginação', '50 itens', '20 itens', 'Rolagem infinita em consulta'],
+]} />
+<Callout titulo="Linguagem do cidadão">
+Texto sem sigla e sem jargão: "Solicitar encaminhamento" no lugar de "Registrar TFD". Rascunho salvo para retomar o fluxo na próxima visita.
+</Callout>
+</Secao>
+
+<Secao titulo="Sete princípios">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Hierarquia declarada', texto: 'Toda tela tem pai no mapa de navegação. O breadcrumb mostra esse caminho.' },
+  { titulo: 'Um destino por função', texto: 'Editar servidor tem um caminho canônico, sem rotas paralelas.' },
+  { titulo: 'Divulgação progressiva', texto: 'Mostre o necessário agora. Avançados e destrutivos aparecem sob demanda.' },
+  { titulo: 'Rótulo único', texto: 'Se o módulo é Pessoas no menu, é Pessoas no breadcrumb, no título e na ajuda.' },
+  { titulo: 'Tarefa, não banco de dados', texto: 'Nomeie pelo que a pessoa quer fazer, como lançar uma diária.' },
+  { titulo: 'Falha com saída', texto: '404, 403, sessão expirada e indisponibilidade sempre oferecem uma ação.' },
+  { titulo: 'Profundidade por perfil', texto: 'Respeite os limites da tabela acima. Nível extra aumenta abandono.' },
+]} />
+</Secao>
+
+<Secao titulo="Casca de navegação" descricao="Vale para todos os produtos.">
+<Tabela larguraMinima={560} colunas={['Elemento', 'Regra']} linhas={[
+  ['Sidebar', 'Recolhível. Expandida com 240 px a partir de 1280 px, recolhida com 60 px abaixo. Estado salvo no navegador.'],
+  ['Topbar de módulos', 'Evitar em sistema operacional. Fica para portal do cidadão, com poucos destinos.'],
+  ['Item de módulo', 'Ícone e rótulo, com tooltip quando recolhido. Substantivo curto, até 20 caracteres. "Pessoas", nunca "Gerenciar Pessoas".'],
+  ['Ordem', 'Mais usados no topo. Administração e Sistema no rodapé, separados por divisor. A ordem não muda por perfil.'],
+  ['Sem permissão', 'O item fica oculto. Item desabilitado sem explicação gera frustração.'],
+  ['Item ativo', 'Fundo de marca suave, texto de marca e borda esquerda de 3 px. Sub-item só com texto de marca e peso 500.'],
+  ['Badge', 'Contagem até 99+. No máximo dois itens com badge ao mesmo tempo.'],
+]} />
+</Secao>
+
+<Secao titulo="Breadcrumb" descricao="Obrigatório em toda tela de profundidade 2 ou mais.">
+<Tabela larguraMinima={560} colunas={['Regra', 'Detalhe']} linhas={[
+  ['Caminho', 'Hierarquia real, nunca histórico de cliques. Não inclui a aba ativa.'],
+  ['Item atual', 'Sem link e sem separador à direita, em texto principal com peso 500.'],
+  ['Separador', 'Chevron. Nunca barra.'],
+  ['Tamanho', 'Até 4 itens visíveis. Acima disso, reticências abrem o caminho completo.'],
+  ['Mobile', 'Abaixo de 768 px mostra só o nível anterior com seta de voltar.'],
+  ['Posição', 'Abaixo da faixa do cabeçalho e acima do título da página.'],
+]} />
+<Callout>
+Exemplo: Pessoas, Servidores, nome da pessoa. Em solicitações: TFD, Solicitações, Em análise, Processo 2025/0481. As abas Dados pessoais, Vínculos, Benefícios e Histórico são navegação local e ficam fora do caminho.
+</Callout>
+</Secao>
+
+<Secao titulo="Divulgação progressiva">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Filtros', texto: 'Mostre de 3 a 5 por padrão. O restante fica em Mais filtros com a contagem de filtros ativos, por exemplo (2).' },
+  { titulo: 'Formulários longos', texto: 'Acima de 12 campos, use stepper. Campos raros ficam em Informações adicionais, fechada. Campo obrigatório nunca é colapsado.' },
+  { titulo: 'Ações destrutivas', texto: 'Fora do grupo principal, no menu de ações ou afastadas do CTA. Confirmação em modal, nunca no diálogo nativo.' },
+  { titulo: 'Detalhe de registro', texto: 'Abre em página ou drawer, nunca em tooltip ou popover de hover. A linha da tabela mostra só o essencial.' },
+  { titulo: 'Ajuda', texto: 'Texto longo vai em ícone de informação. CPF, data de nascimento e campos com máscara mantêm a dica visível.' },
+  { titulo: 'Abas', texto: 'Navegação local dentro de uma entidade, no máximo 6 visíveis. Mais que isso, rolagem horizontal, nunca menu de abas.' },
+]} />
+</Secao>
+
+<Secao titulo="Rótulos e feedback">
+<CertoErrado itens={[
+  {
+    certo: 'Ações específicas: Salvar servidor, Confirmar lançamento de férias, Continuar para documentos, Entendido.',
+    errado: 'Salvar, Confirmar, Continuar e OK, sem dizer o quê.',
+  },
+  {
+    certo: 'Mostrar o total: "Exibindo 1 a 50 de 2.847 servidores".',
+    errado: 'Paginar sem informar quantos registros o filtro devolveu.',
+    motivo: 'O total confirma que o filtro está certo.',
+  },
+]} />
+<Tabela larguraMinima={520} colunas={['Latência', 'Feedback']} linhas={[
+  ['Acima de 300 ms', 'Indicador de progresso.'],
+  ['Acima de 1 s', 'Skeleton ou spinner com mensagem, como "Salvando lançamento de diária...".'],
+  ['Ação concluída', 'Toast de confirmação por pelo menos 4 s.'],
+]} />
+</Secao>
+
+<Secao titulo="Acessibilidade da navegação">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Landmarks', texto: 'Um único `main` por tela. Dois `nav` têm `aria-label` distintos: Menu principal e Localização atual.' },
+  { titulo: 'Skip link', texto: '"Ir para o conteúdo principal" é o primeiro elemento focável e aparece ao receber foco.' },
+  { titulo: 'Item atual', texto: '`aria-current="page"` no menu e no breadcrumb.' },
+  { titulo: 'Foco', texto: 'Header e sidebar fixos não cobrem o elemento focado. Use `scroll-margin-top`. Armadilha de foco só em modal e drawer.' },
+  { titulo: 'Rotas em SPA', texto: 'Anuncie o título da nova página em região `aria-live="polite"` a cada navegação.' },
+  { titulo: 'Telas públicas', texto: 'Símbolo de acessibilidade com link para canal alternativo, linguagem simples e colar permitido em todos os campos.' },
+]} />
+<CodeTabs abas={navegacaoAcessivel} />
+</Secao>
+
+<Secao titulo="Telas de exemplo">
+<Callout>
+Veja a estrutura aplicada em Templates/Sistemas: Listagem de solicitações TFD, Formulário de cadastro, Wizard de nova solicitação, Detalhe de solicitação e Páginas de erro e estados.
+</Callout>
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Paginação', texto: 'Este documento fixa 50 e 20 itens por página. As leis de UX fixam 15. Prevalece o documento específico de arquitetura.' },
+  { titulo: 'Durações de movimento', texto: 'A fonte usa 240 ms para sidebar e accordion e 300 ms para drawer, com nomes de token antigos. O tema atual usa os tokens de Movimento de produto.' },
+  { titulo: 'Texto secundário', texto: 'A fonte cita neutral-500 no separador do breadcrumb. O tema usa neutral-600 no tema claro por contraste.' },
+]} />
+</Secao>
+
+<Callout>
+Fonte: guidelines de UX do Design System Citiesoft, documento de arquitetura da informação.
+</Callout>
+
+</Pagina>

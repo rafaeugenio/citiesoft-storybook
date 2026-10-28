@@ -1,0 +1,129 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado, Paleta } from '../_docs/Conteudo';
+import { logoPorFundo } from '../_docs/snippets/marca-no-produto';
+
+<Meta title="Guias/Marca no produto" />
+
+<Pagina
+  titulo="Marca no produto"
+  resumo="Como a identidade da Citiesoft entra na interface. A marca aparece em poucos momentos e fica silenciosa no resto, presente na consistência, na qualidade e no uso correto dos tokens."
+>
+
+<Secao titulo="Duas camadas" descricao="Confundir as camadas é o erro mais frequente de aplicação de marca.">
+<Tabela larguraMinima={640} colunas={['Aspecto', 'Institucional', 'Produto']} linhas={[
+  ['Onde', 'Propostas, apresentações, landing pages, treinamento, relatórios de SLA, e-mails externos', 'Telas dos sistemas, painéis, módulos operacionais, apps'],
+  ['Tom visual', 'Expressivo, generoso', 'Funcional, denso, consistente'],
+  ['Azul de destaque', '`#146BFA` (citie-blue-500)', '`#1261E4` (citie-blue-600)'],
+  ['Título', 'Red Hat Display 700', 'Red Hat Display 600 em uso limitado, ou Inter 600'],
+  ['Corpo', 'Inter', 'Inter 14 px'],
+  ['Dados técnicos', 'Red Hat Mono', 'Red Hat Mono'],
+  ['Decoração', 'Permitida', 'Proibida em tela operacional'],
+  ['Movimento', 'Permitido em apresentação e onboarding', 'Funcional e curto, com movimento reduzido respeitado'],
+]} />
+<Paleta cores={[
+  { nome: 'Azul de ação do produto', hex: '#1261E4', uso: 'Botões, links, foco. 5,48:1 sobre branco' },
+  { nome: 'Azul institucional', hex: '#146BFA', uso: 'Hero, slides, marca. Nunca em botão ou link de produto' },
+  { nome: 'Ciano tecnológico', hex: '#00B5F0', uso: 'Acento pontual. Nunca como texto sobre fundo claro' },
+]} />
+</Secao>
+
+<Secao titulo="Quando o produto incorpora a marca" descricao="Só quando a pessoa não está em modo operacional.">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Entrada', texto: 'Login, recuperação de senha e seleção de módulo. Fundo azul institucional ou degradê, logo centralizado, título em Red Hat Display.' },
+  { titulo: 'Onboarding', texto: 'Primeira experiência e tour de novidade, com ilustração de contexto e linguagem calorosa.' },
+  { titulo: 'Erro global', texto: '404, 500 e manutenção, com logo, cor institucional e mensagem de parceiro.' },
+  { titulo: 'Relatórios e exportações', texto: 'Cabeçalho com logo, cor de destaque e título em Red Hat Display.' },
+  { titulo: 'E-mails do sistema', texto: 'Cabeçalho com logo, cor institucional e rodapé com canal de suporte.' },
+  { titulo: 'Resto do produto', texto: 'Camada funcional. Fundo `neutral-50`, cards brancos, azul de ação nos botões.' },
+]} />
+<Callout>
+Os templates Login, Esqueci a senha e Páginas de erro e estados, em Templates/Sistemas, mostram os contextos em que a marca se expressa. Listagem, Formulário de cadastro e Detalhe de solicitação mostram a camada funcional.
+</Callout>
+</Secao>
+
+<Secao titulo="Gradiente, vidro e decoração">
+<Tabela larguraMinima={620} colunas={['Item', 'Regra']} linhas={[
+  ['Fundo de página', 'Sempre sólido. Gradiente de página inteira é bloqueado.'],
+  ['Gradiente canônico', '135 graus. De `#146BFA` a `#0E4DB8`, ou de `#1261E4` a `#00B5F0`. Só em hero de módulo, cabeçalho de login e ilustração.'],
+  ['Texto sobre gradiente', 'Apenas branco, com overlay escuro antes. Verifique o contraste do resultado final.'],
+  ['Texto em gradiente', 'Só em título display institucional de 30 px ou mais. Nunca abaixo de 24 px.'],
+  ['Superfície de vidro', 'Reservada a hero, card de boas-vindas e cabeçalho de módulo. Fora de tabela, formulário extenso e modal de confirmação.'],
+  ['Grafismos', 'Arcos, malhas e ondas abertas em azul ou ciano com 6% a 14% de opacidade, nos cantos, nunca sobre dados.'],
+  ['Elevação', 'Sombra informa a camada: campo, card, menu, modal. Nunca decoração.'],
+]} />
+</Secao>
+
+<Secao titulo="Logo no produto">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Fundo claro', texto: '`LogoHorizontal3.svg`.' },
+  { titulo: 'Fundo azul ou escuro', texto: '`LogoHorizontal2.svg`, inclusive com o tema escuro ativo.' },
+  { titulo: 'Acessibilidade', texto: '`alt="Citiesoft"` no logo e `alt=""` em imagens decorativas. Contraste de 3:1 entre logo e fundo.' },
+]} />
+<CodeTabs abas={logoPorFundo} />
+</Secao>
+
+<Secao titulo="Os seis atributos na interface">
+<Tabela larguraMinima={640} colunas={['Atributo', 'Na prática']} linhas={[
+  ['Institucional', 'Linguagem formal e acessível, sem gíria. Títulos claros: "Módulo de Controle de Frequência".'],
+  ['Tecnológico', 'Ícones de traço de 1,5 px, Red Hat Mono em IDs e dados, movimento que mostra causa e efeito.'],
+  ['Confiável', 'Mesmo componente com o mesmo comportamento em todos os módulos. Estados de feedback inequívocos. Foco sempre visível. Erro diz o que houve e o que fazer.'],
+  ['Claro', 'Um nível de atenção por elemento. Ícone com rótulo em contexto operacional. Rótulo descreve o dado: "Data de admissão". Ação principal com verbo.'],
+  ['Moderno', 'Raio de 6 px em controles e 12 px em cards. Sombra em 4 níveis. Tema claro e escuro. Gráficos só com a paleta categórica oficial.'],
+  ['Parceiro', 'Tom de "estamos junto": avisa a manutenção com data e duração, explica o que mudou em linguagem de usuário.'],
+]} />
+</Secao>
+
+<Secao titulo="Tom de voz por contexto">
+<Tabela larguraMinima={600} colunas={['Contexto', 'Modelo']} linhas={[
+  ['Entrada', 'Título com o nome do sistema. Chamada "Entrar", não "Login".'],
+  ['Boas-vindas', '"Bem-vindo ao módulo de Estoque, Laryssa."'],
+  ['E-mail', 'Assunto específico: "Adiantamento 2025/0042 aprovado pelo ordenador." Corpo com contexto e próximo passo.'],
+  ['Manutenção', '"Atualização programada para 23h de sábado (24/06). Estimativa: 30 minutos."'],
+  ['Novidade', '"Junho/2026: o módulo de Benefícios agora exibe a data de vencimento de cada benefício por colaborador."'],
+]} />
+</Secao>
+
+<Secao titulo="Certo e errado">
+<CertoErrado itens={[
+  {
+    certo: 'Tela de cadastro com fundo `neutral-50`, cards brancos e botão em `#1261E4`.',
+    errado: 'Fundo azul institucional em tela operacional.',
+    motivo: 'Reduz o contraste do conteúdo, cansa a vista e mistura as camadas.',
+  },
+  {
+    certo: 'Botão primário de produto em `#1261E4`.',
+    errado: 'Botão primário em `#146BFA`.',
+    motivo: 'Fora do azul de ação, o texto pequeno perde a folga de contraste exigida em componente de UI.',
+  },
+  {
+    certo: 'Tela operacional sem logo, sem fundo institucional e sem Red Hat Display.',
+    errado: 'Elementos decorativos institucionais em listagem ou formulário.',
+  },
+]} />
+</Secao>
+
+<Secao titulo="Checklist rápido">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Camada', texto: 'A peça é institucional ou de produto? A cor de destaque e a tipografia seguem a camada?' },
+  { titulo: 'Logo', texto: 'Versão certa para o fundo, com `alt` correto.' },
+  { titulo: 'Contraste', texto: '4,5:1 para texto normal, 3:1 para texto grande e componentes.' },
+  { titulo: 'Movimento e tom', texto: 'Movimento reduzido respeitado e mensagens com voz de parceiro confiável.' },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Contraste do #146BFA', texto: 'A fonte dá 4,69:1 e diz que não passa para texto pequeno. 4,69:1 está acima de 4,5:1. A regra de uso (azul de ação em produto) fica, mas a justificativa numérica precisa de revisão.' },
+  { titulo: 'Título de página', texto: 'A tabela de tokens dá Red Hat Display 700 de 30 px. O exemplo operacional usa Inter 600 de 20 px.' },
+  { titulo: 'Gradiente em produto', texto: 'O guia de cores proíbe. O de linguagem visual admite um card de KPI com gradiente por tela.' },
+  { titulo: 'Vidro e 3D acrílico', texto: 'Prescritos em linguagem visual e questionados em anti-padrões. Resumidos aqui só como exceção de hero e empty state.' },
+  { titulo: 'Seletor do tema escuro', texto: 'A fonte usa `.app-dark`. O tema deste Storybook usa `.dark`.' },
+]} />
+</Secao>
+
+<Callout>
+Fonte: integração de marca do Design System Citiesoft (princípios, cores, tipografia, logo e linguagem visual no produto).
+</Callout>
+
+</Pagina>

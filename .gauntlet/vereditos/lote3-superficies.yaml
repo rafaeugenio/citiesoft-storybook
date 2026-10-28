@@ -1,0 +1,169 @@
+revisor: Loid, Especialista UI/UX, revisor cego do Lote 3
+lote: >-
+  Lote 3, superfícies e feedback (Card, Panel, Fieldset, Overlay, ConfirmPopup,
+  Tooltip, HoverCard, Feedback, EmptyState, Skeleton, SkeletonFormulario,
+  SkeletonLista, SkeletonParagrafo) e o bloco Lote 3 de tokens.css
+artefato_avaliado: >-
+  Branch revisao, sem commit. Diff lido antes do handoff, conforme o briefing.
+  Medições em worktree próprio (/Users/rafaeleugenio/dev/citiesoft-storybook-revisao-lote3,
+  --detach em HEAD, diff aplicado por git apply, node_modules por hardlink),
+  build estático privado em $CLAUDE_JOB_DIR/tmp/static-lote3, scripts de medição
+  em .gauntlet/medir-lote3.mjs e medir-lote3b.mjs do worktree (Playwright,
+  getComputedStyle nos dois temas).
+status: FINAL, rodada 2 (reverificação dos achados fechados em 2026-09-02)
+veredito: SURPREENDEU
+veredito_anti_slop: PASSOU
+veredito_rodada_1: 'APROVADO com anti-slop em VOLTA PARA REFINO'
+
+resumo: >-
+  A anatomia bate com o kit em todos os pontos medidos, nos dois temas. Os gates
+  do lote estão verdes isolados (81 de 81 claro e escuro) e a suíte escura
+  inteira não tem falha em nenhum arquivo do lote. Duas sabotagens reprovam como
+  devem (popover no Tooltip, portal do HoverCard em modal); a troca de
+  shadow-dialog por shadow-raised e a largura do drawer em 400 passam em
+  silêncio, e é isso que segura o SURPREENDEU. O anti-slop volta por quatro
+  negações paralelas em comentários novos, correção de minutos.
+
+opiniao_parcial_pelo_diff:
+  - 'Card: raio 10, borda default, sombra pelo trilho de elevação. Hub com tokens novos 72/36/20/8. Cabeçalho e rodapé sem fio, respiro por custom property por densidade.'
+  - 'Dialog: 640 (md), 800 (lg), raio 10, borda 1px, shadow-dialog, fechar de 30 por token. Rodapé de um botão só estica por :has(> :only-child).'
+  - 'Drawer: 591 por token, margem 8 e raio 16, título 24. Sem teste de largura.'
+  - 'Tooltip: popover e popover-foreground, 12/16, padding 6 por 8, seta por spacing-1-5, raio 10. Corte de 2 linhas migrou para o filho.'
+  - 'Message: 12 por 16, gap 16, ícone 16, fundo de superfície com aresta tonal a 30 por cento (25 no escuro).'
+  - 'Toast: pilha em escala 0,97 e 0,94 por nth-last-child(of :not(saindo)), ação à direita em altura mini.'
+  - 'Feedback.tsx importa Badge.css para trazer o mapa .citie-sev--*: padrão já usado por Avatar, PrazoIndicador e ValorMonetario, e errado nos quatro.'
+
+medicoes:
+  card_anatomia: 'raio 10px, borda 1px #e8eaed (escuro #34343a), box-shadow igual ao token raised nos dois temas, cabeçalho sem fio (0px), título 16px/500 Red Hat Display.'
+  card_hub: 'altura 72, caixa 36x36 raio 8 em #eff5ff com ícone #1261e4 (escuro #202838 e #4d8bfc), svg 20, título 14/500, subtítulo 12 em text-secondary.'
+  panel: 'raio 10, borda 1px, sombra raised, título 16/500.'
+  fieldset: 'raio 10, borda 1px, box-shadow none, legenda 16/500.'
+  dialog: 'largura 640 com border-box, raio 10, borda 1px, box-shadow igual ao token dialog (0 10 15 -3 e 0 4 6 -4, a 0,1 no claro e 0,6 no escuro), fechar 30x30 raio 6, título 20/24, cabeçalho sem fio.'
+  drawer: 'largura 591, raio 16 nos cantos, margem 8 (top 8, right 8, bottom 8 medidos na viewport), sombra dialog, título 24, fechar 44.'
+  tooltip: 'padding 6x8, 12px/16px, fundo #202020 com texto #fff (16,29:1) e no escuro #f5f5f6 com #141414 (16,91:1), raio 10, sombra overlay, seta 6px na cor do balão, aria-describedby no gatilho.'
+  confirm_popup_e_hover_card: 'ambos raio 10, borda 1px, sombra overlay nos dois temas.'
+  message: 'padding 12x16, column-gap 16, raio 10, borda 1px, fundo de superfície, ícone 16 na tinta da severidade, texto do erro 6,47:1 claro e 9,15:1 escuro.'
+  aresta_tonal_sobre_superficie:
+    claro: 'success 1,52 · info 1,57 · warn 1,54 · danger 1,70'
+    escuro: 'success 1,77 · info 1,65 · warn 1,92 · danger 1,74'
+    veredito: 'oito valores dentro da faixa 1,5 a 2,0; o success claro está a 0,02 do piso.'
+  toast: 'largura 350 = --citie-largura-toast, raio 10, sombra overlay, ação à direita do conteúdo com 24 de altura e 12px, pilha em scale none / 0,97 / 0,94 com origem na base, role status + aria-live polite no comum e alert + assertive no erro.'
+  empty_state: 'sem moldura 0px; contorno 1px solid raio 10; preenchida fundo #f4f5f7 (escuro #232327) raio 10; tracejada 1px dashed raio 10.'
+  skeleton: 'linha e título raio 6, campo raio 10 com 36 de altura, card raio 10, círculo full; base #f4f5f7 (escuro #232327).'
+
+hierarquia_de_profundidade: >-
+  Nas capturas, raised (card e hub), overlay (hover card, popup, toast) e dialog
+  (diálogo e drawer) se distinguem a olho: o card assenta, o toast flutua curto e
+  o diálogo projeta 10px para baixo. Contra kit-dialog.png o diálogo do lote tem
+  a mesma leitura de camada e o mesmo cabeçalho sem fio; a única divergência é o
+  fechar do kit encostado no canto (o lote sobe 6px para alinhar ao eixo do
+  título, decisão declarada no CSS). Contra sis-admin-hub-cards.png o hub bate
+  em altura, caixa e hierarquia; a tinta teal fica de fora por decisão do
+  briefing. Contra sis-drawer-cadastro.png o drawer bate em largura, raio 16 e
+  margem 8.
+
+acessibilidade:
+  dialog: 'foco entra no diálogo (botão fechar), 12 Tabs seguidos ficam presos dentro, Escape fecha e devolve o foco ao gatilho "Editar benefício". aria-modal não está como atributo; a semântica vem do showModal nativo, que expõe o estado modal ao leitor de tela. Atendido.'
+  toast: 'região viva por item (status/polite e alert/assertive), tempo de saída guardado pela story ToastEmpilhado. Atendido.'
+  tooltip: 'abre no foco por teclado, aria-describedby aponta para o balão. Escape NÃO fecha o balão (medido: aposEscape = true nos dois temas), o que fere WCAG 1.4.13 (dispensável). O HoverCard já faz isso certo com o ouvinte de keydown. Achado abaixo.'
+  hover_card_em_modal: 'painel presente, dentro do dialog[open], visível, na top layer (:popover-open) e o elemento no centro do painel pertence a ele. Atendido.'
+
+gate_tecnico:
+  lote_isolado_claro: '17 arquivos, 81 de 81 verdes.'
+  lote_isolado_escuro: '17 arquivos, 81 de 81 verdes.'
+  suite_escura_inteira: '60 falhas em 14 arquivos (TreeSelect 13, CascadeSelect 9, MultiSelect 7, Filters 4, AutoComplete 2, Listagem 6, Dashboard 7, PainelDeTFD 6, TreeTable, Terminal, Table, Search, Cores, ConsultaDeProcessos). Nenhuma em arquivo do lote. O produtor reportou 63 em 16; a diferença é de outros lotes em curso.'
+  verificar_catalogo: 'todas as invariantes passaram no build privado.'
+
+sabotagens:
+  a_apagar_citie_popover:
+    resultado: REPROVOU como deve.
+    evidencia: 'Tooltip.stories 2 falhas em 4 ("abre por foco de teclado" e "anatomia invertida do kit"): a guarda contra rgba(0, 0, 0, 0) pegou.'
+  b_shadow_dialog_para_shadow_raised:
+    resultado: NÃO REPROVOU. MAIOR.
+    evidencia: 'Dialog, Drawer, ConfirmDialog, Elevacao e Cadastro: 14 de 14 verdes com --citie-shadow-dialog: var(--citie-shadow-raised) nos dois temas. A story Anatomia do Dialog só confere boxShadow diferente de none, e a guarda da fundação Elevação conta vírgulas (split(",").length > 4), que o valor de raised também satisfaz. A hierarquia de profundidade fica sem guarda.'
+  c_drawer_para_400:
+    resultado: NÃO REPROVOU. MENOR.
+    evidencia: 'Drawer e Cadastro: 9 de 9 verdes com --citie-largura-drawer: 400px. O token nasceu neste lote sem story que o meça.'
+  d_hover_card_sem_closest_dialog_open:
+    resultado: REPROVOU como deve.
+    evidencia: 'HoverCard.stories 1 falha em 7 ("dentro de Dialog modal").'
+
+reverificacao_rodada_2:
+  ambiente: 'Worktree recriado do zero (--detach em HEAD, diff aplicado, severidade.css copiado, node_modules por hardlink). Baseline dos 10 arquivos tocados: 58 de 58 verdes no claro e no escuro.'
+  L3-01: 'FECHADO. Sabotagem shadow-dialog = var(--citie-shadow-raised): 2 falhas em 12 nos dois temas (Anatomia do Dialog "expected 2 to be 3" e "expected 1 to be greater than or equal to 10"; Degraus de elevação). A sonda resolve o token no contêiner do diálogo, e a story agora carrega card, popover e diálogo juntos.'
+  L3-02: 'FECHADO na causa. Mapa .citie-sev / .citie-sev--* em src/tokens/severidade.css, importado por Badge, Feedback, Avatar, PrazoIndicador e ValorMonetario; Badge.css ficou só com as peles. Sabotagem (apagar a importação em Feedback.tsx): no runner do vitest passa 10 de 10, porque o CSS ali é global; no build estático, medido por Playwright, o ícone, a borda e --sev-fg do Toast e da Message caem para a tinta de texto (rgb(32,32,32), --sev-fg vazio), contra rgb(21,128,61) e rgb(180,83,9) no build íntegro. A sabotagem reprova no cenário real; o gate automático não a enxerga, ver L3-08.'
+  L3-03: 'FECHADO. Ouvinte de keydown em document com preventDefault. Sabotagem (condição do Escape desligada): 1 falha em 4 ("expected span to be null").'
+  L3-04: 'FECHADO. Sabotagem --citie-largura-drawer: 400px: 1 falha em 2 ("expected 400 to be 591"). A story mede 591, topo 8, margens 8, altura innerHeight - 16 e raio 16.'
+  L3-05: 'FECHADO. Zero ", e não " em Feedback.css, Tooltip.stories.tsx, Overlay.css, Card.css e Raio.stories.tsx; zero travessão nas linhas novas do diff.'
+  L3-06: 'ABERTO por decisão registrada do gestor (recuo de escala da pilha em lista vertical).'
+  badge: 'Badge.stories: 7 de 7 verdes no claro e no escuro (o adendo fala em 12; a contagem real do arquivo é 7, e as peles por severidade e a anatomia continuam guardadas pelas stories Peles e Anatomia).'
+
+achados:
+  - id: L3-01
+    status: FECHADO na rodada 2
+    severidade: MAIOR
+    onde: 'src/tokens/tokens.css (--citie-shadow-dialog), src/components/organisms/Overlay/Dialog.stories.tsx (Anatomia), src/fundacoes/Elevacao.stories.tsx'
+    descricao: 'Sabotagem (b): trocar a sombra de diálogo pela de card passa em silêncio. Os três degraus da escada de elevação não têm guarda de distinção.'
+    correcao: 'Na story Anatomia do Dialog, ler o boxShadow computado do diálogo e de um card na mesma página e exigir que difiram, e que o deslocamento vertical da primeira camada do diálogo seja de pelo menos 10px. Na fundação Elevação, exigir que raised, overlay e dialog sejam três strings distintas entre si, nos dois temas.'
+  - id: L3-02
+    status: FECHADO na rodada 2
+    severidade: MAIOR
+    onde: 'src/components/molecules/Feedback/Feedback.tsx (import de Badge.css); mesmo padrão em Avatar.tsx, PrazoIndicador.tsx e ValorMonetario.tsx'
+    descricao: 'O mapa .citie-sev--* (custom properties de severidade) mora em Badge.css e quatro consumidores importam a folha inteira do Badge para pegar 60 linhas de variáveis. É acoplamento de átomo com átomo e molécula, e o build dividido por story é sintoma, não causa. O diagnóstico do produtor está certo; a solução está no lugar errado.'
+    correcao: 'Extrair o bloco .citie-sev / .citie-sev--* para src/tokens/severidade.css (ou src/components/primitives/Severidade/Severidade.css), importado por Badge, Feedback, Avatar, PrazoIndicador e ValorMonetario. O mapa é semântico e transversal, cabe ao lado de tokens.css. Fora do lote tocar os outros três consumidores, mas a extração resolve os quatro de uma vez.'
+  - id: L3-03
+    status: FECHADO na rodada 2
+    severidade: MAIOR
+    onde: 'src/components/molecules/Tooltip/Tooltip.tsx'
+    descricao: 'Escape não fecha o tooltip aberto por foco ou hover (medido nos dois temas). WCAG 1.4.13 exige conteúdo em hover ou foco dispensável sem mover o foco. Comportamento anterior ao lote, mas a story nova Anatomia era o lugar de guardar isso e a rota B2G torna o critério legal.'
+    correcao: 'Ouvinte de keydown em document enquanto visível, como o HoverCard já faz (Escape com preventDefault fecha só o balão). Story "por teclado" ganha o passo Escape e confere que o balão some e o foco fica no gatilho.'
+  - id: L3-04
+    status: FECHADO na rodada 2
+    severidade: MENOR
+    onde: 'src/components/organisms/Overlay/Drawer.stories.tsx'
+    descricao: 'Sabotagem (c): --citie-largura-drawer em 400 passa. Token novo sem medição.'
+    correcao: 'Na story Painel de filtros, exigir getBoundingClientRect().width igual a 591 e margem de 8 nas três bordas da viewport.'
+  - id: L3-05
+    status: FECHADO na rodada 2
+    severidade: MENOR
+    id_anti_slop: TXT-002
+    onde: 'Feedback.css (linhas novas "é o ícone que carrega a severidade, e não o fundo" e "frase de ação e resultado, e não um parágrafo"), Tooltip.stories.tsx (descrição da Anatomia, "e não da superfície da página"), Overlay.css ("640 de largura são 640, e não 642"), Feedback.css linha reescrita ("permanece na primeira, e não no centro do bloco")'
+    descricao: 'Cinco negações paralelas na forma "X, e não Y" em texto novo ou reescrito. A mesma forma foi apontada no Lote 1 (tokens.css, "e não elevação"). Sem travessão em nenhum arquivo do lote.'
+    correcao: 'Afirmar direto: "a severidade mora no ícone", "título de toast é uma frase de ação e resultado", "os dois tokens de popover", "a borda entra na medida de 640", "o ícone permanece na primeira linha".'
+  - id: L3-06
+    status: ABERTO, decisão registrada
+    severidade: MENOR
+    onde: 'src/components/molecules/Feedback/Feedback.css (recuo de escala da pilha)'
+    descricao: 'O recuo de escala do Sonner existe para a pilha sobreposta; aqui os toasts ficam empilhados em lista vertical e ainda encolhem, então a captura toast-pilha mostra três larguras diferentes numa coluna (350, 339 e 329), o que lê como desalinhamento e não como profundidade. Decisão de composição, e o produtor a declarou na tese.'
+    correcao: 'Ou sobrepor a pilha (o recuo passa a fazer sentido), ou manter a lista e trocar o recuo por opacidade nos itens de trás. Decisão de design para o Diretor, sem bloquear o lote.'
+  - id: L3-08
+    severidade: MENOR
+    onde: 'scripts/verificar-catalogo.mjs ou um script de gate sobre o build estático'
+    descricao: 'A regressão do mapa de severidade só aparece no build dividido por story, onde o gate de vitest não chega (lá o CSS é global). Hoje quem guarda isso é a leitura visual.'
+    correcao: 'Um passo do gate que abre a story Toast · sucesso no build estático e confere que --sev-fg está definido e que o ícone difere da tinta de texto; ou uma importação única de severidade.css no preview do Storybook, que elimina a dependência de cada consumidor lembrar da importação.'
+  - id: L3-07
+    severidade: POLIMENTO
+    onde: 'src/components/molecules/Feedback/Feedback.css (aresta tonal do success no claro)'
+    descricao: 'success mede 1,52:1 sobre a superfície, a 0,02 do piso da faixa. Está dentro, mas sem folga.'
+    correcao: 'Nenhuma obrigatória. Se a aresta clara for revisada, o success é o primeiro a sair da faixa.'
+
+anti_slop:
+  rota: 'Produto B2G, fonte docs/figma-ui-kit.md.'
+  auditadas: 'código (diff), imagem (capturas do produtor e medições próprias), conteúdo (comentários e descrições de story), comportamento (Playwright).'
+  passou: 'COR-009 (toda sombra por token, uma por elemento), LAY-005 (raio 10/6/16 por token, aninhamento desce um degrau), LAY-004 (barra lateral do toast removida), COR-012 (hover do card em accent), ICO-001 (ícones do hub em SVG de traço 1.5, sem emoji), TRU-001 (dados de story rotulados como exemplo do domínio, sem placeholder), TXT-001 (zero travessão).'
+  reprovou_rodada_1: 'TXT-002 em cinco linhas de comentário (achado L3-05), reescritas na rodada 2.'
+  veredito: PASSOU
+
+o_que_me_surpreendeu:
+  - 'Rodada 2: a guarda da escada de elevação resolve cada token por sonda dentro do próprio diálogo e mede os três degraus na mesma story; a sabotagem reprova nos dois temas com mensagem que diz o que achatou.'
+  - 'Rodada 2: o mapa de severidade saiu para o nível de token e os quatro consumidores que carregavam Badge.css por tabela foram corrigidos junto; a regressão confirmada por Playwright no build dividido mostra que a causa era essa mesma.'
+  - 'O corte de duas linhas do Tooltip migrou para um filho porque overflow: hidden recorta na borda do padding e a terceira linha aparecia pela metade. Bug real encontrado ao medir, com o motivo escrito no CSS.'
+  - 'A pilha de toasts conta profundidade com :nth-last-child(n of :not(.saindo)), então o recuo se reorganiza no mesmo quadro em que a saída começa e a coreografia de altura anterior sobrevive. A story mede as três escalas.'
+  - 'Rodapé de um botão só vira largura total por :has(> :only-child), a segunda anatomia do kit, com a story Obrigatório medindo a largura útil.'
+  - 'Fieldset sem sombra com justificativa de composição (bloco dentro do formulário, no mesmo plano dele), no lugar de copiar a pele do Card por reflexo.'
+
+o_que_faltou_para_surpreender_na_rodada_1 (tudo fechado na rodada 2):
+  - 'Guarda de hierarquia de profundidade: a sabotagem mais importante do lote passou em silêncio (L3-01).'
+  - 'A correção do mapa de severidade parou no sintoma (L3-02).'
+  - 'Escape no Tooltip, critério legal, ficou de fora da story nova de anatomia (L3-03).'
+  - 'Texto: cinco "X, e não Y" depois de o Lote 1 já ter sido apontado pelo mesmo motivo.'

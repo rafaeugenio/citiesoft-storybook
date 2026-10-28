@@ -1,0 +1,140 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes } from '../_docs/Conteudo';
+import { Galeria, ARQUIVOS_LOGO, LinkSvg } from '../_docs/Logo';
+import { logoUso } from '../_docs/snippets/logo';
+
+<Meta title="Marca/Logo" />
+
+<Pagina
+  titulo="Logo"
+  resumo="A marca gráfica da Citiesoft junta o símbolo `<ct>` e o nome Citiesoft. Cada versão existe para um fundo. Use sempre o SVG oficial, sem recriar, recolorir ou remontar."
+>
+
+<Secao titulo="Regra rápida">
+<Callout titulo="Fundo decide a versão">
+Fundo branco ou claro usa `LogoHorizontal3.svg`. Fundo Citie Blue ou escuro usa `LogoHorizontal2.svg`. O mesmo vale para o símbolo isolado: `LogoAzul.svg` no claro e `LogoBranca.svg` no escuro. Não existe terceira opção.
+</Callout>
+</Secao>
+
+<Secao titulo="Versão horizontal" descricao="Símbolo à esquerda e nome à direita. É a forma padrão sempre que houver espaço na largura: cabeçalhos, slides, propostas, rodapés, assinatura de e-mail e login.">
+<Galeria colunas={2} itens={[
+  { src: 'marca/LogoHorizontal3.svg', legenda: 'LogoHorizontal3.svg, versão positiva, sobre branco e claros', fundo: 'branco', altura: 56 },
+  { src: 'marca/LogoHorizontal2.svg', legenda: 'LogoHorizontal2.svg, versão negativa, sobre Citie Blue', fundo: 'azul', altura: 56 },
+  { src: 'marca/LogoHorizontal2.svg', legenda: 'LogoHorizontal2.svg também serve a fundos escuros e ao gradiente de marca', fundo: 'escuro', altura: 56 },
+  { src: 'marca/LogoHorizontal1.svg', legenda: 'LogoHorizontal1.svg, símbolo azul e nome claro', fundo: 'escuro', altura: 56 },
+]} />
+<Callout titulo="Pendente de confirmação">
+A fonte lista `LogoHorizontal1.svg` como versão para fundo claro. No arquivo, o nome está em cinza muito claro (`#ECECEC`) e some no branco, por isso a amostra acima usa fundo escuro. Até a marca confirmar, prefira `LogoHorizontal3.svg` e `LogoHorizontal2.svg`.
+</Callout>
+</Secao>
+
+<Secao titulo="Símbolo isolado" descricao="Só o `<ct>`, para espaço reduzido ou quando a marca já aparece em outro ponto da peça: favicon, ícone de app, avatar, marca d'água e ícone de notificação. Em cabeçalho de proposta, relatório ou apresentação formal, use a versão horizontal.">
+<Galeria colunas={2} itens={[
+  { src: 'marca/LogoAzul.svg', legenda: 'LogoAzul.svg, sobre branco e claros', fundo: 'branco', altura: 96 },
+  { src: 'marca/LogoBranca.svg', legenda: 'LogoBranca.svg, sobre Citie Blue e escuros', fundo: 'azul', altura: 96 },
+]} />
+</Secao>
+
+<Secao titulo="Wordmark isolado" descricao="O nome Citiesoft sem o símbolo. É uso excepcional, para quando o símbolo já aparece na mesma peça ou para composição editorial só de texto. Nunca identifica a empresa sozinho na capa de uma proposta.">
+<Galeria colunas={2} itens={[
+  { src: 'marca/LogoNome1.svg', legenda: 'LogoNome1.svg, sobre fundo claro', fundo: 'branco', altura: 40 },
+  { src: 'marca/LogoNome2.svg', legenda: 'LogoNome2.svg, sobre fundo escuro ou azul', fundo: 'azul', altura: 40 },
+]} />
+</Secao>
+
+<Secao titulo="Qual versão em cada peça">
+<Tabela colunas={['Contexto', 'Versão', 'Arquivo']} linhas={[
+  ['Capa de apresentação, fundo branco', 'Horizontal positiva', '`LogoHorizontal3.svg`'],
+  ['Capa de apresentação, fundo azul', 'Horizontal negativa', '`LogoHorizontal2.svg`'],
+  ['Proposta comercial, licitação e relatório (capa)', 'Horizontal positiva', '`LogoHorizontal3.svg`'],
+  ['Contrato ou documento impresso', 'Horizontal positiva ou monocromático preto', '`LogoHorizontal3.svg`'],
+  ['Assinatura de e-mail, fundo branco', 'Horizontal positiva', '`LogoHorizontal3.svg`'],
+  ['E-mail marketing com cabeçalho azul', 'Horizontal negativa', '`LogoHorizontal2.svg`'],
+  ['Slide de seção em Citie Blue', 'Horizontal negativa', '`LogoHorizontal2.svg`'],
+  ['Tela de login com fundo branco', 'Horizontal positiva ou símbolo azul', '`LogoHorizontal3.svg` ou `LogoAzul.svg`'],
+  ['Favicon e ícone de app', 'Símbolo', '`LogoAzul.svg` ou `LogoBranca.svg`'],
+  ['Avatar de perfil institucional', 'Símbolo azul ou claro', '`LogoAzul.svg` ou `LogoBranca.svg`'],
+  ['Banner de evento', 'Conforme o fundo', '`LogoHorizontal3.svg` ou `LogoHorizontal2.svg`'],
+  ['Marca d\'água em relatório', 'Símbolo azul com opacidade reduzida', '`LogoAzul.svg`'],
+  ['Carimbo, gravação a laser e silk de uma cor', 'Monocromático preto', 'Versão monocromática'],
+  ['Tecido escuro, silk de uma cor', 'Monocromático branco', 'Versão monocromática'],
+  ['Pacote de slides', 'Padrão do pacote', '`logo-citiesoft-5.svg`'],
+]} larguraMinima={640} />
+<Callout>
+No digital, a versão monocromática só vale quando o meio técnico impede cor. A fonte não indica um arquivo próprio para ela. A família numerada traz variantes pretas e brancas (`logo-citiesoft-4`, `6`, `9` e `3`, `7`, `10`).
+</Callout>
+</Secao>
+
+<Secao titulo="Família numerada" descricao="Onze arquivos usados no pacote de slides e em materiais institucionais. Cada um serve a um contexto, sem troca livre entre eles. A leitura abaixo vem do conteúdo de cada SVG.">
+<Galeria colunas={4} itens={[
+  { src: 'marca/logo-citiesoft-1.svg', legenda: '1, horizontal, símbolo azul e nome branco', fundo: 'escuro', altura: 28 },
+  { src: 'marca/logo-citiesoft-2.svg', legenda: '2, horizontal azul', fundo: 'branco', altura: 28 },
+  { src: 'marca/logo-citiesoft-3.svg', legenda: '3, horizontal branco', fundo: 'azul', altura: 28 },
+  { src: 'marca/logo-citiesoft-4.svg', legenda: '4, horizontal preto', fundo: 'branco', altura: 28 },
+  { src: 'marca/logo-citiesoft-5.svg', legenda: '5, horizontal azul, padrão dos slides', fundo: 'branco', altura: 28 },
+  { src: 'marca/logo-citiesoft-6.svg', legenda: '6, wordmark preto', fundo: 'branco', altura: 28 },
+  { src: 'marca/logo-citiesoft-7.svg', legenda: '7, wordmark branco', fundo: 'azul', altura: 28 },
+  { src: 'marca/logo-citiesoft-8.svg', legenda: '8, wordmark azul', fundo: 'branco', altura: 28 },
+  { src: 'marca/logo-citiesoft-9.svg', legenda: '9, símbolo preto', fundo: 'branco', altura: 28 },
+  { src: 'marca/logo-citiesoft-10.svg', legenda: '10, símbolo branco', fundo: 'azul', altura: 28 },
+  { src: 'marca/logo-citiesoft-11.svg', legenda: '11, símbolo azul', fundo: 'branco', altura: 28 },
+]} />
+<Callout titulo="Pendente de confirmação">
+A fonte descreve `logo-citiesoft-5` como padrão de slides para "fundo azul/branco". O SVG é todo azul (`#146BFA`), então só tem contraste em fundo claro. O mapa completo da família fica na skill de slides, fora do brandbook.
+</Callout>
+</Secao>
+
+<Secao titulo="Construção" descricao="O logo é um desenho fechado. Escalar significa escalar o arquivo inteiro.">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Símbolo e nome juntos', texto: 'Na versão horizontal, o símbolo `<ct>` fica à esquerda e o nome à direita, com relação de tamanho e espaço travada no vetor.' },
+  { titulo: 'Símbolo', texto: 'Dois colchetes angulares enquadram as letras `ct` em caixa baixa. A leitura remete a uma tag de código e a moldura passa ideia de estrutura e segurança.' },
+  { titulo: 'Wordmark próprio', texto: 'A tipografia do nome faz parte do desenho. Red Hat Display, Inter ou qualquer outra fonte do sistema não a substituem.' },
+  { titulo: 'Alinhamento óptico', texto: 'O nome é alinhado ao centro vertical do símbolo no próprio arquivo. Ajuste manual introduz erro.' },
+  { titulo: 'Proporção travada', texto: 'Redimensione com a proporção bloqueada. Nunca estique, comprima ou mexa em símbolo e nome separadamente.' },
+  { titulo: 'Sem remontagem', texto: 'Não posicione símbolo e nome como camadas soltas no Figma. Insira o SVG como um componente único.' },
+]} />
+<Callout>
+A fonte não traz medidas internas, grade nem coordenadas. Para qualquer medida exata, confira o SVG oficial. Quem gera código usa o arquivo como asset estático e não recria o logo com CSS ou SVG inline editado.
+</Callout>
+</Secao>
+
+<Secao titulo="Símbolo e ícone de app" descricao="O símbolo isolado representa a marca inteira em favicon, ícone de app, avatar e conectores. Use somente `LogoAzul.svg` e `LogoBranca.svg`, sem recortar o símbolo do logo completo.">
+<Tabela colunas={['Contexto', 'Tamanho mínimo', 'Entrega']} linhas={[
+  ['Favicon', '32 x 32 px (entregue também 16 e 64)', '`.ico` com 16, 32 e 48 px, mais PNG 32 e 64'],
+  ['Ícone de app iOS', '60 x 60 pt, até 1024 x 1024 px na loja', 'PNG sem transparência, quadrado, sem cantos arredondados'],
+  ['Ícone de app Android', '48 x 48 dp, até 512 x 512 px na loja', 'PNG sem transparência, quadrado'],
+  ['Avatar de rede social', 'Canvas de 400 x 400 px', 'PNG com fundo sólido, quadrado. A plataforma aplica o recorte circular'],
+  ['Conector ou marketplace', '128 x 128 px (512 x 512 px na entrega)', 'PNG sobre fundo azul. O nome Citiesoft vai em campo de texto separado'],
+  ['Miniatura de documento', '80 x 80 px, uso interno', 'Conforme o meio'],
+]} larguraMinima={620} />
+<Galeria colunas={2} itens={[
+  { src: 'marca/LogoBranca.svg', legenda: 'Ícone de app e avatar: LogoBranca.svg centralizado sobre Citie Blue', fundo: 'azul', altura: 96 },
+  { src: 'marca/LogoAzul.svg', legenda: 'Alternativa aprovada: LogoAzul.svg sobre fundo claro', fundo: 'branco', altura: 96 },
+]} />
+<Cartoes colunas={3} itens={[
+  { titulo: 'Fundo do ícone de app', texto: 'Citie Blue 500 (`#146BFA`) com `LogoBranca.svg`, ou fundo claro com `LogoAzul.svg`. O gradiente de marca vale só em apps de produto.' },
+  { titulo: 'Margem interna', texto: 'Símbolo centralizado no quadrado, com pelo menos 12% de margem por lado.' },
+  { titulo: 'Impressão de uma cor', texto: 'Use o símbolo em 100% preto ou 100% branco, sem meio-tom nem sombra.' },
+]} />
+<Callout titulo="Símbolo de marca e ícone de interface">
+O símbolo identifica a empresa e vem só dos arquivos oficiais, sem adaptação. Ícones de interface (lixeira, editar, filtro) comunicam ação ou estado e seguem a biblioteca de ícones do produto. Quem pede "o símbolo da Citiesoft na tela de login" quer `LogoAzul.svg` ou `LogoBranca.svg`.
+</Callout>
+<Callout titulo="Pendente de confirmação">
+A regra pede 12% de margem interna no ícone de app, mas os exemplos da mesma página usam 14% e 15%.
+</Callout>
+</Secao>
+
+<Secao titulo="Como inserir" descricao="Carregue o SVG como asset e troque o arquivo conforme o tema. Não aplique filtro nem cor por CSS.">
+<CodeTabs abas={logoUso} />
+</Secao>
+
+<Secao titulo="Baixar" descricao="Todos os SVGs oficiais. Para produção gráfica, entregue sempre o vetor original ao fornecedor, nunca um PNG exportado.">
+<Tabela colunas={['Arquivo', 'Versão', 'Fundo']} larguraMinima={640} linhas={ARQUIVOS_LOGO.map((a) => [<LinkSvg arquivo={a.arquivo} />, a.versao, a.fundo])} />
+</Secao>
+
+<Callout>
+Fonte: brandbook Citiesoft, seção Identidade visual (logotipo, versões, construção, símbolo e ícone).
+</Callout>
+
+</Pagina>

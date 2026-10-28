@@ -1,0 +1,426 @@
+lote: 6b-templates
+revisor: Loid, Especialista UI/UX, revisão cega (não participei da produção)
+commit_revisado: d7bf4ad na rodada 1, 0020b0c na rodada 2
+rodada: 2
+veredito: SURPREENDEU
+veredito_anti_slop: PASSOU
+gate_tecnico: VERDE
+
+metodo: >
+  Opinião formada pelo diff em `.storybook/templates/`, `.storybook/pages/`,
+  `Field`, `Select` e o bloco `/* Lote 6b */` de `tokens.css`, antes do handoff
+  e das 44 capturas. Medição ao vivo em worktree próprio
+  (`/Users/rafaeleugenio/dev/citiesoft-storybook-revisao-lote6b`, detached em
+  d7bf4ad, `node_modules` por cópia com hardlink), sobre build estático privado
+  servido em 127.0.0.1:6099, com Playwright nos dois temas em 1366 e 375.
+  Quatro sabotagens rodadas no worktree e revertidas.
+
+gates_conferidos_por_mim:
+  claro: 837 de 837, 124 arquivos, zero falha
+  escuro: 35 falhas em 8 arquivos (TreeSelect 13, CascadeSelect 9, MultiSelect
+    7, AutoComplete 2, Search 1, Sidebar 1, Terminal 1, fundacoes/Cores 1).
+    Zero falha nos arquivos do lote. Confere com o handoff.
+  verificar_catalogo: verde, 952 entradas, 837 stories, 125 títulos, 104
+    componentes, todas as invariantes
+
+medicoes:
+  shell_1366: >
+    Barra 52,0px, sidebar 257,0px, botões de ícone 30x30, avatar 32x32, todos
+    iguais aos tokens do bloco 6b. Trilha com ícone de casa no primeiro nível.
+    "Sair" em rgb(185,28,28) no rodapé da navegação. Rodapé "Desenvolvido por
+    Citiesoft @ 2026" presente. Moldura `cartao`: raio 16px, margem 8px, borda
+    1px, superfície branca distinta do fundo. Moldura `direto`: raio 0, sem
+    superfície própria, como na listagem do Sismental.
+  barra_azul: >
+    Story Tema escuro: fundo da barra rgb(77,139,252), logotipo trocado para
+    LogoHorizontal2.svg, texto rgb(20,20,20) medindo 5,63:1. Passa 4,5:1.
+  shell_375: barra 52, lateral off-canvas em x=-257, documento em 375, sem pan
+  listagem: >
+    Título 24px peso 600, subtítulo, ação primária à direita. Barra de filtro
+    com busca (34px de campo dentro do bloco de 36) e select de escopo de 36px
+    com `rotuloOculto` aplicado ("Destino", caixa de 1px). Tabela em cartão
+    raio 10, borda 1px, sombra sm. Identificador em duas linhas (nome 14 e CPF
+    mascarado em Red Hat Mono). Data e protocolo em Red Hat Mono no elemento
+    interno. Ação por linha nomeada ("Abrir solicitação 2026/0481"). Paginação
+    à esquerda, "Mostrando 1 a 6 de 24 solicitações" à direita. Um único `main`.
+  consulta: >
+    Nove colunas na ordem do domínio, dez linhas, resumo "Mostrando 1 a 10 de
+    24 registros" coerente com a paginação "Página 1 de 3", situações vindas da
+    fixture (Em Análise, Aprovado, Enviado, Devolvido). Asserções derivadas.
+  dashboard_hub: >
+    Abas `citie-tabs--line` sem superfície própria (fundo transparente), realce
+    de 2px em rgb(18,97,228). Cards de hub com 72px de altura exatos, ícone em
+    caixa de 36 com tinta de marca sobre accent, grade de 3 colunas.
+  kpi_faixa: >
+    `grid-column: 1 / -1` efetivo: faixa de 1326px na linha de 1326px. Uma
+    única região viva no painel (`role="status"`, `aria-live="polite"`).
+  escuro_no_grafico_375: >
+    Superfície do gráfico rgb(26,26,29) sobre fundo rgb(20,20,20) no escuro a
+    375, grade em coluna única de 335px, documento em 375. O fundo branco
+    sumiu e o axe não acusa: PainelDeTFD e Dashboard estão fora das 35 falhas.
+  cores_de_serie_no_escuro: >
+    Contra rgb(26,26,29): Recebidos 3,19:1, Autorizados 3,46:1, Aguardando
+    Assinatura 3,05:1, Devolvido 3,46:1, Cancelado 4,72:1. Todas acima de 3:1
+    (WCAG 1.4.11).
+  formulario_longo: >
+    Coluna de seções de 216px na grade `216px 1078px`, seis seções, ativa
+    "Evolução". Blocos em cartão raio 10, borda 1px, sombra `none`. Campos de
+    36px, dez asteriscos em rgb(185,28,28), texto de ajuda presente. Rodapé
+    fixo com Voltar, Salvar seção e Salvar e Avançar nessa ordem. Timeline
+    presente na story de evolução, com marcador, título, data e ator.
+  acesso: >
+    Padding 10px, cartão raio 16, painel de marca em rgb(18,97,228) no claro e
+    rgb(77,139,252) no escuro, sempre `brand-primary`, nunca teal. 38% da
+    largura (496 de 1306). Cinco telas com título, contraparte, ação e rótulos
+    coerentes; `InputOtp` de quatro casas na verificação, cada dígito nomeado.
+    A 375 o painel de marca sai (`display: none`), coluna única, documento em
+    375. Ordem de Tab em Entrar: Cadastre-se, e-mail, senha, "Esqueceu sua
+    senha?", Entrar no sistema, rodapé. Um único `h1` real por tela.
+  rotulo_oculto: >
+    `<label>` permanece no DOM com `for`/`id` para o `<select>`, ganha
+    `citie-visualmente-oculto` e mede 1x1px. Vale no Select isolado e na linha
+    de filtro da Listagem.
+
+sabotagens:
+  - alvo: "--citie-altura-da-barra de 52 para 64"
+    resultado: REPROVOU
+    prova: "AppShell.stories.tsx > Anatomia · 52 / 257 / 30 / 32 falhou (1 de 8)"
+  - alvo: "painel de marca do Acesso em #12b0af com degradê teal"
+    resultado: REPROVOU
+    prova: "Acesso.stories.tsx > 1 · Entrar falhou (1 de 6)"
+  - alvo: 'remover role="status" da KpiFaixa'
+    resultado: REPROVOU
+    prova: >
+      PainelDeTFD.stories.tsx > Padrão · com dados e > troca do período global
+      falharam (2 de 19). As seis stories da própria KpiFaixa seguiram verdes.
+  - alvo: "remover citie-visualmente-oculto do rótulo com rotuloOculto"
+    resultado: REPROVOU
+    prova: >
+      Select.stories.tsx > Composição · rótulo oculto e Listagem.stories.tsx >
+      Estrutura · listagem do Sismental falharam (2 de 60)
+
+achados:
+  - id: 6B-01
+    severidade: MAIOR
+    id_anti_slop: regra de marca Citiesoft (logo por contexto de fundo)
+    onde: ".storybook/templates/Acesso/Acesso.tsx:71"
+    o_que: >
+      O painel do formulário fixa `/marca/LogoHorizontal3.svg`, que é a versão
+      para fundo claro. No tema escuro o painel fica em `background-surface`
+      (#1a1a1d) e a assinatura, cujo texto é #373737, mede 1,46:1 contra o
+      fundo. A marca some da tela de entrada do sistema.
+    evidencia: >
+      Medido nas duas execuções (claro e escuro) e visível nas seis capturas
+      `.gauntlet/capturas-lote6b/acesso-*--dark--1366.png` já entregues. O
+      AppShell resolve o mesmo problema uma pasta ao lado, com a prop
+      `fundoDaBarra` (AppShell.tsx:287), e o Acesso não ganhou equivalente.
+    alternativa: >
+      Trocar o logotipo pelo tema, como o AppShell faz, ou expor uma prop de
+      fundo no Acesso. Fechar com uma story de guarda que afirme o `src` por
+      tema, como `Marca.stories.tsx:66` já faz nas fundações.
+  - id: 6B-02
+    severidade: MAIOR
+    onde: >
+      Listagem e ConsultaDeProcessos a 375, mais qualquer tabela com coluna de
+      ações
+    o_que: >
+      A 375 a página inteira rola no eixo horizontal para dentro de área vazia:
+      717px de área de rolagem contra 375 de viewport na Listagem, 1032 contra
+      375 na Consulta. `window.scrollTo(300, 0)` desloca a página de fato, e a
+      captura mostra o conteúdo cortado à esquerda com o resto em branco.
+    evidencia: >
+      Causa isolada por eliminação: o `<span class="citie-visualmente-oculto">`
+      com o texto "Ações" dentro de `th.citie-table__celula--acoes` é
+      `position: absolute` sem ancestral posicionado, então resolve contra o
+      bloco inicial e pousa em x=716 na Listagem e x=1031 na Consulta, fora do
+      alcance do `overflow-x: auto` do `citie-table-wrapper`. Esconder só os
+      elementos dessa classe devolve o documento a 375. Reproduz em
+      `Table > Controle · ações por linha` (873) e `Table > Composição ·
+      listagem em cartão` (683), então a origem é do Lote 5, não deste.
+    por_que_conta_aqui: >
+      As stories responsivas de 375 deste lote passam verdes sem afirmar nada
+      sobre a largura do documento, e a documentação escrita neste lote diz o
+      contrário do medido: ConsultaDeProcessos.stories.tsx:746 afirma que "a
+      tabela rola no eixo horizontal em vez de estourar a tela".
+    alternativa: >
+      Dar `position: relative` à célula de ações (ou ao `citie-table-wrapper`)
+      para prender o rótulo oculto ao contêiner que rola, e acrescentar às
+      stories de 375 a asserção de que `documentElement.scrollWidth` é igual à
+      largura da viewport.
+  - id: 6B-03
+    severidade: MENOR
+    onde: "src/components/primitives/Field/Field.tsx:80"
+    o_que: >
+      O modificador `citie-field--rotulo-oculto` é escrito no wrapper e não tem
+      nenhuma regra de CSS no repositório. Classe morta que sugere um
+      comportamento que não existe.
+    alternativa: Remover o modificador, ou dar a ele a regra que justifica existir.
+  - id: 6B-04
+    severidade: MENOR
+    id_anti_slop: TXT-002
+    onde: >
+      Formulario.stories.tsx:194, ConsultaDeProcessos.stories.tsx:327 e :746
+    o_que: >
+      Três negações paralelas em texto escrito neste lote: "rota própria em vez
+      de drawer", 'nunca oferece "Limpar filtros", e sim a criação' e "em vez
+      de estourar a tela". O briefing veta a figura em código, comentário,
+      story e doc.
+    alternativa: >
+      Afirmar direto: "Formulário extenso em rota própria", "o vazio de
+      primeiro uso oferece a criação", "a tabela rola no eixo horizontal".
+  - id: 6B-05
+    severidade: MENOR
+    onde: "coluna Situação da Listagem e da Consulta"
+    o_que: >
+      O kit descreve "badge outline para status" e a implementação entrega
+      etiqueta preenchida: fundo rgb(255,251,235), borda `0px none`, texto
+      rgb(180,83,9) em 11px. O contraste passa (5,79:1), a anatomia diverge, e
+      o handoff não registra a divergência entre as que ficaram fora.
+    alternativa: >
+      Alinhar ao kit, ou registrar a divergência como decisão com o motivo,
+      como o handoff faz com os outros seis itens.
+  - id: 6B-06
+    severidade: MENOR
+    onde: "src/components/organisms/Sidebar/Sidebar.stories.tsx:164"
+    o_que: >
+      `Sidebar · fixa (shell)` está entre as 35 falhas do escuro porque a story
+      afirma o literal rgb(239,245,255) para o item ativo. O shell em si está
+      certo: medi rgb(32,40,56) no escuro, que é o `sidebar-accent` do tema.
+      É o teste que fixa cor de um tema só.
+    escopo: Dívida do Lote 4, fora deste lote. Vale rotear ao Kafka.
+  - id: 6B-07
+    severidade: POLIMENTO
+    onde: ".storybook/templates/Formulario/Formulario.tsx:306"
+    o_que: >
+      No formulário longo o `h1` fica visualmente oculto e o `main` não recebe
+      `aria-labelledby`, então o marco principal fica sem nome acessível. A
+      Listagem e o Acesso apontam o `aria-labelledby` para o próprio título.
+    alternativa: Repetir aqui o padrão que os outros dois templates já usam.
+  - id: 6B-08
+    severidade: POLIMENTO
+    onde: "src/components/organisms/Widget/KpiFaixa.tsx:60"
+    o_que: >
+      A região viva da KpiFaixa só é guardada pela página. Removendo o
+      `role="status"` do componente, as seis stories da própria KpiFaixa
+      seguiram verdes e só o PainelDeTFD reprovou.
+    alternativa: Uma asserção da região viva na story do componente.
+  - id: 6B-09
+    severidade: POLIMENTO
+    onde: "src/tokens/tokens.css:760"
+    o_que: >
+      O bloco `/* Lote 6b */` entrou no commit e69bc69, do Lote 6a, então
+      `git show d7bf4ad -- src/tokens/tokens.css` não devolve nada e a revisão
+      cega do lote pelo diff não enxerga os sete tokens novos.
+    alternativa: Fechar o commit do lote com os tokens que ele criou.
+
+o_que_me_surpreendeu:
+  - >
+    A story `Anatomia` fixa 52 / 257 / 30 / 32 contra o token e contra o
+    literal ao mesmo tempo, então editar o token não faz o teste mentir. Foi
+    exatamente a sabotagem que rodei, e ela reprovou.
+  - >
+    A barra sobre o azul da marca leva todo o texto para
+    `sidebar-primary-foreground` e o handoff registra que `brand-contrast`
+    mediria 3,0:1 sobre #4d8bfc. Medi 5,63:1 na story de tema escuro: a troca
+    foi decidida e documentada, não descoberta por acaso.
+  - >
+    A dívida do escuro foi rastreada até a causa real, a especificidade de
+    `[data-colunas]` vencendo a regra de 900px e colapsando a grade em duas
+    colunas a 375, em vez de sobrar no Chart. Confirmei a superfície do gráfico
+    em rgb(26,26,29) a 375 e zero falha de escuro em Dashboard e PainelDeTFD.
+  - >
+    As quatro sabotagens reprovaram, e a do `rotuloOculto` reprovou em dois
+    lugares independentes, o componente e o template que o consome.
+
+o_que_faltou_para_surpreender:
+  - >
+    A tela nova do lote entrega a assinatura da casa a 1,46:1 no tema escuro,
+    com a solução pronta uma pasta ao lado. O handoff declara auditoria "em
+    captura nos dois temas em 1366 e 375" e fecha anti-slop como PASSOU, e a
+    falha está em seis das capturas entregues. É a verificação, mais do que o
+    desenho, que segurou a nota.
+  - >
+    As stories responsivas de 375 medem o que cabe dentro do cartão e nada
+    sobre a largura do documento, então a página inteira pode rolar 342px de
+    lado com o gate verde.
+
+nota_anti_slop: >
+  Rota: produto B2G, fonte `docs/figma-ui-kit.md`. Código limpo no que a
+  política cobra: zero hex fora de comentário de medição nos quatro CSS do
+  lote, zero travessão, hover do item de seção em `--citie-accent` e não em
+  cinza neutro (COR-012 respeitada). O veredito fica em VOLTA PARA REFINO por
+  6B-01, que quebra regra de marca da casa, e por 6B-04, que quebra a regra de
+  texto do briefing. Nenhum dos dois pede rediscussão de desenho: os dois se
+  fecham em uma rodada curta.
+
+# =====================================================================
+# Rodada 2, sobre 0020b0c: fechamento dos dois MAIOR
+# =====================================================================
+
+rodada_2:
+  commit: 0020b0c
+  nota_de_estado: >
+    O briefing da rodada dizia "sem commit, sobre f19003f". A árvore estava
+    limpa e as correções já eram o commit 0020b0c. Revisei o commit, que é o
+    mesmo conteúdo. Worktree próprio em
+    `/Users/rafaeleugenio/dev/citiesoft-storybook-revisao-lote6b-r2`, detached
+    em 0020b0c, `node_modules` por cópia com hardlink.
+
+  gates_conferidos_por_mim:
+    claro: 844 de 844, 125 arquivos, zero falha
+    escuro: >
+      34 falhas em 7 arquivos, contra 35 em 8 na rodada 1. Sidebar saiu da
+      lista. Zero falha nos arquivos do lote. Confere com o adendo.
+
+  6B-01_marca_por_superficie:
+    situacao: FECHADO
+    como: >
+      `MarcaDoAcesso` põe as duas versões oficiais no DOM e o CSS mostra a que
+      tem contraste na superfície corrente. Dentro de `.citie-tpl-acesso__marca-painel`
+      a regra inverte por cascata, com especificidade maior (0,2,0 e 0,3,0
+      contra 0,1,0 e 0,2,0), então quem compõe o painel azul só usa a peça.
+    medicao_dos_seis_numeros_declarados: >
+      Recalculei cada razão a partir das tintas lidas nos `fill` dos SVGs
+      (#373737 na versão 3, #ECECEC na versão 2). Os seis conferem na segunda
+      casa: versão 2 sobre #1a1a1d 14,70:1; versão 3 sobre #ffffff 11,90:1;
+      versão 2 sobre #1261e4 4,61:1; versão 2 sobre #4d8bfc 2,77:1; versão 3
+      sobre #4d8bfc 3,64:1; e o defeito da rodada 1, versão 3 sobre #1a1a1d,
+      1,46:1.
+    regra_invertida_no_azul: CORRETA E REGISTRADA
+    por_que: >
+      O azul da casa clareia de #1261e4 para #4d8bfc no tema escuro, então a
+      assinatura tem que inverter junto com `brand-contrast`. Sobre #4d8bfc a
+      versão 3 mede 3,64:1 e a versão 2 mede 2,77:1: a versão 3 vence, e é o
+      que a implementação faz. Passa o piso de 3:1 de objeto gráfico
+      (WCAG 1.4.11); assinatura de marca fica fora de 1.4.3. A inversão está
+      escrita no comentário do CSS, no doc da story e no adendo do handoff,
+      com os três números.
+    medido_ao_vivo: >
+      Claro: formulário com LogoHorizontal3 sobre rgb(255,255,255), painel com
+      LogoHorizontal2 sobre rgb(18,97,228). Escuro: formulário com
+      LogoHorizontal2 sobre rgb(26,26,29), painel com LogoHorizontal3 sobre
+      rgb(77,139,252). Quatro `<img>` no DOM da story de guarda e duas
+      expostas por papel e nome, uma por superfície: a escondida sai da árvore
+      de acessibilidade por `display: none`. Na tela `1 · Entrar`, que não
+      compõe o painel, sobra uma só.
+
+  6B-02_rolagem_a_375:
+    situacao: FECHADO
+    como: >
+      Corrigido na origem que apontei: `.citie-table-wrapper` ganhou
+      `position: relative` (Table.css:15), então o rótulo oculto da coluna de
+      ações passa a resolver contra o cartão que rola em vez do bloco inicial.
+      Vale para toda tabela do sistema, não só para os dois templates.
+    medido_ao_vivo_a_375: >
+      Listagem: `scrollWidth` 375 contra `clientWidth` 375, e
+      `window.scrollTo(300, 0)` deixa `scrollX` em 0. Era 717 com pan real de
+      300. Consulta: 375 contra 375, era 1032. Table `Controle · ações por
+      linha`: 375 contra 375, era 873. Nos três a rolagem ficou dentro do
+      cartão (740, 1091 e 932 de conteúdo contra 333 de caixa) e o wrapper
+      computa `position: relative`.
+
+  sabotagens_da_rodada_2:
+    - alvo: "remover `position: relative` do `.citie-table-wrapper`"
+      resultado: REPROVOU
+      prova: >
+        Listagem > Responsivo · 375 e ConsultaDeProcessos > Responsivo ·
+        celular 375 falharam (2 de 43).
+    - alvo: >
+        devolver a tinta escura ao painel escuro (o defeito da rodada 1),
+        invertendo as duas regras de `[data-theme='dark']`
+      resultado: REPROVOU
+      prova: >
+        Acesso > Marca · versão por superfície falhou no escuro, com
+        "expected '/marca/LogoHorizontal3.svg' to be
+        '/marca/LogoHorizontal2.svg'" (1 de 7).
+    - alvo: "remover a inversão do painel azul no tema escuro"
+      resultado: REPROVOU
+      prova: >
+        Acesso > Marca · versão por superfície falhou no escuro, com
+        "expected '/marca/LogoHorizontal2.svg' to be
+        '/marca/LogoHorizontal3.svg'" (1 de 7).
+
+  menores_da_rodada_1_conferidos:
+    6B-03: >
+      FECHADO. Zero elemento com `citie-field--rotulo-oculto` na Listagem, e o
+      rótulo "Destino" segue oculto em caixa de 1px pelo `<label>`.
+    6B-04: FECHADO. As três negações paralelas viraram afirmação direta.
+    6B-05: >
+      REGISTRADO como divergência com motivo. A pele preenchida vem do
+      `StatusIndicator`, decidido em lote anterior e consumido por outras
+      telas, e carrega a tinta semântica a 5,79:1. Trocar para outline é do
+      dono do componente.
+    6B-06: >
+      FECHADO, e diagnosticado mais fundo do que eu tinha ido. Eu disse "a
+      story afirma um literal"; a causa era
+      `canvasElement.closest('[data-theme]')` lendo o contêiner errado, então
+      o token vinha sempre do claro. Medi rgb(32,40,56) no escuro e a Sidebar
+      saiu das falhas. O gêmeo latente em `Tabs.stories.tsx:54` ficou
+      sinalizado.
+    6B-07: >
+      FECHADO. O `main` do formulário longo recebe `aria-labelledby` e o nome
+      acessível resolve para "Cadastro do prontuário".
+    6B-08: FECHADO. A região viva agora é afirmada na story do componente.
+    6B-09: >
+      ABERTO por dependência. Os sete tokens do 6b seguem dentro de e69bc69.
+      Fica para quem reorganizar o histórico, se valer a pena.
+
+  achados_novos:
+    - id: 6B-10
+      severidade: MENOR
+      onde: "src/components/organisms/Table/Table.stories.tsx:684"
+      o_que: >
+        A asserção da Table que nomeia a causa (caixa do rótulo presa à caixa
+        do cartão, mais largura do documento) não morde. Removi o
+        `position: relative` e rodei só esse arquivo: 24 testes, todos verdes.
+        Na largura do runner a tabela não estoura o cartão, então o rótulo cai
+        dentro dele de qualquer jeito e o documento não cresce. Quem segura a
+        regressão são as duas stories de 375.
+      contraponto_ao_handoff: >
+        O adendo diz que essa asserção "vale em qualquer largura". Vale como
+        leitura do código; como teste, ela só passa a valer numa largura em que
+        o cartão de fato role.
+      alternativa: >
+        Dar largura estreita à story de guarda (contêiner fixo, como as stories
+        de 375 fazem), ou mover a asserção para uma story própria de 375 do
+        componente.
+    - id: 6B-11
+      severidade: POLIMENTO
+      onde: ".gauntlet/lote6b-handoff.md, adendo, item 6B-01"
+      o_que: >
+        O adendo diz que mostrar a tinta escura no escuro "reprovou em duas
+        stories (`1 · Entrar` e a guarda)". Sob a sabotagem que devolve
+        exatamente o defeito da rodada 1, uma versão visível por superfície,
+        só a guarda reprova; `1 · Entrar` segue verde, porque o que ela cobra
+        ali é uma assinatura única por `getByRole`, e não qual arquivo é. As
+        duas reprovações aparecem numa sabotagem que deixa as duas versões
+        visíveis ao mesmo tempo.
+      alternativa: Precisar no handoff qual sabotagem produz cada reprovação.
+
+  o_que_me_surpreendeu_na_rodada_2:
+    - >
+      O 6B-01 não virou uma prop de tema. Virou regra de superfície, com as
+      duas versões no DOM e a escolha na cascata, e a inversão dentro do painel
+      azul cai de graça. O template segue sem saber qual tema está ativo, e a
+      árvore de acessibilidade continua com uma assinatura por superfície.
+    - >
+      A inversão sobre o azul é a parte que eu não tinha visto na rodada 1, e
+      ela está certa pela medição: sobre #4d8bfc a versão 3 dá 3,64:1 contra
+      2,77:1 da versão 2. Recalculei os seis números declarados e os seis
+      conferem na segunda casa.
+    - >
+      O 6B-02 foi fechado na origem que apontei, uma linha no wrapper da
+      Table, e não remendado no template. A correção vale para toda tabela do
+      sistema, e o comentário no CSS grava os dois números que eu tinha medido.
+    - >
+      O 6B-06 foi diagnosticado além do que eu entreguei, com o contêiner de
+      tema errado como causa, e o gêmeo latente em `Tabs.stories.tsx` ficou
+      sinalizado em vez de silenciado.
+    - >
+      O adendo corrige a autoavaliação da rodada 1 em vez de defendê-la, e
+      nomeia as duas auditorias que falharam, a de captura e a de texto.
+
+  o_que_faltou:
+    - >
+      A guarda da Table (6B-10) é a única peça desta rodada que não reproduz a
+      falha quando o código volta a errar.

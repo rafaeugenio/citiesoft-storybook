@@ -1,5 +1,5 @@
 /**
- * Verificação de catálogo — roda contra o índice PUBLICADO, nunca contra uma lista paralela.
+ * Verificação de catálogo: roda contra o índice PUBLICADO, nunca contra uma lista paralela.
  *
  * Motivo de existir: a documentação chegou a afirmar "zero órfãos e zero destinos
  * inventados" enquanto o mapa legado apontava para um título que não existia no catálogo e
@@ -18,7 +18,14 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const caminhoIndice = resolve(raiz, 'storybook-static/index.json');
+/**
+ * Pasta do build estático. Com vários lotes rodando gate ao mesmo tempo,
+ * `storybook-static/` é reescrito por cada um e fica com índice e assets de
+ * builds distintos, então quem constrói numa pasta privada aponta a checagem
+ * para lá por `CITIE_STATIC`.
+ */
+const pastaEstatica = process.env.CITIE_STATIC ?? 'storybook-static';
+const caminhoIndice = resolve(raiz, pastaEstatica, 'index.json');
 const caminhoMapa = resolve(raiz, 'docs/atomic-design/legacy-story-map.json');
 const caminhoClassificacao = resolve(raiz, 'docs/atomic-design/classificacao.json');
 
@@ -33,7 +40,8 @@ function exigir(condicao, mensagem) {
 
 if (!existsSync(caminhoIndice)) {
   console.error(
-    'storybook-static/index.json não existe. Rode `npm run build-storybook` antes desta verificação.',
+    `${pastaEstatica}/index.json não existe. Rode \`npm run build-storybook\` antes desta verificação, ` +
+      'ou aponte CITIE_STATIC para a pasta do build que você construiu.',
   );
   process.exit(1);
 }
@@ -235,7 +243,61 @@ if (consumidoresDoButton.length < 10) {
 }
 
 // ---------------------------------------------------------------------------
-// 7. Contagens, para a documentação poder citar número conferido
+// 7. Quem escreve a classe compartilhada importa a folha que a define
+// ---------------------------------------------------------------------------
+//
+// Achado L3-08: o runner do Storybook injeta o CSS de todas as stories no mesmo
+// documento, então um componente que escreve `citie-sev--danger` sem importar
+// `src/tokens/severidade.css` continua pintado no teste, porque outra story da
+// mesma rodada já trouxe a folha. Em produção, montado sozinho, ele aparece sem
+// pele nenhuma. Nenhum teste de componente pega isso, e por isso a checagem
+// mora aqui, lendo o código-fonte.
+//
+// Arquivo de story fica de fora de propósito: ele renderiza o componente, e o
+// componente é quem carrega a folha.
+
+const FOLHAS_COMPARTILHADAS = [
+  {
+    folha: 'src/tokens/severidade.css',
+    /** Prefixo de classe que só existe naquela folha. */
+    classe: /citie-sev--/,
+    /** Como o import aparece no código, com ou sem caminho relativo completo. */
+    importa: /(from|@import)\s+['"][^'"]*tokens\/severidade\.css['"]|['"][^'"]*tokens\/severidade\.css['"]/,
+  },
+];
+
+for (const { folha, classe, importa } of FOLHAS_COMPARTILHADAS) {
+  if (!existsSync(resolve(raiz, folha))) {
+    falhas.push(`Folha compartilhada ausente: ${folha}.`);
+    continue;
+  }
+
+  const fontes = [
+    ...globSync('src/**/*.tsx', { cwd: raiz }),
+    ...globSync('.storybook/**/*.tsx', { cwd: raiz }),
+  ].filter((f) => !f.includes('.stories.'));
+
+  for (const arquivo of fontes) {
+    const caminho = resolve(raiz, arquivo);
+    const fonte = readFileSync(caminho, 'utf8');
+    if (!classe.test(fonte)) continue;
+    if (importa.test(fonte)) continue;
+
+    // O componente também está coberto quando a folha de pele dele já importa
+    // a compartilhada, porque o bundler resolve a cadeia inteira.
+    const irma = caminho.replace(/\.tsx$/, '.css');
+    const cobertoPelaIrma = existsSync(irma) && importa.test(readFileSync(irma, 'utf8'));
+    if (cobertoPelaIrma) continue;
+
+    falhas.push(
+      `${arquivo} escreve classe de ${folha} sem importar a folha. ` +
+        `No Storybook ele fica pintado por CSS de outra story; montado sozinho, aparece sem pele.`,
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 8. Contagens, para a documentação poder citar número conferido
 // ---------------------------------------------------------------------------
 const contagem = {};
 for (const nivel of NIVEIS) {

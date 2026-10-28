@@ -1,0 +1,96 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { EscalasDeCor, TabelaSemantica, ResumoDeTokens } from '../_docs/Cores';
+import { USOS } from '../_docs/usos';
+import { Tabela, Paleta } from '../_docs/Conteudo';
+import { coresUso } from '../_docs/snippets/cores';
+
+<Meta title="Fundação/Cores" />
+
+<Pagina
+  titulo="Cores"
+  resumo="A cor chega à interface em três camadas: paleta primitiva, tokens semânticos e tokens de componente. Quem desenvolve consome sempre o token semântico, que já troca de valor no tema escuro."
+>
+
+<Secao titulo="Visão geral">
+<ResumoDeTokens />
+<Callout titulo="A regra">
+Use o token pelo papel que ele cumpre, como `--color-text-secondary`, e deixe a paleta para quem mantém o sistema. Um hex colado no código fica fixo no tema escuro, na troca de marca e no ajuste de contraste.
+</Callout>
+</Secao>
+
+<Secao titulo="Marca no tema" descricao="Os valores vêm do Design System de produto da Citiesoft. A geometria do layout (raios, sombras, espaçamento) foi mantida.">
+<Paleta cores={[
+  { nome: 'Azul de ação', hex: '#1261E4', uso: 'accent-500: botões, links, foco' },
+  { nome: 'Hover', hex: '#0E4DB8', uso: 'accent-600' },
+  { nome: 'Pressionado', hex: '#0B3C8F', uso: 'accent-700' },
+  { nome: 'Azul no escuro', hex: '#4D8BFC', uso: 'text-brand e foco no tema escuro' },
+  { nome: 'Azul institucional', hex: '#146BFA', uso: 'citie-blue-500: só apresentações e hero' },
+  { nome: 'Sucesso', hex: '#22C55E', uso: 'green-500' },
+  { nome: 'Aviso', hex: '#F59E0B', uso: 'amber-500' },
+  { nome: 'Perigo', hex: '#EF4444', uso: 'red-500' },
+]} />
+<Tabela
+  colunas={['Papel', 'Token', 'Valor da Citiesoft']}
+  linhas={[
+    ['Cor de ação', '`--color-accent-50` a `-950`', 'Escala Citie Blue, com o 500 apontando para o azul de ação `#1261E4`'],
+    ['Neutros', '`--color-neutral-50` a `-950`', '`#FAFAFA`, `#F4F5F7`, `#E8EAED`, `#D6D8DC`, `#A8ACB3`, `#6B7177`, `#4E5258`, `#3C3C3C`, `#2A2A2A`, `#202020`, `#141414`'],
+    ['Superfícies no escuro', '`--color-background-*`', 'Página `#141414`, superfície `#1A1A1D`, camada sutil `#232327`'],
+    ['Feedback', '`--color-green-*`, `--color-amber-*`, `--color-red-*`', 'Passos 50, 500, 600 e 700 do Design System'],
+    ['Gráficos', '`--color-chart-1` a `-8`', 'Azul de ação, ciano, verde, âmbar, violeta, vermelho, verde-azulado e rosa'],
+    ['Movimento', '`--motion-*`, `--ease-citie-*`', 'Durações de 120 a 480ms e curvas de saída, entrada e saída, e gaveta'],
+  ]}
+  larguraMinima={680}
+/>
+<Callout titulo="Desvios documentados">
+Três ajustes em relação ao Design System, todos por acessibilidade ou por estrutura do layout. O texto secundário usa `neutral-600` (`#4E5258`) em vez de `neutral-500`, porque `#6B7177` sobre `neutral-200` mede 4,1:1 e reprova AA. O texto terciário e o placeholder usam `neutral-500`. O passo `accent-900` (`#082659`) é derivado, o ponto médio entre `citie-blue-900` e `citie-blue-950`.
+</Callout>
+<Callout titulo="Seletores de tema">
+O tema escuro responde à classe `.dark`, à classe `.app-dark` (PrimeNG) e ao atributo `data-theme="dark"`. A classe `.light` força o tema claro dentro de uma área escura.
+</Callout>
+</Secao>
+
+<Secao titulo="Como usar" descricao="O mesmo token, em cada tecnologia. Baixe os arquivos na página Tokens e instalação.">
+<CodeTabs abas={coresUso} />
+</Secao>
+
+<Secao titulo="Paleta primitiva" descricao="Valores brutos em 11 passos por família (50 a 950). Clique em um passo para copiar o hex. O accent é a cor de ação e aponta para uma família da paleta, o que permite retintar o sistema inteiro em um só lugar.">
+<EscalasDeCor />
+</Secao>
+
+<Secao titulo="Texto" descricao="Cada linha mostra o contraste do texto sobre o fundo padrão do tema. O mínimo é 4,5:1 para texto normal e 3:1 para texto grande.">
+<TabelaSemantica prefixos={['text-']} contra="fundo" descricoes={USOS} />
+</Secao>
+
+<Secao titulo="Superfícies" descricao="Do fundo da página às camadas de cartão. Quanto maior o nível, mais profundo na hierarquia.">
+<TabelaSemantica prefixos={['background-']} descricoes={USOS} />
+</Secao>
+
+<Secao titulo="Bordas e divisores">
+<TabelaSemantica prefixos={['border-', 'separator-']} descricoes={USOS} />
+<Callout titulo="Foco visível">
+`--color-border-focus-ring` desenha o anel de foco. Todo controle interativo precisa mostrá-lo no foco por teclado, exigência do e-MAG e do WCAG 2.2 AA.
+</Callout>
+</Secao>
+
+<Secao titulo="Ícones e conteúdo sobre preenchimento">
+<TabelaSemantica prefixos={['foreground-']} contra="fundo" descricoes={USOS} />
+</Secao>
+
+<Secao titulo="Estados e ações" descricao="Botões, campos, controles de seleção e abas.">
+<TabelaSemantica prefixos={['button-', 'icon-button-', 'input-', 'control-', 'switch-', 'segmented-', 'tab-', 'pill-', 'dropdown-', 'kbd-', 'badge-', 'state-']} />
+</Secao>
+
+<Secao titulo="Status" descricao="Pares de fundo e texto para chips e indicadores. Use os dois juntos, do mesmo matiz.">
+<TabelaSemantica prefixos={['status-']} />
+</Secao>
+
+<Secao titulo="Gráficos" descricao="Séries, trilhas e cursor dos gráficos. A ordem das séries segue os números do token.">
+<TabelaSemantica prefixos={['chart-']} />
+</Secao>
+
+<Secao titulo="Notificações, calendário e blocos" descricao="Tokens de componente. Existem para um bloco específico e seguem o nome dele.">
+<TabelaSemantica prefixos={['notification-', 'calendar-', 'file-', 'avatar-', 'stat-', 'ticket-', 'project-', 'composer-', 'team-', 'ai-', 'questionnaire-', 'agent-', 'date-', 'theme-', 'docs-']} />
+</Secao>
+
+</Pagina>

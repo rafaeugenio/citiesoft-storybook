@@ -1,0 +1,133 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado, Passos } from '../_docs/Conteudo';
+
+<Meta title="Marca/Hierarquia e densidade" />
+
+<Pagina
+  titulo="Hierarquia e densidade"
+  resumo="Toda composição tem um ponto focal único, e a quantidade de informação segue o tipo de peça. O leitor decide em segundos, com atenção dividida e carga cognitiva alta."
+>
+
+<Secao titulo="Hierarquia" descricao="Cinco instrumentos trabalham juntos: tamanho, peso, cor, posição e espaço. Cada elemento ocupa um só nível, e nenhum outro compete com o ponto focal.">
+<Tabela colunas={['Nível', 'Tamanho', 'Contexto']} linhas={[
+  ['H1, ponto focal', '32 a 56 px', 'Título de slide hero, de seção de proposta, headline de dashboard'],
+  ['H2, contexto direto', '22 a 28 px', 'Subtítulo, rótulo de módulo, título de card de dado'],
+  ['H3, suporte', '16 a 20 px', 'Terceiro nível, rótulo de grupo de campos'],
+  ['Corpo', '14 a 16 px', 'Parágrafo, descrição, meta-texto'],
+  ['Legenda e rótulo', '11 a 13 px', 'Legenda, rótulo de input, timestamp, nota técnica'],
+]} />
+<Cartoes colunas={3} itens={[
+  { titulo: 'Peso 900', texto: 'Número de impacto (KPI, percentual) e headline de hero institucional.' },
+  { titulo: 'Peso 700', texto: 'Título de seção, rótulo de módulo, item ativo de menu, badge de status.' },
+  { titulo: 'Peso 600', texto: 'Subtítulo, rótulo de campo, título de card.' },
+  { titulo: 'Peso 400 e 300', texto: 'Corpo e descrição em 400. Peso 300 para nota e rodapé, nunca abaixo de 13 px.' },
+  { titulo: 'Máximo de quatro níveis', texto: 'Focal, contexto direto, corpo e suporte. Mais que isso agrupe em uma linha de meta-informação.' },
+  { titulo: 'Salto de nível', texto: 'Não pule mais de dois níveis entre vizinhos sem espaço ou separador. O espaço resolve a tensão do salto.' },
+]} />
+<Tabela colunas={['Cor', 'Papel na hierarquia']} linhas={[
+  ['Citie Blue 500 `#146BFA`', 'Destaque institucional: headline de proposta, elemento primário de apresentação'],
+  ['Citie Blue 600 `#1261E4`', 'Ação interativa em produto e dado crítico de dashboard'],
+  ['`#202020`', 'Título e rótulo principal em fundo claro'],
+  ['`#3C3C3C`', 'Corpo de texto'],
+  ['Cinza 500 `#6B7280`', 'Suporte, meta-informação, placeholder'],
+  ['Cinza 300 `#D1D5DB`', 'Borda, separador, texto desabilitado'],
+  ['`#16A34A`, `#D97706`, `#DC2626`', 'Sucesso, atenção e prazo, erro e vencido'],
+]} />
+<Callout titulo="Cor de marca">
+Citie Blue só no elemento de maior prioridade ou na ação interativa. Em texto de suporte ela perde o valor de sinal. O ciano de acento (`#5FD2FF`, `#00B5F0`) fica em ícone tecnológico e linha de detalhe, nunca em texto funcional.
+</Callout>
+<Tabela colunas={['Padrão de leitura', 'Peça', 'Como compor']} larguraMinima={620} linhas={[
+  ['Z', 'Slide, hero de landing, capa', 'Entrada no canto superior esquerdo, título no centro ou terço superior, ação ou dado de impacto no terço inferior esquerdo'],
+  ['F', 'Documento, relatório, listagem de 10 ou mais páginas', 'Título e primeira linha completos, conteúdo mais importante nas primeiras linhas e na margem esquerda'],
+  ['Terços', 'Slide e banner', 'Ponto focal em um dos quatro cruzamentos da grade 3 por 3. Nunca centralize tudo'],
+]} />
+<Tabela colunas={['Situação', 'Espaço']} linhas={[
+  ['Entre seções de página ou slide', '48 a 80 px'],
+  ['Título H1 e subtítulo H2', '8 a 12 px'],
+  ['Subtítulo e primeiro parágrafo', '16 a 24 px'],
+  ['Entre parágrafos', '12 a 16 px'],
+  ['Entre cards em grid', '16 a 24 px'],
+  ['Padding de card', '24 px no produto e 32 px na apresentação'],
+  ['Margem lateral de documento', '48 a 64 px'],
+]} />
+<Passos itens={[
+  { titulo: 'Defina o ponto focal', texto: 'O que a pessoa capta em menos de 3 segundos recebe maior tamanho, peso, cor de destaque e posição privilegiada.' },
+  { titulo: 'Estabeleça o contexto direto', texto: 'Informação de apoio fica ao lado do focal, menor, em cor neutra.' },
+  { titulo: 'Adicione o corpo', texto: 'Regular, `#3C3C3C`, espaçamento interno consistente.' },
+  { titulo: 'Valide o silêncio', texto: 'Tire os elementos da cabeça. O branco que sobra ainda conduz o olho ao ponto focal? Se não, há excesso ou o focal está fraco.' },
+]} />
+<Cartoes colunas={2} itens={[
+  { titulo: 'Equilíbrio simétrico', texto: 'Capa de proposta técnica, relatório de auditoria, ofício digital. Comunica formalidade.' },
+  { titulo: 'Equilíbrio assimétrico', texto: 'Slide executivo, banner de produto, post. Âncora pesada à esquerda e branco à direita.' },
+]} />
+<CertoErrado itens={[
+  {
+    certo: 'Título em Red Hat Display 700 de 32 px em `#146BFA` e subtítulo de 20 px, peso 400, em `#3C3C3C`.',
+    errado: 'Dois títulos de 32 px, peso 700, em azuis próximos.',
+    motivo: 'O olho não sabe qual ler primeiro.',
+  },
+  {
+    certo: 'Meta-informação em Inter 400 de 13 px, cinza 500.',
+    errado: 'Data de atualização em Citie Blue.',
+  },
+  {
+    certo: 'Card com nome do paciente, processo, status e uma linha de meta-informação.',
+    errado: 'Cinco níveis (H1 a H5) dentro de um card.',
+  },
+  {
+    certo: 'Ponto focal no terço superior esquerdo e ação ancorada no terço inferior.',
+    errado: 'Logo, título, subtítulo, texto e CTA, todos centralizados.',
+    motivo: 'Centralização total elimina o movimento e a hierarquia posicional.',
+  },
+]} />
+</Secao>
+
+<Secao titulo="Densidade de informação" descricao="Calibre pela peça, não pelo conteúdo disponível. Mais dado não gera mais valor.">
+<Tabela colunas={['Peça', 'Densidade', 'Regra prática']} larguraMinima={640} linhas={[
+  ['Slide institucional (pitch, licitação)', 'Baixa', 'Uma ideia, um dado principal, máximo de 40 palavras de corpo'],
+  ['Slide de produto (demo, treinamento)', 'Baixa a média', 'Um fluxo por slide, print com setas, sem texto longo'],
+  ['Proposta comercial e técnica', 'Média', 'Seções curtas, no máximo 5 itens por lista, tabela para comparativo e valor'],
+  ['Contrato e especificação', 'Alta', 'Numeração rigorosa, sumário, glossário, texto corrido permitido'],
+  ['Relatório de projeto e auditoria', 'Alta', 'Sumário executivo no topo, seções numeradas, hierarquia clara'],
+  ['Dashboard de indicadores', 'Alta, em cards', 'Um KPI por card, drill-down opcional'],
+  ['Tela de sistema público', 'Mínima', 'Rótulo, status e ação, sem texto explicativo na interface'],
+  ['E-mail institucional', 'Média', 'Contexto, bloco de ação e fechamento, até 250 palavras'],
+  ['E-mail transacional', 'Baixa', 'Assunto claro, uma ação principal, link em destaque'],
+  ['Post institucional', 'Baixa', 'Gancho, 3 a 4 parágrafos curtos, CTA'],
+]} />
+<Cartoes colunas={2} itens={[
+  { titulo: 'Slide não vira documento', texto: 'Texto de apoio ao orador vai nas notas ou em um handout. O slide funciona com o apresentador.' },
+  { titulo: 'Documento não vira slide', texto: 'Relatório de 20 páginas não cabe em 5 slides. Entregue deck executivo e relatório completo como anexo.' },
+  { titulo: 'Consistência na peça', texto: 'Não alterne slides de 3 palavras com slides de 12 itens no mesmo deck.' },
+  { titulo: 'Hierarquia antes de densidade', texto: 'Bloco denso com tipografia bem graduada lê melhor que bloco leve com hierarquia quebrada.' },
+]} />
+<CertoErrado itens={[
+  {
+    certo: 'Título afirma, visual demonstra, texto apoia: "Redução de 34% no tempo de emissão de TFD em 90 dias", gráfico antes e depois e uma linha de contexto.',
+    errado: 'Slide com título genérico e parágrafo de 8 linhas descrevendo o módulo.',
+  },
+  {
+    certo: 'Escopo com parágrafo de contexto, lista do que está incluso e lista do que está fora desta fase.',
+    errado: 'Bloco monolítico sem pontuação, hierarquia nem respiro.',
+  },
+  {
+    certo: 'Card de KPI em quatro linhas: número, rótulo, variação e meta.',
+    errado: 'Card único com 14 métricas, 3 gráficos sobrepostos e filtro escondido atrás de ícone.',
+    motivo: 'Painel que precisa de manual falhou no design.',
+  },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Tabela colunas={['Tema', 'O que a fonte diz', 'Adotado aqui']} larguraMinima={680} linhas={[
+  ['Escala tipográfica', 'Princípios de layout pedem relação mínima de 1:1,5 entre níveis (14, 20, 28). A tabela de tamanhos da hierarquia traz faixas que se encostam entre níveis (H3 até 20 px, H2 a partir de 22 px).', 'Faixas da tabela de hierarquia, com peso e cor reforçando a diferença entre níveis.'],
+  ['Espaço entre seções', 'Hierarquia: 48 a 80 px. Espaçamento: 40 a 48 px.', 'Ver página Layout e composição.'],
+]} />
+</Secao>
+
+<Callout>
+Fonte: Brandbook Citiesoft, Layout e composição.
+</Callout>
+
+</Pagina>

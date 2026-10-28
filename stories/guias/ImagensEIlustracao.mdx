@@ -1,0 +1,130 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado, Paleta } from '../_docs/Conteudo';
+import { imagemEGrafico } from '../_docs/snippets/imagens-e-ilustracao';
+
+<Meta title="Guias/Imagens e ilustração" />
+
+<Pagina
+  titulo="Imagens e ilustração"
+  resumo="Quando usar ilustração, ícone, fotografia ou gráfico, como é o estilo Citie Glass, a paleta de dados e as regras de acessibilidade e de arquivo."
+>
+
+<Secao titulo="Qual mídia usar" descricao="Cada tipo tem um papel. Um só estilo de ilustração por produto.">
+<Tabela colunas={['Mídia', 'Onde entra']} linhas={[
+  ['Ilustração 3D isométrica (Citie Glass)', 'Estado vazio, onboarding, erro, sucesso, apresentações e landing pages'],
+  ['Ícone', 'Ação, status, navegação, rótulo de campo e badge em tela operacional'],
+  ['Fotografia institucional', 'Site, relatório anual, comunicação interna e estudo de caso'],
+  ['Gráfico', 'Dashboard, painel analítico e relatório exportável'],
+]} />
+<Cartoes colunas={2} itens={[
+  { titulo: 'Tela vazia, de erro ou primeiro acesso', texto: 'Ilustração Citie Glass.' },
+  { titulo: 'Ação ou dado recorrente', texto: 'Ícone. Ilustração nunca substitui ícone em botão, campo ou linha de tabela.' },
+  { titulo: 'Informação que só a imagem transmite', texto: 'Fotografia ou gráfico.' },
+  { titulo: 'Nenhum dos casos', texto: 'Questione se o elemento deve existir.' },
+]} />
+<CertoErrado itens={[
+  { certo: 'Ilustração em estado vazio, em erro, em sucesso e no onboarding.', errado: 'Ilustração em tela de lançamento, grid de cadastro, tabela ou célula.', motivo: 'Em fluxo denso a imagem compete com o dado e alonga a tarefa.' },
+  { certo: 'Um estilo visual por produto.', errado: 'Misturar flat 2D com 3D isométrico, ou cartoon com fotorrealismo.' },
+  { certo: 'Imagem com licença documentada.', errado: 'Imagem sem licença, clipart genérico ou foto de banco com sorriso encenado.' },
+]} />
+<Callout>
+Tamanho mínimo da ilustração: 120 por 120 px em estado vazio inline e 240 por 240 px em tela dedicada. Abaixo disso, use ícone grande de 48 a 64 px. Em modal de exclusão, uma ilustração de 80 a 96 px pode reforçar o peso, com o texto como comunicação principal.
+</Callout>
+</Secao>
+
+<Secao titulo="Citie Glass" descricao="Único tratamento de ilustração: acrílico translúcido 3D isométrico em Citie Blue.">
+<Tabela colunas={['Atributo', 'Definição']} larguraMinima={600} linhas={[
+  ['Perspectiva', 'Isométrica a 30 graus, câmera ortogonal'],
+  ['Material', 'Acrílico fosco, opacidade de superfície entre 0,75 e 0,90'],
+  ['Cor', 'Gradiente de `#84AEFD` a `#1261E4`, com brancos translúcidos e brilho de aresta em ciano `#00B5F0`'],
+  ['Luz', 'Difusa, vinda do canto superior esquerdo. Sem sombra dura nem glow'],
+  ['Sombra do objeto', '`0 8px 24px rgba(18,97,228,.18)` sobre fundo claro'],
+  ['Fundo', 'Branco ou transparente. Nunca cor saturada'],
+  ['Forma', 'Chanfro suave de 2 a 4 px'],
+  ['Proibido', 'Neon, contorno cartoon, sombra colorida, arco-íris, textura pixelada'],
+]} />
+<Tabela colunas={['Contexto', 'Objeto canônico', 'Acento']} larguraMinima={620} linhas={[
+  ['Estado vazio', 'Pasta aberta, documento flutuante, gráfico vazio com lupa', 'Azul'],
+  ['Erro 404', 'Placa de endereço com interrogação', 'Azul e cinza'],
+  ['Erro 500', 'Engrenagem com fissura', 'Azul e `#EF4444`'],
+  ['Onboarding', 'Prédio público isométrico', 'Azul e ciano'],
+  ['Sucesso', 'Escudo com check, documento selado', 'Azul e `#22C55E`'],
+  ['Alerta', 'Triângulo âmbar sobre objeto canônico', 'Azul e `#F59E0B`'],
+  ['Acesso restrito', 'Cadeado translúcido', 'Azul e cinza'],
+  ['Pessoas, Financeiro, Estoque', 'Crachá, moeda e cofre, caixa e prateleira', 'Azul'],
+]} />
+</Secao>
+
+<Secao titulo="Fotografia" descricao="Servidores em ambiente real, território dos municípios e eventos do time. Sério, profissional e humano.">
+<Tabela colunas={['Critério', 'Especificação']} linhas={[
+  ['Resolução', '1920 por 1080 px na web, 3000 px no menor lado na impressão'],
+  ['Cor', 'Temperatura neutra a fria (5.500 a 7.000 K). Saturação de menos 5 a 10%'],
+  ['Tratamento', 'Só contraste e temperatura. Sem filtro, HDR exagerado ou vinheta'],
+  ['Texto sobre foto', 'Área escura ou painel `rgba(0,0,0,0.55)`, com contraste mínimo de 4,5:1'],
+  ['Licença', 'Fonte, data e número nos metadados e no repositório de assets. Sem licença, não entra em produção'],
+]} />
+</Secao>
+
+<Secao titulo="Gráficos" descricao="Use chart-1 a chart-8 nesta ordem. Gráfico de processo usa as cores de feedback, nunca esta paleta.">
+<Paleta cores={[
+  { nome: 'chart-1', hex: '#1261E4', uso: 'Série principal' },
+  { nome: 'chart-2', hex: '#00B5F0', uso: 'Comparativo' },
+  { nome: 'chart-3', hex: '#22C55E', uso: 'Positivo, meta atingida' },
+  { nome: 'chart-4', hex: '#F59E0B', uso: 'Atenção' },
+  { nome: 'chart-5', hex: '#8B5CF6', uso: 'Auxiliar 1' },
+  { nome: 'chart-6', hex: '#EF4444', uso: 'Negativo' },
+  { nome: 'chart-7', hex: '#14B8A6', uso: 'Auxiliar 2' },
+  { nome: 'chart-8', hex: '#EC4899', uso: 'Auxiliar 3' },
+]} />
+<Cartoes colunas={3} itens={[
+  { titulo: 'Cor não basta', texto: 'Nunca diferencie série só por cor. Combine com hachura (sólido, diagonal, pontilhado, horizontal, xadrez) ou rótulo direto.' },
+  { titulo: 'Rótulo visível', texto: 'Valores à vista por padrão, sem depender de hover. Números em pt-BR: `1.234.567,89`.' },
+  { titulo: 'Legenda', texto: 'Acima ou à direita, com texto de 13 px no mínimo. Nunca embaixo em dashboard compacto.' },
+  { titulo: 'Pizza', texto: 'Até 5 fatias, com percentual na fatia. Acima disso, barra horizontal empilhada ou treemap.' },
+  { titulo: 'Barras', texto: 'Verticais para tempo. Horizontais para ranking com rótulo longo.' },
+  { titulo: 'Eixos e grade', texto: 'Só grade horizontal em `color.border.default`. Linha de meta pontilhada de 4 por 4 px, 1,5 px de espessura.' },
+]} />
+<Tabela colunas={['Pergunta do gestor', 'Gráfico']} linhas={[
+  ['Como evoluiu a arrecadação?', 'Linha com área'],
+  ['Quem arrecadou mais?', 'Barra horizontal'],
+  ['Como se distribuem as despesas?', 'Barra empilhada'],
+  ['Qual a execução do orçamento?', 'Gauge ou barra de progresso'],
+  ['Processos por status?', 'Donut com até 5 categorias'],
+  ['Atendimentos por mês e tipo?', 'Barras agrupadas'],
+]} />
+</Secao>
+
+<Secao titulo="Acessibilidade e movimento">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Ilustração decorativa', texto: '`alt` vazio e `aria-hidden`, quando o texto da tela já comunica tudo.' },
+  { titulo: 'Ilustração informativa', texto: 'Texto alternativo com conteúdo e ação, nunca o estilo. Certo: `Falha de conexão com o servidor. Verifique a rede e tente novamente.`' },
+  { titulo: 'Gráfico', texto: 'Legenda com o que mostra, o período e a conclusão. Dados em tabela recolhível acessível por teclado. Gráfico interativo anuncia a mudança em `aria-live`.' },
+  { titulo: 'Movimento', texto: 'Entrada de 320 ms com stagger de 60 ms por elemento. Sem animação sob movimento reduzido. Nada pisca mais de 3 vezes por segundo.' },
+]} />
+<CodeTabs abas={imagemEGrafico} />
+</Secao>
+
+<Secao titulo="Arquivos e entrega">
+<Tabela colunas={['Tema', 'Regra']} linhas={[
+  ['Formato', 'SVG para vetor e ícone. WebP com fallback PNG no raster. Hero de até 200 KB sem justificativa'],
+  ['Nome', 'Padrão `modulo-contexto-variante.ext`, como `pessoas-empty-state-default.svg`'],
+  ['Render externo', 'PNG de 32 bits com fundo transparente, mínimo de 400 por 400 px (800 por 800 px para 2x)'],
+  ['Modo escuro', 'Entregue a versão dark quando o produto a suporta'],
+  ['Geração por IA', 'Confira o azul dominante `#1261E4`, remova artefatos de texto e registre ferramenta, prompt, data e operador'],
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Alt do estado vazio', texto: 'Na acessibilidade, a ilustração de estado vazio é decorativa com `alt` vazio. Em UX writing, o exemplo de alt para a mesma ilustração é descritivo: `Pasta vazia. Nenhum processo encontrado.`' },
+  { titulo: 'Tokens de movimento', texto: 'Este documento usa `expressive` 320 ms e `quick` 180 ms. Os princípios usam `slow` 300 ms e `fast` 100 ms.' },
+  { titulo: 'Fonte do título de estado vazio', texto: 'O CSS de handoff usa Red Hat Display no título. O restante do produto usa Inter.' },
+]} />
+</Secao>
+
+<Callout>
+Fonte: Design System Citiesoft, Imagem e ilustração.
+</Callout>
+
+</Pagina>

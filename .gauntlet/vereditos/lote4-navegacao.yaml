@@ -1,0 +1,114 @@
+lote: 4-navegacao
+revisor: tanjiro
+veredito: APROVADO
+veredito_anti_slop: PASSOU
+gate_tecnico: VERDE
+
+resumo: >
+  Anatomia do lote (Tabs pill, item de menu 32/raio 6, painel flutuante raio
+  10, Menubar 36, Sidebar fixa, Pagination, Breadcrumb) bate com o kit medido
+  em px via bounding box e com docs/figma-ui-kit.md. Contraste dos quatro
+  pares de token mais sensíveis do lote foi recalculado de forma independente
+  (luminância relativa, fórmula WCAG) e bateu com a casa decimal do comentário
+  do produtor em tokens.css nos quatro casos: accent x text-secondary 4,51:1,
+  accent-forte x brand-primary 3,95:1 (reprova, por isso a migração para
+  text-primary), accent-forte x text-primary 11,80:1, accent-foreground x
+  accent 9,32:1. Gate isolado no worktree (tsc, claro e escuro nos 12 arquivos
+  do lote) verde, 76/76 nos dois temas; a suíte de escuro inteira reprova em
+  outros 22 arquivos, todos fora do lote (CascadeSelect, MultiSelect,
+  TreeSelect, Filters, Table, TreeTable, Terminal etc.), confirmando o
+  isolamento declarado no handoff. Os dois MAIOR da primeira rodada foram
+  fechados pelo produtor com guarda nova nas stories e reverificados em
+  worktree limpo separado.
+
+achados:
+  - severidade: MAIOR
+    status: FECHADO
+    local: "organisms/Sidebar (variante fixa), tokens.css --citie-sidebar-accent"
+    descricao: >
+      Sabotagem b do briefing (apagar --citie-sidebar-accent) fazia o item
+      ativo da Sidebar fixa perder todo o fundo de estado, sobrando só a cor
+      do rótulo como sinal (violaria 1.4.1 em produção), e os 3 testes da
+      story "Fixa" passavam mesmo assim.
+    correcao: >
+      Sidebar.stories.tsx (story "Fixa") ganhou 3 asserts: fundo do item ativo
+      igual ao token resolvido, diferente do fundo da nav e diferente de
+      rgba(0,0,0,0). Reverifiquei em worktree limpo próprio (não o mesmo do
+      produtor): sabotagem de apagar só --citie-sidebar-accent (linha 240,
+      tema claro) reprova a story, com "expected 'rgba(0, 0, 0, 0)' to be
+      'rgb(239, 245, 255)'" na linha do assert de fundo. Suíte restaurada e
+      verde (3/3).
+    ressalva_menor: >
+      O assert de igualdade (linha 161 de Sidebar.stories.tsx) compara o
+      fundo computado do item contra o token `--citie-accent` resolvido, não
+      contra `--citie-sidebar-accent`, que é o token que a regra de CSS do
+      item realmente consome. Hoje `--citie-sidebar-accent: var(--citie-accent)`,
+      então são o mesmo valor e a guarda funciona (confirmado acima, e o
+      terceiro assert, contra rgba(0,0,0,0), pega a sabotagem de qualquer
+      forma). No dia em que os dois tokens divergirem por decisão de marca, a
+      guarda passa a comparar o item contra a referência errada: ou aprova um
+      item com o valor velho de accent quando deveria estar em
+      sidebar-accent, ou reprova um sidebar-accent correto e novo por não
+      bater com accent. Severidade MENOR porque não há sabotagem hoje que
+      passe em silêncio; é dívida de acoplamento a resolver trocando o
+      argumento de `token('--citie-accent')` por
+      `token('--citie-sidebar-accent')` na linha 161.
+  - severidade: MAIOR
+    status: FECHADO
+    local: "molecules/Tabs (variante line), tokens.css --citie-espessura-indicador"
+    descricao: >
+      Sabotagem c do briefing (zerar --citie-espessura-indicador) passava
+      silenciosamente nos 9 testes de Tabs.
+    correcao: >
+      Tabs.stories.tsx (story "Line") ganhou assert da altura de
+      .citie-tabs__realce contra o próprio --citie-espessura-indicador
+      resolvido, maior que zero. Reverifiquei em worktree limpo: zerar o
+      token reprova a story "Variante · line (padrão)" com "expected 0 to be
+      greater than 0". Suíte restaurada e verde (9/9, e 12/12 somando com
+      Sidebar). Sem ressalva: o assert lê o token certo desde o começo, não
+      há acoplamento indireto como no caso da Sidebar.
+  - severidade: POLIMENTO
+    status: OBSERVACAO
+    local: "TieredMenu.css, MegaMenu.css, Menubar.css, PanelMenu.css: migração para accent-forte"
+    descricao: >
+      Sabotagem a do briefing (accent-forte := brand-primary) reprova alto e
+      correto: o addon de acessibilidade (axe, regra color-contrast) barra 8
+      testes em 4 arquivos automaticamente via afterEach, sem precisar de
+      assert manual. Achado positivo, registrado porque prova que o gate
+      cobre contraste de cor de forma automática e vale documentar essa
+      cobertura no briefing dos próximos lotes.
+
+o_que_me_surpreendeu:
+  - A precisão do comentário de medição em tokens.css: recalculando os quatro
+    pares mais críticos do lote de forma independente (fórmula de luminância
+    relativa do WCAG, não estimativa visual) bati exatamente com os valores
+    documentados pelo produtor até a segunda casa decimal, incluindo o caso
+    de reprovação (accent-forte x brand-primary, 3,95:1) que justifica a
+    migração de cor do item ativo em cinco organismos diferentes.
+  - A cobertura automática de contraste via axe: a sabotagem (a) (trocar
+    accent-forte por brand-primary) derrubou 8 testes sozinha, sem qualquer
+    assert manual de cor, porque o addon de acessibilidade roda em todo
+    afterEach.
+
+o_que_faltou_para_surpreender: >
+  A guarda nova da Sidebar fecha o buraco de regressão, mas ainda lê o token
+  errado (--citie-accent em vez de --citie-sidebar-accent); um SURPREENDEU
+  pediria a guarda já nascendo acoplada ao token que o componente de fato
+  consome, sem a ressalva de acoplamento indireto registrada acima.
+
+escopo: limpo
+metodo:
+  - Diff lido por arquivo antes do handoff, na primeira rodada.
+  - Rodada 1: worktree detached em
+    /Users/rafaeleugenio/dev/citiesoft-storybook-revisao-lote4, node_modules
+    por hardlink, diff do lote aplicado via git apply. Gate isolado (tsc,
+    vitest claro e escuro nos 12 arquivos do lote, 76/76) e sabotagens a/b/c
+    originais.
+  - Rodada 2 (reverificação do adendo): worktree limpo separado
+    /Users/rafaeleugenio/dev/citiesoft-storybook-revisao-lote4b, a partir do
+    HEAD já com lotes 0 a 4 commitados; só o diff não commitado das duas
+    stories (guardas novas) aplicado por cima. Sabotagem pontual de cada
+    token (linha única, tema claro) confirmando reprovação real, texto do
+    erro e assert que disparou. Os dois worktrees removidos ao final,
+    tokens.css conferido limpo (git diff --stat sem saída) antes de cada
+    remoção.

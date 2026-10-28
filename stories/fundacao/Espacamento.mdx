@@ -1,0 +1,59 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Espacamento } from '../_docs/Medidas';
+import { TabelaUso } from '../_docs/TabelaUso';
+import { espacamentoUso, espacamentoGap } from '../_docs/snippets/espacamento';
+
+<Meta title="Fundação/Espaçamento" />
+
+<Pagina
+  titulo="Espaçamento"
+  resumo="Uma escala de múltiplos de 4px. Padding, gap e margem usam sempre um passo da escala."
+>
+
+<Secao titulo="Escala" descricao="O token --spacing vale 0.25rem (4px). O passo é o multiplicador: passo 4 equivale a 16px.">
+<Espacamento />
+</Secao>
+
+<Secao titulo="Quando usar cada passo">
+<TabelaUso
+  colunas={['Passos', 'Valor', 'Uso']}
+  linhas={[
+    ['0.5 a 1', '2px a 4px', 'Ajuste fino entre ícone e texto, espaço entre itens de uma aba ou de um controle segmentado.'],
+    ['1.5 a 2', '6px a 8px', 'Padding de botões, campos e itens de menu. Gap entre ícone e rótulo.'],
+    ['3', '12px', 'Padding de tooltips e da moldura de página. Gap entre linhas de uma lista densa.'],
+    ['4', '16px', 'Padding de cartões e gap entre blocos de uma página.'],
+    ['6', '24px', 'Gap entre o cabeçalho de um cartão e seu conteúdo.'],
+    ['8 em diante', '32px ou mais', 'Separação entre seções de uma página.'],
+  ]}
+/>
+</Secao>
+
+<Secao titulo="Valores nos componentes" descricao="Medidas reais do código dos componentes. Servem de referência para telas novas.">
+<TabelaUso
+  colunas={['Componente', 'Espaçamento', 'Classe']}
+  linhas={[
+    ['Botão médio', 'altura 36px, padding 8px', '`h-9 p-2`'],
+    ['Botão pequeno', 'altura 32px, padding 8px na horizontal e 6px na vertical', '`h-8 px-2 py-1.5`'],
+    ['Botão xs', 'altura 24px, padding 8px na horizontal', '`h-6 px-2`'],
+    ['Campo de texto', 'altura 36px (médio) ou 32px (pequeno)', '`h-9 ps-1 pe-2 py-2`'],
+    ['Menu suspenso', 'padding 10px', '`p-2.5`'],
+    ['Cartão de gráfico', 'padding 16px, gap interno 24px', '`p-4 gap-6`'],
+    ['Moldura de página', 'padding 12px, gap 16px', '`p-3 gap-4`'],
+    ['Grade de indicadores', 'gap 16px', '`gap-4`'],
+  ]}
+/>
+</Secao>
+
+<Secao titulo="Como usar" descricao="Em qualquer stack, o valor vem do token. Evite números soltos como 13px ou 18px.">
+<CodeTabs abas={espacamentoUso} />
+</Secao>
+
+<Secao titulo="Gap em vez de margem por filho" descricao="O contêiner define o espaço entre os filhos. Os filhos ficam sem margem própria.">
+<CodeTabs abas={espacamentoGap} />
+<Callout titulo="Por que">
+Com margem em cada filho, o primeiro e o último item ganham espaço extra nas pontas, e remover um item exige ajustar os vizinhos. Com `gap`, o espaço só existe entre itens presentes. Use `margin` apenas para afastar um bloco inteiro do que o cerca.
+</Callout>
+</Secao>
+
+</Pagina>

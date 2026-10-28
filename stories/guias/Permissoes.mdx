@@ -1,0 +1,125 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { PerfisDemo } from '../_docs/padroes/Permissoes';
+import { Prontos } from '../_docs/padroes/Moldura';
+import { permissaoExemplo } from '../_docs/snippets/padrao-permissoes';
+
+<Meta title="Guias/Padrões/Permissões" />
+
+<Pagina
+  titulo="Permissões"
+  resumo="Como a interface mostra, oculta, desabilita e explica restrições de acesso por perfil. A tela é camada de experiência. A autorização real fica no serviço."
+>
+
+<Secao titulo="Quando usar">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Use para', texto: 'Ações restritas por perfil, itens de menu condicionais, botões que mexem no fluxo de aprovação, abas, seções e campos que nem todo perfil vê ou edita, e rotas protegidas.' },
+  { titulo: 'Não use para', texto: 'Esconder conteúdo puramente visual, substituir a validação no servidor ou punir o usuário com tela de erro sem contexto.' },
+]} />
+</Secao>
+
+<Secao titulo="Anatomia" descricao="Os perfis são aditivos: um usuário pode ser gestor e servidor. A interface só lê o perfil, nunca o define.">
+<Tabela colunas={['Perfil', 'Descrição']} linhas={[
+  ['Servidor operacional', 'Consulta e preenche os próprios dados e acompanha os próprios processos.'],
+  ['Gestor de unidade', 'Aprova lançamentos da unidade, vê a equipe e acompanha indicadores.'],
+  ['RH operacional', 'Cadastra colaboradores, lança benefícios e gera relatórios de pessoal.'],
+  ['Administrador do sistema', 'Usuários, perfis, parâmetros e auditoria.'],
+  ['Cidadão', 'Portal externo: protocolos e envio de documentos, sem acesso ao sistema interno.'],
+]} />
+</Secao>
+
+<Secao titulo="Regras" descricao="Decisão central: se o usuário nunca precisa saber que a ação existe, oculte. Se ele sabe que existe e precisa entender por que não pode, desabilite com explicação.">
+<Tabela colunas={['Nº', 'Regra']} larguraMinima={520} linhas={[
+  ['1', 'Oculte quando a ausência é natural no fluxo do perfil. O elemento não entra na tela.'],
+  ['2', 'Desabilite com explicação quando a ação é esperada e a permissão, ou uma condição de negócio, a bloqueia.'],
+  ['3', 'Toda explicação está disponível por mouse e por teclado e antes da tentativa.'],
+  ['4', 'Não oculte campos no meio do fluxo depois de o usuário preencher dependências.'],
+  ['5', 'Módulo sem nenhuma sub-rota acessível some do menu. Itens parciais aparecem sem lacuna nem separador órfão.'],
+  ['6', 'URL direta proibida leva à tela de acesso negado, nunca ao login.'],
+  ['7', 'Coluna de ações vem por linha. Se tudo for negado, mantenha ao menos `Visualizar`.'],
+  ['8', '`Aprovar em lote` desaparece para quem não aprova no módulo.'],
+  ['9', 'Campo de configuração restrita fica somente leitura, com cadeado e `Somente administradores do sistema podem alterar este parâmetro.`'],
+  ['10', 'Seção sem visibilidade é removida do conteúdo, não escondida por estilo.'],
+  ['11', 'CPF de terceiro aparece completo para gestor e administrador e mascarado para o servidor operacional.'],
+  ['12', 'Recusa durante a operação vira toast com `Fazer login novamente`. Distinga falta de permissão de sessão expirada.'],
+  ['13', 'Toast de permissão negada dura no mínimo 6 segundos ou até fechar.'],
+  ['14', 'Antes de o perfil carregar, o estado é sem permissão. Mostre esqueleto.'],
+  ['15', 'Permissões têm nomes estáveis definidos no produto, não texto solto na interface.'],
+  ['16', 'Tentativas negadas entram na auditoria com data e hora, usuário, perfil, rota e resultado.'],
+]} />
+</Secao>
+
+<Secao titulo="Estados" descricao="Texto de explicação: quem pode, o que pode fazer e como obter acesso.">
+<Tabela colunas={['Situação', 'Texto']} larguraMinima={560} linhas={[
+  ['Aprovar, servidor operacional', '`Somente o gestor de unidade pode aprovar lançamentos.`'],
+  ['Editar colaborador, gestor sem papel de RH', '`A edição de cadastro é realizada pelo setor de RH.`'],
+  ['Excluir processo, RH', '`A exclusão de processos requer permissão de administrador. Solicite ao responsável pelo sistema.`'],
+  ['Regra de negócio', '`Aguardando anexo da documentação pelo servidor.`'],
+  ['Aprovar a própria solicitação', '`Você não pode aprovar sua própria solicitação.`'],
+  ['Lista sem registros para o perfil', 'Título `Nenhum registro disponível para seu perfil`, com ícone de escudo. É distinto do vazio por falta de dado.'],
+]} />
+<Tabela colunas={['Tela de acesso negado', 'Conteúdo']} linhas={[
+  ['Título', '`Você não tem acesso a esta página`'],
+  ['Motivo', 'Perfil ao qual a funcionalidade é restrita, quando possível'],
+  ['Ações', '`Voltar ao início`. Para administrador, também `Gerenciar permissões`.'],
+]} />
+</Secao>
+
+<Secao titulo="Acessibilidade">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Desabilitado alcançável', texto: 'Para o usuário entender o motivo, mantenha o botão na ordem de tabulação com estado de desabilitado acessível.' },
+  { titulo: 'Somente leitura', texto: 'Prefira somente leitura a desabilitado em campo de visualização: continua anunciado e focável. Cadeado com nome acessível.' },
+  { titulo: 'Contraste de exceção', texto: 'Rótulo desabilitado fica perto de 2,3:1, exceção aceita se o estado também for comunicado sem cor.' },
+  { titulo: 'Foco no título', texto: 'A tela de acesso negado posiciona o foco no título ao carregar.' },
+  { titulo: 'Anúncio da mudança', texto: 'Quando o perfil altera a interface depois do carregamento, a região é anunciada de forma educada.' },
+  { titulo: 'Alvos', texto: 'Ícones de ação com 44 px no portal do cidadão e 32 px no desktop do servidor, com 8 px entre eles.' },
+]} />
+</Secao>
+
+<Secao titulo="Certo e errado">
+<CertoErrado itens={[
+  { certo: 'Gestor vê `Aprovar` na própria solicitação, bloqueado, com o motivo visível.', errado: '`Aprovar` apenas desabilitado, sem explicação.', motivo: 'O leitor de tela anuncia só `Aprovar, desabilitado`.' },
+  { certo: 'Renderização condicional: sem permissão, o botão nem existe.', errado: 'Esconder o botão por estilo.', motivo: 'Pode ser revelado por inspeção e ainda ser anunciado.' },
+  { certo: 'Usuário autenticado sem acesso vai para a tela de acesso negado.', errado: 'Mandar para o login.', motivo: 'Confunde quem já entrou.' },
+]} />
+</Secao>
+
+<Secao titulo="Exemplo composto" descricao="O mesmo lançamento visto por três perfis. Troque o perfil e a autoria da solicitação.">
+<PerfisDemo />
+<Tabela colunas={['Permissão', 'Servidor', 'Gestor', 'RH', 'Administrador']} larguraMinima={640} linhas={[
+  ['Consultar a própria ficha', 'Sim', 'Sim', 'Sim', 'Sim'],
+  ['Aprovar lançamento', 'Não', 'Sim (exceto a própria)', 'Não', 'Sim'],
+  ['Devolver processo', 'Não', 'Sim', 'Não', 'Sim'],
+  ['Editar ou cadastrar colaborador', 'Não', 'Não', 'Sim', 'Sim'],
+  ['Lançar benefício', 'Não', 'Não', 'Sim', 'Sim'],
+  ['Exportar relatório', 'Não', 'Sim (do setor)', 'Sim', 'Sim'],
+  ['Gerenciar usuários, configurar, ler auditoria', 'Não', 'Não', 'Não', 'Sim'],
+]} />
+<Callout>
+A matriz é referência de design. O mapa oficial vive no serviço de autorização.
+</Callout>
+<CodeTabs abas={permissaoExemplo} />
+</Secao>
+
+<Secao titulo="Onde ver pronto">
+<Prontos itens={[
+  { nome: 'Templates/Sistemas/Gestão de usuários e permissões', uso: 'Tela de perfis e acessos.' },
+  { nome: 'Blocos/Estados', uso: 'EmptyState para acesso restrito.' },
+  { nome: 'Blocos/ActionMenu', uso: 'Menu de ações de linha filtrado por perfil.' },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Tabela colunas={['Tema', 'O que os documentos dizem']} linhas={[
+  ['Título da tela de acesso negado', 'Permissões usa `Você não tem acesso a esta página` e `Voltar ao início`. Tratamento de erros usa `Acesso não autorizado` e `Ir para o início`. Telas densas usa `Acesso restrito`.'],
+  ['Ação de pedir acesso', 'Tratamento de erros oferece `Solicitar acesso`. Permissões oferece `Gerenciar permissões`, só para administrador.'],
+  ['Texto de recusa em operação', 'O toast da fonte diz `Sem permissão para realizar esta ação.`, enquanto a mensagem de erro padrão diz `Você não tem permissão para [ação].`'],
+]} />
+</Secao>
+
+<Callout>
+Fonte: padrão de Permissões do Design System Citiesoft, com apoio de Tratamento de erros e Auditabilidade.
+</Callout>
+
+</Pagina>

@@ -1,0 +1,156 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { DuracoesDeMotion, CurvasDeMotion } from '../_docs/MotionDaMarca';
+import { motionTokensCodigo, logoMotionCodigo, slidesCodigo } from '../_docs/snippets/motion-da-marca';
+
+<Meta title="Marca/Motion da marca" />
+
+<Pagina
+  titulo="Motion da marca"
+  resumo="Movimento com função: confirmar uma ação, guiar o olhar ou indicar mudança de estado. Duração curta, curva suave e prefers-reduced-motion respeitado em todo produto. O logo e o gradiente de marca não se animam em loop."
+>
+
+<Secao titulo="Princípios" descricao="Toda animação responde a uma pergunta: por que isso precisa se mover agora? Sem resposta funcional, ela sai.">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Curto', texto: 'Interface opera entre 100 e 300ms. Acima de 400ms exige justificativa, como onboarding, splash ou processo pesado.' },
+  { titulo: 'Curva física', texto: '`ease-out` para entrar, `ease-in` para sair, `ease-in-out` para estado simétrico. Nunca `linear`, exceto em barra de progresso e spinner.' },
+  { titulo: 'Uma por evento', texto: 'Stagger só em lista de até 4 itens visíveis. Elementos secundários seguem com 20 a 40ms de atraso.' },
+  { titulo: 'Feedback imediato', texto: 'Clique, envio e toggle respondem em até 100ms. Escala entre 0,97 e 1,0.' },
+  { titulo: 'Sem loop', texto: 'Só indicador de carregamento ativo gira. Fundo, ícone decorativo e banner ficam parados.' },
+  { titulo: 'Mesmos valores', texto: 'Web, mobile e protótipo no Figma usam as mesmas durações e curvas.' },
+]} />
+</Secao>
+
+<Secao titulo="Tokens do tema" descricao="O tema define cinco durações e quatro curvas. A coluna de uso mostra a faixa da fonte mais próxima de cada duração. Clique em Reproduzir para comparar.">
+<DuracoesDeMotion itens={[
+  { token: '--motion-press', ms: 120, uso: 'Microinteração de 80 a 150ms: hover, foco, toggle.' },
+  { token: '--motion-quick', ms: 180, uso: 'Componente de 150 a 250ms: dropdown, tooltip, troca de aba.' },
+  { token: '--motion-standard', ms: 240, uso: 'Limite entre componente e tela: painel, entrada de item.' },
+  { token: '--motion-expressive', ms: 320, uso: 'Tela ou modal de 250 a 350ms: modal, drawer, rota.' },
+  { token: '--motion-hero', ms: 480, uso: 'Feedback de estado de 300 a 500ms. Acima de 400ms, justifique.' },
+]} />
+<CurvasDeMotion itens={[
+  { token: '--ease-citie-out', curva: [0.16, 1, 0.3, 1], uso: 'Entrada. É a curva do logo e do vídeo.' },
+  { token: '--ease-citie-inout', curva: [0.65, 0, 0.35, 1], uso: 'Estado simétrico, como abrir e fechar seção.' },
+  { token: '--ease-citie-exit', curva: [0.3, 0, 1, 1], uso: 'Saída rápida, sem bounce.' },
+  { token: '--ease-citie-drawer', curva: [0.32, 0.72, 0, 1], uso: 'Gaveta lateral. Só existe no tema.' },
+]} />
+<CodeTabs abas={motionTokensCodigo} />
+<Callout titulo="Só opacity e transform">
+Anime `opacity` e `transform`. Evite `width`, `height`, `top`, `left`, `padding` e `margin`, que causam reflow em equipamento com GPU limitada.
+</Callout>
+</Secao>
+
+<Secao titulo="Produto digital" descricao="Valores da fonte para cada interação, antes de escolher o token mais próximo.">
+<Tabela
+  colunas={['Interação', 'Duração', 'Curva', 'Movimento']}
+  linhas={[
+    ['Hover no botão primário', '100ms', 'ease-out', 'Só cor'],
+    ['Pressionar botão', '80ms + 120ms', 'ease-in e ease-out', 'Escala 1,0, 0,97, 1,0'],
+    ['Abrir modal', '200ms', 'ease-out', 'Fade e translateY de 8px a 0'],
+    ['Fechar modal', '150ms', 'ease-in', 'Fade e translateY de 0 a -4px'],
+    ['Drawer lateral', '250ms', 'ease-out', 'translateX de 100% a 0'],
+    ['Trocar de aba', '180ms', 'ease-in-out', 'Fade'],
+    ['Erro de campo', '300ms', 'ease-in-out', 'Shake de 2 ciclos, 4px'],
+    ['Tooltip', '100ms e 80ms', 'ease-out e ease-in', 'Fade'],
+    ['Spinner', '800ms em loop', 'linear', 'Só enquanto ativo'],
+  ]}
+/>
+</Secao>
+
+<Secao titulo="Logo animado" descricao="Para vídeo, splash e abertura de apresentação. Em PDF, documento e impresso o logo é estático.">
+<Tabela
+  colunas={['Regra', 'Valor']}
+  linhas={[
+    ['Ordem', 'Símbolo primeiro, wordmark depois. Nunca o inverso nem os dois juntos.'],
+    ['Entrada completa', '800 a 1200ms. Splash de produto até 850ms.'],
+    ['Assinatura de vídeo', 'Até 600ms. Reels em versão de 500ms.'],
+    ['Curva', '`--ease-citie-out`. Nada de bounce, elastic ou spring com overshoot.'],
+    ['Símbolo', 'Fade com subida de 8px, ou escala de 0,92 a 1,0. Traçado de 400 a 600ms em SVG.'],
+    ['Wordmark', 'Fade com atraso de 200 a 300ms, deslocamento horizontal de 6px ou máscara da esquerda para a direita.'],
+    ['Fundo e cor', 'Fundo sólido, Blue 500 ou 900 para logo branco. Sem troca de cor durante a animação.'],
+    ['Permanência e saída', 'Fica parado por pelo menos 1s. Saída em fade de 300 a 400ms.'],
+    ['Arquivo', 'SVG vetorial de `assets/logos/`, nunca PNG.'],
+  ]}
+/>
+<CodeTabs abas={logoMotionCodigo} />
+</Secao>
+
+<Secao titulo="Vídeo e redes sociais" descricao="Vídeo tem escala própria de durações. Não copie esses tokens para o CSS do produto.">
+<Tabela
+  colunas={['Token de vídeo', 'Duração', 'Uso']}
+  linhas={[
+    ['`motion-instant`', '80ms', 'Hover, toggle'],
+    ['`motion-fast`', '160ms', 'Ícone, rótulo, saída de lower-third'],
+    ['`motion-base`', '280ms', 'Card, fade de conteúdo, entrada de lower-third'],
+    ['`motion-emphasis`', '420ms', 'Cena, título, abertura de seção'],
+    ['`motion-slow`', '600ms', 'Logo, abertura e encerramento'],
+    ['`motion-cinematic`', '900ms a 1,2s', 'Título principal, capa animada'],
+  ]}
+/>
+<Cartoes colunas={2} itens={[
+  { titulo: 'Abertura de 3s', texto: 'Fundo Blue 900, logo em `motion-slow`, linha fina em `#5FD2FF`, depois dissolve ou slide lateral. Vídeo curto: 1,5s.' },
+  { titulo: 'Encerramento de 3s', texto: 'Dissolve para Blue 800 ou gradiente, logo, URL em Inter 400 com 0,2s de atraso, fade-out de 0,4s. Nunca tela branca.' },
+  { titulo: 'Lower-third', texto: 'Faixa Blue 600 a 92%, entra em 280ms, sai em 160ms, fica visível por 3,5s ou mais.' },
+  { titulo: 'Texto e dados', texto: 'Título com subida de 12px em 420ms. Contador de impacto em 800ms. Nada de letra por letra, exceto tutorial técnico.' },
+  { titulo: 'Transições', texto: 'Dissolve, slide lateral, fade-to-black e wipe horizontal. Sem wipe diagonal, spin 3D, glitch nem partículas.' },
+  { titulo: 'Exportação', texto: '16:9 a 1920 x 1080, 9:16 a 1080 x 1920, 25 ou 30 fps, H.264.' },
+]} />
+</Secao>
+
+<Secao titulo="Apresentações" descricao="Uma transição para o deck inteiro e builds só onde o argumento é progressivo.">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Entrada de elemento', texto: '200 a 350ms, nunca abaixo de 150ms nem acima de 600ms. Fade ou subida de 12 a 24px.' },
+  { titulo: 'Transição de slide', texto: 'Fade ou empurrar de 50 a 70px, entre 300 e 500ms. Padrão global de 400ms.' },
+  { titulo: 'Gráficos e diagramas', texto: 'Intervalo de 250ms entre etapas de dado e 150ms entre nós. Contador com até 800ms e uma métrica por slide.' },
+  { titulo: 'Proibido', texto: 'Cubo 3D, origami, flip, espiral, galeria e zoom acima de 110%. Sem animação em slide de texto, tabela financeira e contato.' },
+]} />
+<CodeTabs abas={slidesCodigo} />
+<Callout>
+Deck enviado como PDF é estático e precisa comunicar sem animação. Gradiente de marca em movimento só como fade de entrada de 400ms.
+</Callout>
+</Secao>
+
+<Secao titulo="O que evitar" descricao="Casos recorrentes de reprovação.">
+<CertoErrado itens={[
+  { certo: 'Modal que entra com fade e subida de 8px em 200ms.', errado: 'Modal que quica ao abrir.', motivo: 'Bounce passa leveza inadequada para dado público.' },
+  { certo: 'Logo estático ou com a sequência símbolo e wordmark.', errado: 'Logo girando, pulsando ou em loop.' },
+  { certo: 'Tabela que aparece inteira.', errado: 'Linhas entrando em cascata ao rolar.', motivo: 'Desorienta em telas com muitas linhas.' },
+  { certo: 'Gradiente de hero com fade de entrada única.', errado: 'Gradiente azul animado no login.' },
+]} />
+</Secao>
+
+<Secao titulo="Acessibilidade" descricao="Obrigatória em todo produto digital.">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Movimento reduzido', texto: 'Respeite `prefers-reduced-motion: reduce`. A abordagem preferida é zerar os tokens no `:root`. A mudança de estado continua visível por cor, borda ou ícone.' },
+  { titulo: 'Spinner e skeleton', texto: 'Spinner vira ícone estático ou o texto Carregando. Skeleton fica estático com opacidade reduzida.' },
+  { titulo: 'Limite de 3 Hz', texto: 'Nada pisca mais de 3 vezes por segundo. Pulse lento de 1 Hz ou menos só em badge não crítico.' },
+  { titulo: 'Sem emergência animada', texto: 'Luto, emergência e alerta crítico de segurança não levam movimento.' },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte" descricao="Pontos em que os documentos de motion divergem entre si. Vale o tema desta biblioteca.">
+<Tabela
+  colunas={['Tema', 'O que diverge']}
+  linhas={[
+    ['Conjuntos de tokens', 'A fonte traz três: `--duration-fast` a `--duration-slow` (100 a 400ms) no produto, `motion-instant` a `motion-cinematic` no vídeo, e os `--motion-*` do tema (120 a 480ms).'],
+    ['Duração de modal', '200ms nos princípios, 250 a 350ms no guia de fazer e evitar, 300ms nos tokens de produto.'],
+    ['Teto de duração', '400ms em interface no documento de produto. 800ms absolutos no guia de fazer e evitar.'],
+    ['Curva de saída', '`cubic-bezier(0.4, 0, 1, 1)` na fonte. O tema usa `0.3, 0, 1, 1`.'],
+    ['Curva simétrica', '`0.45, 0, 0.55, 1` no vídeo, `0.4, 0, 0.2, 1` no produto. O tema usa `0.65, 0, 0.35, 1`.'],
+    ['Curva de entrada', '`0, 0, 0.2, 1` em produto e decks. `0.16, 1, 0.3, 1` em logo e vídeo, igual ao tema.'],
+    ['Spring e overshoot', 'Os princípios mandam trocar spring por tween. O guia de fazer e evitar e o vídeo liberam `0.34, 1.56, 0.64, 1` para feedback positivo pontual.'],
+    ['Movimento reduzido', 'Fade de 80ms nos princípios, duração de 0,01ms no guia de fazer e evitar, tokens em 0ms no documento de produto.'],
+    ['Logo animado', 'O checklist dos princípios exige logo estático em todas as aplicações. O documento do logo permite a animação descrita acima. Os exemplos de bumper ficam com 800ms de permanência, abaixo do mínimo de 1s.'],
+    ['Transição de slide', 'Fade de 200ms ou slide de 250ms nos princípios, 300 a 500ms no documento de apresentações, 300ms no de vídeo.'],
+  ]}
+  larguraMinima={640}
+/>
+</Secao>
+
+<Callout>
+Fonte: Brandbook Citiesoft, seção Motion da marca (princípios, logo, produto, vídeo e redes, apresentações, fazer e evitar). Tokens e curvas vêm do tema do Storybook.
+</Callout>
+
+</Pagina>

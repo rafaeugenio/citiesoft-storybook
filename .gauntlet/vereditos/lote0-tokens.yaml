@@ -1,0 +1,408 @@
+revisor: Gojo, Design QA, revisor cego do Lote 0
+lote: Lote 0, tokens do UI Kit Citiesoft em tokens.css e fundações
+artefato_avaliado: >-
+  Branch revisao, sem commit. Escopo restrito a src/tokens/tokens.css,
+  src/fundacoes/*.stories.tsx e as asserções de teste listadas em
+  .gauntlet/lote0-tokens.md. Os começos dos lotes 1 e 2 que já estão na árvore
+  (Button, SplitButton, Field, InputGroup, InputOtp) ficaram fora da análise.
+  Handoff do produtor lido só depois do diff, conforme o briefing.
+veredito: APROVADO
+veredito_anti_slop: PASSOU
+status: >-
+  Rodada 2 (02/09). Reverificação dos dois MAIOR e do POLIMENTO em worktree
+  próprio, conforme o briefing. Veredito mantido em APROVADO; anti-slop sobe
+  para PASSOU. A seção reverificacao_rodada_2 abaixo registra o que mudou.
+
+resumo_curto: >-
+  Os valores do kit estão todos no lugar e as medições de contraste do produtor
+  se confirmam número a número. A prova de herança do var() no escuro está
+  correta e eu a reproduzi nos dois sentidos. O que impede SURPREENDEU é a
+  guarda que ele não tem: o accent pode virar branco puro no tema claro e a
+  suíte segue 782 de 782 verde. E a tabela de tokens das fundações lê a raiz do
+  documento, então no tema escuro ela exibe o valor claro ao lado de uma
+  amostra pintada de escuro: a documentação nova mente justo onde o lote mais
+  se esforçou para medir.
+
+gate_tecnico:
+  lint: 'oxlint, zero erro (dois avisos antigos em .probe-rev3)'
+  typecheck: 'tsc -b --force, exit 0'
+  build: 'storybook build, verde'
+  verificar_catalogo: 'verde, 7 invariantes'
+  testes_claro: '119 arquivos, 782 de 782 verdes'
+  testes_escuro: >-
+    62 falhas em 14 arquivos, 720 verdes. Igual ao número do handoff, abaixo do
+    teto de 62. Nenhum arquivo do Lote 0 entre as falhas novas; a única falha em
+    src/fundacoes (Cores > Texto, placeholder #6b7177 sobre #1a1a1d, 3,51:1) é
+    dívida anterior ao lote.
+  sabotagem_1_accent_branco: >-
+    --citie-accent: #ffffff no bloco :root. Resultado: 782 de 782 verdes. Nenhum
+    teste reprova. A guarda de contraste do accent não existe; a única guarda
+    nova (Cores > Accent) confere só que state-selected e hover-overlay apontam
+    para o accent, e branco apontando para branco passa. Valor restaurado.
+  sabotagem_2_apagar_mini: >-
+    --citie-control-height-mini removido. Resultado: 1 falha, Raio > Altura de
+    controle e alvo de toque (a contagem de dois 24px cai para um). Guarda
+    existe e reprova no lugar certo. Valor restaurado.
+  sabotagem_3_redeclaracao_escura: >-
+    Removidas do bloco [data-theme='dark'] as três linhas state-selected,
+    state-hover-overlay e sidebar-accent. Resultado: 90 falhas em 25 arquivos
+    contra 62 em 14 na base, 28 falhas novas, todas por contraste de axe no
+    escuro: AppShell (4), Tree (4), OrderList (5), Listbox (3), MegaMenu (3),
+    TieredMenu (2), PickList (2), Widget (2), Sidebar, MultiSelect,
+    InputGroup. A necessidade da redeclaração está guardada pela suíte
+    escura, sem teste dedicado. Valor restaurado.
+  restauracao: >-
+    tokens.css conferido byte a byte contra a cópia original ao fim do script
+    (18:30 de 01/09). Depois disso o Lote 3 editou o arquivo (00:57 de
+    02/09); conferi que accent, mini e as redeclarações escuras seguem
+    intactos no arquivo atual. Registro o risco: sabotagem por cópia e
+    restauro numa árvore compartilhada por vários lotes pode sobrescrever
+    escrita alheia feita na janela; recomendo que sabotagens futuras rodem em
+    worktree próprio.
+
+medicoes_refeitas:
+  ferramenta: >-
+    Calculadora própria em Node com a fórmula de luminância relativa da WCAG,
+    em $CLAUDE_JOB_DIR/tmp/contraste.mjs. Diferença máxima contra o handoff de
+    0,02, por arredondamento intermediário.
+  tokens_contra_o_kit:
+    - 'radius-lg 10px: confere com radius 10 do kit'
+    - 'alturas mini 24, small 32, normal 36, large 40, xl 48: conferem com Button e Input do kit'
+    - 'shadow-controle 0 1 2 rgba(0,0,0,.05): igual ao shadow-xs'
+    - 'shadow-raised 0 1 3 0 .10 + 0 1 2 -1 .10: igual ao shadow-sm'
+    - 'shadow-dialog 0 10 15 -3 .10 + 0 4 6 -4 .10: igual ao shadow-lg'
+    - 'anel de foco 0 0 0 3px opaco: igual à anatomia do kit'
+    - 'popover #202020/#ffffff no claro e invertido no escuro: confere'
+    - 'secondary #f4f5f7/#202020: confere com neutral-100 e neutral-900 traduzidos'
+    - 'sidebar 7 vagas: conferem com a lista do kit'
+  contraste_claro:
+    - 'text-primary #202020 / accent #eff5ff = 14,88:1'
+    - 'text-secondary #6b7177 / accent #eff5ff = 4,51:1'
+    - 'brand-primary #1261e4 / accent #eff5ff = 4,97:1'
+    - 'text-secondary / accent do kit #e4edfd = 4,19:1, reprova, concordo com o desvio do produtor'
+    - 'brand-primary / accent-forte #d6dce4 = 3,95:1, reprova'
+    - 'text-secondary / accent-forte #d6dce4 = 3,58:1, reprova'
+    - 'anel #1261e4 / #ffffff = 5,45:1; / #fafafa = 5,22:1; anel antigo a 40% composto #a0c0f4 = 1,85:1'
+    - 'borda de campo #8f8f8f / #ffffff = 3,23:1; / #fafafa = 3,10:1'
+    - 'borda de campo #8f8f8f / accent #eff5ff = 2,95:1, REPROVA 1.4.11 (campo dentro de linha em hover ou selecionada)'
+  contraste_escuro:
+    - 'text-primary #f5f5f6 / accent #202838 = 13,55:1'
+    - 'text-secondary #9a9da3 / accent #202838 = 5,43:1'
+    - 'brand-primary #4d8bfc / accent #202838 = 4,51:1'
+    - 'brand-primary #4d8bfc / accent-forte #29344b = 3,80:1, REPROVA, e o comentário do token omite este par'
+    - 'anel #4d8bfc / #1a1a1d = 5,30:1; / #141414 = 5,63:1; anel antigo a 50% composto = 2,29:1'
+    - 'borda de campo #6b6b6b / #1a1a1d = 3,26:1'
+    - 'borda de campo #6b6b6b / accent #202838 = 2,77:1, REPROVA'
+  desvios_do_briefing:
+    accent_claro_eff5ff: >-
+      Concordo. O #e4edfd do kit derruba text-secondary para 4,19:1 e 27
+      componentes escrevem metadado nessa tinta dentro da linha que recebe
+      hover. Registro o custo do desvio: #eff5ff é também brand-subtle,
+      info-background e o antigo state-selected. Quatro nomes, uma tinta. A
+      linha em hover e a faixa informativa ficam idênticas de cor, e o accent
+      mede 1,10:1 sobre a superfície branca, ou seja, o realce de marca que o
+      kit pede é quase invisível.
+    accent_escuro_202838: >-
+      Concordo. O neutro 900 é a zebra, e a matiz de marca sólida é a mesma
+      composição que o véu de 14% produzia. Medido: 1,06:1 contra a zebra
+      #232327 e 1,18:1 contra a superfície, pouco, mas distinto.
+    selecao_apontando_para_accent: >-
+      Concordo como transição, com o gap registrado: hover e seleção iguais
+      significa que a linha apontada e a linha escolhida não se distinguem
+      por cor. O accent-forte existe e reprova em brand-primary e
+      text-secondary nos dois temas, então a migração componente a componente
+      é o caminho.
+
+heranca_no_escuro:
+  metodo: >-
+    Playwright sobre o build estático servido em localhost, story
+    fundações-cores--accent com globals theme:dark, getComputedStyle no
+    container [data-theme='dark'] e na raiz; depois HTML mínimo com o
+    tokens.css original e com uma cópia sem as três redeclarações escuras.
+  resultado: >-
+    PROVADO. Com o arquivo original, o container escuro lê accent #202838,
+    state-selected #202838 e sidebar-accent #202838, enquanto a raiz lê
+    #eff5ff nos três. Removidas as redeclarações, o container escuro lê
+    accent #202838 e state-selected #eff5ff, sidebar-accent #eff5ff: o var()
+    foi substituído na raiz e o valor computado claro foi herdado. O produtor
+    descreveu o mecanismo corretamente.
+  efeito_colateral_encontrado: >-
+    Na mesma story, em tema escuro, a tabela de tokens exibe "#eff5ff" na
+    coluna Valor de --citie-accent enquanto a amostra ao lado pinta
+    rgb(32, 40, 56). TabelaDeTokens.lerValor consulta document.documentElement,
+    que nunca recebe data-theme; o decorador marca um container. Toda tabela
+    de fundação mostra o valor claro no tema escuro, e o texto das stories
+    promete o contrário ("troque o tema no controle").
+
+testes_ajustados:
+  conclusao: >-
+    Nenhuma asserção de comportamento foi afrouxada. Confirmado arquivo a
+    arquivo nas seis alturas ([32,40,48] para [32,36,40] em Button,
+    FloatLabel, Input, InputOtp, Select, SplitButton), nos três de 40 para 36
+    (InputOtp Default, SkeletonFormulario, SkeletonLista), nos doze nomes de
+    story e nos cinco pontos de indexOf('rgba') para indexOf('rgb'). Este
+    último merece registro: com o anel em rgb() e a busca ainda em 'rgba', o
+    indexOf devolveria -1, o slice(-1) devolveria ")" e o toContain passaria
+    sempre. A troca manteve o teste vivo. Elevação passou de regex para
+    string exata porque a regex casava dois tokens; Raio conta dois 24px.
+    Ambas continuam medindo o que mediam.
+
+fundacoes:
+  tokens_novos_em_tabela: >-
+    Todos os 18 tokens novos têm linha com uso: accent, accent-foreground,
+    accent-forte, secondary, secondary-foreground, popover,
+    popover-foreground, os sete de sidebar, control-height-mini,
+    control-height-xl, spacing-0-5, spacing-1-5. shadow-controle e
+    state-focus-ring-danger, que existiam sem linha, ganharam linha. Campo
+    evitar presente onde há vizinho confundível (accent, secondary, popover,
+    hover-overlay, spacing-0-5, mini); ausente em accent-forte, que confunde
+    com accent e deveria ter.
+
+texto:
+  travessao: 'grep de — em tokens.css e src/fundacoes/*.tsx: zero'
+  nao_e_x_e_y: 'zero'
+  nao_x_mas_y: 'zero'
+  e_nao_y: >-
+    A figura "X, e não Y" e "X, e nunca Y", que o briefing lista como negação
+    paralela, aparece em 8 linhas novas do diff (tokens.css 166, 378, 785,
+    787; Cores 265 duas vezes e 282; Elevação 114) e em mais de 30 linhas
+    pré-existentes dos mesmos arquivos. O grep sugerido pelo orquestrador não
+    a pega. Registro como MENOR e como padrão da casa a tratar na origem.
+
+reverificacao_rodada_2:
+  ambiente: >-
+    Worktree destached em /Users/rafaeleugenio/dev/citiesoft-storybook-revisao-lote0,
+    diff não commitado aplicado com git apply, node_modules por symlink. O
+    symlink exigiu server.fs.allow apontando para o repositório principal no
+    vite.config.ts do worktree, senão o Vite recusa o setup-file do addon e a
+    suíte reporta "no tests". Fica registrado para o próximo revisor. Worktree
+    removido ao fim; nada tocado na árvore compartilhada.
+  guarda_do_accent:
+    base_claro: 'Cores.stories.tsx 9 de 9'
+    base_escuro: '8 de 9; a falha é Cores > Texto (placeholder 3,51:1), dívida anterior, presente na base da rodada 1'
+    accent_claro_ffffff_tema_claro: 'REPROVA em Accent, secundário e popover: expected #ffffff not to be #ffffff (accent igual a background-surface)'
+    accent_claro_ffffff_tema_escuro: 'passa, como esperado: o bloco escuro redeclara o accent'
+    accent_escuro_1a1a1d_tema_escuro: 'REPROVA em Accent, secundário e popover: expected #1a1a1d not to be #1a1a1d'
+    accent_escuro_1a1a1d_tema_claro: 'passa, como esperado'
+    conclusao: >-
+      A guarda existe, lê o container [data-theme] e reprova nos dois temas
+      com a asserção certa. Os pisos de contraste (4,5:1 texto, 3:1
+      brand-primary) estão na story com o cálculo WCAG ao lado, e a story
+      confere que a tabela exibe o mesmo valor que o container computa.
+  tabela_no_escuro: >-
+    Playwright sobre o build do worktree, fundações-cores--accent com
+    theme:dark: container lê accent #202838; coluna Valor exibe #202838;
+    amostra pinta rgb(32, 40, 56). No claro a coluna exibe #eff5ff. Igual à
+    amostra nos dois temas. lerValor recebe o ref da própria tabela.
+  accent_forte_evitar: >-
+    Presente: "usar como hover. O forte é estado que persiste; o ponteiro
+    passa pelo accent. E o rótulo por cima precisa ser text-primary ou
+    accent-foreground: brand-primary mede 3,95:1 no claro e 3,80:1 no escuro."
+  menores_fechados_de_passagem: >-
+    Confirmados: linha 3,80:1 no comentário escuro do accent-forte;
+    comentário em sidebar-accent-foreground escuro explicando a subida para
+    text-primary; AchadoAberto na story Accent sobre os quatro tokens em
+    #eff5ff; as negações paralelas novas de tokens.css e de Cores reescritas.
+    Resta uma no diff do Lote 0: "É a espessura da tecla, e não elevação" em
+    Elevacao.stories.tsx, que é linha do Kbd (Lote 1) e fica com o Lote 1.
+  fora_do_escopo: 'Badge e Link (Lote 1) ignorados por instrução do orquestrador.'
+
+achados:
+  - severidade: MAIOR
+    status: FECHADO na rodada 2, sabotagem refeita por mim nos dois temas
+    id_anti_slop: null
+    local: 'src/tokens/tokens.css :root, --citie-accent; src/fundacoes/Cores.stories.tsx, story Accent (play)'
+    descricao: >-
+      Não existe guarda de contraste nem de visibilidade para o accent. Com
+      --citie-accent: #ffffff no claro, a suíte inteira fica verde (782 de
+      782), embora 25 arquivos consumam hover-overlay e 17 consumam
+      state-selected e todos passem a pintar hover e seleção de branco sobre
+      branco. A guarda de paridade de Table aceita, porque a linha par sai da
+      zebra e as duas paridades ficam iguais, sem exigir que a seleção se
+      distinga da linha ímpar em repouso. O comentário do token diz que as
+      guardas de Table e TreeTable reprovaram o neutro 900 no escuro, o que é
+      verdade só para o caso em que seleção coincide com a zebra.
+    esperado: >-
+      Um teste na fundação Cores (ou em Table) que meça o accent contra
+      background-surface e contra background-subtle nos dois temas e exija
+      diferença mínima, e que meça text-secondary sobre accent com piso 4,5:1,
+      já que esse foi o critério declarado para escolher o valor.
+    encontrado: 'Asserção de aliasing (state-selected == accent) somente, e ela lê a raiz do documento, que nunca é escura.'
+    correcao: >-
+      Adicionar ao play da story Accent: ler os tokens no container
+      [data-theme] mais próximo, calcular contraste text-secondary/accent e
+      text-primary/accent e exigir 4,5:1, e exigir accent diferente de
+      background-surface e de background-subtle. Sabotar com #ffffff e ver
+      reprovar antes de fechar.
+
+  - severidade: MAIOR
+    status: FECHADO na rodada 2, valor exibido #202838 igual à amostra no escuro
+    id_anti_slop: null
+    local: 'src/fundacoes/_ui/TabelaDeTokens.tsx:53 (lerValor) e as stories novas Accent e Sidebar de Cores.stories.tsx'
+    descricao: >-
+      A tabela de tokens lê getComputedStyle(document.documentElement), e o
+      tema vive no container do decorador. No tema escuro a coluna Valor
+      exibe o valor claro ao lado de uma amostra pintada de escuro. Medido em
+      fundações-cores--accent com theme:dark: valor exibido "#eff5ff",
+      amostra rgb(32, 40, 56). O defeito é anterior ao lote, mas o lote
+      escreveu dois blocos de descrição com contrastes do escuro ("No escuro:
+      13,55:1, 5,43:1...") por cima de uma tabela que não mostra esses
+      valores, e os dois play tests novos leem a raiz, então a suíte escura
+      nunca exercita o bloco [data-theme='dark'] das fundações.
+    esperado: 'Valor exibido igual ao valor computado no container de tema, nos dois temas.'
+    encontrado: 'Valor da raiz (claro) em qualquer tema; amostra correta, número errado.'
+    correcao: >-
+      lerValor recebe um elemento de referência (o container mais próximo
+      com data-theme, via closest) e lê dele. Os play tests de Accent e
+      Sidebar passam a ler o mesmo container. O MutationObserver já observa o
+      container; só a leitura está no lugar errado.
+
+  - severidade: MENOR
+    status: ABERTO, entregue ao Lote 5 por decisão registrada
+    id_anti_slop: null
+    local: 'src/tokens/tokens.css, --citie-form-field-border (#8f8f8f claro, #6b6b6b escuro) sobre --citie-accent'
+    descricao: >-
+      A borda de campo mede 3,23:1 sobre a superfície e 2,95:1 sobre o accent
+      no claro; 3,26:1 e 2,77:1 no escuro. O kit coloca input como conteúdo
+      de célula e o hover de linha agora é o accent sólido, então campo em
+      linha apontada ou selecionada fica com borda abaixo de 3:1 (WCAG
+      1.4.11). Antes do lote a seleção já era #eff5ff, portanto o número não
+      piorou; o que mudou é que o hover deixou de ser véu e passou a ser a
+      mesma tinta em 25 arquivos.
+    correcao: >-
+      Registrar no comentário do token e entregar ao Lote 5: campo dentro de
+      linha em accent usa form-field-border-hover (#6b7177, que mede 4,51:1
+      sobre #eff5ff) ou a linha com campo fica fora do hover sólido.
+
+  - severidade: MENOR
+    status: FECHADO na rodada 2
+    id_anti_slop: null
+    local: 'src/tokens/tokens.css, comentário de --citie-accent-forte no bloco escuro'
+    descricao: >-
+      O comentário lista text-primary 11,42:1, text-secondary 4,58:1 e
+      accent-foreground 8,32:1 sobre #29344b e para aí. brand-primary
+      #4d8bfc sobre #29344b mede 3,80:1 e reprova, o mesmo par que no claro
+      é citado como motivo de state-selected não apontar para o forte. O
+      motivo vale nos dois temas e o texto sugere que vale só no claro.
+    correcao: 'Acrescentar a linha "brand-primary #4d8bfc / #29344b = 3,80:1, reprova" ao comentário escuro.'
+
+  - severidade: MENOR
+    status: REGISTRADO como AchadoAberto na story Accent; decisão de DesignOps segue pendente
+    id_anti_slop: null
+    local: 'src/tokens/tokens.css :root: --citie-accent, --citie-brand-subtle, --citie-info-background, antigo state-selected'
+    descricao: >-
+      Quatro tokens com o mesmo #eff5ff. A story Cores diz para evitar accent
+      como fundo de mensagem informativa porque info-background carrega
+      severidade, mas os dois pintam a mesma cor, então a distinção existe só
+      no nome. Consequência visível: linha em hover e faixa de informação
+      idênticas na mesma tela. O produtor registrou o gap para o Lote 5 e
+      para o DesignOps; fica aqui como achado de token para o Kafka decidir
+      entre escurecer text-secondary e adotar o #e4edfd do kit, ou separar
+      info-background do accent.
+    correcao: 'Decisão de DesignOps, fora do lote; registrar como achado aberto na story Accent, como as demais fundações fazem com AchadoAberto.'
+
+  - severidade: MENOR
+    status: FECHADO no escopo do Lote 0; sobra uma linha do Kbd (Lote 1) em Elevacao.stories.tsx
+    id_anti_slop: TXT-002
+    local: 'tokens.css linhas 166, 378, 785, 787; Cores.stories.tsx 265 e 282; Elevacao.stories.tsx 114'
+    descricao: >-
+      Oito ocorrências novas da figura "X, e não Y" / "X, e nunca Y" ("foi
+      escolhido medindo, e não copiando", "promovidos a token, e nunca uma
+      escala nova", "Redeclarados aqui, e não só na raiz", "ficou em #eff5ff,
+      e não no #e4edfd"). O briefing proíbe negação paralela em qualquer
+      forma. O handoff declara "nenhuma negação paralela nos textos novos"
+      porque o grep procura só "não é X, é Y". A figura é padrão de toda a
+      base (mais de 30 ocorrências anteriores nos mesmos arquivos), então
+      isto é para o DesignOps tratar na origem, e para o produtor corrigir as
+      oito dele.
+    correcao: >-
+      Afirmar direto: "O valor claro foi escolhido medindo o contraste dos
+      três textos"; "Os degraus são os valores que já predominam no código";
+      "Redeclarados no bloco escuro porque...". Sem a segunda metade.
+
+  - severidade: MENOR
+    status: ABERTO, pertence ao Lote 1 (regra do Button)
+    id_anti_slop: null
+    local: 'src/fundacoes/Raio.stories.tsx, linha control-height-mini; src/components/atoms/Button/Button.tsx:24 (fora do escopo, só citado)'
+    descricao: >-
+      A fundação documenta mini 24px como altura de botão e campo em linha de
+      tabela, e o Button mantém o comentário "Nunca abaixo de 32px em
+      produto", com a story Tamanhos repetindo "A spec proíbe altura abaixo
+      de 32px". Duas regras vivas em contradição no mesmo catálogo. O Lote 1
+      precisa escolher e escrever a regra uma vez.
+    correcao: 'A fundação Raio registra a exceção (mini só em densidade de operador, dentro de tabela) e o Lote 1 alinha o Button.'
+
+  - severidade: POLIMENTO
+    status: FECHADO na rodada 2
+    id_anti_slop: null
+    local: 'src/fundacoes/Cores.stories.tsx, ACCENT[accent-forte]'
+    descricao: 'Único token novo sem campo evitar, e é o que mais confunde com o vizinho (accent). Falta dizer: evitar como hover; hover é accent.'
+    correcao: 'Acrescentar evitar: "usar como hover. O forte é estado que persiste; o ponteiro passa pelo accent."'
+
+  - severidade: POLIMENTO
+    status: FECHADO na rodada 2, comentário presente
+    id_anti_slop: null
+    local: 'src/tokens/tokens.css, bloco escuro, --citie-sidebar-accent-foreground'
+    descricao: >-
+      No claro o token é apelido de accent-foreground; no escuro é #f5f5f6
+      literal enquanto accent-foreground é #d2d3d6. A relação de apelido muda
+      de tema para tema sem comentário. Contraste passa nos dois (9,32:1 e
+      13,55:1), então é coerência de arquitetura, sem risco visual.
+    correcao: 'Ou apelidar nos dois temas, ou comentar por que o escuro escolhe text-primary.'
+
+o_que_me_surpreendeu:
+  - >-
+    A escolha do accent por varredura em vez de por cópia. O produtor testou
+    o degrau do kit, mediu que ele derruba text-secondary para 4,19:1, varreu
+    seis candidatos mais claros e ficou com o único que fecha os três textos.
+    Refiz a varredura e cheguei aos mesmos números. É a diferença entre
+    seguir o kit e entender o kit.
+  - >-
+    A prova de herança do var() no bloco escuro está certa e é o tipo de
+    defeito que passa em silêncio: o AppShell escuro teria pintado rótulo
+    #84aefd sobre #d6dce4 a 1,60:1. Reproduzi a remoção e vi state-selected
+    voltar a #eff5ff dentro do container escuro. O comentário no arquivo
+    explica o mecanismo em três linhas, o que vai poupar a próxima pessoa que
+    tentar "limpar" as redeclarações.
+  - >-
+    A troca de rgba para rgb no teste do anel manteve a asserção viva. Com o
+    anel opaco serializado como rgb() e o indexOf ainda em 'rgba', o slice(-1)
+    devolveria ")" e o toContain passaria sempre. O produtor viu isso e o
+    handoff explica a serialização do navegador como motivo de o token estar
+    em rgb() e não em hex.
+
+o_que_faltou_para_surpreender:
+  - >-
+    Uma guarda que reprove quando o accent some. Sabotei para branco e nada
+    reprovou. O critério do briefing é que o revisor sabote e veja falhar, e
+    o token mais importante do lote não tem o que falhar.
+  - >-
+    Ler o tema no lugar certo. As duas stories novas medem contraste no
+    escuro em prosa e não conseguem exibir o valor escuro na tabela abaixo da
+    prosa. O produtor escreveu o comentário sobre herança em container e
+    depois escreveu um play test que lê a raiz.
+
+motivo_do_veredito: >-
+  APROVADO. Os valores do kit entraram inteiros e conferidos, as sombras e o
+  anel batem com o doc do Figma medida a medida, as alturas e o raio estão
+  onde o mapa mandou, os desvios do briefing têm número que os justifica e eu
+  concordo com os três, a herança escura foi provada nos dois sentidos, e os
+  testes ajustados são todos de literal, nenhum de comportamento. O gate está
+  em 782 de 782 no claro e em 62 no escuro, igual ao número do handoff e sem
+  falha nova. Fica em APROVADO em vez de SURPREENDEU por dois MAIOR: o accent
+  sem guarda e a tabela de fundação que no tema escuro exibe o valor claro. O
+  anti-slop fica em VOLTA PARA REFINO pelas oito negações paralelas novas
+  (TXT-002), que o briefing proíbe sem exceção; é trabalho de minutos e não
+  toca valor de token.
+
+motivo_do_veredito_rodada_2: >-
+  APROVADO, mantido. Os dois MAIOR fecharam do jeito que o briefing pede:
+  com guarda que eu sabotei e vi reprovar nos dois temas, e com o número
+  exibido igual ao número pintado. O anti-slop sobe para PASSOU porque as
+  negações paralelas do escopo foram reescritas. Não subo para SURPREENDEU
+  porque o critério é o estado do lote hoje e as duas decisões que me
+  surpreenderam na rodada 1 já contavam; o que fechou agora era o que
+  faltava para o lote estar inteiro, e estar inteiro é o aprovado. Ficam
+  abertos, fora deste lote e com dono nomeado: borda de campo sobre accent
+  (Lote 5), a regra de altura mínima do Button contra o mini (Lote 1) e a
+  decisão de DesignOps sobre os quatro tokens em #eff5ff.

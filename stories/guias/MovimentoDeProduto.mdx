@@ -1,0 +1,157 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { pressEOptIn, carregamento } from '../_docs/snippets/movimento-de-produto';
+
+<Meta title="Guias/Movimento de produto" />
+
+<Pagina
+  titulo="Movimento de produto"
+  resumo="Princípios e microinterações do movimento nos sistemas Citiesoft. Os valores dos tokens estão em Fundação/Movimento. Aqui estão as regras de quando, quanto e como animar."
+>
+
+<Secao titulo="A tese" descricao="O movimento tem personalidade premium institucional. A marca aparece em como o movimento acontece e nunca em quanto tempo ele toma da tarefa.">
+<Callout titulo="Em uma frase">
+Entradas com cauda longa, saídas em 75% do tempo, elevação no lugar de crescimento, stagger uma única vez e física só no momento raro.
+</Callout>
+<Cartoes colunas={3} itens={[
+  { titulo: 'Curva assinatura', texto: '`--ease-citie-out` em toda entrada, cerca de 80% dos usos.' },
+  { titulo: 'Durações fechadas', texto: '120, 180, 240, 320 e 480 ms. Valor fora do inventário é bug de revisão.' },
+  { titulo: 'Entrada única', texto: 'Fade-rise: `translateY(12px)` e opacidade de 0 ao repouso. Variações: 6 px na aba, 8 px no modal, 16 px no toast.' },
+]} />
+</Secao>
+
+<Secao titulo="Tokens usados no produto" descricao="Os mesmos nomes existem no tema do Storybook.">
+<Tabela larguraMinima={560} colunas={['Token', 'Valor', 'Papel']} linhas={[
+  ['`--motion-press`', '120 ms', 'Press, hover de linha, saídas leves'],
+  ['`--motion-quick`', '180 ms', 'Dropdown, tooltip, painel de aba, hover de card'],
+  ['`--motion-standard`', '240 ms', 'Accordion, indicador de aba, tema, toggle'],
+  ['`--motion-expressive`', '320 ms', 'Modal, drawer, toast. No produto o teto é 300 ms'],
+  ['`--motion-hero`', '480 ms', 'Hero e revelação, só no catálogo'],
+  ['`--ease-citie-out`', 'Entrada', 'Assinatura'],
+  ['`--ease-citie-inout`', 'Mudança em tela', 'Algo que já está visível'],
+  ['`--ease-citie-exit`', 'Saída', 'Sempre mais curta que a entrada'],
+  ['`--ease-citie-drawer`', 'Drawer e sidebar', 'Curva própria'],
+]} />
+</Secao>
+
+<Secao titulo="Quanto animar" descricao="Orçamento inversamente proporcional à frequência de uso.">
+<Tabela larguraMinima={560} colunas={['Frequência', 'Exemplo', 'Orçamento']} linhas={[
+  ['Contínua', 'Linha de tabela, item de menu, teclado', 'Só cor, ou nada'],
+  ['Alta', 'Botão, dropdown, aba', 'Press e entrada de superfície, 120 a 240 ms'],
+  ['Média', 'Modal, drawer, toast', 'Entrada expressiva, até 300 ms'],
+  ['Rara', 'Hero, cópia de token', 'Coreografia e spring, só no catálogo'],
+]} />
+<Cartoes colunas={3} itens={[
+  { titulo: 'Fade-rise', texto: 'Entradas de painel e toast.' },
+  { titulo: 'Surface-in', texto: 'Overlays: escala de 0,96 com fade e 4 px a partir do gatilho.' },
+  { titulo: 'Lift', texto: 'Hover de card: sobe 2 px com sombra.' },
+]} />
+<Callout>
+No máximo 3 primitivas por página. Uma quarta indica problema de intenção de design.
+</Callout>
+</Secao>
+
+<Secao titulo="Regime do produto">
+<Tabela larguraMinima={560} colunas={['Regra', 'Catálogo', 'Produto B2G']} linhas={[
+  ['Teto de duração', '480 ms', '300 ms'],
+  ['Blur', 'Só no título do hero', 'Proibido'],
+  ['Spring', 'Só na cópia de token', 'Proibido'],
+  ['Hero orquestrado e revelação', 'Sim', 'Não, skeleton primeiro'],
+  ['Hover de card', 'Elevação e sombra', 'Só sombra'],
+  ['Movimento reduzido', 'Desliga com exceções', 'Liga só quando permitido'],
+]} />
+<CertoErrado itens={[
+  {
+    certo: 'Saída com `--ease-citie-exit` em tempo menor que a entrada, partindo do valor atual quando interrompida.',
+    errado: 'Overshoot em componente funcional, entrada de 800 ms ou fade-up em cada parágrafo.',
+  },
+  {
+    certo: 'Animar `transform` e `opacity`, e `grid-template-rows` no accordion.',
+    errado: 'Animar width, height, top, left, margin ou padding.',
+  },
+]} />
+<Cartoes colunas={2} itens={[
+  { titulo: 'Nunca anima', texto: 'Anel de foco, ações de teclado, texto durante a leitura, propriedades de layout e troca de página do catálogo.' },
+  { titulo: 'Nunca pisca', texto: 'Nenhum elemento pisca mais de 3 vezes por segundo (WCAG 2.3.1).' },
+]} />
+</Secao>
+
+<Secao titulo="Microinterações">
+<Tabela larguraMinima={640} colunas={['Microinteração', 'Regra', 'Com movimento reduzido']} linhas={[
+  ['Press', 'Todo clicável (botão, card, aba, chip, paginação) faz `scale(0.97)` em 120 ms. Desabilitado fica fora.', 'Mantido, instantâneo'],
+  ['Hover de card', 'Sobe 2 px, sombra sm para md e borda com 30% de marca, em 180 ms. Só com ponteiro fino. Volta em 150 ms.', 'Só sombra'],
+  ['Linha de tabela', 'Só `background-color` em 120 ms linear. Linha atualizada decai o realce em 600 ms.', 'Mantido'],
+  ['Toggle', 'Thumb com `translateX` em 240 ms, trilho só com cor em 120 ms.', 'Instantâneo'],
+  ['Checkbox', 'Marca instantânea ou fade de 120 ms. Nunca bounce.', 'Instantâneo'],
+  ['Erro inline', 'Fade de 120 ms, com ícone e texto anunciado por `aria-live`. Sem tremor.', 'Instantâneo'],
+  ['Foco de teclado', 'Anel de 3 px aparece na hora. Nunca transiciona nem atrasa.', 'Igual'],
+  ['Copiar valor', 'No produto: troca de ícone e toast "Copiado", sem pop.', 'Sem escala'],
+]} />
+<CodeTabs abas={pressEOptIn} />
+</Secao>
+
+<Secao titulo="Carregamento">
+<Tabela larguraMinima={600} colunas={['Padrão', 'Uso', 'Detalhe']} linhas={[
+  ['Skeleton', 'Conteúdo estrutural', 'Brilho de 1,6 s linear. Imita o layout real. Troca para o conteúdo com fade de 180 ms. Altura sempre declarada.'],
+  ['Spinner', 'Ação pontual', 'Giro de 700 ms linear, 20, 28 ou 40 px. `role="status"` e `aria-label="Carregando"`.'],
+  ['Barra de progresso', 'Operação mensurável', 'Preenchimento por `scaleX`, 240 ms, com rótulo como "64%, 3 de 5 arquivos".'],
+  ['UI otimista', 'Ação rara de falhar e reversível', 'Nunca em lançamento financeiro, exclusão ou envio de processo.'],
+  ['Operação longa', 'Acima de uns 8 s', 'Mensagem de etapa que muda com o progresso real. Nada de barra falsa.'],
+]} />
+<Cartoes colunas={2} itens={[
+  { titulo: 'Botão em ação', texto: 'Desabilita no primeiro clique, mantém a largura e troca o rótulo para o gerúndio, como "Salvando…". O spinner é decorativo.' },
+  { titulo: 'Texto sempre presente', texto: 'Todo carregamento tem texto acessível em `aria-live` ou `aria-busy`, porque o movimento pode estar desligado.' },
+]} />
+<Callout>
+Abaixo de 100 ms não há indicador de carregamento. O press do botão já confirma o gesto. Evite spinner global quando só um painel carrega.
+</Callout>
+<CodeTabs abas={carregamento} />
+</Secao>
+
+<Secao titulo="Movimento reduzido" descricao="Obrigação legal (LBI Art. 63, e-MAG 3.1, WCAG 2.2). No produto vale o modelo opt-in.">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Estado base estático', texto: 'Toda animação vive dentro de `prefers-reduced-motion: no-preference`.' },
+  { titulo: 'Sem zerar tudo', texto: 'Não desligue transições do PrimeNG com `!important` global. O overlay conclui o ciclo de abrir e fechar pelo evento `transitionend`.' },
+]} />
+<Tabela larguraMinima={560} colunas={['Componente', 'Com movimento', 'Reduzido']} linhas={[
+  ['Dropdown, tooltip, popover', 'Escala, fade e 4 px, 180 ms', 'Só opacidade, 120 ms'],
+  ['Accordion', 'Altura por grid-rows, 240 ms', 'Seco, com fade de 120 ms'],
+  ['Modal', 'Véu 240 ms e cartão até 300 ms', 'Fade de 150 ms'],
+  ['Drawer', 'translateX com curva própria', 'Fade de 150 ms'],
+  ['Toast', 'translateY de 16 px', 'Fade de 150 ms'],
+  ['Skeleton', 'Brilho de 1,6 s', 'Bloco estático'],
+  ['Spinner', 'Giro de 700 ms', 'Permanece a 1,2 s com texto'],
+]} />
+<Callout>
+O fallback universal é um fade de até 150 ms só em opacidade. O movimento nunca é o único canal: tudo o que ele comunica também existe em cor, ícone ou texto.
+</Callout>
+</Secao>
+
+<Secao titulo="Handoff para PrimeNG">
+<Tabela larguraMinima={560} colunas={['Componente', 'Entrada', 'Saída']} linhas={[
+  ['`p-dialog`, `p-confirmdialog`', '300 ms, out', '225 ms, exit'],
+  ['`p-drawer`', '300 ms, drawer', '240 ms, drawer'],
+  ['`p-select`, `p-tooltip`', '180 ms, out', '120 ms, exit'],
+  ['`p-toast`', '300 ms, out, translateY de 16 px', '225 ms, exit'],
+  ['`p-accordion`, `p-tabs`, `p-toggleswitch`', '240 ms, inout', '180 ms no accordion'],
+  ['`p-button`', '120 ms, out', 'Mesma'],
+]} />
+<Callout>
+Os overlays usam 300 ms de entrada porque o teto do produto é 300 ms, enquanto o token expressivo do catálogo marca 320 ms. O foco de modal e drawer é transferido na abertura lógica, sem esperar o fim da animação.
+</Callout>
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Dois vocabulários de token', texto: 'Os guias de UX, marca e anti-padrões citam durações de 100, 200, 240, 300 e 400 ms e curvas standard, entrance e exit. Os tokens do tema são 120, 180, 240, 320 e 480 ms. Esta página segue o tema.' },
+  { titulo: 'Modal e drawer', texto: 'Nos guias de UX, modal em 300 ms e drawer em 240 ms de entrada. No guia de movimento, ambos em 300 ms no produto, com saída em 225 e 240 ms.' },
+  { titulo: 'Movimento reduzido', texto: 'O checklist de Design QA sugere zerar a duração de tudo com `!important`. O guia de movimento desaconselha no produto.' },
+]} />
+</Secao>
+
+<Callout>
+Fonte: guias de movimento do Design System Citiesoft (princípios, microinterações, carregamento, movimento reduzido e componentes).
+</Callout>
+
+</Pagina>

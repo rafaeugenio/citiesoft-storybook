@@ -1,0 +1,113 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { TabelaOuCardsDemo } from '../_docs/padroes/ComportamentoResponsivo';
+import { Prontos } from '../_docs/padroes/Moldura';
+import { responsivoExemplo } from '../_docs/snippets/padrao-comportamento-responsivo';
+
+<Meta title="Guias/Padrões/Comportamento responsivo" />
+
+<Pagina
+  titulo="Comportamento responsivo"
+  resumo="Como telas, componentes e layouts se adaptam aos quatro pontos de quebra. Mobile-first para o cidadão, densidade progressiva para servidor e gestor."
+>
+
+<Secao titulo="Quando usar">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Use para', texto: 'Qualquer tela acessada em mais de um viewport, conteúdo que muda de forma entre desktop e mobile e todo módulo novo, desde o primeiro frame.' },
+  { titulo: 'Não use para', texto: 'Terminais fixos de back-office, como impressão de guia e relatório para PDF (comportamento de impressão próprio), e componentes estáticos sem interação.' },
+]} />
+</Secao>
+
+<Secao titulo="Pontos de quebra">
+<Tabela colunas={['Token', 'Largura mínima', 'Descrição', 'Usuário principal']} larguraMinima={600} linhas={[
+  ['`screen.xs`', '375 px', 'Smartphone compacto', 'Cidadão, campo'],
+  ['`screen.sm`', '768 px', 'Tablet', 'Cidadão avançado, gestor mobile'],
+  ['`screen.lg`', '1366 px', 'Notebook padrão de governo', 'Servidor operacional'],
+  ['`screen.xl`', '1920 px', 'Monitor widescreen', 'Servidor especialista, supervisor'],
+]} />
+<Tabela colunas={['Aspecto', '1920 px', '1366 px', '768 px', '375 px']} larguraMinima={640} linhas={[
+  ['Colunas', '12', '12', '4', '2'],
+  ['Gutter', '24 px', '20 px', '16 px', '12 px'],
+  ['Margem lateral', '32 px', '24 px', '16 px', '12 px'],
+  ['Largura máxima', '1680 px', '100%', '100%', '100%'],
+]} />
+</Secao>
+
+<Secao titulo="Regras">
+<Tabela colunas={['Nº', 'Regra']} larguraMinima={520} linhas={[
+  ['1', 'O conteúdo decide o colapso, não o dispositivo. A tabela vira cards porque as colunas não cabem em 375 px.'],
+  ['2', 'Toda ação de 1920 px existe em 375 px, ainda que por outro caminho. Exportar migra da barra para o menu.'],
+  ['3', 'Entre pontos de quebra o layout escala sem salto.'],
+  ['4', 'Cabeçalho e trilha: em 768 px a trilha vira `Voltar`. Em 375 px, menu à esquerda, nome da tela ao centro e avatar à direita.'],
+  ['5', 'Alvos de 44 por 44 px em 375 e 768 px, com 8 px entre eles. A área cresce sem mudar o visual.'],
+  ['6', 'O cabeçalho fixo não cobre o foco: margem de rolagem de 56 px em 375 px e 64 px de 1366 px para cima.'],
+  ['7', 'Zona de arrastar (upload, reordenação) tem botão alternativo e some em 375 px.'],
+  ['8', 'Tabela com 5 ou mais colunas vira lista de cards em 375 px e, quando preciso, em 768 px.'],
+  ['9', 'Em 375 px, botões de ação do formulário ficam fixos no rodapé, sobre o fundo de superfície.'],
+  ['10', 'Gráfico em 375 px com altura mínima de 200 px, legenda de 12 px no mínimo e símbolo ou textura além da cor.'],
+]} />
+</Secao>
+
+<Secao titulo="Estados" descricao="Comportamento por componente em cada ponto de quebra.">
+<Tabela colunas={['Componente', '1920 e 1366 px', '768 px', '375 px']} larguraMinima={680} linhas={[
+  ['Sidebar', '240 px expandida em 1920. 64 px só ícones em 1366.', 'Retraída. Painel sobreposto de 280 px.', 'Igual a 768. Barra inferior opcional, com até 5 itens.'],
+  ['Barra de ações', 'Todas visíveis em 1920. Secundárias em `Mais ações` em 1366.', 'Primária fixa e demais no menu.', 'Botão flutuante para a primária.'],
+  ['Formulário', '2 colunas', '1 coluna, seções colapsáveis acima de 12 campos', '1 coluna, campo de 44 px'],
+  ['Modal de confirmação', '480 px centralizado', '480 px ou 90%', 'Folha inferior'],
+  ['Modal de formulário', '640 a 800 px', '90%', 'Tela cheia'],
+  ['Drawer de detalhe', '480 px', '360 px ou 85%', 'Tela cheia'],
+  ['Filtros', 'Painel de 280 px em 1920. Em linha em 1366.', 'Botão `Filtrar` abre overlay', 'Overlay em tela cheia com contador'],
+  ['Indicadores', '4 colunas', '2 colunas', '1 coluna'],
+]} />
+<Callout>
+Textos de menu sempre completos: `Exportar como CSV`, `Imprimir relatório`, `Excluir lançamento`. Filtro com contador: `Filtrar (3 filtros ativos)`. Botão de menu: `Abrir menu de navegação`.
+</Callout>
+</Secao>
+
+<Secao titulo="Acessibilidade">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Teclado em todos os tamanhos', texto: 'Painel e modais prendem o foco, Escape fecha qualquer overlay e a ordem de foco segue a ordem visual.' },
+  { titulo: 'Semântica preservada', texto: 'A troca de tabela por cards mantém lista de itens, e o estado do painel sobreposto é anunciado.' },
+  { titulo: 'Contraste nos cards', texto: 'Texto base passa AA com folga. O badge de status tem a combinação de fundo e texto verificada.' },
+  { titulo: 'Sem perda de conteúdo', texto: 'Exportação, aprovação e observação continuam disponíveis em 375 px.' },
+  { titulo: 'Sem rolagem lateral', texto: 'Nenhuma tela exige rolagem horizontal em 375 px para chegar à ação principal.' },
+  { titulo: 'Movimento', texto: 'Sem redução de movimento o painel desliza em 240 ms. Com redução, só fade de 100 ms.' },
+]} />
+</Secao>
+
+<Secao titulo="Certo e errado">
+<CertoErrado itens={[
+  { certo: 'Tabela de 6 colunas que vira cards com status, data, título, pares de rótulo e valor e ações expostas.', errado: 'Tabela inteira com rolagem lateral em 375 px.' },
+  { certo: 'Exportar vai para `Mais ações` no mobile.', errado: 'Remover a exportação do mobile.', motivo: 'Toda ação precisa existir em todos os tamanhos.' },
+  { certo: 'Quatro frames por tela (375, 768, 1366 e 1920 px) com camadas nomeadas por token.', errado: 'Só o frame de desktop e a promessa de ajustar depois.' },
+]} />
+</Secao>
+
+<Secao titulo="Exemplo composto" descricao="Tabela de lançamentos de diárias. Troque a largura simulada para ver a tabela virar cards.">
+<TabelaOuCardsDemo />
+<CodeTabs abas={responsivoExemplo} />
+</Secao>
+
+<Secao titulo="Onde ver pronto">
+<Prontos itens={[
+  { nome: 'Blocos/AppFrame', uso: 'Sidebar fixa e painel sobreposto.' },
+  { nome: 'Blocos/PageHeader', uso: 'Cabeçalho com trilha e ações.' },
+  { nome: 'Blocos/Drawer', uso: 'Drawer lateral de detalhe.' },
+  { nome: 'Templates/Sistemas/Painel com menu flutuante', uso: 'Navegação que se adapta ao viewport.' },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Tabela colunas={['Tema', 'O que os documentos dizem']} linhas={[
+  ['Grade em tablet', 'Comportamento responsivo define 4 colunas em 768 px. Dashboards manda usar 6 colunas entre 768 e 1024 px.'],
+  ['Painel de filtros em 1920 px', 'Comportamento responsivo põe os filtros em painel fixo de 280 px. Telas densas manda expor os filtros na barra de controle acima da tabela.'],
+  ['Folha inferior', 'Padrões mobile abre em 240 ms e a fonte de Autenticação usa 300 ms para o modal. Esta página usa 240 ms para folha inferior e painel.'],
+]} />
+</Secao>
+
+<Callout>
+Fonte: padrão de Comportamento responsivo do Design System Citiesoft, com apoio de Padrões mobile, Dashboards e Telas densas.
+</Callout>
+
+</Pagina>

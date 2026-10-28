@@ -1,0 +1,43 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Raios } from '../_docs/Medidas';
+import { TabelaUso } from '../_docs/TabelaUso';
+import { raiosUso, raiosAninhados } from '../_docs/snippets/raios';
+
+<Meta title="Fundação/Raios" />
+
+<Pagina
+  titulo="Raios"
+  resumo="Oito raios da escala base e três específicos do produto. Cada tipo de elemento tem um raio padrão."
+>
+
+<Secao titulo="Escala" descricao="Clique em um raio para copiar o token.">
+<Raios />
+</Secao>
+
+<Secao titulo="Qual raio usar">
+<TabelaUso
+  colunas={['Elemento', 'Token', 'Valor']}
+  linhas={[
+    ['Cartão, painel e menu suspenso', '`--radius-2xl`', '16px'],
+    ['Painel grande, árvore e seletor de data', '`--radius-3xl`', '24px'],
+    ['Campo de texto e botão médio', '`--radius-2lg`', '10px'],
+    ['Botão pequeno e tooltip', '`--radius-lg`', '8px'],
+    ['Botão xs, checkbox e aba', '`--radius-sm`', '4px'],
+    ['Pílula, badge arredondado e avatar', 'sem token', '9999px'],
+  ]}
+/>
+<Callout>
+`--radius-2lg` (10px) fica entre `lg` e `xl` e é o raio dos controles de tamanho médio. Pílulas não têm token: use `rounded-full` no Tailwind ou `9999px` no CSS.
+</Callout>
+</Secao>
+
+<Secao titulo="Como usar">
+<CodeTabs abas={raiosUso} />
+</Secao>
+
+<Secao titulo="Raios aninhados" descricao="Um elemento dentro de outro usa raio menor. Subtraia o espaço entre os dois do raio externo.">
+<CodeTabs abas={raiosAninhados} />
+</Secao>
+
+</Pagina>

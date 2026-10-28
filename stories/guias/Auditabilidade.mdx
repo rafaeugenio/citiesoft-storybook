@@ -1,0 +1,124 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { HistoricoDemo, ConfirmacaoEDesfazerDemo } from '../_docs/padroes/Auditabilidade';
+import { Prontos } from '../_docs/padroes/Moldura';
+import { historicoExemplo } from '../_docs/snippets/padrao-auditabilidade';
+
+<Meta title="Guias/Padrões/Auditabilidade" />
+
+<Pagina
+  titulo="Auditabilidade"
+  resumo="Sistemas B2G operam sobre dado público e responsabilidade legal. Cada alteração relevante é rastreável: quem fez, quando fez e o que mudou, sem o usuário preencher nada."
+>
+
+<Secao titulo="Quando usar">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Use para', texto: 'Cadastros que alimentam folha, contrato ou prestação de contas, mudanças de estado (aprovar, indeferir, devolver, cancelar, homologar, publicar), exclusões e inativações, integrações externas e campos de relatório oficial.' },
+  { titulo: 'Não use para', texto: 'Preferência local sem impacto (tema, fonte), rascunho que nunca persiste e leitura pura. O log de acesso a dado sensível é da camada de serviço.' },
+]} />
+</Secao>
+
+<Secao titulo="Anatomia">
+<Tabela colunas={['Parte', 'Conteúdo']} linhas={[
+  ['Entrada de log', 'Usuário (nome completo), data e hora, tipo de ação, entidade, identificador e diferença campo a campo.'],
+  ['Histórico do registro', 'Painel acessível em até dois cliques da tela principal do registro.'],
+  ['Log do módulo', 'Tabela densa com filtro por data, usuário e ação, e `Exportar CSV` para o controle externo.'],
+  ['Confirmação', 'Diálogo para ação irreversível.'],
+  ['Desfazer', 'Toast com botão para ação reversível.'],
+  ['Estado de fluxo', 'Badge com nome canônico, cor semântica e texto.'],
+]} />
+</Secao>
+
+<Secao titulo="Regras">
+<Tabela colunas={['Nº', 'Regra']} larguraMinima={520} linhas={[
+  ['1', 'O sistema registra automaticamente toda criação, alteração e exclusão relevante. O usuário só digita justificativa quando o processo exige texto formal.'],
+  ['2', 'Falha ao carregar o histórico mostra estado de erro explícito. Nunca pode parecer ausência de histórico.'],
+  ['3', 'Ação irreversível pede diálogo com título que nomeia a ação, consequência, identificador do registro, Cancelar à esquerda e confirmar em perigo à direita.'],
+  ['4', 'Ação reversível mostra toast com `Desfazer` por 8 segundos. Depois, a ação se consolida.'],
+  ['5', 'Cada status tem nome, cor semântica e ícone. Sem amarelo em estado final positivo, sem vermelho em estado neutro intermediário.'],
+  ['6', 'Exiba `DD/MM/AAAA HH:mm` no fuso do usuário e armazene em UTC.'],
+  ['7', 'Autor sempre pelo nome completo, nunca por matrícula ou identificador.'],
+  ['8', 'O log é somente leitura. Nenhuma tela edita ou exclui entradas, nem para administrador.'],
+  ['9', 'Estado nunca só por cor: sempre rótulo textual.'],
+  ['10', 'Animações de timeline e toast respeitam a redução de movimento.'],
+]} />
+</Secao>
+
+<Secao titulo="Estados">
+<Tabela colunas={['Status', 'Rótulo', 'Quando']} larguraMinima={560} linhas={[
+  ['Rascunho', 'Rascunho', 'Não enviado'],
+  ['Pendente', 'Pendente', 'Aguardando ação de outro usuário'],
+  ['Em andamento', 'Em andamento', 'Em tramitação'],
+  ['Aprovado', 'Aprovado', 'Estado positivo final'],
+  ['Indeferido', 'Indeferido', 'Estado negativo final'],
+  ['Cancelado', 'Cancelado', 'Estado neutro final'],
+  ['Publicado', 'Publicado', 'Publicação oficial'],
+  ['Vencido', 'Vencido', 'Benefício, contrato ou prazo'],
+]} />
+<Tabela colunas={['Texto do log', 'Exemplo']} linhas={[
+  ['Com diferença', '`Vencimento atualizado de 31/12/2024 para 31/03/2025`'],
+  ['De estado', '`Status alterado para Aprovado`'],
+  ['De arquivo', '`Documento enviado: Atestado Médico (PDF, 210 KB)`'],
+  ['Sem registros', '`Nenhuma alteração registrada ainda. As ações realizadas neste cadastro aparecerão aqui.`'],
+]} />
+</Secao>
+
+<Secao titulo="Diálogos e desfazer">
+<Tabela colunas={['Contexto', 'Esquerda', 'Direita']} linhas={[
+  ['Exclusão de cadastro', 'Cancelar', 'Excluir'],
+  ['Cancelamento de processo', 'Cancelar', 'Cancelar processo'],
+  ['Publicação oficial', 'Cancelar', 'Confirmar publicação'],
+  ['Inativação de benefício', 'Cancelar', 'Inativar'],
+]} />
+<Callout>
+Título com verbo, objeto e consequência: `Excluir servidor João da Silva?` Nunca `Tem certeza?`, `OK`, `Sim` ou `Não`. O botão do toast é sempre `Desfazer`.
+</Callout>
+</Secao>
+
+<Secao titulo="Acessibilidade">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Foco seguro', texto: 'O diálogo abre com foco em Cancelar, prende o foco entre os dois botões e Escape cancela a ação.' },
+  { titulo: 'Anúncio', texto: 'Diálogo com papel de alerta, título e consequência lidos. Toast de desfazer anunciado de imediato e focável.' },
+  { titulo: 'Evento legível', texto: 'Cada evento da timeline é um item de lista com texto completo. Diferença estruturada com `antes:` e `depois:`.' },
+  { titulo: 'Badge com texto', texto: 'Sem ponto colorido isolado. Contraste do badge verificado em todos os status.' },
+  { titulo: 'Alvos', texto: 'Botões do diálogo, `Desfazer` e links de expansão com 44 px.' },
+  { titulo: 'Cidadão', texto: 'Log exposto ao cidadão leva símbolo de acessibilidade, linguagem simples e sigla expandida na primeira ocorrência.' },
+]} />
+</Secao>
+
+<Secao titulo="Certo e errado">
+<CertoErrado itens={[
+  { certo: '`Cancelar processo 2025/0481?` com consequência e botão `Cancelar processo`.', errado: '`Tem certeza?` com `Não` e `Sim`, sem foco definido.' },
+  { certo: '`Salário base alterado de R$ 3.200,00 para R$ 3.450,00`, com autor e data com hora.', errado: '`Registro atualizado` sem usuário, campo nem valor.' },
+  { certo: 'Badge `Em andamento` com cor e texto.', errado: 'Ponto colorido sem texto nem nome acessível.' },
+]} />
+</Secao>
+
+<Secao titulo="Exemplo composto" descricao="Histórico com Timeline e Chip, mais confirmação e desfazer.">
+<HistoricoDemo />
+<ConfirmacaoEDesfazerDemo />
+<CodeTabs abas={historicoExemplo} />
+</Secao>
+
+<Secao titulo="Onde ver pronto">
+<Prontos itens={[
+  { nome: 'Blocos/Detalhe', uso: 'Timeline, cabeçalho de detalhe e lista de chave e valor.' },
+  { nome: 'Blocos/Dialog', uso: 'ConfirmDialog para ação irreversível.' },
+  { nome: 'Templates/Sistemas/Detalhe de solicitação', uso: 'Detalhe com histórico de eventos.' },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Tabela colunas={['Tema', 'O que os documentos dizem']} linhas={[
+  ['Entrada do toast', 'Auditabilidade faz o toast deslizar de baixo para cima. CRUD e Tratamento de erros posicionam o toast no canto superior direito.'],
+  ['Exclusão', 'CRUD trata a exclusão como definitiva, com diálogo e toast de 3 segundos. Auditabilidade oferece `Desfazer` por 8 segundos em exclusão lógica.'],
+  ['Contraste do cinza secundário', 'O texto de data e hora aparece com 5,9:1 aqui e com 4,73:1 em Dashboards e Telas densas.'],
+]} />
+</Secao>
+
+<Callout>
+Fonte: padrão de Auditabilidade do Design System Citiesoft, com apoio de CRUD e Permissões.
+</Callout>
+
+</Pagina>

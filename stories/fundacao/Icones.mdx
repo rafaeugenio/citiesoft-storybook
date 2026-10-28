@@ -1,0 +1,45 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { GradeDeIcones, TamanhosDeIcone } from '../_docs/Icones';
+import { iconesInstalacao, iconesTamanhoCor, iconesAcessivel } from '../_docs/snippets/icones';
+
+<Meta title="Fundação/Ícones" />
+
+<Pagina
+  titulo="Ícones"
+  resumo="Os ícones vêm do Remix Icon, em duas variações: contorno (Line) e preenchido (Fill). Herdam a cor do texto e seguem cinco tamanhos."
+>
+
+<Secao titulo="Instalação" descricao="Em HTML e Angular, use a webfont ou o SVG. Em React, use o componente.">
+<CodeTabs abas={iconesInstalacao} />
+</Secao>
+
+<Secao titulo="Tamanhos" descricao="Os tamanhos acompanham o botão em que o ícone vive.">
+<TamanhosDeIcone />
+</Secao>
+
+<Secao titulo="Tamanho e cor">
+<CodeTabs abas={iconesTamanhoCor} />
+<Callout titulo="Cor por currentColor">
+O ícone usa `currentColor`, então segue a cor do texto do elemento. Defina a cor no pai com um token, como `--color-text-secondary` ou `--color-foreground-icon-primary`. Nunca pinte o SVG com hex.
+</Callout>
+</Secao>
+
+<Secao titulo="Acessibilidade">
+<Callout>
+Ícone ao lado de texto é decorativo: use `aria-hidden="true"`. Ícone sozinho no botão exige `aria-label` no botão, que descreve a ação ("Fechar"), não a imagem ("X").
+</Callout>
+<CodeTabs abas={iconesAcessivel} />
+</Secao>
+
+<Secao titulo="Mais usados" descricao="Os 24 ícones mais frequentes nos componentes. Clique para copiar o nome do componente; a segunda linha é a classe da webfont.">
+<GradeDeIcones />
+</Secao>
+
+<Secao titulo="Regras de uso">
+<Callout>
+Use Line como padrão e Fill para estado ativo ou informação de status. Não misture famílias de ícones na mesma tela. O catálogo completo está em Fundação/Biblioteca de ícones.
+</Callout>
+</Secao>
+
+</Pagina>

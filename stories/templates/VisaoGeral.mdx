@@ -1,0 +1,41 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout } from '../_docs/Layout';
+import { Tabela } from '../_docs/Conteudo';
+
+<Meta title="Templates/Visão geral" />
+
+<Pagina
+  titulo="Templates"
+  resumo="Telas completas montadas só com os blocos e componentes deste Storybook. Servem de ponto de partida: copie a composição e troque os dados."
+>
+
+<Secao titulo="Sistemas" descricao="Telas para sistemas B2G da Citiesoft, em português e no contexto do TFD. Cada uma segue o template de tela do Design System de produto e tem três versões: tela cheia, contida e mobile.">
+<Tabela
+  colunas={['Tela', 'Blocos usados', 'Template de origem']}
+  linhas={[
+    ['Listagem de solicitações TFD', '`AppFrame`, `PageHeader`, `FilterBar`, `DataListing`, `SelectionBar`, `Drawer`, `ConfirmDialog`', '`tela-listagem`'],
+    ['Tabelas auxiliares', '`SettingsLayout`, `DataListing`, `Drawer`, `FormSection`, `ConfirmDialog`', '`tela-configuracoes`'],
+    ['Hub de configurações', '`SettingsLayout`, `FormSection`, `Switch`', '`tela-configuracoes`'],
+    ['Gestão de usuários e permissões', '`DataListing`, `Drawer`, matriz de papéis', '`tela-gestao-usuarios`, `tela-permissoes`'],
+    ['Login, Esqueci a senha, Redefinir senha, Verificação em duas etapas', '`LoginSimples`, `InputOtp`', '`tela-login` e fluxo de senha'],
+    ['Formulário de cadastro', '`FormSection`, `FormGrid`, `FormActions`, `Drawer`', '`tela-formulario-cadastro`'],
+    ['Wizard de nova solicitação', '`Stepper`, `FileUpload`, `FormSection`', '`tela-wizard`'],
+    ['Detalhe de solicitação', '`DetailHeader`, `KeyValueList`, `Timeline`, `ActionMenu`', '`tela-detalhe-registro`'],
+    ['Painel TFD', '`StatCards`, charts, `DataListing`', '`tela-dashboard`'],
+    ['Páginas de erro e estados', '`EmptyState`, `ErrorState`, `ConfirmDialog`', '`tela-erro`, `tela-estados-apoio`'],
+    ['Painel com menu flutuante', '`DockBar`, `ActionMenu`', 'Nova composição'],
+    ['Notificações', '`Tabs`, `Switch`, `EmptyState`', '`tela-notificacoes`'],
+  ]}
+  larguraMinima={760}
+/>
+</Secao>
+
+<Secao titulo="Base" descricao="Templates de uso geral: dashboards, perfis, quadro de projetos e telas de conversa com agentes.">
+Home, Financeiro, Marketing, Perfil clínico, Perfil de IA, Quadro de projetos, Chat com IA, Geração de imagem, Chat com vários agentes e Chat inicial.
+</Secao>
+
+<Callout titulo="Como usar">
+Abra a tela mais próxima da sua necessidade, leia a composição no código da story e reaproveite os blocos. A anatomia, as regras fixas e os estados de cada tela estão no template de origem do Design System. Os dados são fictícios: troque pelo contrato da sua API.
+</Callout>
+
+</Pagina>

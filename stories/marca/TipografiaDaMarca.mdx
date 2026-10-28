@@ -1,0 +1,340 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { Especime, EscalaDaMarca, MedidaDeLinha, TextoEm } from '../_docs/AmostrasDeFonte';
+import { fontesDaMarca } from '../_docs/snippets/tipografia-da-marca';
+
+<Meta title="Marca/Tipografia da marca" />
+
+<Pagina
+  titulo="Tipografia da marca"
+  resumo="Red Hat Display para títulos, Inter para corpo e interface, Red Hat Mono para conteúdo técnico. Nenhuma família invade o domínio da outra. A única exceção é o documento .docx, que mantém Aptos."
+>
+
+<Secao titulo="Três famílias" descricao="Cada família sinaliza um tipo de conteúdo. Misturar fora do sistema, com Montserrat, Roboto, Lato ou JetBrains Mono, fragmenta a marca.">
+<div className="grid gap-4 xl:grid-cols-3">
+<Especime nome="Red Hat Display" familia="display" papel="Títulos e display" amostra="Modernização do Controle de TFD" pesos={[[600, 'SemiBold'], [700, 'Bold'], [800, 'ExtraBold'], [900, 'Black']]} />
+<Especime nome="Inter" familia="inter" papel="Corpo e interface" amostra="Acompanhe o andamento de cada solicitação." pesos={[[400, 'Regular'], [500, 'Medium'], [600, 'SemiBold'], [700, 'Bold']]} />
+<Especime nome="Red Hat Mono" familia="mono" papel="Técnico" amostra="PROP-2026-0047 · v2.3.1 · 123.456.789-09" pesos={[[400, 'Regular'], [500, 'Medium']]} />
+</div>
+<Tabela
+  colunas={['', 'Red Hat Display', 'Inter', 'Red Hat Mono']}
+  linhas={[
+    ['Papel', 'Autoridade e hierarquia', 'Leitura e operação', 'Precisão técnica'],
+    ['Pesos', '600, 700, 800, 900', '400, 500, 600 e 700 pontual', '400, 500'],
+    ['Use em', 'Capa, hero, título de documento, título de slide, KPI de destaque, título de página e de seção em produto', 'Corpo, formulário, tabela, rótulo, botão, legenda, tooltip, e-mail, texto de apoio em slide', 'Código, nome de token, hex, ID, protocolo, CPF, CNPJ, hash, versão, timestamp, coluna numérica'],
+    ['Não use em', 'Corpo corrido, texto acima de 3 linhas, rótulo de UI, tamanho abaixo de 14px', 'Título de capa ou hero, bloco de código, valor de token', 'Prosa, título, botão, call to action, texto de marketing, decoração'],
+  ]}
+  larguraMinima={720}
+/>
+<Tabela
+  colunas={['Contexto', 'Título', 'Corpo', 'Técnico']}
+  linhas={[
+    ['Apresentação institucional', 'Red Hat Display 700', 'Inter 400', 'Red Hat Mono 400'],
+    ['Produto digital', 'Red Hat Display 600 a 700', 'Inter 400 a 500', 'Red Hat Mono 400'],
+    ['Proposta comercial em PDF', 'Red Hat Display 700', 'Inter 400', 'Red Hat Mono 400'],
+    ['Documento técnico de integração', 'Red Hat Display 600', 'Inter 400', 'Red Hat Mono 400 a 500'],
+    ['Post institucional', 'Red Hat Display 700 a 800', 'Inter 400', 'Sem uso'],
+    ['Comunicação interna', 'Red Hat Display 600', 'Inter 400', 'Red Hat Mono 400'],
+    ['Documento .docx (Office)', 'Aptos negrito', 'Aptos regular', 'Courier New'],
+  ]}
+/>
+<CodeTabs abas={fontesDaMarca} />
+</Secao>
+
+<Secao titulo="Red Hat Display" descricao="A voz visual da marca quando ela precisa se apresentar com autoridade. Trocar por Inter em negrito quebra a identidade.">
+<div className="rounded-2xl border border-border-button-default p-6">
+<TextoEm familia="display" peso={900} tamanho={56} linha={1.1} tracking={-0.02}>Modernização do Controle de TFD</TextoEm>
+<br />
+<TextoEm familia="display" peso={600} tamanho={20} linha={1.3}>Proposta técnica e comercial, Secretaria Municipal de Saúde</TextoEm>
+</div>
+<Cartoes colunas={3} itens={[
+  { titulo: 'Pesos', texto: 'Somente de 600 a 900. Regular e Medium pertencem à Inter.' },
+  { titulo: 'Tamanho mínimo', texto: '24px em título corrido na web. Em PDF, 14 pt em título de seção e 28 pt em capa e hero.' },
+  { titulo: 'Espaçamento', texto: 'A partir de 40px (28 pt em impressão), de -0,01em a -0,03em. Nunca positivo em título pesado.' },
+  { titulo: 'Entrelinha', texto: 'Acima de 48px, de 1,05 a 1,15. Entre 24 e 48px, de 1,15 a 1,25.' },
+  { titulo: 'Cor', texto: '`#202020` sobre claro. `#FAFAFA` sobre Blue 500 a 900. Destaque em `#146BFA` sobre branco ou `#4D8BFC` sobre escuro. Nunca tom abaixo de Blue 400.' },
+  { titulo: 'Alinhamento', texto: 'À esquerda. Centralizado só em capa, hero e boas-vindas.' },
+]} />
+<CertoErrado itens={[
+  { certo: 'Todos os títulos do mesmo nível na mesma família.', errado: 'Um título em Red Hat Display e o vizinho do mesmo nível em Inter.', motivo: 'Mistura no mesmo nível cria inconsistência.' },
+  { certo: 'Texto de mais de 3 linhas em Inter.', errado: 'Parágrafo de proposta em Red Hat Display.', motivo: 'Prejudica a leitura em corpo corrido.' },
+  { certo: 'Título display com tracking levemente negativo.', errado: 'Título pesado com tracking positivo ou itálico.', motivo: 'O espaçamento positivo abre demais o desenho em tamanho grande.' },
+]} />
+</Secao>
+
+<Secao titulo="Inter" descricao="Se o usuário precisa ler para agir, a fonte é Inter. Foi desenhada para telas de alta densidade e não carrega personalidade que interfira em dado crítico.">
+<div className="rounded-2xl border border-border-button-default p-6">
+<TextoEm familia="inter" peso={500} tamanho={14} linha={1.5} caixaAlta tracking={0.05}>Vencimento</TextoEm>
+<br />
+<TextoEm familia="inter" peso={400} tamanho={16} linha={1.6}>Exibindo 48 colaboradores. Revise os benefícios com vencimento nos próximos 30 dias.</TextoEm>
+</div>
+<Tabela
+  colunas={['Peso', 'Uso']}
+  linhas={[
+    ['400 Regular', 'Corpo, parágrafo, descrição, placeholder'],
+    ['500 Medium', 'Rótulo de campo, botão secundário, metadado de card'],
+    ['600 SemiBold', 'Título pequeno de UI, cabeçalho de tabela, rótulo de status, badge, botão primário na escala de produto'],
+    ['700 Bold', 'Destaque pontual em dado crítico, rótulo de alerta, totais'],
+  ]}
+/>
+<Cartoes colunas={3} itens={[
+  { titulo: 'Tamanho base', texto: '16px em tela. 14px em interface densa, tabela e tooltip. Escala de UI: 12, 14, 16, 18, 20, 24.' },
+  { titulo: 'Entrelinha', texto: '1,5 em corpo de UI, 1,4 em UI compacta, 1,6 em artigo longo ou documento impresso.' },
+  { titulo: 'Espaçamento', texto: 'Zero no corpo. De +0,01em a +0,03em em rótulo de 12px. Nunca negativo.' },
+  { titulo: 'Cor', texto: '`#3C3C3C` sobre `#FAFAFA`. Secundário em cinza do sistema. Nunca `#000000`.' },
+  { titulo: 'Onde assume', texto: 'A partir do H4 de UI e em qualquer texto funcional. H1 a H3 de página são Red Hat Display.' },
+  { titulo: 'Negrito', texto: 'Só para hierarquia real. Pesos 100 a 300 e 800 e 900 não são usados.' },
+]} />
+<Callout titulo="Sem fonte instalada">
+Em e-mail HTML e ambientes sem fonte web, declare `font-family: 'Inter', system-ui, -apple-system, sans-serif`. Nunca Arial ou Calibri como substituto em material de marca editável. O wordmark e os balões do mascote seguem seus próprios arquivos.
+</Callout>
+</Secao>
+
+<Secao titulo="Red Hat Mono" descricao="Sinaliza dado técnico. Use onde o leitor precisa conferir caractere por caractere, nunca para parecer técnico.">
+<div className="rounded-2xl border border-border-button-default p-6">
+<TextoEm familia="mono" peso={400} tamanho={14} linha={1.6}>--color-brand-600: #1261E4;</TextoEm>
+<br />
+<TextoEm familia="mono" peso={500} tamanho={14} linha={1.4}>Protocolo TFD-2026-0047 · 2026-06-24T10:00:00-03:00</TextoEm>
+</div>
+<Cartoes colunas={3} itens={[
+  { titulo: 'Conteúdo', texto: 'Código, comando, resposta de API, nome de token, hex, CPF, CNPJ, protocolo, hash, UUID, versão, data em ISO.' },
+  { titulo: 'Colunas numéricas', texto: 'Valores, contadores e IDs alinhados à direita, com `font-variant-numeric: tabular-nums`. Nunca misture mono e sans na mesma coluna.' },
+  { titulo: 'Tamanho mínimo', texto: '12px em produto, 10 pt em impresso. Código inline 13px, bloco 13 a 14px.' },
+  { titulo: 'Peso', texto: '400 em código corrido. 500 em destaque técnico isolado. Nunca negrito pesado em bloco.' },
+  { titulo: 'Entrelinha', texto: '1,6 em bloco de código. 1,4 em inline e legenda técnica. Espaçamento sempre zero.' },
+  { titulo: 'Cor', texto: 'Herda `#3C3C3C` ou `#202020`. Bloco de código com fundo cinza claro. Protocolo em destaque pode usar `#146BFA`.' },
+]} />
+<CertoErrado itens={[
+  { certo: 'Texto de e-mail institucional em Inter 14 a 16px.', errado: 'Corpo de e-mail em Red Hat Mono.', motivo: 'Parece terminal e cansa a leitura.' },
+  { certo: 'Título de seção em Red Hat Display, mesmo em documento técnico.', errado: 'Título de seção em Red Hat Mono.', motivo: 'Desvio de função.' },
+  { certo: 'Red Hat Mono, a única mono autorizada.', errado: 'JetBrains Mono, Courier ou Consolas em material de marca.', motivo: 'JetBrains Mono veio do ambiente de desenvolvimento e é desvio de marca. Courier New e Consolas só aparecem como fallback de .docx.' },
+]} />
+</Secao>
+
+<Secao titulo="Escala tipográfica" descricao="Produto digital e interfaces, base de 16px. Cada linha está renderizada no tamanho real.">
+<EscalaDaMarca niveis={[
+  { nivel: 'type/hero', familia: 'display', tamanho: 56, peso: 900, linha: 1.1, tracking: -0.02, amostra: 'Controle de TFD', uso: 'Capa de sistema, splash, landing page de produto.' },
+  { nivel: 'type/display', familia: 'display', tamanho: 48, peso: 800, linha: 1.15, tracking: -0.02, amostra: 'Módulo de Pessoas', uso: 'Título de módulo principal, boas-vindas.' },
+  { nivel: 'type/h1', familia: 'display', tamanho: 36, peso: 700, linha: 1.2, tracking: -0.01, amostra: 'Processos de Transporte', uso: 'Título de página, seção principal de dashboard.' },
+  { nivel: 'type/h2', familia: 'display', tamanho: 28, peso: 700, linha: 1.25, tracking: -0.01, amostra: 'Dados do paciente', uso: 'Seção de formulário, título de card expandido.' },
+  { nivel: 'type/h3', familia: 'display', tamanho: 22, peso: 600, linha: 1.3, tracking: 0, amostra: 'Confirmar solicitação', uso: 'Subtítulo de seção, título de modal, painel lateral.' },
+  { nivel: 'type/h4', familia: 'display', tamanho: 18, peso: 600, linha: 1.35, tracking: 0, amostra: 'Documentos anexados', uso: 'Título de card, grupo de campos, cabeçalho de accordion.' },
+  { nivel: 'type/body-lg', familia: 'inter', tamanho: 18, peso: 400, linha: 1.6, tracking: 0, amostra: 'Informe os dados do paciente para iniciar o pedido.', uso: 'Texto introdutório, instrução principal.' },
+  { nivel: 'type/body-md', familia: 'inter', tamanho: 16, peso: 400, linha: 1.6, tracking: 0, amostra: 'Acompanhe o andamento de cada solicitação.', uso: 'Base padrão de UI: rótulo de campo, parágrafo, texto de formulário.' },
+  { nivel: 'type/body-sm', familia: 'inter', tamanho: 14, peso: 400, linha: 1.5, tracking: 0, amostra: 'Última atualização há 3 dias.', uso: 'Texto auxiliar, ajuda contextual, descrição de item.' },
+  { nivel: 'type/caption', familia: 'inter', tamanho: 12, peso: 400, linha: 1.4, tracking: 0.01, amostra: 'Fonte: Secretaria Municipal de Saúde', uso: 'Legenda de gráfico, metadado, timestamp.' },
+  { nivel: 'type/overline', familia: 'inter', tamanho: 11, peso: 600, linha: 1.4, tracking: 0.08, caixaAlta: true, amostra: 'Em análise', uso: 'Rótulo de categoria, tag de status, eyebrow.' },
+  { nivel: 'type/code', familia: 'mono', tamanho: 14, peso: 400, linha: 1.6, tracking: 0, amostra: 'GET /api/solicitacoes/0047', uso: 'Bloco de código, token, ID técnico, log.' },
+  { nivel: 'type/code-sm', familia: 'mono', tamanho: 12, peso: 400, linha: 1.5, tracking: 0, amostra: 'status: ativo', uso: 'Código inline, valor de API, referência de campo.' },
+]} />
+<Tabela
+  colunas={['Contexto em Inter', 'Peso']}
+  linhas={[
+    ['Rótulo de campo em repouso', '400'],
+    ['Rótulo de campo com foco', '500'],
+    ['Valor de destaque em dado', '600'],
+    ['Botão primário', '600'],
+    ['Botão secundário', '500'],
+  ]}
+/>
+<Callout>
+Nunca troque um nível por outro para parecer maior ou caber no espaço. Ajuste o layout, não a hierarquia. Em dashboards, Red Hat Display aparece só no KPI de destaque. O resto é Inter.
+</Callout>
+</Secao>
+
+<Secao titulo="Escalas por contexto" descricao="Produto, apresentação, dashboard, rede social e documento têm escalas próprias. Não aplique a escala de produto direto em slides.">
+<Tabela
+  colunas={['Apresentação', 'Família', 'Tamanho', 'Peso']}
+  linhas={[
+    ['Título de capa', 'Red Hat Display', '52 a 60px', '900'],
+    ['Subtítulo de capa', 'Red Hat Display', '28 a 34px', '600'],
+    ['Título de slide', 'Red Hat Display', '36 a 40px', '700'],
+    ['Subtítulo de slide', 'Red Hat Display', '22 a 26px', '600'],
+    ['Corpo de slide', 'Inter', '18 a 20px', '400'],
+    ['Dado ou KPI', 'Red Hat Display', '48 a 72px', '900'],
+    ['Unidade de KPI', 'Inter', '18 a 24px', '500'],
+    ['Rótulo de diagrama', 'Inter', '13 a 15px', '500'],
+    ['Caption de slide', 'Inter', '12 a 14px', '400'],
+    ['Código ou token', 'Red Hat Mono', '13 a 14px', '400'],
+  ]}
+/>
+<Callout>
+Corpo de slide nunca abaixo de 18px. Projetor degrada fonte pequena.
+</Callout>
+<Tabela
+  colunas={['Dashboard', 'Família', 'Tamanho', 'Peso']}
+  linhas={[
+    ['KPI principal', 'Red Hat Display', '40 a 48px', '800'],
+    ['Variação de KPI', 'Inter', '14px', '600'],
+    ['Título de widget', 'Inter', '14px', '600'],
+    ['Valor de tabela', 'Inter', '13 a 14px', '400'],
+    ['Valor destacado', 'Inter', '13 a 14px', '600'],
+    ['Legenda e tooltip', 'Inter', '12px', '400'],
+    ['Rótulo de eixo', 'Inter', '11 a 12px', '400'],
+    ['Badge e status', 'Inter', '11px, caixa alta', '600'],
+    ['Timestamp', 'Red Hat Mono', '11 a 12px', '400'],
+  ]}
+/>
+<Tabela
+  colunas={['Rede social', 'Família', 'Tamanho na arte', 'Peso']}
+  linhas={[
+    ['Post feed, título', 'Red Hat Display', '48 a 56px', '800 a 900'],
+    ['Post feed, subtítulo', 'Inter', '22 a 26px', '500'],
+    ['Post feed, corpo ou dado', 'Inter', '18 a 20px', '400'],
+    ['Story ou Reels, título', 'Red Hat Display', '56 a 64px', '900'],
+    ['Story ou Reels, apoio', 'Inter', '22 a 24px', '500'],
+    ['Banner LinkedIn, título', 'Red Hat Display', '40 a 48px', '800'],
+    ['Banner LinkedIn, subtítulo', 'Inter', '20 a 22px', '500'],
+  ]}
+/>
+<Tabela
+  colunas={['Documento (Aptos no Word)', 'Tamanho', 'Peso', 'Entrelinha']}
+  linhas={[
+    ['Título do documento', '24 pt', 'Bold', '1,15'],
+    ['Heading 1', '18 pt', 'Bold', '1,2'],
+    ['Heading 2', '14 pt', 'Bold', '1,25'],
+    ['Heading 3', '12 pt', 'Bold ou SemiBold', '1,3'],
+    ['Corpo', '11 pt', 'Regular', '1,5'],
+    ['Tabela, cabeçalho e corpo', '10 pt', 'SemiBold e Regular', '1,3'],
+    ['Nota de rodapé', '9 pt', 'Regular', '1,3'],
+    ['Código ou dado técnico', '10 pt, Courier New', 'Regular', '1,4'],
+  ]}
+/>
+</Secao>
+
+<Secao titulo="Hierarquia" descricao="Poucos tamanhos por peça. Níveis se diferenciam por família, peso e escala, nunca só por tamanho.">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Três níveis ativos', texto: 'Título, subtítulo e corpo. Caption, badge ou rótulo de campo entram como quarto elemento. Nunca mais de 4 tamanhos numa tela ou slide.' },
+  { titulo: 'Contraste entre níveis', texto: 'Razão mínima de 1,25. Título em 32px, próximo nível em no máximo 24px.' },
+  { titulo: 'Entrelinha padrão', texto: 'Display e heading 1,2. Corpo de 1,5 a 1,6. Mono 1,4. Caption 1,3.' },
+  { titulo: 'Espaçamento', texto: 'Display acima de 36px com -0,02em. Corpo e mono em zero.' },
+  { titulo: 'Alinhamento', texto: 'À esquerda por padrão. Justificado proibido em produto e restrito a documento impresso formal.' },
+  { titulo: 'Blocos', texto: 'Em slides, um bloco de texto usa uma família só: ou Display ou Inter.' },
+]} />
+<Tabela
+  colunas={['Produto digital', 'Família', 'Peso', 'Tamanho', 'Entrelinha']}
+  linhas={[
+    ['Display', 'Red Hat Display', '700', '32 a 40px', '1,2'],
+    ['H1', 'Red Hat Display', '600', '24 a 28px', '1,2'],
+    ['H2', 'Red Hat Display', '600', '20 a 22px', '1,25'],
+    ['H3', 'Inter', '600', '16 a 18px', '1,3'],
+    ['Corpo', 'Inter', '400', '14 a 16px', '1,5'],
+    ['Rótulo', 'Inter', '500', '13 a 14px', '1,3'],
+    ['Caption', 'Inter', '400', '11 a 12px', '1,3'],
+    ['Código', 'Red Hat Mono', '400', '13px', '1,4'],
+  ]}
+/>
+<Tabela
+  colunas={['Documento em PDF', 'Família', 'Peso', 'Tamanho']}
+  linhas={[
+    ['Título do documento', 'Red Hat Display', '700', '28 a 36px'],
+    ['H1', 'Red Hat Display', '600', '22 a 26px'],
+    ['H2', 'Red Hat Display', '600', '18 a 20px'],
+    ['H3', 'Inter', '600', '15 a 16px'],
+    ['Corpo', 'Inter', '400', '13 a 15px'],
+    ['Célula de tabela', 'Inter', '400', '12 a 14px'],
+    ['Rodapé', 'Inter', '400', '10 a 11px'],
+    ['Bloco de código', 'Red Hat Mono', '400', '12 a 13px'],
+  ]}
+/>
+<Callout>
+As faixas acima são orientação por contexto. A escala tipográfica da seção anterior é a referência de tamanho exato. Ver divergências no fim da página.
+</Callout>
+</Secao>
+
+<Secao titulo="Legibilidade" descricao="Regras inegociáveis em produto digital e material institucional. O leitor nunca deve hesitar para distinguir caracteres ou achar a próxima linha.">
+<Tabela
+  colunas={['Texto', 'Entrelinha']}
+  linhas={[
+    ['Corpo corrido em Inter', '1,6 a 1,7'],
+    ['Parágrafo de UI em Inter', '1,5'],
+    ['Rótulo curto em Inter', '1,3 a 1,4'],
+    ['Dado de tabela em Inter', '1,4 a 1,5'],
+    ['Legenda e nota de rodapé', '1,5'],
+    ['Título display em Red Hat Display', '1,1 a 1,25'],
+    ['Heading em Red Hat Display', '1,2 a 1,35'],
+    ['Código em Red Hat Mono', '1,5 a 1,6'],
+  ]}
+/>
+<Callout>
+Nunca entrelinha abaixo de 1,3 em texto de mais de uma linha, nem acima de 2,0.
+</Callout>
+<MedidaDeLinha
+  texto="A Secretaria precisa conferir, em uma única leitura, quem pode receber o benefício, quando ele vence e qual setor responde pela renovação. Linhas muito longas fazem o olho perder o começo da seguinte e o leitor volta duas vezes ao mesmo trecho."
+  bom="de 65 a 75 caracteres por linha"
+  ruim="acima de 90 caracteres por linha"
+/>
+<Tabela
+  colunas={['Canal', 'Comprimento máximo da linha']}
+  linhas={[
+    ['Corpo em produto digital', '65 a 75 caracteres (60 a 72ch)'],
+    ['Corpo em documento ou PDF', '75 a 85 caracteres'],
+    ['Parágrafo de relatório ou proposta', '80 caracteres'],
+    ['Código', '80 a 100 caracteres'],
+    ['Célula de texto em tabela', '40 a 60 caracteres'],
+    ['Coluna de texto longo', 'Até 720px em produto, 16 cm em impresso'],
+  ]}
+/>
+<Tabela
+  colunas={['Tamanho mínimo', 'Valor']}
+  linhas={[
+    ['Corpo em produto digital', '14px'],
+    ['Corpo em documento impresso', '10 pt'],
+    ['Rótulo de formulário', '13px'],
+    ['Texto de tabela de dados', '13px'],
+    ['Cabeçalho de tabela', '12px SemiBold'],
+    ['Legenda, nota e metadado', '12px'],
+    ['Código inline e bloco', '13px e 13 a 14px'],
+    ['Texto em gráfico', '11px'],
+    ['Texto sobre imagem ou fundo colorido', '14px, com contraste verificado'],
+  ]}
+/>
+<Callout>
+12px é o piso para texto funcional, mesmo em rodapé. A única exceção é texto de gráfico, a partir de 11px.
+</Callout>
+<Tabela
+  colunas={['Cor do texto sobre `#FAFAFA`', 'Medido', 'Status']}
+  linhas={[
+    ['`#202020`', '15,61:1', 'Padrão para título'],
+    ['`#3C3C3C`', '10,57:1', 'Padrão para corpo'],
+    ['`#52525B`', '7,41:1', 'Rótulo secundário'],
+    ['`#71717A`', '4,63:1', 'Legenda e metadado, passa por pouco'],
+    ['`#A1A1AA`', '2,46:1', 'Reprovado para texto, só decorativo'],
+    ['`#1261E4`', '5,22:1', 'Link e ação'],
+    ['`#146BFA`', '4,46:1', 'Só texto grande'],
+    ['`#0E4DB8`', '7,26:1', 'Texto sobre fundo claro'],
+  ]}
+/>
+<Cartoes colunas={2} itens={[
+  { titulo: 'Texto longo', texto: 'Mais de 4 parágrafos pedem seções com heading em Red Hat Display. Inter 400 de 15 a 16px, entrelinha 1,6, 1em entre parágrafos. Termo-chave em SemiBold, nunca itálico excessivo nem sublinhado fora de link.' },
+  { titulo: 'Documento longo', texto: 'Mais de 8 páginas exigem sumário com âncoras. Nota, observação e alerta em bloco com borda esquerda `#146BFA` e fundo `#EFF5FF`.' },
+  { titulo: 'Cabeçalho de tabela', texto: 'Inter SemiBold 12 a 13px, caixa alta, espaçamento de 0,04em, cinza `#525252` sobre `#F5F5F5` ou `#EFF5FF`.' },
+  { titulo: 'Células e números', texto: 'Dado em Inter 13 a 14px, entrelinha 1,4. Números e datas em Red Hat Mono alinhados à direita. Padding mínimo de 8px por 12px.' },
+  { titulo: 'Totais e status', texto: 'Total em Inter Bold 14px com divisória acima. Status em Inter Medium 12px dentro de chip semântico, com rótulo.' },
+  { titulo: 'Espaçamento entre letras', texto: 'Cabeçalho de tabela em caixa alta de 0,04 a 0,06em. Rótulo em caixa alta de 0,05 a 0,08em. Display grande de -0,01 a -0,02em. Nunca aumente o corpo para parecer mais fino.' },
+]} />
+</Secao>
+
+<Secao titulo="Divergências entre os documentos" descricao="Os sete documentos de tipografia divergem em alguns pontos. A coluna final diz o que vale nesta página.">
+<Tabela
+  colunas={['Tema', 'O que diverge', 'Vale']}
+  linhas={[
+    ['Pesos da Inter', 'O sistema tipográfico lista 400, 500 e 600. O documento da Inter autoriza também 700. A escala usa 700 em totais.', '400 a 700, do documento dedicado. O 700 é pontual.'],
+    ['Escala de produto', 'A escala tem H1 de 36px peso 700. A hierarquia tem H1 de 24 a 28px peso 600. O sistema sugere título de página de 24 a 32px peso 700.', 'A tabela de tokens `type/*` para tamanho exato. As faixas da hierarquia como orientação.'],
+    ['Tamanho mínimo da Red Hat Display', 'A regra pede 24px no mínimo em título corrido, mas a escala tem H3 de 22px e H4 de 18px, e a hierarquia tem H2 de 20px.', 'A escala. A regra de 24px fica como alerta de revisão para o Design.'],
+    ['Tamanho mínimo de texto', 'A legibilidade proíbe qualquer texto funcional abaixo de 12px. A escala tem overline e badge de 11px e a hierarquia tem caption de 11 a 12px.', 'A legibilidade: 12px, com 11px só em gráfico.'],
+    ['Entrelinha do corpo', 'O sistema indica de 1,5 a 1,6, a escala 1,6 e a legibilidade de 1,6 a 1,7 em texto corrido.', 'De 1,6 a 1,7 em texto corrido, 1,5 em parágrafo de UI.'],
+    ['Cinza secundário', 'Os documentos citam `#6B7280`, `#737373` e `#525252` para texto secundário. A paleta neutra define `#71717A` e `#52525B`.', 'A paleta neutra da página Cores da marca.'],
+    ['Cinza em texto grande', 'A legibilidade diz que `#737373` (cerca de 4,6:1) só vale para texto grande.', 'Cerca de 4,6:1 passa em 4,5:1. A tabela de cor do texto acima registra a medição.'],
+    ['Fontes carregadas', 'A marca usa Red Hat Display de 600 a 900 e Red Hat Mono. O Storybook carrega Red Hat Display de 400 a 900, Inter de 400 a 700 e Red Hat Mono de 400 a 500.', 'Resolvido: as amostras desta página usam as fontes carregadas.'],
+  ]}
+  larguraMinima={720}
+/>
+</Secao>
+
+<Callout>
+Fonte: Brandbook Citiesoft, seção Tipografia (sistema, Red Hat Display, Inter, Red Hat Mono, escala, hierarquia e legibilidade).
+</Callout>
+
+</Pagina>

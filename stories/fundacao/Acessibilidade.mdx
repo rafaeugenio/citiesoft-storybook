@@ -1,0 +1,55 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { ParesDeContraste } from '../_docs/ParesDeContraste';
+import { a11yFoco, a11yRotulos, a11yAlvo } from '../_docs/snippets/acessibilidade';
+import { movimentoReduzido } from '../_docs/snippets/movimento';
+
+<Meta title="Fundação/Acessibilidade" />
+
+<Pagina
+  titulo="Acessibilidade"
+  resumo="Sistemas de governo precisam atender ao e-MAG e ao WCAG 2.2 nível AA. Os tokens e os componentes já trazem a base. Cada tela ainda precisa ser conferida."
+>
+
+<Secao titulo="Base legal" descricao="No Brasil, a acessibilidade digital em órgãos públicos é exigida pela Lei Brasileira de Inclusão (Lei 13.146/2015) e pelo e-MAG.">
+<Callout>
+O alvo do sistema é o **WCAG 2.2 nível AA**, que o e-MAG referencia. Os critérios abaixo cobrem o que o Design System controla. Leitor de tela, ordem de leitura e conteúdo de cada tela são responsabilidade de quem monta a página.
+</Callout>
+</Secao>
+
+<Secao titulo="Contraste" descricao="Texto normal exige 4,5:1. Texto grande (a partir de 24px, ou 18,66px em negrito), ícones e bordas de componentes exigem 3:1. Valores calculados dos tokens.">
+<ParesDeContraste />
+<Callout>
+Texto desabilitado fica fora da exigência. Texto de apoio que precisa ser lido usa `--color-text-secondary` ou mais forte. Uma célula marcada como reprova indica um par que não serve para texto corrido.
+</Callout>
+</Secao>
+
+<Secao titulo="Foco visível" descricao="Todo controle interativo mostra o anel de foco por teclado, com `--color-border-focus-ring`.">
+<CodeTabs abas={a11yFoco} />
+</Secao>
+
+<Secao titulo="Alvo de toque" descricao="O WCAG 2.2 (critério 2.5.8) pede no mínimo 24 x 24 px. Os botões do sistema têm 24px (xs), 32px (small) e 36px (medium). Em telas de toque, prefira 36px ou mais.">
+<CodeTabs abas={a11yAlvo} />
+</Secao>
+
+<Secao titulo="Teclado" descricao="Tudo o que o mouse faz, o teclado também faz.">
+<Callout>
+Use elementos nativos: `button` para ação, `a` para navegação. Mantenha a ordem de tabulação igual à ordem visual. `Tab` e `Shift+Tab` percorrem, `Enter` e `Espaço` acionam, `Esc` fecha diálogos e menus, e as setas percorrem listas, abas e menus. Devolva o foco ao gatilho quando um diálogo fechar.
+</Callout>
+</Secao>
+
+<Secao titulo="Rótulos e ARIA" descricao="Todo campo tem rótulo visível. ARIA complementa o HTML nativo, nunca o substitui.">
+<CodeTabs abas={a11yRotulos} />
+</Secao>
+
+<Secao titulo="Movimento reduzido" descricao="Respeite `prefers-reduced-motion`. Detalhes na página Movimento.">
+<CodeTabs abas={movimentoReduzido} />
+</Secao>
+
+<Secao titulo="Antes de entregar">
+<Callout>
+Navegue a tela só com o teclado. Confira o contraste nos dois temas. Aumente o zoom para 200% e confirme que nada se perde. Abra com um leitor de tela (NVDA, VoiceOver) e verifique nomes de botões, campos e mensagens de erro.
+</Callout>
+</Secao>
+
+</Pagina>

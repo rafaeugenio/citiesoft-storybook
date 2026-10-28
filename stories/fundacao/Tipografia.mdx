@@ -1,0 +1,63 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela } from '../_docs/Conteudo';
+import { Familias, EscalaTipografica, TabelaTipografica } from '../_docs/Tipografia';
+import { fontesCarregamento, tipografiaUso } from '../_docs/snippets/tipografia';
+
+<Meta title="Fundação/Tipografia" />
+
+<Pagina
+  titulo="Tipografia"
+  resumo="Três famílias, uma por papel, e uma escala de 13 estilos em 4 pesos. Cada estilo define tamanho, altura de linha e espaçamento juntos."
+>
+
+<Secao titulo="Famílias">
+<Familias />
+<Callout titulo="Carregamento">
+Títulos e marca usam Red Hat Display, corpo e interface usam Inter e código usa Red Hat Mono. Em qualquer stack, carregue as fontes antes de usar os tokens. Sem elas, a pilha de fallback do sistema assume e os tamanhos continuam corretos.
+</Callout>
+<CodeTabs abas={fontesCarregamento} />
+</Secao>
+
+<Secao titulo="Estilos da Citiesoft e classes equivalentes" descricao="Os estilos do Design System de produto e a classe do tema que os implementa. Onde não há tamanho idêntico, a tabela indica a aproximação.">
+<Tabela
+  colunas={['Estilo Citiesoft', 'Especificação', 'Classe equivalente', 'Observação']}
+  linhas={[
+    ['`display.lg`', 'Red Hat Display, 48px, 700', '`text-display-2-bold` (48/64)', 'Tamanho idêntico'],
+    ['`display.md`', 'Red Hat Display, 36px, 700', '`text-display-3-bold` (40/54)', 'Aproximação: não há 36px na escala'],
+    ['`heading.xl`', 'Red Hat Display, 30px, 700', '`text-display-4-bold` (32/44)', 'Aproximação: não há 30px na escala'],
+    ['`heading.lg`', 'Red Hat Display, 24px, 600', '`text-title-1-semibold` (24/34)', 'Tamanho idêntico'],
+    ['`heading.md`', 'Red Hat Display, 20px, 600', '`text-title-2-semibold` (20/26)', 'Tamanho idêntico'],
+    ['`heading.sm`', 'Red Hat Display, 18px, 600', '`text-title-3-semibold` (18/24)', 'Tamanho idêntico'],
+    ['`body.lg`', 'Inter, 16px, 400', '`text-headline-regular` (16/22)', 'Tamanho idêntico'],
+    ['`body.md` (base)', 'Inter, 14px, 400', '`text-body-regular` (14/20)', 'Tamanho idêntico'],
+    ['`body.sm`', 'Inter, 13px, 400', '`text-body-2-regular` (13/18)', 'Tamanho idêntico'],
+    ['`caption`', 'Inter, 12px, 400', '`text-caption-1-regular` (12/16)', 'Tamanho idêntico'],
+    ['`overline`', 'Inter, 11px, 600, caixa alta, 0,08em', '`text-caption-2-semibold` com `uppercase` e `tracking-[0.08em]`', 'Tamanho idêntico'],
+    ['`code`', 'Red Hat Mono, 13px, 400', '`font-mono text-body-2-regular`', 'Tamanho idêntico'],
+  ]}
+  larguraMinima={720}
+/>
+</Secao>
+
+<Secao titulo="Escala" descricao="Clique no nome do peso para copiar a classe. As medidas aparecem em px e rem (1rem = 16px).">
+<EscalaTipografica />
+</Secao>
+
+<Secao titulo="Referência rápida">
+<TabelaTipografica />
+</Secao>
+
+<Secao titulo="Como usar" descricao="Os quatro pesos de cada estilo seguem a mesma medida. Escolha o estilo pelo papel do texto e o peso pela ênfase.">
+<CodeTabs abas={tipografiaUso} />
+</Secao>
+
+<Secao titulo="Regras de uso">
+<Callout>
+Os estilos são compostos: não monte um texto empilhando tamanho, peso e altura de linha soltos. Se nenhum estilo cobre o caso, peça um novo estilo ao Design em vez de criar um valor local.
+
+Use `title-*` para cabeçalhos de página e seção, `headline` para títulos de cartão, `body` para leitura e `caption-*` para legendas, rótulos e dados auxiliares. Os estilos `display-*` e `large-title` ficam para páginas de destaque.
+</Callout>
+</Secao>
+
+</Pagina>

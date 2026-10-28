@@ -1,0 +1,105 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { FormularioDeCadastro } from '../_docs/padroes/Formularios';
+import { Prontos } from '../_docs/padroes/Moldura';
+import { campoComErro } from '../_docs/snippets/padrao-formularios';
+
+<Meta title="Guias/Padrões/Formulários" />
+
+<Pagina
+  titulo="Formulários"
+  resumo="Regras de rótulo, máscara, validação e envio para qualquer formulário Citiesoft. Um servidor preenche dezenas por dia, então cada erro vago vira retrabalho."
+>
+
+<Secao titulo="Quando usar">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Use para', texto: 'Dados que serão salvos ou processados: cadastro, lançamento, abertura de processo, edição de registro e configurações de perfil.' },
+  { titulo: 'Não use para', texto: 'Filtro simples de 1 ou 2 campos, busca livre com um campo de texto e configuração booleana isolada, que pede só uma alternância.' },
+]} />
+</Secao>
+
+<Secao titulo="Anatomia">
+<Tabela colunas={['Parte', 'Regra']} linhas={[
+  ['Rótulo', 'Sempre visível acima do campo, a 4 px dele. Obrigatório leva asterisco depois do texto. Em formulário quase todo obrigatório, o opcional leva `(opcional)`.'],
+  ['Campo', 'Largura comunica o tamanho esperado: CEP com 120 px, número de processo com 240 px, nome com 100%.'],
+  ['Texto auxiliar', 'Abaixo do campo, só quando o comportamento não é óbvio. Exemplo: `Sem espaços ou pontos. Ex.: 123456`.'],
+  ['Mensagem de erro', 'Imediatamente abaixo do campo, com ícone e texto. Nunca em tooltip, modal ou só no topo da página.'],
+  ['Grupo', 'Campos relacionados sob uma legenda. 32 px entre grupos e 16 px entre campos do mesmo grupo.'],
+  ['Ações', 'Ao final: pelo menos um botão de envio. Destrutivo nunca é o primeiro da linha.'],
+]} />
+</Secao>
+
+<Secao titulo="Regras" descricao="Numeradas para citar em revisão e em critério de aceite.">
+<Tabela colunas={['Nº', 'Regra']} larguraMinima={520} linhas={[
+  ['1', 'Rótulo fora do campo. Placeholder só exemplifica o formato (`Ex.: 123.456.789-09`) e nunca repete o rótulo.'],
+  ['2', 'Coluna única por padrão. Duas colunas só para campos diretamente relacionados e de até 160 px, como UF e CEP.'],
+  ['3', 'Acima de 12 campos, use seções colapsáveis ou etapas.'],
+  ['4', 'A máscara guia e não bloqueia. Envie só os dígitos de CPF, CNPJ, CEP e telefone.'],
+  ['5', 'Valide ao sair do campo, nunca a cada tecla. Exceções: contador de caracteres e força de senha.'],
+  ['6', 'Não mostre erro antes de o usuário interagir. O estado inicial é neutro.'],
+  ['7', 'No envio inválido, mostre todos os erros, leve o foco ao primeiro campo inválido e anuncie a contagem.'],
+  ['8', 'Mensagem de erro diz o que está errado e como corrigir.'],
+  ['9', 'Preencha o que o contexto já sabe, como órgão, data atual e UF. Nunca pré-preencha senha, valor financeiro crítico nem campo que exige confirmação.'],
+  ['10', 'Erro de servidor não limpa o formulário. Em formulário longo, guarde rascunho local a cada 30 segundos de inatividade.'],
+  ['11', 'Sair com dados não salvos abre confirmação que descreve a perda.'],
+  ['12', 'Tabulação segue a leitura visual, sem ordem positiva artificial. Os botões de ação ficam por último.'],
+  ['13', 'Durante o envio, o botão primário mostra carregamento (`Salvando...` ou `Enviando...`). Depois do sucesso, toast e, quando couber, ida ao registro.'],
+]} />
+</Secao>
+
+<Secao titulo="Estados">
+<Tabela colunas={['Estado', 'Comportamento']} linhas={[
+  ['Neutro', 'Borda padrão, sem mensagem. Estado inicial de todo campo.'],
+  ['Foco', 'Anel de foco de 3 px somado à borda de marca. Cabeçalho fixo não pode cobrir o campo.'],
+  ['Erro', 'Borda, ícone e texto em perigo, mais fundo do campo. O rótulo não muda de cor.'],
+  ['Sucesso', 'Borda e ícone de confirmação ao corrigir, só em formatos complexos como CPF, CNPJ e CEP.'],
+  ['Somente leitura', 'Fundo sutil e texto secundário. Fica na ordem de tabulação.'],
+  ['Desabilitado', 'Estado nativo, fora do foco. Campo dependente explica o que falta: `Selecione a UF primeiro.`'],
+]} />
+</Secao>
+
+<Secao titulo="Acessibilidade">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Rótulo e erro ligados', texto: 'Todo campo tem rótulo visível associado. O erro é associado ao campo, que fica marcado como inválido.' },
+  { titulo: 'Contagem anunciada', texto: 'No envio inválido, uma região assertiva anuncia `3 erros encontrados. Corrija antes de continuar.`' },
+  { titulo: 'Sem barreira de entrada', texto: 'Colar e autocompletar sempre funcionam. Não repita dado já informado, nem peça captcha sem alternativa.' },
+  { titulo: 'Alvos de toque', texto: 'Campos e botões com 44 px para cidadão e gestor. Servidor em tela grande aceita 36 px.' },
+  { titulo: 'Contraste', texto: 'Erro em perigo sobre branco passa AA. Placeholder fica acima de 3:1 e nunca carrega informação.' },
+  { titulo: 'Movimento', texto: 'Com redução de movimento ativa, hover, foco e mensagem de erro aparecem sem transição.' },
+]} />
+</Secao>
+
+<Secao titulo="Certo e errado">
+<CertoErrado itens={[
+  { certo: 'Rótulo `CPF` acima do campo, placeholder `Ex.: 123.456.789-09` e erro `CPF inválido. Verifique os 11 dígitos e tente novamente.`', errado: 'Placeholder `CPF` como único rótulo e erro `Campo obrigatório`.', motivo: 'O rótulo some ao digitar e a mensagem não orienta a correção.' },
+  { certo: 'Validar o nome ao sair do campo ou ao enviar.', errado: 'Mostrar `campo obrigatório` logo após a primeira letra.', motivo: 'Erro durante a digitação gera ansiedade e ruído para leitor de tela.' },
+  { certo: 'Manter todos os valores após falha de rede e explicar que os dados foram preservados.', errado: 'Limpar o formulário em erro de servidor.' },
+]} />
+</Secao>
+
+<Secao titulo="Exemplo composto" descricao="Montado com Input, FormSection, FormGrid e FormActions. Valida ao sair do campo e leva o foco ao resumo no envio inválido.">
+<FormularioDeCadastro />
+<CodeTabs abas={campoComErro} />
+</Secao>
+
+<Secao titulo="Onde ver pronto">
+<Prontos itens={[
+  { nome: 'Blocos/Formulario', uso: 'Seção, grade e barra de ações usadas no exemplo.' },
+  { nome: 'Templates/Sistemas/Formulário de cadastro', uso: 'Tela completa de cadastro com validação.' },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Tabela colunas={['Tema', 'O que os documentos dizem']} linhas={[
+  ['Mensagem de campo vazio', 'Formulários usa `Informe o nome completo para continuar.`, Tratamento de erros usa `[Rótulo] é obrigatório.` e CRUD usa `Informe o [campo].` Esta página adota o modelo `Informe o ...`.'],
+  ['Ordem dos botões', 'Formulários põe a confirmação à esquerda e o cancelamento à direita. CRUD põe Cancelar à esquerda e Salvar à direita. O exemplo segue CRUD.'],
+  ['Altura mínima', 'Formulários fala em 36 px para servidor operacional, Comportamento responsivo em 32 px no desktop.'],
+]} />
+</Secao>
+
+<Callout>
+Fonte: padrões de Formulários do Design System Citiesoft, com apoio dos padrões CRUD e Tratamento de erros.
+</Callout>
+
+</Pagina>

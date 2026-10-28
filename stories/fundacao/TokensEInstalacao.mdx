@@ -1,0 +1,41 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs, Downloads } from '../_docs/Layout';
+import { instalacao, cartaoMinimo, validarCarga, atualizarTokens } from '../_docs/snippets/tokensEInstalacao';
+
+<Meta title="Fundação/Tokens e instalação" />
+
+<Pagina
+  titulo="Tokens e instalação"
+  resumo="Os mesmos tokens em seis formatos. Escolha o da sua stack, carregue uma vez e use pelo nome."
+>
+
+<Secao titulo="Arquivos" descricao="Clique no nome para baixar.">
+<Downloads />
+<Callout titulo="Qual usar">
+HTML, Angular e React usam `citiesoft.tokens.css`. Tailwind v4 usa os dois arquivos `tailwind`. SCSS usa `citiesoft.tokens.scss`. Apps nativos e Figma usam o JSON.
+</Callout>
+</Secao>
+
+<Secao titulo="Instalação" descricao="Passo a passo por stack. Todas carregam o arquivo uma única vez, na entrada do projeto.">
+<CodeTabs abas={instalacao} />
+</Secao>
+
+<Secao titulo="Exemplo mínimo" descricao="Um cartão com título, texto e botão, feito só com tokens.">
+<CodeTabs abas={cartaoMinimo} />
+<Callout>
+O cartão não tem nenhum valor fixo. Fundo, texto, borda, raio e sombra vêm de tokens, e o tema escuro funciona sem código extra.
+</Callout>
+</Secao>
+
+<Secao titulo="Como validar" descricao="Confirme que os tokens carregaram antes de construir a tela.">
+<CodeTabs abas={validarCarga} />
+</Secao>
+
+<Secao titulo="Como atualizar" descricao="Quando os tokens mudam, os arquivos são gerados de novo e republicados.">
+<CodeTabs abas={atualizarTokens} />
+<Callout titulo="Sequência">
+Rode `gerar-tokens`, republique os arquivos de `public/tokens/` e atualize a cópia em cada projeto. Os arquivos gerados não se editam à mão, porque a próxima geração sobrescreve a alteração.
+</Callout>
+</Secao>
+
+</Pagina>

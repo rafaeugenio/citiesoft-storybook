@@ -1,0 +1,133 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado, Passos } from '../_docs/Conteudo';
+import { assinaturaEmailCodigo, iconeDeAppCodigo, heroDoSiteCodigo } from '../_docs/snippets/marca-no-digital';
+
+<Meta title="Marca/Marca no digital" />
+
+<Pagina
+  titulo="Marca no digital"
+  resumo="Como a marca aparece em site, redes sociais, e-mail, Microsoft 365, ícone de app e produto. Em todos, o fundo é sólido, o gradiente é exceção de destaque e a cor de ação é o Citie Blue 600."
+>
+
+<Secao titulo="Site e landing" descricao="Hero com gradiente, resto da página em fundo sólido. Um CTA primário por seção.">
+<Tabela
+  colunas={['Item', 'Regra']}
+  linhas={[
+    ['Fundo', '`#FAFAFA`. Seção de destaque suave em azul 50. Gradiente só no hero, a 135°.'],
+    ['Hero', 'Institucional `#146BFA` a `#0B3C8F`, ou tecnológico `#1261E4` a `#00B5F0` em página de produto. Texto `#FAFAFA` com 4,5:1 ou mais.'],
+    ['Botão e link', '`#1261E4`, hover `#0E4DB8`, desabilitado `#B3CEFE`. CTA secundário em outline.'],
+    ['Cards', 'Fundo `#FFFFFF`, borda `#DBE8FF` ou sombra leve.'],
+    ['Títulos', 'Red Hat Display 700, 28 a 36 px. Hero 800 a 900, 40 a 56 px.'],
+    ['Corpo', 'Inter 400 a 500, 16 px, entrelinha 1,6. Dado técnico em Red Hat Mono 14 px.'],
+    ['Layout', 'Conteúdo até 1200 px. Seção com 80 px de respiro no desktop e 48 px no mobile. Margem lateral mínima de 24 px.'],
+    ['Texto', 'Título afirma. Parágrafo com até 3 linhas. Lista com verbo no infinitivo e objeto concreto.'],
+  ]}
+/>
+<Passos itens={[
+  { titulo: 'Navbar e hero', texto: 'Hero com um CTA primário.' },
+  { titulo: 'Prova social e proposta de valor', texto: 'Strip de clientes, depois três colunas ou lista de diferenciais.' },
+  { titulo: 'Produto e números', texto: 'Screenshot ou mockup, depois números de impacto em Red Hat Display 700.' },
+  { titulo: 'Como funciona e depoimentos', texto: 'Passos ou diagrama, depois cases com nome, cargo e órgão.' },
+  { titulo: 'Integração, CTA final e footer', texto: 'Landing de produto pode suprimir blocos, mas mantém hero, CTA e prova social.' },
+]} />
+<CertoErrado itens={[
+  { certo: 'Solicitar demonstração. Ver proposta técnica. Acessar o sistema.', errado: 'Saiba mais. Clique aqui. Descobrir.', motivo: 'O rótulo diz o que acontece depois do clique.' },
+  { certo: 'Botão `#FAFAFA` com texto `#146BFA` sobre o hero azul.', errado: 'Botão azul sobre fundo azul.' },
+]} />
+<CodeTabs abas={heroDoSiteCodigo} />
+</Secao>
+
+<Secao titulo="Redes sociais" descricao="LinkedIn e Instagram. Cor estrutural dominante em branco ou Citie Blue 900, com Citie Blue 500 ou 600 no destaque.">
+<Tabela
+  colunas={['Peça', 'Medida', 'Regra']}
+  linhas={[
+    ['Avatar', 'Quadrado', '`LogoAzul.svg` sobre `#FAFAFA` ou `#146BFA`, padding mínimo de 12%.'],
+    ['Capa LinkedIn', '1584 x 396 px', 'Fundo Blue 900 ou 950, `LogoHorizontal2.svg` à esquerda com margem de 48 px.'],
+    ['Post 1:1', '1080 x 1080 px', 'Topo de 80 px com logo, rodapé de 160 px com tagline ou URL.'],
+    ['Post 4:5', '1080 x 1350 px', 'Mesmas faixas. Uma métrica por post. Texto no terço superior do corpo.'],
+    ['Story e Reels 9:16', '1080 x 1920 px', 'Faixas seguras de 252 px em cima e embaixo. Gradiente de marca permitido.'],
+  ]}
+/>
+<Cartoes colunas={2} itens={[
+  { titulo: 'Tipografia', texto: 'Título em Red Hat Display 600 a 800, mínimo de 36 px (48 px em 9:16). Apoio em Inter 400, mínimo de 18 px.' },
+  { titulo: 'Grafismo', texto: 'Linhas, blocos sólidos e cantos de 4 a 8 px em Blue 100 ou 200. Ícone outlined de 1,5 a 2 px.' },
+  { titulo: 'Foto', texto: 'Sempre com overlay de Blue 900 entre 40% e 60%.' },
+  { titulo: 'Feed', texto: 'A cada três posts, um em fundo Blue escuro. Dois posts seguidos nunca repetem a paleta.' },
+  { titulo: 'Citiezinho', texto: 'Cultura interna, recrutamento e datas comemorativas. Fora de institucional, licitação e lançamento.' },
+  { titulo: 'Semânticas e ciano', texto: 'Semânticas só em contexto funcional. Ciano só como acento, nunca fundo nem texto principal.' },
+]} />
+</Secao>
+
+<Secao titulo="E-mail, Teams e Outlook" descricao="Template oficial para comunicação formal. Fundo, avatar, banner e assinatura saem dos modelos aprovados.">
+<Tabela
+  colunas={['Item', 'Regra']}
+  linhas={[
+    ['Fundo de reunião', '1920 x 1080 px, até 20 MB. Blue 800 a 900 com `LogoHorizontal2.svg`, ou `#FAFAFA` com `LogoHorizontal3.svg`. Com cliente público, nada de fundo pessoal ou desfocado.'],
+    ['Avatar de equipe', '`LogoAzul.svg` sobre Blue 900, 1:1, mínimo de 192 px, PNG sem transparência.'],
+    ['Banner de equipe', '1920 x 300 px, fundo Blue 800, `LogoHorizontal2.svg` à esquerda com 24 px de folga, nome em Red Hat Display 600.'],
+    ['Template de e-mail', 'Faixa Blue 800 com logo, corpo `#FAFAFA` com texto `#3C3C3C` em Inter 14 a 15 px, rodapé Blue 950. Gradiente só em faixa de até 80 px.'],
+    ['Botão de e-mail', '`#1261E4`, texto branco, raio de 6 px.'],
+    ['Assinatura', 'Largura máxima de 500 px, tabela HTML, `LogoHorizontal3.svg` com link, cargo em português. Só o LinkedIn da empresa como rede.'],
+    ['Respostas na thread', 'Assinatura completa na primeira mensagem, curta nas seguintes.'],
+    ['Nome da reunião', 'Produto ou projeto, cliente ou órgão, tipo de reunião.'],
+  ]}
+/>
+<CodeTabs abas={assinaturaEmailCodigo} />
+</Secao>
+
+<Secao titulo="Ícone de app e PWA" descricao="Símbolo isolado sobre fundo sólido, nunca o logo horizontal.">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Versão clara', texto: 'Símbolo `#FAFAFA` sobre Blue 500 `#146BFA`.' },
+  { titulo: 'Versão escura', texto: 'Símbolo `#FAFAFA` sobre Blue 800 `#0B3C8F`.' },
+  { titulo: 'Zona de segurança', texto: 'Símbolo ocupa de 55% a 65% da área, com margem mínima de 17,5%.' },
+  { titulo: 'Gradiente', texto: 'Só em versão hero acima de 512 px, como ícone de loja.' },
+  { titulo: 'Recorte', texto: 'iOS e PWA recebem asset quadrado. Android pede camadas foreground e background.' },
+  { titulo: 'Monocromática', texto: 'Símbolo `#FAFAFA` sobre `#606060`, para ícone tingido pelo sistema.' },
+  { titulo: 'Nome de arquivo', texto: '`citiesoft-icon-1024@1x.png`, `citiesoft-icon-192@1x.png`, `favicon-32.png`.' },
+  { titulo: 'Sem efeitos', texto: 'Nada de sombra, brilho, 3D, outline ou ruído. O favicon usa o símbolo, nunca a letra C.' },
+]} />
+<CodeTabs abas={iconeDeAppCodigo} />
+</Secao>
+
+<Secao titulo="Interface de produto" descricao="O Design System é a camada funcional e a marca é a camada de identidade. Elas convivem sem se sobrepor.">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Ação em Blue 600', texto: '`#1261E4` em botão, link, aba ativa e progresso. O 500 fica para peças institucionais.' },
+  { titulo: 'Inter', texto: 'Única fonte do produto. Red Hat Display só em título de login e splash, com boas-vindas ou nome do sistema.' },
+  { titulo: 'Red Hat Mono', texto: 'CPF mascarado, protocolo, ID, token, CEP, data ISO e log.' },
+  { titulo: 'Densidade', texto: 'Compacta nos módulos operacionais. Espaço generoso só em onboarding.' },
+  { titulo: 'Pontos de ancoragem', texto: 'A marca institucional aparece em login, header, empty state, telas 404, 403 e 500, modal de boas-vindas e conclusão de fluxo crítico.' },
+  { titulo: 'Header', texto: '`LogoHorizontal3.svg` em fundo claro. `LogoHorizontal2.svg` em Blue 700 a 900.' },
+  { titulo: 'Gradiente', texto: 'Só no painel lateral do login e no splash. Fundo de tela operacional é `#FAFAFA`.' },
+  { titulo: 'Citiezinho', texto: 'Empty state e onboarding. Fora de autorização, emissão de documento, cadastro, erro de sistema, relatório e listagem.' },
+]} />
+</Secao>
+
+<Secao titulo="Arquivos no SharePoint e OneDrive" descricao="Asset oficial vive na biblioteca de marca. O OneDrive pessoal guarda rascunho.">
+<Cartoes colunas={2} itens={[
+  { titulo: 'Nome de arquivo', texto: 'Tipo, descrição e versão com hífen, sem espaço nem acento: `Logo-Horizontal3-v1.0.svg`. Nada de sufixo `_final`.' },
+  { titulo: 'Versão', texto: '`vMAJOR.MINOR`. MAJOR em revisão aprovada de identidade, MINOR em ajuste menor.' },
+  { titulo: 'Pastas', texto: 'Distribuição guarda só formato final. Fontes de trabalho ficam em pasta restrita ao Design. Cada pasta tem um `_INDEX.md`.' },
+  { titulo: 'Compartilhar', texto: 'Link de leitura, nunca anexo. Projeto referencia a biblioteca e não copia asset.' },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte" descricao="Pontos em que os documentos de marca no digital divergem entre si.">
+<Tabela
+  colunas={['Tema', 'O que diverge']}
+  linhas={[
+    ['Azul 50', 'O site usa `#F4F8FF` para seção suave e card de depoimento. A interface de produto usa `#EFF5FF`, que é o Blue 50 da paleta.'],
+    ['Contraste do ícone', 'O ícone cita 4,69:1 para `#FAFAFA` sobre `#146BFA`. A página Cores da marca mede 4,46:1. Em gráfico o mínimo é 3:1, então o ícone passa nos dois casos.'],
+    ['Contraste do Blue 600', 'A interface de produto cita 5,48:1 sobre branco. A página Cores da marca mede 5,45:1 sobre `#FFFFFF`.'],
+    ['Assinatura de e-mail', 'Largura do logo: até 160 px num documento, 120 a 140 px no outro. Linha divisória: `#DBE8FF` ou `#B3CEFE`. Texto jurídico ou institucional: `#9E9E9E` ou `#6B7280`. Ordem: logo no fim ou no topo.'],
+    ['Gradiente em 9:16', 'Redes sociais permitem gradiente cobrindo a tela inteira no 9:16. Os demais documentos proíbem gradiente de tela inteira.'],
+  ]}
+  larguraMinima={640}
+/>
+</Secao>
+
+<Callout>
+Fonte: Brandbook Citiesoft, seção Marca no digital (site, redes sociais, assinatura de e-mail, Teams e Outlook, ícone de app, interface de produto, SharePoint e OneDrive).
+</Callout>
+
+</Pagina>

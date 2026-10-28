@@ -1,0 +1,144 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { iconesCodigo } from '../_docs/snippets/icones-e-imagem';
+
+<Meta title="Marca/Ícones, ilustração e fotografia" />
+
+<Pagina
+  titulo="Ícones, ilustração e fotografia"
+  resumo="Três linguagens para três trabalhos: ícone para ação e estado, ilustração para conceito abstrato, foto para pessoa e lugar real. Uma peça usa uma linguagem por vez."
+>
+
+<Secao titulo="Qual usar" descricao="Escolha pelo que precisa ser comunicado.">
+<Tabela colunas={['Linguagem', 'Use quando', 'Evite']} larguraMinima={620} linhas={[
+  ['Ícone', 'O espaço é restrito ou o objeto é isolado e funcional: botão, rótulo, estado.', 'Como único canal de significado.'],
+  ['Ilustração', 'O conceito é abstrato e pede cena: integração, automação, fluxo. Hero, capa, empty state, onboarding.', 'No lugar de diagrama técnico ou de foto de pessoa.'],
+  ['Fotografia', 'É preciso mostrar pessoas, locais físicos ou situações reais de uso.', 'Banco de fotos genérico e prints com dado real.'],
+]} />
+</Secao>
+
+<Secao titulo="Ícones" descricao="Estilo de linha, família Phosphor Icons. Desvio da família exige justificativa documentada.">
+<Tabela colunas={['Peso', 'Uso']} linhas={[
+  ['`thin`', 'Decorativo e hero, a partir de 24 px'],
+  ['`light`', 'Card informativo e painel de baixa densidade'],
+  ['`regular`', 'Interface padrão: navegação, formulário, ação secundária'],
+  ['`bold`', 'Ação primária, alerta, destaque em fundo escuro'],
+  ['`fill`', 'Estado ativo e status semântico'],
+  ['`duotone`', 'Empty state e onboarding, com critério. Evite em tela operacional densa'],
+]} />
+<Cartoes colunas={3} itens={[
+  { titulo: 'No máximo dois pesos', texto: 'Por superfície. Sidebar regular e empty state light são contextos distintos e vale.' },
+  { titulo: 'Múltiplos de 4 px', texto: 'Alinhados ao pixel grid e ao centro vertical do texto vizinho. Sem posição subpixel.' },
+  { titulo: 'Thin abaixo de 24 px', texto: 'Nunca. O traço some e falha em acessibilidade. Contraste mínimo de 3:1 para componente gráfico.' },
+]} />
+<Tabela colunas={['Contexto', 'Tamanho', 'Peso']} linhas={[
+  ['Inline em texto, badge', '16 px', 'Regular'],
+  ['Botão', '20 px', 'Regular ou bold'],
+  ['Sidebar', '20 a 24 px', 'Regular'],
+  ['Card', '24 a 32 px', 'Regular ou light'],
+  ['Cabeçalho de seção ou tela', '32 a 40 px', 'Light ou regular'],
+  ['Banner e hero', '48 a 80 px', 'Thin ou light'],
+  ['Empty state e onboarding', '64 a 96 px', 'Light ou duotone'],
+]} />
+<Tabela colunas={['Situação', 'Cor']} linhas={[
+  ['Neutro, informativo', '`#3C3C3C`'],
+  ['Ação interativa e info', '`#1261E4` (Citie Blue 600), hover `#0E4DB8`'],
+  ['Sobre azul escuro', '`#FAFAFA`'],
+  ['Decorativo em destaque', '`#146BFA` (Citie Blue 500)'],
+  ['Sucesso, atenção, perigo', '`#16A34A`, `#D97706`, `#DC2626`, sempre em `fill`'],
+  ['Desabilitado', '`#A3A3A3`'],
+]} />
+<CodeTabs abas={iconesCodigo} />
+<CertoErrado itens={[
+  {
+    certo: 'Ícone de ação com rótulo visível. Em toolbar densa, `aria-label` e tooltip no hover e no foco.',
+    errado: 'Botão só com ícone, sem texto nem `aria-label`.',
+  },
+  {
+    certo: 'Status com ícone `fill`, cor e texto juntos, e legenda em tabela.',
+    errado: 'Círculo verde ou vermelho sozinho.',
+    motivo: 'Daltonismo e leitor de tela quebram a leitura só por cor.',
+  },
+  {
+    certo: 'Ícone decorativo com `aria-hidden="true"`.',
+    errado: 'Símbolo do logo (`LogoAzul.svg`, `LogoBranca.svg`) no lugar de ícone funcional, ou ícone genérico de cidade como identidade.',
+    motivo: 'O símbolo é identidade da marca e não troca por ícone de interface.',
+  },
+  {
+    certo: 'Ícone animado só com função: loader e progresso.',
+    errado: 'Ícone girando, pulsando ou em loop em tela de uso prolongado.',
+  },
+]} />
+</Secao>
+
+<Secao titulo="Ilustração" descricao="Estilo canônico: 3D acrílico isométrico em Citie Blue, render de alta qualidade, luz suave difusa, fundo branco ou transparente.">
+<Tabela colunas={['Parâmetro', 'Regra']} linhas={[
+  ['Cor', 'Citie Blue dominante, escala 50 a 950 para profundidade. Ciano `#5FD2FF` ou `#00B5F0` só em brilho pontual.'],
+  ['Fundo', '`#FAFAFA` ou transparente. Gradiente só dentro do objeto 3D.'],
+  ['Ângulo', 'Isométrico, 30° de elevação e projeção a 45°. Variação com aprovação da marca.'],
+  ['Composição', 'Objeto principal ocupa de 60% a 75% da área.'],
+  ['Texto', 'Fora da ilustração. Exceção: interface dentro de mockup de tela.'],
+  ['Personagem', 'Sem humanoide em contexto institucional. O Citiezinho segue regras próprias.'],
+  ['Exportação', 'Digital em 2x, PNG ou SVG com fundo transparente. Impressão em 300 dpi, CMYK ou PDF com perfil.'],
+  ['Fonte editável', 'Obrigatória de fornecedor (`.blend`, `.c4d`, `.ai`). Aprovação do responsável de marca antes de uso externo.'],
+]} />
+<Cartoes colunas={3} itens={[
+  { titulo: 'Usar', texto: 'Hero de deck, capa de proposta, empty state, onboarding de módulo, post institucional como destaque.' },
+  { titulo: 'Em produto', texto: 'Nunca mais de 30% da tela em estado funcional. Pontual em empty state, onboarding e boas-vindas.' },
+  { titulo: 'Não usar', texto: 'Tela com dado real, fundo de página, contrato e edital, retrato de pessoa real, diagrama técnico.' },
+]} />
+<CertoErrado itens={[
+  {
+    certo: 'Cena isométrica de módulos conectados, cada um em um tom da escala (400, 600, 800).',
+    errado: 'Flat 2D colorido com personagem sorrindo, cartoon, hand-drawn ou paleta laranja, verde ou vermelha.',
+    motivo: 'Cartoon e flat só em comunicação interna, nunca em peça que sai da empresa.',
+  },
+  {
+    certo: 'Máximo de uma ilustração de destaque por proposta. O resto é ícone ou diagrama.',
+    errado: 'Sombra dura, néon e mistura de estilos na mesma peça.',
+  },
+]} />
+</Secao>
+
+<Secao titulo="Fotografia" descricao="Reconhecível como brasileira, institucional e real. Luz natural ou difusa, nitidez no sujeito, paleta neutra ou fria.">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Original primeiro', texto: 'Equipe, visita técnica, evento, cliente com autorização. Banco de fotos só com filtro de autenticidade.' },
+  { titulo: 'Brasil real', texto: 'Diversidade orgânica de etnia, região e idade. Cidades médias do Nordeste, Centro-Oeste e interior. Prefeituras e secretarias de verdade.' },
+  { titulo: 'Tecnologia em uso', texto: 'Pessoas operando tablet, notebook ou terminal no trabalho. Sem holograma, matrix e hacker de capuz.' },
+  { titulo: 'Qualidade técnica', texto: 'Mínimo de 1920 px na maior dimensão no digital e 300 dpi na impressão.' },
+  { titulo: 'Um estilo por material', texto: 'Mesma temperatura de cor, profundidade de campo e tratamento. Máximo de uma foto por slide.' },
+  { titulo: 'Fundo sólido', texto: 'Foto vai em seção ou bloco, nunca como fundo de página inteira.' },
+]} />
+<Tabela colunas={['Dado em print ou mockup', 'Tratamento']} linhas={[
+  ['CPF, RG, NIS, matrícula', 'Dado fictício antes da captura. Sem isso, blur total (formato `000.000.000-00`)'],
+  ['Nome de cidadão', 'Nome fictício, como "Maria Silva"'],
+  ['Endereço residencial', 'Logradouro fictício'],
+  ['Dado de saúde', 'Blur total, sem exposição parcial'],
+  ['Dado financeiro', 'Valor zerado ou fictício'],
+  ['Rosto de cidadão, processo judicial', 'Sem autorização formal, não usar. Processo judicial nunca'],
+]} />
+<CertoErrado itens={[
+  {
+    certo: 'Mockup com dado fictício, versão atual do produto, frame de dispositivo neutro ou escuro.',
+    errado: 'Print de produção com CPF real, protótipo desatualizado em material externo.',
+    motivo: 'Violação de LGPD e perda de confiança institucional.',
+  },
+  {
+    certo: 'Foto de equipe real em prefeitura parceira, com legenda e autorização.',
+    errado: 'Skyline de capital para cliente de município pequeno, executivos sorrindo em escritório de banco de fotos, diversidade posada de estúdio.',
+  },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte">
+<Tabela colunas={['Tema', 'O que a fonte diz', 'Adotado aqui']} larguraMinima={680} linhas={[
+  ['Estilo de ilustração', 'O documento de ilustração fixa o 3D acrílico isométrico como estilo canônico. O de layouts institucionais pede estilo linear ou flat e proíbe 3D em ícones e ilustrações, e o slide de seção cita ilustração linear plana.', 'Ilustração segue o 3D acrílico. A regra de linear ou flat vale para ícones.'],
+]} />
+</Secao>
+
+<Callout>
+Fonte: Brandbook Citiesoft, Sistema gráfico.
+</Callout>
+
+</Pagina>

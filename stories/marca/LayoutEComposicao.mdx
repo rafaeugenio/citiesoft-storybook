@@ -1,0 +1,142 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Pagina, Secao, Callout, CodeTabs } from '../_docs/Layout';
+import { Tabela, Cartoes, CertoErrado } from '../_docs/Conteudo';
+import { espacamentoCodigo, areaSeguraCodigo } from '../_docs/snippets/layout-e-composicao';
+
+<Meta title="Marca/Layout e composição" />
+
+<Pagina
+  titulo="Layout e composição"
+  resumo="Grid, margens, área segura e escala de espaçamento das peças da marca. Clareza vem antes de estética: o leitor deve saber em até três segundos o que importa e qual ação tomar."
+>
+
+<Secao titulo="Princípios" descricao="Layout organizado sinaliza parceiro confiável. Poluição visual sinaliza improviso, e no B2G isso pesa na contratação.">
+<Cartoes colunas={3} itens={[
+  { titulo: 'Formato primeiro', texto: 'Cada formato tem grid próprio. Slide não vira A4 sem reconfigurar colunas, margens e gutter.' },
+  { titulo: 'Alinhe à grade', texto: 'Posicione por início, centro e fim de coluna ou por valor da escala. Ajuste por feeling é vedado em material oficial.' },
+  { titulo: 'Colunas inteiras', texto: 'Imagem, card, tabela e gráfico ocupam 1, 2, 3 ou 4 colunas completas. Largura de 7,5 colunas quebra o ritmo.' },
+  { titulo: 'Texto à esquerda', texto: 'Em layout editorial, alinhamento à esquerda. Centralizado só em capa e dado único.' },
+  { titulo: 'Margem é inviolável', texto: 'Texto, imagem, ícone, gráfico e logo ficam dentro da área segura. Só fundo, faixa decorativa e gradiente sangram.' },
+  { titulo: 'Guias entregues', texto: 'Arquivo editável sai com guias de grid ativas ou instrução no rodapé da primeira página.' },
+]} />
+</Secao>
+
+<Secao titulo="Grid e área segura por formato" descricao="Colunas e gutter vêm do documento de grid, margens e área segura do documento de margens. Ver divergências no fim.">
+<Tabela colunas={['Formato', 'Colunas e gutter', 'Margens', 'Área segura']} larguraMinima={720} linhas={[
+  ['Slide 16:9, 1920 por 1080 px', '12 colunas, gutter 24 px', '80 px laterais, 64 px topo, 72 px base', '1760 por 944 px'],
+  ['Slide 4:3, 1024 por 768 px (legado)', 'Sem grid definido', '48 px laterais, 40 px topo, 48 px base', '928 por 680 px'],
+  ['A4 vertical, 210 por 297 mm', '12 colunas editoriais ou 2, gutter 5 mm', '20 mm topo, base e direita, 25 mm esquerda (lombada)', '165 por 257 mm'],
+  ['Social quadrado, 1080 por 1080 px', '6 colunas, gutter 16 px', '64 px, com folga de 16 px nos cantos para elemento crítico', '952 por 952 px'],
+  ['Social retrato 4:5, 1080 por 1350 px', '6 colunas, gutter 16 px', '72 px laterais, 80 px topo, 72 px base', '936 por 1198 px'],
+  ['Story e Reels, 1080 por 1920 px', '4 colunas, gutter 16 px', '72 px laterais. Zona morta de 160 px no topo e 200 px na base', '936 por 1560 px'],
+  ['LinkedIn paisagem, 1200 por 628 px', 'Sem grid definido', '60 px laterais, 48 px topo e base', '1080 por 532 px'],
+  ['Banner 1920 por 600 px', 'Sem grid definido', '120 px laterais, 48 px topo e base', '1680 por 504 px. Texto e logo nos 1040 px centrais'],
+  ['Leaderboard 728 por 90 px', 'Sem grid definido', '16 px laterais, 8 px topo e base', '696 por 74 px'],
+  ['Half page 300 por 600 px', 'Sem grid definido', '20 px', '260 por 560 px'],
+  ['E-mail HTML', 'Sem grid definido', 'Container de 600 px, padding de 32 px lateral e 24 px vertical', '600 px'],
+]} />
+<Cartoes colunas={3} itens={[
+  { titulo: 'Slide: zonas', texto: 'Título entre 64 e 160 px do topo. Rodapé e numeração entre 1008 e 1080 px, respeitando 80 px à esquerda. Logo ancorado em 80 por 64 px.' },
+  { titulo: 'A4: cabeçalho e rodapé', texto: 'Cabeçalho entre 10 e 20 mm do topo, com logo, razão social e data. Rodapé entre 10 e 20 mm da base, com página e versão. Bloco de cor sangra, o texto dentro mantém 10 mm de padding.' },
+  { titulo: 'Story: zonas', texto: 'Logo a partir de 200 px do topo. Conteúdo crítico no terço central, longe dos 15% de cima e de baixo.' },
+  { titulo: 'Impressão', texto: 'Sangria técnica de 3 mm vem por fora do formato final. Elemento crítico a pelo menos 3% da borda em banner físico, margem mínima de 5% da menor dimensão.' },
+  { titulo: 'Layout de slide', texto: '1 coluna (12), 2 colunas (5 e 5 com 1 de margem), 3 colunas (3, 3 e 3) ou sidebar de 3 mais conteúdo de 9.' },
+  { titulo: 'Sem espremer', texto: 'Conteúdo que não cabe vira mais slides ou páginas, ou hierarquia revista. Margem nunca encolhe.' },
+]} />
+<CodeTabs abas={areaSeguraCodigo} />
+</Secao>
+
+<Secao titulo="Grid web" descricao="Produto e site institucional usam 12 colunas que colapsam: 12, 8 e 4.">
+<Tabela colunas={['Breakpoint', 'A partir de', 'Colunas', 'Gutter', 'Margem lateral']} larguraMinima={600} linhas={[
+  ['Mobile (sm)', '0 px', '4', '12 px', '16 px'],
+  ['Tablet (md)', '768 px', '8', '16 px', '24 px'],
+  ['Desktop (lg)', '1024 px', '12', '24 px', '32 px'],
+  ['Wide (xl)', '1280 px', '12', '24 px', 'Automática, centrado'],
+]} />
+<Tabela colunas={['Componente (12 colunas)', 'Largura']} linhas={[
+  ['Tabela de listagem, hero', '12 colunas'],
+  ['Conteúdo principal com sidebar', '9 colunas, com a sidebar de filtros em 3'],
+  ['Formulário principal', '6 colunas, centralizado'],
+  ['Card de funcionalidade, modal de confirmação', '4 colunas'],
+  ['Card de KPI', '3 colunas'],
+]} />
+<Callout>
+Container de conteúdo com no máximo 1280 px e fundos de ponta a ponta até 1440 px. Fundo de página é sólido, gradiente só em hero.
+</Callout>
+</Secao>
+
+<Secao titulo="Escala de espaçamento" descricao="Unidade mínima de 4 px e passo-base de 8 px. Nunca use valor fora da escala: se a necessidade cai entre dois tokens, escolha o maior.">
+<Tabela colunas={['Token', 'Valor', 'Uso típico']} larguraMinima={560} linhas={[
+  ['`space-1`', '4 px', 'Ícone e rótulo, badge'],
+  ['`space-2`', '8 px', 'Gap interno de componente, ícone e texto'],
+  ['`space-3`', '12 px', 'Input compacto, linha de tabela'],
+  ['`space-4`', '16 px', 'Padding lateral de card, entre campos'],
+  ['`space-5`', '20 px', 'Entre seções internas de painel'],
+  ['`space-6`', '24 px', 'Padding de card padrão, após título'],
+  ['`space-8`', '32 px', 'Entre cards, seção de página'],
+  ['`space-10`', '40 px', 'Entre blocos maiores, antes do rodapé'],
+  ['`space-12`', '48 px', 'Hero, capa, margem de seção de slide'],
+  ['`space-16`', '64 px', 'Respiro de página em peça institucional'],
+  ['`space-20`', '80 px', 'Entre seções de landing ou capa de proposta'],
+  ['`space-24`', '96 px', 'Margem externa de layout institucional amplo'],
+]} />
+<CodeTabs abas={espacamentoCodigo} />
+<Cartoes colunas={3} itens={[
+  { titulo: 'Elemento clicável', texto: 'Mínimo de 12 px vertical e 16 px horizontal.' },
+  { titulo: 'Card', texto: 'Padding de 24 px. De 16 px no mobile e em painel compacto.' },
+  { titulo: 'Modal e painel lateral', texto: '32 px nas laterais, 24 px no topo e na base.' },
+  { titulo: 'Formulário', texto: 'Campo com 12 px vertical e 16 px horizontal, gap de 16 px entre campos e de 32 a 40 px entre grupos.' },
+  { titulo: 'Entre seções de página', texto: 'De 40 a 48 px. Título de seção a 16 px do primeiro elemento.' },
+  { titulo: 'Slide', texto: 'Padding seguro mínimo de 48 px. Gap entre colunas de 32 px e rodapé a 24 px da base.' },
+]} />
+<Tabela colunas={['Elemento', 'Line-height', 'Margem inferior']} linhas={[
+  ['H1 Red Hat Display', '1,15', '24 px'],
+  ['H2 Red Hat Display', '1,2', '20 px'],
+  ['H3 Red Hat Display', '1,25', '16 px'],
+  ['Corpo Inter 16 px', '1,6', '16 px'],
+  ['Corpo compacto Inter 14 px', '1,5', '12 px'],
+  ['Legenda Inter 12 px', '1,4', '8 px'],
+  ['Código Red Hat Mono', '1,6', '16 px'],
+]} />
+<Tabela colunas={['Densidade', 'Quando', 'Padding de card', 'Gap de grid']} larguraMinima={640} linhas={[
+  ['Aberta', 'Apresentação, landing, hero, capa de proposta, comunicação institucional', '32 a 48 px', '32 px'],
+  ['Padrão', 'Produto digital: dashboard, cadastro, relatório', '24 px', '24 px'],
+  ['Compacta', 'Tabela de dados, lista longa, sidebar, modal denso', '12 a 16 px', '16 px'],
+]} />
+<CertoErrado itens={[
+  {
+    certo: 'Uma densidade por contexto. Dashboard em padrão, tabela de estoque em compacta, deck de licitação em aberta.',
+    errado: 'Dashboard inteiro em densidade aberta, ou tabela com 24 px de padding de linha.',
+    motivo: 'Aberta demais obriga a rolar. Compacta demais em deck derruba a credibilidade.',
+  },
+  {
+    certo: 'Valores de 4 em 4 px: 8, 12, 16, 24, 32, 48.',
+    errado: 'Padding de 10 px, gap de 15 px, margem de 22 px, seção de 50 px.',
+    motivo: 'Improviso fora da grade se acumula em material longo.',
+  },
+  {
+    certo: 'Mesmo padding em todos os cards equivalentes do artefato.',
+    errado: 'Card com 11 px à esquerda e 14 px à direita.',
+  },
+]} />
+</Secao>
+
+<Secao titulo="Divergências na fonte" descricao="Os documentos de layout discordam em valores. A tabela mostra o que prevaleceu e por quê.">
+<Tabela colunas={['Tema', 'Valores na fonte', 'Adotado']} larguraMinima={720} linhas={[
+  ['Margens do slide 16:9', 'Grid: 96 px laterais, 72 topo, 64 base. Margens: 80, 64, 72. Princípios: 80 em todos os lados. Linguagem gráfica: 40 px.', 'Margens e área segura (80, 64, 72), documento específico do tema.'],
+  ['Gutter do slide', 'Grid: 24 px. Princípios: 20 px. Linguagem gráfica: 16 px.', '24 px, do documento de grid.'],
+  ['Margens do A4', 'Grid: 24 topo, 20 base e laterais. Margens: 20 topo, base e direita, 25 esquerda. Princípios: 2,5 cm laterais e 3 cm topo e base. Espaçamento: 2,5 cm em proposta e 3 cm em relatório.', 'Margens e área segura (20, 20, 25 esquerda, 20 direita).'],
+  ['Social quadrado', 'Grid: margem de 72 px. Margens, espaçamento e princípios: 64 px.', '64 px.'],
+  ['Story', 'Grid: lateral de 64 px e zona segura a partir de 200 px. Margens: lateral de 72 px, topo de 160 px. Espaçamento: 80 px lateral e 96 px topo e base.', 'Margens e área segura (72, 160 e 200).'],
+  ['Container web', 'Grid: 1280 px. Princípios: 1200 px com gutter de 20 a 24 px.', '1280 px, do documento de grid.'],
+  ['Gutter mobile', 'Grid: 12 px. Linguagem gráfica: 16 px.', '12 px.'],
+  ['Escala de espaçamento', 'Grid e princípios citam escala de 8 px, e o documento de espaçamento define 4 px como unidade com 20 px na escala.', 'Espaçamento: múltiplos de 4 px, 8 px como passo-base.'],
+  ['Espaço entre seções', 'Espaçamento: de 40 a 48 px. Hierarquia: de 48 a 80 px.', 'De 40 a 48 px em produto e de 48 a 80 px em peça institucional.'],
+]} />
+</Secao>
+
+<Callout>
+Fonte: Brandbook Citiesoft, Layout e composição.
+</Callout>
+
+</Pagina>

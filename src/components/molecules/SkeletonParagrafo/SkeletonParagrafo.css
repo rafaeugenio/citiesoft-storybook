@@ -1,7 +1,0 @@
-/* Ritmo vertical entre as linhas do parágrafo em carregamento. */
-
-.citie-skeleton-paragrafo {
-  display: flex;
-  flex-direction: column;
-  gap: var(--citie-spacing-2);
-}
